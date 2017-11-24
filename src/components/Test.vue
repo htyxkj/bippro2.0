@@ -4,7 +4,7 @@
       <md-part-toolbar-group>
         <md-button @click.native="bbb">保存</md-button>
         <md-button >放弃</md-button>
-        <md-button >新增</md-button>
+        <md-button @click.native="ccc">新增</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <md-button>复制</md-button>
@@ -44,33 +44,10 @@
           <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20">
              <xlsx-table @on-select-file="selectData" @get-name="getName"></xlsx-table>
           </md-layout>
-        </md-layout>
-        <md-layout class="flex">
-          <md-table-card class="flex">
-            <md-table class="flex">
-              <md-table-header>
-                <md-table-row>
-                  <md-table-head>阿米巴</md-table-head>
-                  <md-table-head>分配基数</md-table-head>
-                </md-table-row>
-              </md-table-header>
-              <md-table-body>
-              </md-table-body>
-            </md-table>
-            <md-table-tool>
-              <md-table-action md-insert
-                ></md-table-action>
-              <md-layout class="flex"></md-layout>
-              <md-table-pagination
-                  md-size="5"
-                  md-total="10"
-                  md-page="1"
-                  md-label="每页"
-                  md-separator="/"
-                  :md-page-options="[5, 10, 25, 50]">
-              </md-table-pagination>
-            </md-table-tool>
-          </md-table-card>
+          <md-bip-work ref="cc"></md-bip-work>
+          <md-checkbox md-theme="orange"  id="my-test10" name="my-test10" md-value="orange" v-model="checkbox3" class="md-primary">Primary Orange</md-checkbox>
+          <md-checkbox md-theme="green"  id="my-test11" name="my-test11" md-value="green" v-model="checkbox3" class="md-primary">Primary Green</md-checkbox>
+          <md-checkbox md-theme="light-blue" id="my-test12" name="my-test12" md-value="light-blue" v-model="checkbox3" class="md-primary">Primary Light Blue</md-checkbox>
         </md-layout>
       </md-content>
     </md-part-body>
@@ -94,7 +71,9 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
-      title:''
+      title:'',
+      showDialog:false,
+      checkbox3:[]
     }
   },
   methods:{
@@ -108,6 +87,10 @@ export default {
     bbb(){
       // console.log(this.$bipModal);
       this.$notify.success({content: '登录成功'})
+    },
+    ccc(){
+      console.log(this);
+      this.$refs['cc'].open('fdsfds');
     }
   }
 }

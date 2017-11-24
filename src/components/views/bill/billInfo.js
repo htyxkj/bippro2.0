@@ -1,6 +1,6 @@
 import common from '../../core/utils/common.js';
 import qs from 'qs'
-import billS from './billState';
+import billS from '../classes/billState';
 import CDataSet from '../classes/CDataSet'
 export default {
   data(){

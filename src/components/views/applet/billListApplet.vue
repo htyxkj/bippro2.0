@@ -69,7 +69,7 @@
   </md-part>
 </template>
 <script>
-import BillState from '../bill/billState';
+import BillState from '../classes/billState';
 export default {
   data () {
     return {
@@ -169,26 +169,43 @@ export default {
       this.dsm.currRecord = row;
       this.dsm.index = index;
       this.$emit('addBill');
-    }
+    },
 
-    // delList(){
-    //   console.log(this.selectData);
-    //   var _self = this;
-    //   _.forEach(this.selectData,function(n,key){
-    //     n.sys_stated = 4;
-    //     var str = JSON.stringify(n);
-    //     //  console.log(str);
-    //     var options = {'pcell': _self.mparams.pcell, 'jsonstr': str};
-    //     _self.saveData(options,_self.delSuccess,_self.delError);
-    //   });
-    //   this.$notify.success({content: '删除成功！'});
-    // },
-    // delSuccess(res){
-    //   if(res.data.id == 0){
-    //     // this.$notify.info({content: '删除成功！'});
-    //     this.fetchUIData();
-    //   }
-    // },
+    //删除数据
+    delList(){
+      console.log(this.selectData);
+      _.forEach(this.selectData,item=>{
+        if(this.opera){
+          var state = item[this.opera.statefld];
+          var sid  = item[this.opera.pkfld];
+          if(state !== '0' && state !=='1'){
+            this.$notify.warning({content: '不能删除'+sid+'!'});
+          }else{
+            item.sys_stated = 4;
+            var str = JSON.stringify(item);
+            var options = { pcell: this.dsm.pcell, jsonstr: str };
+            this.saveData(options,this.delSuccess);
+            // console.log(res);
+          }
+        }
+        console.log(item);
+      });
+      // var _self = this;
+      // _.forEach(this.selectData,function(n,key){
+      //   n.sys_stated = 4;
+      //   var str = JSON.stringify(n);
+      //   //  console.log(str);
+      //   var options = {'pcell': _self.mparams.pcell, 'jsonstr': str};
+      //   // _self.saveData(options,_self.delSuccess,_self.delError);
+      // });
+      // this.$notify.success({content: '删除成功！'});
+    },
+    delSuccess(res){
+      if(res.data.id == 0){
+        this.$notify.info({content: '删除成功！'});
+        this.fetchUIData();
+      }
+    },
     // delError(res){
     //   this.$notify.danger({content: '出错了！'});
     // }

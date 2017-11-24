@@ -19,7 +19,7 @@
 <script>
 import Column from './classes/Column';
 import localCache from '@/components/core/utils/localCache';
-import billState from '../../bill/billState';
+import billState from '../../classes/billState';
 import Row from './classes/Row';
 import mdBipGridHead from './mdBipGridHead';
 import mdBipGridBody from './mdBipGridBody';

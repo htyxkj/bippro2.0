@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import CDataSet from '../classes/CDataSet'
-import billS from '../bill/billState'
+import CDataSet from '../classes/CDataSet';
+import billS from '../classes/billState';
 import Operation from '../operation/operation';
 export default {
   data(){

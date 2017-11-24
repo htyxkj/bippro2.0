@@ -8,6 +8,7 @@ Vue.prototype._ = lodash;
 import Components from './components';
 import App from './views/app/myApp';
 import VuejsDialog from "vuejs-dialog"
+import "babel-polyfill";
 
 
 

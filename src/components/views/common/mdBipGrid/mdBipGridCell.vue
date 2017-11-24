@@ -34,7 +34,7 @@
 import getClosestVueParent from '@/components/core/utils/getClosestVueParent';
 import mdBipGridCellShow from './mdBipGridCellShow';
 import mdBipGridCellEdit from './mdBipGridCellEdit';
-import billState from '../../bill/billState';
+import billState from '../../classes/billState';
 export default {
   components: {
     mdBipGridCellShow,

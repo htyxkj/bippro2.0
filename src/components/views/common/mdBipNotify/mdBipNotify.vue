@@ -105,15 +105,16 @@ export default {
     handleClose () {
       this.isShow = false
       setTimeout(() => {
-        this.$destroy()
-        this.$el.remove()
+        this.$destroy();
+        console.log(this);
+        this.$el.remove();
       }, 100)
     },
     close () {
-      clearTimeout(this.timer)
-      this.isShow = false
-      this.$destroy()
-      this.$el.remove()
+      clearTimeout(this.timer);
+      this.isShow = false;
+      this.$destroy();
+      this.$el.remove();
     }
   },
   beforeMount () {

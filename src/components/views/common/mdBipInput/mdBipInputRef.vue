@@ -52,6 +52,7 @@ export default {
         console.log(this.refData.value[this.refData.cols[0]],this.oldValue);
         if(this.refData.value[this.refData.cols[0]] !== this.oldValue){
           // this.oldValue = this.refData.value[this.refData.cols[0]] ;
+          this.refData.oldValue = this.oldValue;
           this.$set(this.modal,this.cell.id,this.refData.value[this.refData.cols[0]]);
           console.log(data);
           this.$emit('change',data);
@@ -76,6 +77,7 @@ export default {
         if(this.refValue ===''){
           this.refData.value[this.refData.cols[0]]="";
           this.refData.value[this.refData.cols[1]]="";
+          this.refData.oldValue = this.oldValue;
           if(this.modal[this.cell.id] !== this.oldValue)
           this.$emit('change',this.refData);
         }else{

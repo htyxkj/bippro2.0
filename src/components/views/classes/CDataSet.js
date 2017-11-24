@@ -1,12 +1,11 @@
 import _ from 'lodash';
-import BillState from '../bill/billState'
+import BillState from './billState'
 import common from '../../core/utils/common.js';
 import scriptProc from './BipScriptProc';
 import BipScriptProc from './BipScriptProc';
 // 整体的数据类型
 export default class CDataSet {
   constructor(ccells) {
-    // console.log(ccells);
     this.ccells = ccells;
     this.cdata = [];
     this.removeData = [];
@@ -14,7 +13,9 @@ export default class CDataSet {
     this.ds_sub = [];
     this.ds_par = null;
     this.pcell = null;
+    this.x_pk = this.indexPKID(ccells, true, true)
     this.currRecord = { sys_stated: BillState.DICT };
+    this.canEdit = true;
     if (ccells.subLayCells) {
       _.forEach(ccells.subLayCells, (item) => {
         var ds = new CDataSet(item);
@@ -24,6 +25,34 @@ export default class CDataSet {
       });
     }
     this.scriptProc = new BipScriptProc(this.currRecord,this.ccells.cels);
+  }
+
+  indexPKID(cell, bfull, bcid){
+    var cel, cels = cell.cels;
+    // console.log(cels,'909090');
+    var rx = -1, x0 = 0, cp = cell.pkcc, xco = cell.x_co, t0 = 0, t1, cc = cels.length;
+    var atr;
+    for (var i = 0, cx = 0;cx < cp && i < cc;i++) {
+      cel = cels[i];
+      atr = cel.attr;
+      if ((atr & 1) != 0) {
+        if (cel.index != xco) {
+          t1 = cel.type;
+          if (bcid && t1 === 5 && ((cel.attr & 0x800000) != 0 || cel.ccName=='cid')){
+            return x0;//直接用cid时
+          }
+          t1 = t1 == 12 ? cel.ccLeng : (t1 == 4 ? 4 : 2);
+          if (t1 > t0) {
+            t0 = t1;
+            rx = x0;
+           }
+        }
+        x0++;
+        cx++;
+      }else if(bfull || (atr & 512) != 0)
+      x0++;
+    }
+    return rx;
   }
 
   addRow(crecord) {
@@ -89,12 +118,17 @@ export default class CDataSet {
 
   // 编辑检查
   checkEdit(res) {
-    console.log(res);
-    var cell = this.getCell(res.cellId);
-    console.log(cell,'cell')
-    cell.refValues = res;
-    this.checkGS(cell);
-    this.currRecord.sys_stated = this.currRecord.sys_stated | BillState.EDITED;
+    if(this.canEdit){
+      console.log(res);
+      var cell = this.getCell(res.cellId);
+      console.log(cell,'cell')
+      cell.refValues = res;
+      this.checkGS(cell);
+      this.currRecord.sys_stated = this.currRecord.sys_stated | BillState.EDITED;
+    }else{
+      this.currRecord[res.cellId] = res.oldValue;
+      console.log(this.currRecord);
+    }
   }
 
   clearData() {
@@ -153,7 +187,9 @@ export default class CDataSet {
     modal.sys_stated = modal | BillState.INSERT | BillState.EDITED;
     this.addRow(modal);
     this.currRecord = modal;
+    this.canEdit = true;
     return this.currRecord;
+
   }
   initModal(isNew) {
     var user = JSON.parse(window.localStorage.getItem('user'));

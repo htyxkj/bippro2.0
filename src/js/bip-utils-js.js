@@ -12,6 +12,19 @@ export default {
       return returnobj;
     }
 
+    Vue.prototype.getCeaCheckInfo = async function (ceaParam,id) {
+      var checkParasm = {
+        dbid: global.DBID,
+        usercode: JSON.parse(window.localStorage.getItem("user")).userCode,
+        apiId: global.APIID_CHKUP,
+        chkid:id,
+        cea:JSON.stringify(ceaParam)
+      }
+      var returnobj = null;
+      returnobj = await axios.post(global.BIPAPIURL, qs.stringify(checkParasm));
+      return returnobj;
+    }
+
     Vue.prototype.makeCellCL = async function(cells){
       for(var i=0;i<cells.cels.length;i++){
         var cell = cells.cels[i];
