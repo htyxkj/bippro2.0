@@ -31,7 +31,7 @@ export default {
       if(this.pbuid && this.pmenuid){
         //var bb = await this.getDataByAPINew(data1,this.getCallBack,this.getCallError);
         var res = await this.getDataByAPINewSync(data1);
-        console.log(res);
+        // console.log(res);
         if(res.data.id==0){
           this.mparams = res.data.data.mparams
         }else{

@@ -63,7 +63,7 @@ export default {
     this.tjpages = this.ptjPage;
     this.option = {};
     this.pieOption = {};
-    this.searchData()
+    this.searchData();
     if (this.tjpages) {
       this.makeColumnOpitons();
     }
@@ -100,11 +100,13 @@ export default {
         'groupfilds': JSON.stringify(this.groupfilds),
         'groupdatafilds': JSON.stringify(this.groupdatafilds)
       }
-      if (this.groupfilds.length > 0 && this.groupdatafilds.length > 0 && this.pcell && this.doSearch > 0) {
+      // console.log('chart serach',this.groupfilds.length,this.groupdatafilds.length,this.pcell,this.doSearch);
+      if (this.groupfilds.length > 0 && this.groupdatafilds.length > 0 && this.pcell && this.doSearch >=0) {
         this.getDataByAPINew(data1, this.getCallBack, this.getCallError)
       }
     },
     getCallBack(res) {
+      console.log(res,'bipchart');
       if (res.data.id === 0) {
         this.tjcell = res.data.data.tjlayCels;
         this.tjpages = res.data.data.tjpages;
@@ -253,20 +255,57 @@ export default {
     this.option = options;
   },
   getGroupFldName(items) {
+    // console.log(items,'999999999');
     var name = "";
-    this._.each(this.groupfilds, (fld, indx) => {
+    _.each(this.groupfilds, async (fld, indx) =>  {
       var id = fld;
       var code = items[id];
-      var getNum = _.findIndex(this.refValues, function(item) {
-        return (item.id == id) && (item.code == code);
-      });
-      if (getNum >= 0) {
-        name += this.refValues[getNum].name + "-"
-      } else {
-        name += code + "-"
+      var cell = this.getCellById(id);
+      var rr = cell.refValue;
+      if(rr!=null&&rr){
+        if(rr.indexOf('$')>0){
+          var val = JSON.parse(window.sessionStorage.getItem(rr));
+          _.forEach(val.values,item=>{
+            console.log(item);
+            if(item.code==code){
+              name+=item.name+"-";
+            }
+          });
+        }else if(rr.indexOf('&')>0){
+          // console.log(cell,rr);
+          var val = JSON.parse(window.sessionStorage.getItem(rr+'.'+code));
+          // console.log(val);
+          if(val){
+            name += val.value[val.allCols[1]]+'-';
+          }else{
+            var cc = await this.getCLByAPI({'assistid':rr,'cont':code});
+            if(cc.data.code==1){
+              var cldata = {'allCols':cc.data.allCols,'value':cc.data.values[0]};
+              name += cldata.value[cldata.allCols[1]]+'-';
+              if(!window.sessionStorage.getItem(rr+"."+code))
+                window.sessionStorage.setItem(rr+"."+code,JSON.stringify(cldata));
+            }else{
+              name+=items[fld]+'-';
+            } 
+          }
+          
+        }
+      }else{
+        name+=items[fld]+'-';
       }
+      // var getNum = _.findIndex(this.refValues, function(item) {
+      //   console.log(item,id);
+      //   return (item.id == id) && (item.code == code);
+      // });
+      // if (getNum >= 0) {
+      //   name += this.refValues[getNum].name + "-"
+      // } else {
+      //   if(!name)
+      //     name += code + "-"
+      // }
     });
-    name = name.substr(0, name.length - 1);
+    if(name.indexOf('-')>0)
+      name = name.substr(0, name.length - 1);
     return name;
   },
   getFldName(id) {
@@ -296,7 +335,7 @@ export default {
     this.endIndex = this.startIndex + this.pageInfo.size - 1;
   },
   makeRef(refId, refData) {
-    var data = { 'id': refId, 'code': refData.code, 'name': refData.name }
+    var data = { 'id': refId, 'code': refData.code, 'name': refData.name };
     var exi = _.findIndex(this.refValues, data);
     if (exi === -1) {
       this.refValues.push(data);
@@ -309,8 +348,17 @@ export default {
     var code = refData.code;
     var _self = this;
     var getNum = _.findIndex(this.refValues, function(item) {
-      return (item.id == id) && (item.code == code);
+      return (item.id === id) && (item.code == code);
     });
+  },
+  getCellById(id){
+    var cc = null;
+    _.forEach(this.tjcell.cels,item=>{
+      if(item.id==id){
+        cc = item;
+      }
+    });
+    return cc;
   }
 }
 }

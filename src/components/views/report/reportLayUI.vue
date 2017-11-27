@@ -174,7 +174,7 @@ export default {
       this.fetchUIData();
     },
     async getCallBack(res){
-      console.log(res)
+      // console.log(res)
       this.loading = 0;
       if (res.data.id === 0) {
         this.contCel = res.data.data.contCel;

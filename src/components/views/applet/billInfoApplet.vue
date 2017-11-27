@@ -55,7 +55,7 @@ import common from "../../core/utils/common.js";
 export default {
   data() {
     return {
-      curr_dsm: Object,
+      curr_dsm: null,
       chkinfo: null
     };
   },
@@ -144,7 +144,11 @@ export default {
           this.dsm.deleteRow(-1);
           this.dsm.createRecord();
           this.dsm.currRecord.sys_stated = 3;
-          this.curr_dsm.clearData();
+          if(this.curr_dsm){
+            console.log(this.curr_dsm);
+            this.curr_dsm.clearData();
+          }
+            
         } else {
           var data = res.data.data;
           var _self = this;
@@ -155,7 +159,7 @@ export default {
           this.dsm.currRecord.sys_stated = billS.POSTED;
           this.$notify.success({ content: "保存成功！", placement: "mid-center" });
         }
-        if (this.opera) {
+        if (this.opera || this.opera !==null) {
             await this.makeCheckParams();
         }
         return true;
@@ -164,7 +168,10 @@ export default {
       // }
     },
     async makeCheckParams() {
+      if(this.opera===null)
+      return ;
       var crd = this.dsm.currRecord;
+      // console.log(this.opera);
       var params = {
         sid: crd[this.opera.pkfld],
         sbuid: crd[this.opera.buidfld],
@@ -179,7 +186,10 @@ export default {
       } else {
         this.chkinfo = {};
       }
-      console.log(res, "fdfdsfds");
+      var state = crd[this.opera.statefld];
+      if(state === '1' || state === '0')
+        this.dsm.canEdit = true;
+      // console.log(res, "fdfdsfds");
     },
     getDataType(item) {
       if (
@@ -246,6 +256,9 @@ export default {
       return value;
     },
     async getChildData(subdsm) {
+      if(!subdsm){
+        return ;
+      }
       const objId = subdsm.ccells.obj_id;
       var pkcel = this.dsm.ccells.cels[this.dsm.ccells.pkid];
       var pkkey = pkcel.id;
@@ -263,12 +276,12 @@ export default {
         pageSize: 20,
         cellid: objId
       };
-      console.log(data1, "findChild");
+      // console.log(data1, "findChild");
       var res = await this.getDataByAPINewSync(data1);
       if (res.data.id === 0) {
         this.dsm.currRecord[objId] = res.data.data.pages.celData;
         subdsm.cdata = res.data.data.pages.celData;
-        console.log(subdsm);
+        // console.log(subdsm);
       }
     }
   },
@@ -364,7 +377,7 @@ export default {
       if (this.dsm.ds_sub && state === 0) {
         this.getChildData(this.dsm.ds_sub[0]);
         await this.makeCheckParams();
-      } else if (this.dsm.ds_sub) {
+      } else if (this.dsm.ds_sub.length>0) {
         this.dsm.ds_sub[0].clearData();
       }
     }

@@ -39,9 +39,9 @@ export default {
               var cc = JSON.parse(window.sessionStorage.getItem(cell.refValue));
               cell.refCl = true;
               if(!cc){
-                console.log('服务端获取');
+                // console.log('服务端获取');
                 cc = await this.getCLByAPI({'assistid':cell.refValue});
-                console.log(cc);
+                // console.log(cc);
                 window.sessionStorage.setItem(cell.refValue,JSON.stringify(cc.data));
               }
             }else if(s0.charAt(0)=='&'){

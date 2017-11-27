@@ -22,7 +22,7 @@ export default class BipScriptProc {
       // TODO 后续处理
     } else {
       s0 = this.expcalc(s0, true);
-      // console.log(s0);
+      console.log(s0);
       return this.keepRound(s0, cell); //;--单行公式
     }
   }
@@ -82,13 +82,14 @@ export default class BipScriptProc {
             t1--;
             if (cx0 >= t1 || cx0 < 1) {
               sv0 = sv0.substring(1, t1); // [xxxx]
-              // console.log(sv0);
+              console.log(sv0);
               sv1 = null;
             } else {
               sv1 = sv0.substring(cx0 + 2); //[xxxx].方法或其它变量
               sv0 = sv0.substring(1, cx0);
-              // console.log(sv0);
+              console.log(sv0);
             }
+            console.log(cfh);
             ov = cfh == '(' ? this.expcalc(sv0, true) : this.invokeref(sv0);
             if (ov != null && sv1 != null) {
               // 有其他关联
@@ -148,6 +149,7 @@ export default class BipScriptProc {
         return o1;
       if (o1 == null)
         return o0;
+        console.log(o0)
       if (ysf == '+' && typeof (o0) != 'date' && (typeof (o0) != 'number' || typeof (o1) != 'number'))
         return o0 + '' + o1;
     }
@@ -226,6 +228,10 @@ export default class BipScriptProc {
     } else if (c0 >= 'a' && c0 <= 'z') {
       // 当前数据
       ov = this.data[s0];
+      var cell = this.getColumn(s0);
+      if(cell.type<12&&cell.type>1){
+        ov = new Number(ov).valueOf();
+      }
     } else {
       ov = s0;
     }

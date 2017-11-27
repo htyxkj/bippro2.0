@@ -287,7 +287,8 @@ export default class CDataSet {
         // this.$set(modal, cel.id, s0);
       }else{
         var cell = this.getPKInt();
-        modal[cell.id] = (this.cdata.length+1)+'';
+        if(cell)
+          modal[cell.id] = (this.cdata.length+1)+'';
       }
     }
     return modal;
