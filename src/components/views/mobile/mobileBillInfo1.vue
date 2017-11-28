@@ -27,17 +27,22 @@
           </md-layout>
         </md-content>
       </template>
-      <template v-else>
+      <template >
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
-          <md-layout>
-            <md-bip-input v-for="(cell, index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
-          </md-layout>
-          <md-layout class="flex layout-column" v-if="dsm.ds_sub&&dsm.ds_sub.length==1">
+           <md-stepper md-vertical>
+            <md-step id="step1" :md-label="dsm.ccells.desc" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成">
+              <md-layout>
+                <md-bip-input v-for="(cell, index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+              </md-layout>
+            </md-step>
+            <md-step id="step2"  md-label="子项" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成">fdsfds</md-step>
+          <!-- <md-layout class="flex layout-column" v-if="dsm.ds_sub&&dsm.ds_sub.length==1">
               <md-bip-grid :datas="dsm.ds_sub[0].cdata" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd(dsm.ds_sub[0])" @onRemove="onRemove" :showAdd="true" :showRemove="true" @rowChange="rowChange" @click="rowClick(dsm.ds_sub[0])">
                 <md-bip-grid-column v-for="(item,itemIndex) in dsm.ds_sub[0].ccells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName||item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :dataType="getDataType(item)" :formatter="formatter">
                 </md-bip-grid-column>
               </md-bip-grid>
-          </md-layout>
+          </md-layout> -->
+           </md-stepper>
         </md-content>
       </template>
       <template v-if="chkinfo">
@@ -55,7 +60,7 @@ import common from "../../core/utils/common.js";
 export default {
   data() {
     return {
-      curr_dsm: null,
+      curr_dsm: Object,
       chkinfo: null
     };
   },
@@ -144,11 +149,7 @@ export default {
           this.dsm.deleteRow(-1);
           this.dsm.createRecord();
           this.dsm.currRecord.sys_stated = 3;
-          if(this.curr_dsm){
-            console.log(this.curr_dsm);
-            this.curr_dsm.clearData();
-          }
-            
+          this.curr_dsm.clearData();
         } else {
           var data = res.data.data;
           var _self = this;
@@ -156,11 +157,10 @@ export default {
             // console.log(val, key);
             _self.$set(_self.dsm.currRecord, key, val);
           });
-          // this.dsm.currRecord.sys_stated = billS.DICT;
-          this.dsm.makeState(billS.DICT);
+          this.dsm.currRecord.sys_stated = billS.POSTED;
           this.$notify.success({ content: "保存成功！", placement: "mid-center" });
         }
-        if (this.opera || this.opera !==null) {
+        if (this.opera) {
             await this.makeCheckParams();
         }
         return true;
@@ -169,10 +169,7 @@ export default {
       // }
     },
     async makeCheckParams() {
-      if(this.opera===null)
-      return ;
       var crd = this.dsm.currRecord;
-      // console.log(this.opera);
       var params = {
         sid: crd[this.opera.pkfld],
         sbuid: crd[this.opera.buidfld],
@@ -187,10 +184,7 @@ export default {
       } else {
         this.chkinfo = {};
       }
-      var state = crd[this.opera.statefld];
-      if(state === '1' || state === '0')
-        this.dsm.canEdit = true;
-      // console.log(res, "fdfdsfds");
+      console.log(res, "fdfdsfds");
     },
     getDataType(item) {
       if (
@@ -257,9 +251,6 @@ export default {
       return value;
     },
     async getChildData(subdsm) {
-      if(!subdsm){
-        return ;
-      }
       const objId = subdsm.ccells.obj_id;
       var pkcel = this.dsm.ccells.cels[this.dsm.ccells.pkid];
       var pkkey = pkcel.id;
@@ -277,12 +268,12 @@ export default {
         pageSize: 20,
         cellid: objId
       };
-      // console.log(data1, "findChild");
+      console.log(data1, "findChild");
       var res = await this.getDataByAPINewSync(data1);
       if (res.data.id === 0) {
         this.dsm.currRecord[objId] = res.data.data.pages.celData;
         subdsm.cdata = res.data.data.pages.celData;
-        // console.log(subdsm);
+        console.log(subdsm);
       }
     }
   },
@@ -378,7 +369,7 @@ export default {
       if (this.dsm.ds_sub && state === 0) {
         this.getChildData(this.dsm.ds_sub[0]);
         await this.makeCheckParams();
-      } else if (this.dsm.ds_sub.length>0) {
+      } else if (this.dsm.ds_sub) {
         this.dsm.ds_sub[0].clearData();
       }
     }
@@ -398,5 +389,3 @@ export default {
 <style lang="scss">
 
 </style>
-
-

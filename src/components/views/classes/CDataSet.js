@@ -59,6 +59,7 @@ export default class CDataSet {
     // crecord.sys_stated = BillState.INSERT | BillState.EDITED;
     this.cdata.push(crecord);
     this.index = this.cdata.length - 1;
+    this.currRecord = crecord;
     this.checkGS();
   }
 
@@ -77,7 +78,7 @@ export default class CDataSet {
         scstr = scstr.replace('=:', '');
         // 公式计算
         var vl = this.scriptProc.execute(scstr,null,col);
-        console.log(vl,this.currRecord,col.id,scstr);
+        // console.log(vl,this.currRecord,col.id,scstr);
         this.currRecord[col.id] = vl;
       }
     })
@@ -103,7 +104,7 @@ export default class CDataSet {
       if (refInfo) {
         _.forEach(cols, (col, n) => {
           var vv = refInfo[refValues.cols[_indexs[n]]];
-          console.log(vv,col);
+          // console.log(vv,col);
           if (vv) {
             var cl = this.getCell(col);
             if (cl.type<12 && cl.type>1) {
@@ -119,15 +120,15 @@ export default class CDataSet {
   // 编辑检查
   checkEdit(res) {
     if(this.canEdit){
-      console.log(res);
+      // console.log(res);
       var cell = this.getCell(res.cellId);
-      console.log(cell,'cell')
+      // console.log(cell,'cell')
       cell.refValues = res;
       this.checkGS(cell);
       this.currRecord.sys_stated = this.currRecord.sys_stated | BillState.EDITED;
     }else{
       this.currRecord[res.cellId] = res.oldValue;
-      console.log(this.currRecord);
+      // console.log(this.currRecord);
     }
   }
 
@@ -144,6 +145,19 @@ export default class CDataSet {
       delRow.sys_stated = 4;
       this.removeData.push(delRow);
     }
+    if(row==0){
+      if(this.cdata.length==0){
+        this.currRecord = null;
+      }else{
+        this.currRecord = this.cdata[row-1];
+      }
+    }else{
+      if(this.cdata.length==0){
+        this.currRecord = null;
+      }else{
+        this.currRecord = this.cdata[row-1];
+      }
+    }
     // this.cdata = _.remove(this.cdata, (n) => {
     //   return n === row;
     // });
@@ -153,7 +167,7 @@ export default class CDataSet {
     var rowIndex =  _.findIndex(this.cdata, (chr) => {
       return chr == row;
     });
-    console.log(rowIndex);
+    console.log(rowIndex,row,'fdsfdsf');
     this.deleteRow(rowIndex);
     // this.cdata = _.remove(this.cdata,(n) =>{
     //   if(n === row){
@@ -173,7 +187,25 @@ export default class CDataSet {
 
   haveChild() {
     // console.log('111');
-    return this.ds_sub > 0 ? true : false;
+    return this.ds_sub.length > 0 ? true : false;
+  }
+
+  makeState(state){
+    this.currRecord.sys_stated = state;
+    if(this.haveChild()){
+      this.makeChildState(state);
+    }
+  }
+
+  makeChildState(state){
+    _.forEach(this.ds_sub,item =>{
+      _.forEach(item.cdata,crd=>{
+        crd.sys_stated = state;
+      });
+      if(item.haveChild()){
+        item.makeState(state);
+      }
+    });
   }
 
   getCell(id){
@@ -184,6 +216,7 @@ export default class CDataSet {
 
   createRecord() {
     var modal = this.initModal(true);
+    // console.log(modal);
     modal.sys_stated = modal | BillState.INSERT | BillState.EDITED;
     this.addRow(modal);
     this.currRecord = modal;

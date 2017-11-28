@@ -228,6 +228,7 @@ export default class BipScriptProc {
     } else if (c0 >= 'a' && c0 <= 'z') {
       // 当前数据
       ov = this.data[s0];
+      console.log(ov,'shuju',s0);
       var cell = this.getColumn(s0);
       if(cell.type<12&&cell.type>1){
         ov = new Number(ov).valueOf();
