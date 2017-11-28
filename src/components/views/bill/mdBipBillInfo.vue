@@ -225,6 +225,7 @@ export default {
       // console.log(res, "321321");
       if (res.data.id == 0) {
         this.subDatas = res.data.data.pages.celData;
+        this.ds
       }
     },
     rowChange(rowData, column) {

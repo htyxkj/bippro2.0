@@ -2,7 +2,7 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-button @click.native="create">新建111</md-button>
+        <md-button @click.native="create">新建</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <md-button @click.native="delList">删除</md-button>

@@ -87,7 +87,7 @@ export default {
       var  posParams = {
         'dbid': global.DBID,
         'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
-        'apiId': global.APIID_AID,
+        'apiId': global.APIID_AIDO,
         'assistid': mdRefID,
         'cont':cont
       }

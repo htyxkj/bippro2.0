@@ -61,6 +61,7 @@ export default {
       }
     },
     makeRefInput(data){
+      console.log(this.cell);
       if (this.cell.refValue) {
         this.refValue = data.value[data.cols[1]];
       } else {
@@ -82,15 +83,21 @@ export default {
           this.$emit('change',this.refData);
         }else{
           if(this.refValue==this.refData.value[this.refData.cols[0]]){
-            this.refValue=this.refData.value[this.refData.cols[1]];
+            if(this.cell.refValue)
+              this.refValue=this.refData.value[this.refData.cols[1]];
+            else
+              this.refValue=this.refData.value[this.refData.cols[0]];
           }else{
-            this.getAssistDataByAPICout(this.cell.refValue,this.refValue,this.getCallBack,this.getCallError);
+            if(this.cell.editName)
+              this.getAssistDataByAPICout(this.cell.editName,this.refValue,this.getCallBack,this.getCallError);
           }   
         }
       }else{
         if(this.refValue !== ''){
           // console.log(this.cell.refValue,this.refValue)
-          this.getAssistDataByAPICout(this.cell.refValue,this.refValue,this.getCallBack,this.getCallError);
+          console.log(this.cell);
+          if(this.cell.editName)
+            this.getAssistDataByAPICout(this.cell.editName,this.refValue,this.getCallBack,this.getCallError);
         }
       }
     },

@@ -30,12 +30,12 @@
       <template v-if="dsm&&dsm.ds_sub.length>0">
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
           <md-stepper md-vertical>
-            <md-step id="step1" :md-label="dsm.ccells.desc">
+            <md-step id="step1" :md-label="dsm.ccells.desc" mdButtonContinue="下一步" mdButtonBack="上一步" mdButtonFinish="完成">
               <md-layout>
                 <md-bip-input v-for="(cell, index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
               </md-layout>
             </md-step>
-            <md-step id="step2" :md-label="dsm.ds_sub[0].ccells.desc">
+            <md-step id="step2" md-label="子项" mdButtonContinue="下一步" mdButtonBack="上一步" mdButtonFinish="完成">
               <div>
                 <md-list>
                   <md-list-item  v-for="(dj,djIndex) in dsm.ds_sub[0].cdata" :key="djIndex" @click.stop="itemClick(dsm.ds_sub[0],djIndex)">
@@ -49,7 +49,7 @@
                       <md-list>
                         <md-layout class="flex layout-column">
                             <md-layout>
-                              <md-bip-input v-for="(item,itemIndex) in dsm.ds_sub[0].ccells.cels" :ref="item.id" :key="item.id" :cell="item" :modal="dsm.ds_sub[0].currRecord" :btj="false" class="bip-input"></md-bip-input>
+                              <md-bip-input v-for="(item,itemIndex) in dsm.ds_sub[0].ccells.cels" :ref="item.id" :key="item.id" :cell="item" :modal="dsm.ds_sub[0].cdata[djIndex]" :btj="false" class="bip-input" @change="childChange"></md-bip-input>
                             </md-layout>
                         </md-layout>
                       </md-list>
@@ -57,14 +57,14 @@
                 </md-list-item>
                 </md-list>
                 <md-button class=" md-raised md-primary" @click="addDj(dsm.ds_sub[0])">
-                  添加单据
+                  添加行
                 </md-button>
                 <md-button class=" md-raised md-accent" @click="deleteAll(dsm.ds_sub[0])">
                   删除所有
                 </md-button>
               </div>
             </md-step>
-            <md-step id="step3" md-label="单据提交">
+            <md-step id="step3" md-label="单据提交" mdButtonContinue="下一步" mdButtonBack="上一步" mdButtonFinish="完成">
                <h2 class="md-title">确认提交单据？</h2>
             </md-step>
           </md-stepper>
@@ -81,11 +81,16 @@ import common from "../../core/utils/common.js";
 export default {
   data(){
     return {
-      curr_dsm:Object,
+      curr_dsm:null,
     }
   },
   props: { dsm: Object, dsext: Array, opera: Object },
   methods: {
+    childChange(data){
+      console.log(data,this.curr_dsm);
+      this.curr_dsm.checkEdit(data);
+
+    },
     //grid
     rowClick(subdsm){
       this.curr_dsm = subdsm;
@@ -258,6 +263,7 @@ export default {
       if(res.data.id === 0){
         this.dsm.currRecord[objId] = res.data.data.pages.celData;
         subdsm.cdata = res.data.data.pages.celData;
+        subdsm.currRecord = subdsm.cdata[0];
         console.log(subdsm);
       }
     }

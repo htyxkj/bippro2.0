@@ -5,7 +5,7 @@
       <md-bip-bill-list-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" :mdTitle="mdTitle" @addBill="addBill"  v-else></md-bip-bill-list-applet>
     </template>
     <template v-else>
-      <span>移动端信息</span>
+      <!-- <span>移动端信息</span> -->
       <md-mobile-bill-info :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" @list="list"></md-mobile-bill-info>
       <md-mobile-bill-list :dsm="ds_m" :dsext="ds_ext" :opera="opera" :mdTitle="mdTitle" @addBill="addBill"  v-else></md-mobile-bill-list>
     </template>
