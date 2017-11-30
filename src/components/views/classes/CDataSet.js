@@ -141,19 +141,21 @@ export default class CDataSet {
       row = this.index;
     }
     var delRow = _.pullAt(this.cdata,row);
-    if(!(delRow.sys_stated&BillState.INSERT)>0){
+    this.cdata = _.without(this.cdata,delRow);
+    console.log(this.cdata);
+    if(!(delRow.sys_stated&BillState.INSERT)==0){
       delRow.sys_stated = 4;
       this.removeData.push(delRow);
     }
     if(row==0){
       if(this.cdata.length==0){
-        this.currRecord = null;
+        this.currRecord = undefined;
       }else{
         this.currRecord = this.cdata[row-1];
       }
     }else{
       if(this.cdata.length==0){
-        this.currRecord = null;
+        this.currRecord = undefined;
       }else{
         this.currRecord = this.cdata[row-1];
       }

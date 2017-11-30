@@ -1,6 +1,6 @@
 <template>
   <md-part>
-    <template v-if="!isPC">
+    <template v-if="isPC">
       <md-bip-bill-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" @list="list"></md-bip-bill-applet>
       <md-bip-bill-list-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" :mdTitle="mdTitle" @addBill="addBill"  v-else></md-bip-bill-list-applet>
     </template>
@@ -58,10 +58,12 @@ export default {
           this.ds_m = new CDataSet(cells0);
           this.ds_m.setPcell(pcell);
         }else{
-          this.ds_m = new CDataSet(cells[0]);
+          var cells0 = await this.makeCellCL(cells[0]);
+          this.ds_m = new CDataSet(cells0);
           this.ds_m.setPcell(pcell);
           for(var i=0;i<celL-2;i++){
-            var ds = new CDataSet(cells[i+1]);
+            var cellsi = await this.makeCellCL(cells[i+1]);
+            var ds = new CDataSet(cellsi);
             this.ds_ext[i] = ds;
           }
         }

@@ -126,14 +126,19 @@ export default {
           cancelText: "取消"
         })
         .then(() => {
+          if ((this.dsm.currRecord.sys_stated & billS.INSERT) > 0) {
+            alert("新建");
+            return;
+          }
           this.dsm.currRecord.sys_stated = 4;
           this.save();
         });
     },
     async save() {
       var str = JSON.stringify(this.dsm.currRecord);
-      // var isnull = this.checkNotNull();
+      var isnull = this.checkNotNull(this.dsm);
       // if(!isnull){
+      return;
       this.loading = 1;
       var options = { pcell: this.dsm.pcell, jsonstr: str };
       var res = await this.saveData(options);
@@ -144,11 +149,10 @@ export default {
           this.dsm.deleteRow(-1);
           this.dsm.createRecord();
           this.dsm.currRecord.sys_stated = 3;
-          if(this.curr_dsm){
+          if (this.curr_dsm) {
             console.log(this.curr_dsm);
             this.curr_dsm.clearData();
           }
-            
         } else {
           var data = res.data.data;
           var _self = this;
@@ -160,17 +164,72 @@ export default {
           this.dsm.makeState(billS.DICT);
           this.$notify.success({ content: "保存成功！", placement: "mid-center" });
         }
-        if (this.opera || this.opera !==null) {
-            await this.makeCheckParams();
+        if (this.opera || this.opera !== null) {
+          await this.makeCheckParams();
         }
         return true;
       }
       this.loading = 0;
       // }
     },
+    checkNotNull(cds) {
+      for (let i = 0; i < cds.ccells.cels.length; i++) {
+        var item = cds.ccells.cels[i];
+        // console.log(item);
+        if (item.unNull) {
+          var vl = cds.currRecord[item.id];
+          // console.log(vl,this.dsm.currRecord);
+          if (!vl) {
+            this.$notify.warning({
+              content: "【" + item.labelString + "】不能为空！",
+              placement: "mid-center"
+            });
+            return false;
+          }
+        }
+      }
+      if (cds.haveChild()) {
+        return this.checkChildNotNull(cds);
+      }
+      return true;
+    },
+    checkChildNotNull(cds) {
+      var isok = true;
+      _.forEach(cds.ds_sub, dssub => {
+        if (dssub.cdata.length === 0 && !dssub.ccells.unNull) {
+          isok = false;
+          this.$notify.warning({
+            content: "【" + dssub.ccells.desc + "】不能为空！",
+            placement: "mid-center"
+          });
+          return;
+        } else {
+          _.forEach(dssub.cdata, (item,index) => {
+            for (let i = 0; i < dssub.ccells.cels.length; i++) {
+              var cell = dssub.ccells.cels[i];
+              if (cell.unNull) {
+                var vl = item[cell.id];
+                if (!vl) {
+                  this.$notify.warning({
+                    content: "第"+(index+1)+"行【" + cell.labelString + "】不能为空！",
+                    placement: "mid-center"
+                  });
+                  isok = false;
+                  return;
+                }
+              }
+              if(!isok)
+                break ;
+            }
+            if(!isok)
+              return ;
+          });
+        }
+      });
+      return isok;
+    },
     async makeCheckParams() {
-      if(this.opera===null)
-      return ;
+      if (this.opera === null) return;
       var crd = this.dsm.currRecord;
       // console.log(this.opera);
       var params = {
@@ -188,8 +247,7 @@ export default {
         this.chkinfo = {};
       }
       var state = crd[this.opera.statefld];
-      if(state === '1' || state === '0')
-        this.dsm.canEdit = true;
+      if (state === "1" || state === "0") this.dsm.canEdit = true;
       // console.log(res, "fdfdsfds");
     },
     getDataType(item) {
@@ -215,8 +273,7 @@ export default {
     onLineAdd(subdsm) {
       this.curr_dsm = subdsm;
       var subId = subdsm.ccells.obj_id;
-      if(!this.dsm.canEdit)
-        return ;
+      if (!this.dsm.canEdit) return;
       var crd = subdsm.createRecord();
       // console.log(subdsm,subId,crd);
       if (!this.dsm.currRecord[subId]) {
@@ -225,8 +282,7 @@ export default {
       this.dsm.currRecord[subId] = subdsm.cdata;
     },
     onRemove(rows) {
-      if(!this.dsm.canEdit)
-        return ;
+      if (!this.dsm.canEdit) return;
       console.log(this.curr_dsm);
       _.forEach(rows.data, row => {
         this.curr_dsm.deleteRecord(row);
@@ -240,9 +296,9 @@ export default {
     rowChange(row) {
       console.log("row Change", row);
       const state = this.dsm.currRecord.sys_stated;
-      if(this.chkinfo){
+      if (this.chkinfo) {
         if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
-          return ;
+          return;
         }
       }
       this.dsm.currRecord.sys_stated = state | billS.EDITED;
@@ -257,8 +313,8 @@ export default {
       return value;
     },
     async getChildData(subdsm) {
-      if(!subdsm){
-        return ;
+      if (!subdsm) {
+        return;
       }
       const objId = subdsm.ccells.obj_id;
       var pkcel = this.dsm.ccells.cels[this.dsm.ccells.pkid];
@@ -318,13 +374,14 @@ export default {
       }
     },
     canDelete() {
-      if(this.opera){
+      if (this.opera) {
         var crd = this.dsm.currRecord;
         if (crd) {
+          if ((crd.sys_stated & billS.INSERT) > 0) return true;
           const state = crd[this.opera.statefld];
-          if(state == '0' || state == '1'){
+          if (state == "0" || state == "1") {
             return false;
-          }else{
+          } else {
             return true;
           }
         }
@@ -357,19 +414,19 @@ export default {
       }
       return true;
     },
-    getSH(){
-      if(this.opera){
+    getSH() {
+      if (this.opera) {
         var crd = this.dsm.currRecord;
-        if(crd){
+        if (crd) {
           var state = crd[this.opera.statefld];
-          if(state=='0'||state=='1'){
-            return '提交';
-          }else{
-            return '审核';
+          if (state == "0" || state == "1") {
+            return "提交";
+          } else {
+            return "审核";
           }
         }
       }
-      return '提交';
+      return "提交";
     }
   },
   async mounted() {
@@ -378,14 +435,14 @@ export default {
       if (this.dsm.ds_sub && state === 0) {
         this.getChildData(this.dsm.ds_sub[0]);
         await this.makeCheckParams();
-      } else if (this.dsm.ds_sub.length>0) {
+      } else if (this.dsm.ds_sub.length > 0) {
         this.dsm.ds_sub[0].clearData();
       }
     }
   },
-  watch:{
-    chkinfo(){
-      if(this.chkinfo){
+  watch: {
+    chkinfo() {
+      if (this.chkinfo) {
         if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
           this.dsm.canEdit = false;
         }

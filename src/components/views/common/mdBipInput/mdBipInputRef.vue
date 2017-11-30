@@ -74,19 +74,25 @@ export default {
       }
     },
     onBlur(){
+      // console.log('fdsfds',this.refData);
       if (this.refData.cols){
         if(this.refValue ===''){
           this.refData.value[this.refData.cols[0]]="";
           this.refData.value[this.refData.cols[1]]="";
           this.refData.oldValue = this.oldValue;
-          if(this.modal[this.cell.id] !== this.oldValue)
-          this.$emit('change',this.refData);
+          if(this.refData.value[this.refData.cols[0]] !== this.oldValue){
+            this.$set(this.modal,this.cell.id,'');
+            this.$emit('change',this.refData);
+          }
         }else{
           if(this.refValue==this.refData.value[this.refData.cols[0]]){
+            this.$set(this.modal,this.cell.id,this.refValue);
             if(this.cell.refValue)
               this.refValue=this.refData.value[this.refData.cols[1]];
-            else
+            else{
               this.refValue=this.refData.value[this.refData.cols[0]];
+            }
+              
           }else{
             if(this.cell.editName)
               this.getAssistDataByAPICout(this.cell.editName,this.refValue,this.getCallBack,this.getCallError);
@@ -98,6 +104,8 @@ export default {
           console.log(this.cell);
           if(this.cell.editName)
             this.getAssistDataByAPICout(this.cell.editName,this.refValue,this.getCallBack,this.getCallError);
+        }else{
+          this.modal[this.cell.id]='';
         }
       }
     },
@@ -122,10 +130,10 @@ export default {
         var newValue = this.refData.value[this.refData.cols[0]];
         this.refData.oldValue = this.oldValue;
         if(newValue !== this.oldValue){
-          this.$set(this.modal,this.cell.id,newValue);
           // this.oldValue = newValue;
           this.$emit('change',this.refData);
         }
+        this.$set(this.modal,this.cell.id,newValue);
         this.makeRefInput(this.refData);
       }else if(data.code == 0){
         if(this.refData.cols){

@@ -37,19 +37,19 @@
             </md-step>
             <md-step id="step2" md-label="子项" mdButtonContinue="下一步" mdButtonBack="上一步" mdButtonFinish="完成">
               <div>
-                <md-list>
-                  <md-list-item  v-for="(dj,djIndex) in dsm.ds_sub[0].cdata" :key="djIndex" @click.stop="itemClick(dsm.ds_sub[0],djIndex)">
+                <md-list >
+                  <md-list-item v-for="(dj,djIndex) in dsm.ds_sub[0].cdata"  :key="djIndex" @click.stop="itemClick(dsm.ds_sub[0],djIndex)">
                     <!-- 删除 -->
                      <md-button class="md-icon-button md-list-action" @click.stop="deleteDj(dsm.ds_sub[0],djIndex)">
                       <md-icon class="md-accent">close</md-icon>
                     </md-button>
                     <!-- <md-icon>list</md-icon> -->
                     <h5>第 {{djIndex+1}} 行</h5>
-                    <md-list-expand>
+                    <md-list-expand ref="expand">
                       <md-list>
                         <md-layout class="flex layout-column">
                             <md-layout>
-                              <md-bip-input v-for="(item,itemIndex) in dsm.ds_sub[0].ccells.cels" :ref="item.id" :key="item.id" :cell="item" :modal="dsm.ds_sub[0].cdata[djIndex]" :btj="false" class="bip-input" @change="childChange"></md-bip-input>
+                              <md-bip-input v-for="(item,itemIndex) in dsm.ds_sub[0].ccells.cels" :ref="item.id" :key="item.id" :cell="item" :modal="dj" :btj="false" class="bip-input" @change="childChange"></md-bip-input>
                             </md-layout>
                         </md-layout>
                       </md-list>
@@ -82,6 +82,7 @@ export default {
   data(){
     return {
       curr_dsm:null,
+      subIndex:0
     }
   },
   props: { dsm: Object, dsext: Array, opera: Object },
@@ -100,11 +101,9 @@ export default {
     itemClick(subdsm,index){
       //当前点击行号
       this.curr_dsm = subdsm;
-      subdsm.currRecord = subdsm.cdata[index]
+      subdsm.currRecord = subdsm.cdata[index];
+      this.subIndex = index;
       console.log(subdsm,index)
-    },
-    addDj(subdsm){
-      this.onLineAdd(subdsm)
     },
     deleteAll(subdsm){
       subdsm.clearData();
@@ -209,7 +208,8 @@ export default {
       }
       return "string";
     },
-    onLineAdd(subdsm) {
+    addDj(subdsm) {
+      
       this.curr_dsm = subdsm;
       // console.log(this.curr_dsm)
       var subId = subdsm.ccells.obj_id;
@@ -221,13 +221,26 @@ export default {
       }
       //currRecord
       this.dsm.currRecord[subId] = subdsm.cdata;
+      this.subIndex = subdsm.cdata.length-1;
+
+      this.$nextTick(() => {
+        console.log(this.$refs.expand);
+        var _index = this.$refs.expand.length-1
+        subdsm.currRecord = subdsm.cdata[_index]
+        for(var i = 0;i<_index;i++){
+          this.$refs.expand[i].$parent.active = false
+        }
+        this.$refs.expand[_index].$parent.active = true
+      });
+      // this.$refs['bb'].$children[index-1].active = true;
+      // console.log(this.$refs['bb']);
       // console.log(subdsm.cdata)
       // console.log(this.dsm)
     },
 
     onRemove(row) {
-      console.log(this.curr_dsm)
       this.curr_dsm.deleteRow(row);
+      console.log(this.curr_dsm,'fdsfdsfds');
     },
     
     rowChange() {},
