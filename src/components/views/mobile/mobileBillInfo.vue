@@ -154,6 +154,7 @@ export default {
         this.dsm.currRecord[subId] = [];
       }
       //currRecord
+      console.log(subdsm.cdata);
       this.dsm.currRecord[subId] = subdsm.cdata;
       this.$nextTick(() => {
         console.log(this.$refs.expand)
@@ -391,6 +392,11 @@ export default {
       if(res.data.id === 0){
         var data = res.data.data.pages.celData;
         var ccdata = _.take(data,data.length);
+        for(let i=0;i<ccdata.length;i++){
+          var crd = ccdata[i];
+          crd.sys_stated = billS.DICT;
+          ccdata[i] = crd;
+        }
         this.dsm.currRecord[objId] = ccdata;
         subdsm.cdata = ccdata;
         this.curr_dsm = subdsm;
