@@ -51,62 +51,65 @@ export default {
       userIds: [],
       content: "已同意",
       users: [],
-      list:[],
-      cea:null,
+      list: [],
+      cea: null,
       currUser: JSON.parse(window.localStorage.getItem("user")).userCode,
-      billuser:''
+      billuser: ""
     };
   },
-  props: { chkinfo: Object},
+  props: { chkinfo: Object },
   methods: {
     close() {
       this.$refs["dialog"].close();
     },
     //同意并提交到下一个节点
-    async checkUp(){
+    async checkUp() {
       this.cea.stateto = this.stateId;
       this.cea.yjcontext = this.content;
       this.cea.tousr = this.makeUU();
       this.cea.ckd = this.chkinfo.checked;
       var res = null;
-      if(this.stateId==6){
-        res = await this.getCeaCheckInfo(this.cea,34);
-      }else{
-        if(this.cea.tousr==''){
+      if (this.stateId == 6) {
+        res = await this.getCeaCheckInfo(this.cea, 34);
+      } else {
+        if (this.cea.tousr == "") {
           this.$notify.danger({ content: "没有审批人", placement: "mid-center" });
-        }else{
-          res = await this.getCeaCheckInfo(this.cea,34);
+        } else {
+          res = await this.getCeaCheckInfo(this.cea, 34);
         }
       }
       // console.log(res);
-      if(res.data.id==0){
-        this.$emit('dataCheckUp',this.stateId);
-        this.$notify.success({ content: '提交成功！', placement: "mid-center" });
+      if (res.data.id == 0) {
+        this.$emit("dataCheckUp", this.stateId);
+        this.$notify.success({ content: "提交成功！", placement: "mid-center" });
         this.close();
-      }else{
-        this.$notify.danger({ content: res.data.message, placement: "mid-center" });
+      } else {
+        this.$notify.danger({
+          content: res.data.message,
+          placement: "mid-center"
+        });
       }
       // this.$notify.danger({ content: "没有审批人", placement: "mid-center" });
       // console.log(res,'同意并提交');
-
     },
-    makeUU(){
-      var ids="";
-      for(var i=0;i<this.userIds.length;i++){
-        ids+=this.userIds[i]+",";
+    makeUU() {
+      var ids = "";
+      for (var i = 0; i < this.userIds.length; i++) {
+        ids += this.userIds[i] + ",";
       }
-      if(ids.length>0){
-        ids = ids.substring(0,ids.length-1);
+      if (ids.length > 0) {
+        ids = ids.substring(0, ids.length - 1);
       }
       return ids;
     },
     //驳回
-    checkBack(){
-      this.$dialog.confirm("确定驳回吗？", {
+    checkBack() {
+      this.$dialog
+        .confirm("确定驳回吗？", {
           okText: "确定",
           cancelText: "取消"
         })
-        .then(()=>{
+        .then(() => {
           this.bh(false);
           // if(this.chkinfo.upState === '0' ||this.chkinfo.upState === '1'){
           //   //this.bh(false);
@@ -127,55 +130,71 @@ export default {
         });
       this.close();
     },
-    async bh(bup){
+    async bh(bup) {
       this.cea.stateto = this.chkinfo.state;
-      this.cea.bup = '2';
-      this.cea.tousr = bup?'#':this.billuser;
-      var res = await this.getCeaCheckInfo(this.cea,34);
-      console.log(res,'驳回！');
+      this.cea.bup = "2";
+      this.cea.tousr = bup ? "#" : this.billuser;
+      var res = await this.getCeaCheckInfo(this.cea, 34);
+      console.log(res, "驳回！");
+      if(res.data.id === 0)
+        this.$emit("dataCheckUp",res.data.data.info);
     },
     //退回
-    async cancelCheck(){
-      if(this.chkinfo){
-        if(this.chkinfo.checked){
+    async cancelCheck() {
+      if (this.chkinfo) {
+        if (this.chkinfo.checked) {
           this.cea.stateto = this.chkinfo.state;
           this.cea.statefr = this.chkinfo.state;
           var id = 39;
-          if(this.chkinfo.state!=='6'){
+          if (this.chkinfo.state !== "6") {
             id = 40;
           }
-          var res = await this.getCeaCheckInfo(this.cea,id);
-          if(res.data.id === 0){
-            this.$emit('dataCheckUp',res.data.data.info+"");
+          var res = await this.getCeaCheckInfo(this.cea, id);
+          if (res.data.id === 0) {
+            this.$emit("dataCheckUp", res.data.data.info + "");
+          }
+        } else {
+          this.cea.stateto = this.chkinfo.upState;
+          this.cea.statefr = this.chkinfo.state;
+          var id = 39;
+          var res = await this.getCeaCheckInfo(this.cea, id);
+          if (res.data.id === 0) {
+            this.$emit("dataCheckUp", res.data.data.info + "");
           }
         }
       }
       this.close();
     },
-    async open(ceaparam,billU) {
+    async open(ceaparam, billU) {
       this.cea = ceaparam;
       // this.$notify.danger({ content: "没有审批人", placement: "mid-center" });
       this.billuser = billU;
-      if(this.cea.statefr ==='0' || this.cea.statefr ==='1'){
-        if(billU !== this.currUser){
-          this.$notify.danger({ content: "只有制单人可以提交!", placement: "mid-center" });
-          return ;
+      if (this.cea.statefr === "0" || this.cea.statefr === "1") {
+        if (billU !== this.currUser) {
+          this.$notify.danger({
+            content: "只有制单人可以提交!",
+            placement: "mid-center"
+          });
+          return;
         }
-      }else{
-        if(this.chkinfo.chkInfos){
-          var exitu = '';
-          _.forEach(this.chkinfo.chkInfos,item=>{
-            if(item.userCode === this.currUser){
+      } else {
+        if (this.chkinfo.chkInfos) {
+          var exitu = "";
+          _.forEach(this.chkinfo.chkInfos, item => {
+            if (item.userCode === this.currUser) {
               exitu = this.currUser;
             }
           });
-          if(!exitu){
-            this.$notify.danger({ content: "没有审批权限！", placement: "mid-center" });
-            return ;
-          }
-        }else{
-          if(this.cea.statefr !=='6'){
-            this.$notify.danger({ content: "没有审批人fdsfds!", placement: "mid-center" });
+          // if(!exitu){
+          //   this.$notify.danger({ content: "没有审批权限！", placement: "mid-center" });
+          //   return ;
+          // }
+        } else {
+          if (this.cea.statefr !== "6") {
+            this.$notify.danger({
+              content: "没有审批人fdsfds!",
+              placement: "mid-center"
+            });
           }
         }
       }
@@ -208,15 +227,15 @@ export default {
         if (this.chkinfo.list && this.chkinfo.list.length > 0) {
           this.stateId = this.chkinfo.list[0].stateId;
           this.list = this.chkinfo.list;
-        }else{
+        } else {
           this.list = [];
         }
-      }else{
+      } else {
         this.list = [];
       }
     },
-    initEA(){
-      if (this.chkinfo){
+    initEA() {
+      if (this.chkinfo) {
         this.getIndexState();
         this.makeUsers();
       }
@@ -226,8 +245,8 @@ export default {
     stateId() {
       this.makeUsers();
     },
-    chkinfo(){
-      console.log('chkinfoChange')
+    chkinfo() {
+      console.log("chkinfoChange");
       this.initEA();
       // this.getYes();
     }
@@ -235,62 +254,100 @@ export default {
   mounted() {
     this.initEA();
   },
-  computed:{
-    isSH(){
+  computed: {
+    isSH() {
       //0：新建状态，1:驳回状态；2:待审核；3:已审核;4:执行状态
-      var id=0;
-      if(this.chkinfo){
-        if(this.chkinfo.state=='0'){
+      var id = 0;
+      if (this.chkinfo) {
+        if (this.chkinfo.state == "0") {
           id = 0;
-        }else if(this.chkinfo.state=='1'){
-          id =  1;
-        }else if(this.chkinfo.state=='6'){
-          id =  4;
-        }else{
-          if(this.chkinfo.checked){
+        } else if (this.chkinfo.state == "1") {
+          id = 1;
+        } else if (this.chkinfo.state == "6") {
+          id = 4;
+        } else {
+          if (this.chkinfo.checked) {
             id = 3;
-          }else{
-            id =  2;
+          } else {
+            id = 2;
           }
         }
-      }else{
-        id =  0;
+      } else {
+        id = 0;
       }
       // console.log(id,this.chkinfo);
       return id;
     },
-    getYes(){
+    getYes() {
       // console.log(this.chkinfo);
-      if(this.chkinfo){
-        if(this.chkinfo.state=='0'){
-          return '提交';
+      if (this.chkinfo) {
+        if (this.chkinfo.state == "0") {
+          return "提交";
         }
       }
-      return '同意';
+      return "同意";
     },
-    canYes(){
-      if(this.chkinfo){
-        if(this.chkinfo.state==='6'){
+    canYes() {
+      if (this.chkinfo) {
+        if (this.chkinfo.state === "6") {
           return true;
         }
-      }
-      return false;
-    },
-    canTH(){
-      if(this.chkinfo){
-        if(this.chkinfo.state==='0'){
+        if(this.chkinfo.state === "0" || this.chkinfo.state === "1" || this.chkinfo.state === "5"){
+          if(this.billuser == this.currUser){
+            return false;
+          }
           return true;
         }
-        if(this.chkinfo.checked){
+        var exitu = "";
+        _.forEach(this.chkinfo.chkInfos, item => {
+          if (item.userCode === this.currUser) {
+            exitu = this.currUser;
+            return;
+          }
+        });
+        if (exitu) {
           return false;
+        } else {
+          return true;
         }
-        return true;
       }
       return false;
     },
-    canBH(){
-      if(this.chkinfo){
-        if(this.chkinfo.state==='0'|| this.chkinfo.state==='6'){
+    canTH() {
+      if (this.chkinfo.state) {
+        console.log(this.chkinfo);
+        if (this.chkinfo.state === "0" || this.chkinfo.state === "1") {
+          return true;
+        }
+        if (this.chkinfo.checked) {
+          if(this.chkinfo.chkInfos[0].userCode === this.currUser)
+            return false;
+          return true;
+        }
+        if (this.currUser === this.chkinfo.upUser.userCode) {
+          return false;
+        } else {
+          return true;
+        }
+        // return false;
+      }
+      return false;
+    },
+    canBH() {
+      if (this.chkinfo) {
+        if (this.chkinfo.state === "0" ||this.chkinfo.state === "1" ||this.chkinfo.state === "6") {
+          return true;
+        }
+         var exitu = "";
+        _.forEach(this.chkinfo.chkInfos, item => {
+          if (item.userCode === this.currUser) {
+            exitu = this.currUser;
+            return;
+          }
+        });
+        if (exitu) {
+          return false;
+        } else {
           return true;
         }
       }

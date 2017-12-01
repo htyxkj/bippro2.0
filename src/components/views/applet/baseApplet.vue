@@ -1,6 +1,6 @@
 <template>
   <md-part>
-    <template v-if="isPC">
+    <template v-if="!isPC">
       <md-bip-bill-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" @list="list"></md-bip-bill-applet>
       <md-bip-bill-list-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" :mdTitle="mdTitle" @addBill="addBill"  v-else></md-bip-bill-list-applet>
     </template>

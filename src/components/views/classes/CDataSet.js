@@ -160,6 +160,9 @@ export default class CDataSet {
         this.currRecord = this.cdata[row-1];
       }
     }
+    if(this.ds_par){
+      this.ds_par.currRecord[this.ccells.obj_id] = this.cdata;
+    }
     // this.cdata = _.remove(this.cdata, (n) => {
     //   return n === row;
     // });

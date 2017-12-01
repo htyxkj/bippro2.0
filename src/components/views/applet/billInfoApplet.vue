@@ -33,7 +33,7 @@
             <md-bip-input v-for="(cell, index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
           </md-layout>
           <md-layout class="flex layout-column" v-if="dsm.ds_sub&&dsm.ds_sub.length==1">
-              <md-bip-grid :datas="dsm.ds_sub[0].cdata" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd(dsm.ds_sub[0])" @onRemove="onRemove" :showAdd="true" :showRemove="true" @rowChange="rowChange" @click="rowClick(dsm.ds_sub[0])">
+              <md-bip-grid :datas="dsm.ds_sub[0].cdata" ref="grid" :row-focused="true" :auto-load="true" @onAdd="onLineAdd(dsm.ds_sub[0])" @onRemove="onRemove" :showAdd="true" :showRemove="true" @rowChange="rowChange" @click="rowClick(dsm.ds_sub[0])">
                 <md-bip-grid-column v-for="(item,itemIndex) in dsm.ds_sub[0].ccells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName||item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :dataType="getDataType(item)" :formatter="formatter">
                 </md-bip-grid-column>
               </md-bip-grid>
@@ -136,9 +136,11 @@ export default {
     },
     async save() {
       var str = JSON.stringify(this.dsm.currRecord);
-      var isnull = this.checkNotNull(this.dsm);
-      // if(!isnull){
-      return;
+      if((this.dsm.currRecord&billS.DELETE)==0){
+        var isnull = this.checkNotNull(this.dsm);
+          if(!isnull)
+            return;
+      }
       this.loading = 1;
       var options = { pcell: this.dsm.pcell, jsonstr: str };
       var res = await this.saveData(options);
@@ -419,14 +421,14 @@ export default {
         var crd = this.dsm.currRecord;
         if (crd) {
           var state = crd[this.opera.statefld];
-          if (state == "0" || state == "1") {
-            return "提交";
+          if (state === '0' || state === '1' || state === '5') {
+            return "提交/退回";
           } else {
-            return "审核";
+            return "审核/退回";
           }
         }
       }
-      return "提交";
+      return "提交/退回";
     }
   },
   async mounted() {

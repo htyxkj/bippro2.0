@@ -12,7 +12,7 @@
       <md-part-toolbar-group>
         <md-button>复制</md-button>
         <!-- <md-button>审核</md-button> -->
-        <md-button>提交</md-button>
+        <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
       </md-part-toolbar-group>
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
@@ -30,17 +30,17 @@
       <template v-if="dsm&&dsm.ds_sub.length>0">
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
           <md-stepper md-vertical>
-            <md-step id="step1" :md-label="dsm.ccells.desc" mdButtonContinue="下一步" mdButtonBack="上一步" mdButtonFinish="完成">
+            <md-step id="step1" :md-label="dsm.ccells.desc" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成">
               <md-layout>
                 <md-bip-input v-for="(cell, index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
               </md-layout>
             </md-step>
-            <md-step id="step2" md-label="子项" mdButtonContinue="下一步" mdButtonBack="上一步" mdButtonFinish="完成">
+            <md-step id="step2" md-label="子项" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成">
               <div>
-                <md-list >
-                  <md-list-item v-for="(dj,djIndex) in dsm.ds_sub[0].cdata"  :key="djIndex" @click.stop="itemClick(dsm.ds_sub[0],djIndex)">
+                <md-list>
+                  <md-list-item v-for="(dj,djIndex) in dsm.ds_sub[0].cdata" :key="djIndex" @click.stop="itemClick(dsm.ds_sub[0],djIndex)">
                     <!-- 删除 -->
-                     <md-button class="md-icon-button md-list-action" @click.stop="deleteDj(dsm.ds_sub[0],djIndex)">
+                     <md-button class="md-icon-button md-list-action" @click="deleteDj(dsm.ds_sub[0],djIndex)">
                       <md-icon class="md-accent">close</md-icon>
                     </md-button>
                     <!-- <md-icon>list</md-icon> -->
@@ -63,12 +63,15 @@
                   删除所有
                 </md-button>
               </div>
-            </md-step>
-            <md-step id="step3" md-label="单据提交" mdButtonContinue="下一步" mdButtonBack="上一步" mdButtonFinish="完成">
+              </md-step>
+            <md-step id="step3" md-label="单据提交" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成">
                <h2 class="md-title">确认提交单据？</h2>
             </md-step>
           </md-stepper>
         </md-content>
+      </template>
+      <template v-if="chkinfo">
+        <md-bip-work  ref="cc" :chkinfo="chkinfo" @dataCheckUp="dataCheckUp"></md-bip-work>
       </template>
     </md-part-body>
   </md-part>
@@ -76,49 +79,116 @@
 
 <script>
 import CDataSet from "../classes/CDataSet";
+import CeaPars from "../classes/CeaPars";
 import billS from "../classes/billState";
 import common from "../../core/utils/common.js";
 export default {
   data(){
     return {
       curr_dsm:null,
-      subIndex:0
+      chkinfo:null
     }
   },
   props: { dsm: Object, dsext: Array, opera: Object },
   methods: {
-    childChange(data){
-      console.log(data,this.curr_dsm);
-      this.curr_dsm.checkEdit(data);
-
+    //提交
+    async submit() {
+      console.log(this.chkinfo)
+      console.log('submit')
+      var crd = this.dsm.currRecord;
+      console.log(this.opera)
+      if (this.opera) {
+        var state = crd[this.opera.statefld];
+        var params = {
+          sid: crd[this.opera.pkfld],
+          sbuid: crd[this.opera.buidfld],
+          statefr: state,
+          stateto: state,
+          tousr: ""
+        };
+        var ceaParams = new CeaPars(params);
+        var billuser = crd[this.opera.smakefld];
+        console.log(this.$refs)
+        this.$refs["cc"].open(ceaParams, billuser);
+      }
+      // var res = await this.getDataByAPINew(checkParasm);
+      // console.log(res);
     },
-    //grid
-    rowClick(subdsm){
+    async dataCheckUp(state) {
+      this.dsm.currRecord[this.opera.statefld] = state;
+      this.dsm.currRecord.sys_stated = billS.POSTED;
+      await this.makeCheckParams();
+    },
+    async makeCheckParams() {
+      if (this.opera === null) return;
+      var crd = this.dsm.currRecord;
+      // console.log(this.opera);
+      var params = {
+        sid: crd[this.opera.pkfld],
+        sbuid: crd[this.opera.buidfld],
+        statefr: crd[this.opera.statefld],
+        stateto: crd[this.opera.statefld],
+        spuserId: ""
+      };
+      var ceaParams = new CeaPars(params);
+      var res = await this.getCeaCheckInfo(ceaParams, 33);
+      if (res.data.id == 0) {
+        this.chkinfo = res.data.data.info;
+      } else {
+        this.chkinfo = {};
+      }
+      var state = crd[this.opera.statefld];
+      if (state === "1" || state === "0") this.dsm.canEdit = true;
+      // console.log(res, "fdfdsfds");
+    },
+    
+    
+    //step2 添加子单据
+    addDj(subdsm) {
+      console.log(subdsm)
       this.curr_dsm = subdsm;
-      console.log(this.curr_dsm);
+      var subId = subdsm.ccells.obj_id;
+      var crd = subdsm.createRecord();
+      if (!this.dsm.currRecord[subId]) {
+        this.dsm.currRecord[subId] = [];
+      }
+      //currRecord
+      this.dsm.currRecord[subId] = subdsm.cdata;
+      this.$nextTick(() => {
+        console.log(this.$refs.expand)
+        var _index = this.$refs.expand.length-1
+        subdsm.currRecord = subdsm.cdata[_index]
+        for(var i = 0;i<_index;i++){
+          this.$refs.expand[i].$parent.active = false
+        }
+        this.$refs.expand[_index].$parent.active = true
+      });
+      
     },
-    //listitem
+    childChange(res){
+      this.curr_dsm.checkEdit(res);
+    },
+    //listitem 点击step2 单据
     itemClick(subdsm,index){
       //当前点击行号
       this.curr_dsm = subdsm;
-      subdsm.currRecord = subdsm.cdata[index];
-      this.subIndex = index;
+      subdsm.currRecord = subdsm.cdata[index]
       console.log(subdsm,index)
     },
+    //删除所有子单据
     deleteAll(subdsm){
       subdsm.clearData();
     },
+    //删除某行单据
     deleteDj(subdsm,index){
-      this.curr_dsm = subdsm;
+      this.itemClick(subdsm,index)
       this.onRemove(index)
-      console.log(this.dsm.ds_sub[0].cdata.length)
-      //无数据
-      // if(subdsm.cdata.length==0){
-      //   subdsm.currRecord = undefined
-      // }else{
-      //   //当前行为下一行
-      //   subdsm.currRecord = subdsm.cdata[index+1]
-      // }
+      var _len = this.dsm.ds_sub[0].cdata.length
+      if(_len>0){
+        this.$refs.expand[_len-1].$parent.active = true
+      }
+      console.log('deletefinsh')
+      console.log(this.dsm)
     },
     dataChange(res) {
       // console.log(res);
@@ -137,6 +207,9 @@ export default {
           });
         } else {
           this.dsm.createRecord();
+          this.dsm.canEdit = true;
+          this.dsm.ds_sub[0].clearData();
+          this.chkinfo = null;
         }
       }
     },
@@ -159,10 +232,70 @@ export default {
           this.save();
         });
     },
+    checkNotNull(cds) {
+      for (let i = 0; i < cds.ccells.cels.length; i++) {
+        var item = cds.ccells.cels[i];
+        // console.log(item);
+        if (item.unNull) {
+          var vl = cds.currRecord[item.id];
+          // console.log(vl,this.dsm.currRecord);
+          if (!vl) {
+            this.$notify.warning({
+              content: "【" + item.labelString + "】不能为空！",
+              placement: "mid-center"
+            });
+            return false;
+          }
+        }
+      }
+      if (cds.haveChild()) {
+        return this.checkChildNotNull(cds);
+      }
+      return true;
+    },
+    checkChildNotNull(cds) {
+      var isok = true;
+      _.forEach(cds.ds_sub, dssub => {
+        if (dssub.cdata.length === 0 && !dssub.ccells.unNull) {
+          isok = false;
+          this.$notify.warning({
+            content: "【" + dssub.ccells.desc + "】不能为空！",
+            placement: "mid-center"
+          });
+          return;
+        } else {
+          _.forEach(dssub.cdata, (item,index) => {
+            for (let i = 0; i < dssub.ccells.cels.length; i++) {
+              var cell = dssub.ccells.cels[i];
+              if (cell.unNull) {
+                var vl = item[cell.id];
+                if (!vl) {
+                  this.$notify.warning({
+                    content: "第"+(index+1)+"行【" + cell.labelString + "】不能为空！",
+                    placement: "mid-center"
+                  });
+                  isok = false;
+                  return;
+                }
+              }
+              if(!isok)
+                break ;
+            }
+            if(!isok)
+              return ;
+          });
+        }
+      });
+      return isok;
+    },
     async save() {
+      console.log(this.dsm)
       var str = JSON.stringify(this.dsm.currRecord);
-      // var isnull = this.checkNotNull();
-      // if(!isnull){
+      if((this.dsm.currRecord&billS.DELETE)==0){
+        var isnull = this.checkNotNull(this.dsm);
+          if(!isnull)
+            return;
+      }
       this.loading = 1;
       var options = { pcell: this.dsm.pcell, jsonstr: str };
       var res = await this.saveData(options);
@@ -173,6 +306,10 @@ export default {
           this.dsm.deleteRow(-1);
           this.dsm.createRecord();
           this.dsm.currRecord.sys_stated = 3;
+          if (this.curr_dsm) {
+            console.log(this.curr_dsm); 
+            this.curr_dsm.clearData();
+          }
         } else {
           var data = res.data.data;
           var _self = this;
@@ -182,6 +319,9 @@ export default {
           });
           this.dsm.currRecord.sys_stated = billS.POSTED;
           this.$notify.success({ content: "保存成功！", placement: "mid-center" });
+        }
+        if (this.opera || this.opera !== null) {
+          await this.makeCheckParams();
         }
         return true;
       }
@@ -208,39 +348,10 @@ export default {
       }
       return "string";
     },
-    addDj(subdsm) {
-      
-      this.curr_dsm = subdsm;
-      // console.log(this.curr_dsm)
-      var subId = subdsm.ccells.obj_id;
-      // console.log(subId,'fdsfdsfdsfdsfdsf');
-      var crd = subdsm.createRecord();
-      // console.log(subdsm,subId,crd,'fdsfdsfds');
-      if (!this.dsm.currRecord[subId]) {
-        this.dsm.currRecord[subId] = [];
-      }
-      //currRecord
-      this.dsm.currRecord[subId] = subdsm.cdata;
-      this.subIndex = subdsm.cdata.length-1;
-
-      this.$nextTick(() => {
-        console.log(this.$refs.expand);
-        var _index = this.$refs.expand.length-1
-        subdsm.currRecord = subdsm.cdata[_index]
-        for(var i = 0;i<_index;i++){
-          this.$refs.expand[i].$parent.active = false
-        }
-        this.$refs.expand[_index].$parent.active = true
-      });
-      // this.$refs['bb'].$children[index-1].active = true;
-      // console.log(this.$refs['bb']);
-      // console.log(subdsm.cdata)
-      // console.log(this.dsm)
-    },
-
+    
     onRemove(row) {
+      console.log(this.curr_dsm)
       this.curr_dsm.deleteRow(row);
-      console.log(this.curr_dsm,'fdsfdsfds');
     },
     
     rowChange() {},
@@ -273,15 +384,51 @@ export default {
       };
       console.log(data1,'findChild');
       var res = await this.getDataByAPINewSync(data1);
+      console.log(res);
       if(res.data.id === 0){
-        this.dsm.currRecord[objId] = res.data.data.pages.celData;
-        subdsm.cdata = res.data.data.pages.celData;
-        subdsm.currRecord = subdsm.cdata[0];
-        console.log(subdsm);
+        var data = res.data.data.pages.celData;
+        var ccdata = _.take(data,data.length);
+        this.dsm.currRecord[objId] = ccdata;
+        subdsm.cdata = ccdata;
+        this.curr_dsm = subdsm;
       }
     }
   },
   computed: {
+    //提交审核
+    getSH() {
+      if (this.opera) {
+        var crd = this.dsm.currRecord;
+        if (crd) {
+          var state = crd[this.opera.statefld];
+          if (state == "0" || state == "1" ||  state == "5") {
+            return "提交/退回";
+          } else {
+            return "审核/退回";
+          }
+        }
+      }
+      return "提交";
+    },
+    canSubmit() {
+      if (this.dsm && this.dsm.currRecord != null) {
+        if (
+          (this.dsm.currRecord.sys_stated & billS.INSERT) > 0 ||
+          (this.dsm.currRecord.sys_stated & billS.EDITED) > 0
+        ) {
+          return true;
+        }
+        if (this.chkinfo) {
+          // if(this.chkinfo.state=='6'){
+          //   return true;
+          // }else{
+          //   return false;
+          // }
+        }
+        return false;
+      }
+      return true;
+    },
     canCreate() {
       if (this.dsm && this.dsm.currRecord != null) {
         if (
@@ -323,14 +470,23 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     if(this.dsm){
       const state = this.dsm.currRecord.sys_stated & billS.INSERT;
       if (this.dsm.ds_sub&&state === 0) {
         this.getChildData(this.dsm.ds_sub[0]);
-      }
-      if(this.dsm.ds_sub.length>0){
+        await this.makeCheckParams();
+      }else if(this.dsm.ds_sub.length>0){
         this.dsm.ds_sub[0].clearData();
+      }
+    }
+  },
+  watch: {
+    chkinfo() {
+      if (this.chkinfo) {
+        if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
+          this.dsm.canEdit = false;
+        }
       }
     }
   }
