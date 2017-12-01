@@ -82,11 +82,13 @@
       },
       observeChildChanges() {
         this.contentObserver = new MutationObserver(this.recalculateAfterChange);
-        this.contentObserver.observe(this.$refs.expand, {
-          childList: true,
-          characterData: true,
-          subtree: true
-        });
+        if(this.$refs.expand){
+            this.contentObserver.observe(this.$refs.expand, {
+            childList: true,
+            characterData: true,
+            subtree: true
+          });
+        }
       }
     },
     mounted() {
