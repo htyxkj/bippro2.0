@@ -29,19 +29,20 @@
       </template>
       <template v-if="dsm&&dsm.ds_sub.length>0">
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
-          <md-stepper md-vertical>
-            <md-step id="step1" :md-label="dsm.ccells.desc" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成">
+          <md-stepper md-vertical  @completed="finish">
+            <md-step id="step1" :md-label="dsm.ccells.desc" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成" :mdEditable="true">
               <md-layout>
                 <md-bip-input v-for="(cell, index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
               </md-layout>
             </md-step>
-            <md-step id="step2" md-label="子项" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成">
+            <md-step id="step2" md-label="子项" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成" :mdEditable="true">
               <div>
                 <md-list>
                   <md-list-item v-for="(dj,djIndex) in dsm.ds_sub[0].cdata" :key="djIndex" @click.stop="itemClick(dsm.ds_sub[0],djIndex)">
                     <!-- 删除 -->
-                     <md-button class="md-icon-button md-list-action" @click="deleteDj(dsm.ds_sub[0],djIndex)">
+                     <md-button class="md-icon-button md-list-action" @click="deleteDj(dsm.ds_sub[0],djIndex)" :disabled="!canEditChild">
                       <md-icon class="md-accent">close</md-icon>
+                      <md-tooltip md-direction="top">删除行</md-tooltip>
                     </md-button>
                     <!-- <md-icon>list</md-icon> -->
                     <h5>第 {{djIndex+1}} 行</h5>
@@ -56,15 +57,15 @@
                     </md-list-expand>
                 </md-list-item>
                 </md-list>
-                <md-button class=" md-raised md-primary" @click="addDj(dsm.ds_sub[0])">
+                <md-button class=" md-raised md-primary" @click="addDj(dsm.ds_sub[0])" :disabled="!canEditChild">
                   添加行
                 </md-button>
-                <md-button class=" md-raised md-accent" @click="deleteAll(dsm.ds_sub[0])">
+                <md-button class=" md-raised md-accent" @click="deleteAll(dsm.ds_sub[0])" :disabled="!canEditChild">
                   删除所有
                 </md-button>
               </div>
               </md-step>
-            <md-step id="step3" md-label="单据提交" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成">
+            <md-step id="step3" md-label="单据提交" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成" :mdEditable="true">
                <h2 class="md-title">确认提交单据？</h2>
             </md-step>
           </md-stepper>
@@ -163,6 +164,8 @@ export default {
         }
         this.$refs.expand[_index].$parent.active = true
       });
+      const state = this.dsm.currRecord.sys_stated ;
+      this.dsm.currRecord.sys_stated = state | billS.EDITED;
       
     },
     childChange(res){
@@ -382,9 +385,9 @@ export default {
         pageSize: 20,
         cellid: objId
       };
-      console.log(data1,'findChild');
+      // console.log(data1,'findChild');
       var res = await this.getDataByAPINewSync(data1);
-      console.log(res);
+      // console.log(res);
       if(res.data.id === 0){
         var data = res.data.data.pages.celData;
         var ccdata = _.take(data,data.length);
@@ -392,9 +395,27 @@ export default {
         subdsm.cdata = ccdata;
         this.curr_dsm = subdsm;
       }
+    },
+    finish(){
+      if((this.dsm.currRecord.sys_stated&billS.EDITED)>0)
+        this.save();
     }
+
   },
   computed: {
+    canEditChild(){
+      if (this.opera) {
+        var crd = this.dsm.currRecord;
+        if (crd) {
+          var state = crd[this.opera.statefld];
+          if (state === '0' || state === '1') {
+            return true;
+          }
+          return false;
+        }
+      }
+      return true;
+    },
     //提交审核
     getSH() {
       if (this.opera) {
@@ -473,7 +494,7 @@ export default {
   async mounted() {
     if(this.dsm){
       const state = this.dsm.currRecord.sys_stated & billS.INSERT;
-      if (this.dsm.ds_sub&&state === 0) {
+      if (this.dsm.haveChild()&&state === 0) {
         this.getChildData(this.dsm.ds_sub[0]);
         await this.makeCheckParams();
       }else if(this.dsm.ds_sub.length>0){

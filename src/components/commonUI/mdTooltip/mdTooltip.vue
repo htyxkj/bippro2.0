@@ -57,6 +57,8 @@
     },
     methods: {
       removeTooltips() {
+        if(!this.tooltipElement)
+          return ;
         if (this.tooltipElement.parentNode) {
           this.tooltipElement.removeEventListener(transitionEndEventName, this.removeTooltips);
           this.tooltipElement.parentNode.removeChild(this.tooltipElement);

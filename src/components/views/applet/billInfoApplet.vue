@@ -33,7 +33,7 @@
             <md-bip-input v-for="(cell, index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
           </md-layout>
           <md-layout class="flex layout-column" v-if="dsm.ds_sub&&dsm.ds_sub.length==1">
-              <md-bip-grid :datas="dsm.ds_sub[0].cdata" ref="grid" :row-focused="true" :auto-load="true" @onAdd="onLineAdd(dsm.ds_sub[0])" @onRemove="onRemove" :showAdd="true" :showRemove="true" @rowChange="rowChange" @click="rowClick(dsm.ds_sub[0])">
+              <md-bip-grid :datas="dsm.ds_sub[0].cdata" ref="grid" :row-focused="true" :auto-load="true" @onAdd="onLineAdd(dsm.ds_sub[0])" @onRemove="onRemove" :showAdd="canAddChild" :showRemove="canAddChild" @rowChange="rowChange" @click="rowClick(dsm.ds_sub[0])">
                 <md-bip-grid-column v-for="(item,itemIndex) in dsm.ds_sub[0].ccells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName||item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :dataType="getDataType(item)" :formatter="formatter">
                 </md-bip-grid-column>
               </md-bip-grid>
@@ -429,6 +429,19 @@ export default {
         }
       }
       return "提交/退回";
+    },
+    canAddChild(){
+      if (this.opera) {
+        var crd = this.dsm.currRecord;
+        if (crd) {
+          var state = crd[this.opera.statefld];
+          if (state === '0' || state === '1') {
+            return true;
+          }
+          return false;
+        }
+      }
+      return true;
     }
   },
   async mounted() {
