@@ -138,8 +138,7 @@ export default {
         'apiId': global.APIID_SAVEDATA,
         'pcell': '',
         'jsonstr':'',
-        'datatype':1,
-        'state': 3
+        'datatype':1
       }
       posParams = Object.assign(posParams, params)
       var returnobj  = await axios.post(global.BIPAPIURL, qs.stringify(posParams))

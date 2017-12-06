@@ -35,10 +35,14 @@ export default {
   },
   methods:{
     initVV(){
+      console.log('modc')
       var defv = this.modal[this.cell.id];
       if(defv){
         this.refValue = defv;
         this.onBlur();
+      }else{
+        this.refValue='';
+        console.log(this.refData);
       }
     },
     openRef(){
@@ -155,7 +159,13 @@ export default {
     // }
   }, 
   watch:{
-    'modal':'initVV'
+    modal(){
+      console.log('modalcc');
+      this.initVV();
+    },
+    // refValue(){
+    //   this.initVV();
+    // }
   } 
 }
 </script>

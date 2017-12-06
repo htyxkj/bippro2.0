@@ -1,8 +1,15 @@
 <template>
   <div>
     <!-- <md-bip-bill v-if="mparams.beBill" :mdTitle="menuTitle" :mparams="mparams"></md-bip-bill> -->
-    <md-bip-applet v-if="mparams.beBill" :mdTitle="menuTitle" :mparams="mparams"></md-bip-applet>
-    <md-bip-report v-if="!mparams.beBill" :mdTitle="menuTitle" :mparams="mparams"></md-bip-report>
+    <template  v-if="mparams.beBill">
+      <md-bip-applet :mdTitle="menuTitle" :mparams="mparams"></md-bip-applet>
+    </template>
+    <template v-else>
+      <!-- <md-bip-report :mdTitle="menuTitle" :mparams="mparams"></md-bip-report> -->
+       <md-bip-bi :mdTitle="menuTitle" :mparams="mparams"></md-bip-bi>
+    </template>
+    <!-- <md-bip-applet v-if="mparams.beBill" :mdTitle="menuTitle" :mparams="mparams"></md-bip-applet>
+    <md-bip-report v-else :mdTitle="menuTitle" :mparams="mparams"></md-bip-report> -->
   </div>
 </template>
 

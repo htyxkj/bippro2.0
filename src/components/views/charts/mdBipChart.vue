@@ -7,7 +7,7 @@
         </md-layout>
       </md-card-media>
       <md-layout class="flex">
-        <md-table-card>
+        <md-table-card v-if="tjcell">
           <md-table class="flex">
             <md-table-header>
               <md-table-row>
@@ -55,7 +55,7 @@ export default {
   props: {
     groupfilds: Array, groupdatafilds: Array, pcell: String,
     searchCelId: String, modal: Object, doSearch: Number,
-    ptjCell: Object, ptjPage: Object, chartType: String,
+    chartType: String,
     showChart:{type:Boolean,default:true}
   },
   mounted() {
@@ -69,8 +69,8 @@ export default {
     }
   },
   watch: {
-    'option': function() {
-    },
+    // 'option': function() {
+    // },
     'doSearch': function() {
       if (this.doSearch)
         this.searchData();
@@ -81,9 +81,6 @@ export default {
     'refValues': function() {
       this.makeDataUI();
     },
-    'tjpages': function() {
-      this.makeDataUI();
-    }
   },
   methods: {
     searchData() {

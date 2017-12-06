@@ -177,13 +177,14 @@ export default {
       // console.log(res)
       this.loading = 0;
       if (res.data.id === 0) {
-        this.contCel = res.data.data.contCel;
+        // this.contCel = res.data.data.contCel;
+        this.contCel = await this.makeCellCL(res.data.data.contCel);
         this.groupTJ = res.data.data.bcount;
         this.layoutCel = await this.makeCellCL(res.data.data.layCels);
         if(this.groupTJ){
           this.groupfilds = res.data.data.groupfilds;
           this.groupdatafilds = res.data.data.groupdatafilds;
-          this.tjcell = res.data.data.tjlayCels;
+          this.tjcell = await this.makeCellCL(res.data.data.tjlayCels);
           this.tjpage = res.data.data.pages;
           this.ctype = res.data.data.chartType;
         }else{
@@ -262,7 +263,7 @@ export default {
       }else{
         this.$set(this.modal,celId.id,data.value);
       }
-      console.log(data);
+      // console.log(data);
     }
   },
   watch: {

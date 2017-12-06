@@ -16,7 +16,6 @@
     <template v-if="inputType == INPUT_FILE">
       <md-bip-input-file-tmp></md-bip-input-file-tmp>
     </template>
-
   </md-layout>
 </template>
 <script>

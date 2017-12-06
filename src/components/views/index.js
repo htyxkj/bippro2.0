@@ -6,7 +6,7 @@ import Applet from './applet';
 import Chart from './charts';
 import Excel from './excel';
 import Cwork from './cwork';
-
+import BI from './bi'
 export default function install(Vue) {
   if (install.installed) {
     console.warn('Vue core is already installed.');
@@ -22,6 +22,5 @@ export default function install(Vue) {
   // Vue.use(Bill);
   Vue.use(Chart);
   Vue.use(Excel);
-
-
+  Vue.use(BI);
 }

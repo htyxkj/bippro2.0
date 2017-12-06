@@ -12,7 +12,7 @@ export default {
   mixins:[comm],
   watch:{
     modal(){
-      console.log('modal change')
+      // console.log('modal change')
     }
   },
   methods:{
@@ -37,6 +37,8 @@ export default {
     getType(){
       if(this.cell.type<12){
         return "number";
+      }else if(this.cell.type === 91 || this.cell.type===93){
+        return 'dates';
       }
       return "string";
     }

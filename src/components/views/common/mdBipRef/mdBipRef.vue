@@ -37,6 +37,7 @@ export default {
       if(s0 == '{&DATETIME}' || s0=='{&DATE}'){
         return ;
       }
+      // if(s0&&s0.indexOf('$')>0){
       if(this.bipRefId.refCl){
         var cldata = JSON.parse(window.sessionStorage.getItem(this.bipRefId.refValue));
         if(cldata){
@@ -51,6 +52,7 @@ export default {
           this.refData.name = cldata.value[cldata.allCols[1]];
         }else{
           var cc = await this.getCLByAPI({'assistid':this.bipRefId.refValue,'cont':this.refData.code});
+          //  console.log('1111',cc);
           if(cc.data.code==1){
             cldata = {'allCols':cc.data.allCols,'value':cc.data.values[0]};
             this.refData.name = cldata.value[cldata.allCols[1]];
@@ -62,11 +64,10 @@ export default {
     },
 
     makeRef(cldata){
-      let _self = this;
-      _.find(cldata.values,function(item){
-        // console.log(item);
-        if(item[cldata.allCols[0]]==_self.refData.code){
-          _self.refData.name=item[cldata.allCols[1]];
+      _.find(cldata.values,(item)=>{
+        // console.log(item,'fdsfds');
+        if(item[cldata.allCols[0]]==this.refData.code){
+          this.refData.name=item[cldata.allCols[1]];
         }
       });
     }
