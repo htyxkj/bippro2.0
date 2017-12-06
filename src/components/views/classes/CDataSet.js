@@ -60,7 +60,8 @@ export default class CDataSet {
     this.cdata.push(crecord);
     this.index = this.cdata.length - 1;
     this.currRecord = crecord;
-    this.checkGS();
+    if((crecord.sys_stated&BillState.INSERT)>0||(crecord.sys_stated&BillState.EDITED)>0)
+      this.checkGS();
   }
 
   checkGS(cell) {

@@ -27,8 +27,18 @@
       <md-content class="flex layout-column">
         <template v-if="showCont">
           <md-layout md-gutter="4" v-if="ds_cont">
-            <md-bip-input v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
+            <template v-if="showAllCont">
+              <md-bip-input v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
+            </template>
+            <template v-else>
+              <md-bip-input v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"></md-bip-input>
+            </template>
+            <md-button class="bip-more md-icon-button" @click.native="showMore()">
+              <md-tooltip md-direction="right">{{tipLaber}}</md-tooltip>
+              <md-icon>list</md-icon>   
+            </md-button>
           </md-layout>
+          
         </template>
         <template v-if="!groupTJ">
           <md-layout class="flex">
@@ -150,7 +160,9 @@ export default {
       showChart:true,
       tjcell:{},
       tjpage:{},
-      doSearCh:0
+      doSearCh:0,
+      showAllCont:false,
+      tipLaber:'更多条件'
     }
   },
   mixins:[common],
@@ -242,6 +254,7 @@ export default {
       this.pageInfo.total = 0;
       this.showCont = false;
       this.groupTJ = false;
+      this.showAllCont=false;
     },
     initCell(){
       this.initInf();
@@ -260,6 +273,9 @@ export default {
     showSearchInfo () {
       this.showCont = !this.showCont;
       this.showContLabel = this.showCont ? '隐藏条件' : '显示条件';
+      if(!this.showCont){
+        this.showAllCont = false;
+      }
     },
     dblclick (row) {
     },
@@ -272,6 +288,9 @@ export default {
         // console.log(crd);
         // this.ds_cont.currRecord = crd;
       }
+    },
+    list(){
+      this.groupTJ = false;
     },
     searchCount (ref) {
       this.$refs[ref].open();
@@ -299,6 +318,9 @@ export default {
         // this.pageInfo.page = 1;
         this.fetchUIData();
       }
+    },
+    showMore(){
+      this.showAllCont = !this.showAllCont;
     }
     // async get
   },
@@ -311,9 +333,17 @@ export default {
     },
     mparams(){
       this.initCell();
+    },
+    showAllCont(){
+      if(this.showAllCont){
+        this.tipLaber = '隐藏其他条件';
+      }else{
+         this.tipLaber = '更多条件';
+      }
     }
   },
   computed:{
+
   }
 }
 </script>
@@ -326,6 +356,16 @@ export default {
 .md-table-head.md-numeric {
     // text-align: right;
     color:rgba(81,162,81,.91);
+}
+
+.bip-more{
+  // background-color: rgba(81,162,81,.91);
+  font-size: 0.1rem;
+  &.md-button{
+    // height: 0.3rem;
+    // min-height: 0.2rem;
+    margin: 0.15rem 0.08rem;
+  }
 }
 
 </style>

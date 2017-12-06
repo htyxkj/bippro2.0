@@ -1,4 +1,4 @@
-import ReportUI from './report';
+// import ReportUI from './report';
 import Common from './common';
 import Mobile from './mobile';
 import Applet from './applet';
@@ -16,7 +16,7 @@ export default function install(Vue) {
   install.installed = true;
   Vue.use(Common);
   Vue.use(Mobile);
-  Vue.use(ReportUI);
+  // Vue.use(ReportUI);
   Vue.use(Cwork);
   Vue.use(Applet);
   // Vue.use(Bill);

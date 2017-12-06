@@ -6,8 +6,12 @@ import Dashbord from '@/views/dashboard/Dashboard'
 
 Vue.use(Router)
 
+let basePro = window.location.pathname;
+basePro = basePro.substring(0,basePro.lastIndexOf('/'));
+// console.log(basePro);
 export default new Router({
-  // mode: 'history',
+  mode: 'history',
+  base:basePro,
   routes: [
     {
       path: '/',

@@ -1,5 +1,5 @@
 <template>
-<div class="md-work-dialog">
+<div class="md-work-dialog" v-if="chkinfo">
   <md-avatar class="md-large md-fab md-fab-top-left" tabindex="-9999">
     <template v-if="isSH==3 || isSH==4">
       <img src="../../../img/check/ysh.png">

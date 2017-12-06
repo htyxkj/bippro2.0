@@ -141,13 +141,12 @@ export default {
       }
       var res = await this.getDataByAPINewSync(data1);
       if(res.data.id==0){
-        var _self = this;
         if(this.dsm.cdata.length>0){
           this.dsm.clearData();
         }
-        _.forEach(res.data.data.pages.celData,function(row){
+        _.forEach(res.data.data.pages.celData,row=>{
           row.sys_stated = BillState.HISTORY;
-          _self.dsm.addRow(row);
+          this.dsm.addRow(row);
         });
         this.pageInfo.total = res.data.data.pages.totalItem;
         var total = res.data.data.pages.totalPage;

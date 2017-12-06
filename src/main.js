@@ -24,7 +24,6 @@ Vue.use(Components)
 
 Vue.use(VuejsDialog)
 
-
 new Vue({
   el: '#app',
   router,
