@@ -67,12 +67,13 @@ export default class Row {
   async getAssistDataByAPICout (mdRefID,cont,success,error) {
     var  posParams = {
       'dbid': global.DBID,
-      'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+      'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
       'apiId': global.APIID_AIDO,
       'assistid': mdRefID,
       'cont':cont
     }
-    return await axios.post(global.BIPAPIURL, qs.stringify(posParams))
+    const url = global.BIPAPIURL+global.API_COM;
+    return await axios.post(url, qs.stringify(posParams))
       .then(success)
       .catch(error);
   }

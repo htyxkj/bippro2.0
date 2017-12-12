@@ -19,7 +19,7 @@
     <md-part-body>
       <md-content class="flex layout-column">
          <md-layout class="flex">
-          <md-table-card class="flex">
+          <md-table-card>
             <md-table @select="onTableSelect" class="flex">
               <md-table-header>
                 <md-table-row v-if="dsm">
@@ -83,7 +83,7 @@ export default {
         nextId:'',
       },
       pageInfo:{
-        size:10,
+        size:20,
         page:1,
         total:0
       }
@@ -130,7 +130,7 @@ export default {
       this.loading++;
       var data1 = {
         'dbid': global.DBID,
-        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
         'apiId': global.APIID_FINDCELLDATA,
         'pcell': this.dsm.pcell,
         'pdata': '',

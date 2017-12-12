@@ -75,8 +75,10 @@ export default {
       if (res.data.id === 0) {
         var userI = res.data.data.user;
         var mlist = res.data.data.menulist;
-        window.localStorage.setItem('user', JSON.stringify(userI));
-        window.localStorage.setItem('menulist', JSON.stringify(mlist));
+        var snkey = res.data.data.snkey;
+        window.sessionStorage.setItem('user', JSON.stringify(userI));
+        window.sessionStorage.setItem('menulist', JSON.stringify(mlist));
+        window.sessionStorage.setItem('snkey', JSON.stringify(snkey));
         this.$emit('emitLogin');
          this.$notify.success({content: '成功登陆'})
       } else {

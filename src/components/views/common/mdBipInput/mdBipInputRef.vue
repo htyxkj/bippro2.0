@@ -35,14 +35,14 @@ export default {
   },
   methods:{
     initVV(){
-      console.log('modc')
+      // console.log('modc')
       var defv = this.modal[this.cell.id];
       if(defv){
         this.refValue = defv;
         this.onBlur();
       }else{
         this.refValue='';
-        console.log(this.refData);
+        // console.log(this.refData);
       }
     },
     openRef(){
@@ -53,12 +53,12 @@ export default {
         data.cellId = this.cell.id;
         this.refData = data;
         this.refData.value = data.value[0];
-        console.log(this.refData.value[this.refData.cols[0]],this.oldValue);
+        // console.log(this.refData.value[this.refData.cols[0]],this.oldValue);
         if(this.refData.value[this.refData.cols[0]] !== this.oldValue){
           // this.oldValue = this.refData.value[this.refData.cols[0]] ;
           this.refData.oldValue = this.oldValue;
           this.$set(this.modal,this.cell.id,this.refData.value[this.refData.cols[0]]);
-          console.log(data);
+          // console.log(data);
           this.$emit('change',data);
           this.makeRefInput(data);
         }
@@ -105,7 +105,7 @@ export default {
       }else{
         if(this.refValue !== ''){
           // console.log(this.cell.refValue,this.refValue)
-          console.log(this.cell);
+          // console.log(this.cell);
           if(this.cell.editName)
             this.getAssistDataByAPICout(this.cell.editName,this.refValue,this.getCallBack,this.getCallError);
         }else{
@@ -160,7 +160,7 @@ export default {
   }, 
   watch:{
     modal(){
-      console.log('modalcc');
+      // console.log('modalcc');
       this.initVV();
     },
     // refValue(){

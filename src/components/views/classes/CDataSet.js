@@ -231,7 +231,7 @@ export default class CDataSet {
 
   }
   initModal(isNew) {
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     var deptInfo = user.deptInfo;
     let xinc = this.ccells.autoInc;
     if (xinc > 0)
@@ -249,7 +249,7 @@ export default class CDataSet {
     return modal;
   }
   createDataModal(cell, modal) {
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     var deptInfo = user.deptInfo;
     _.forEach(cell.cels, (item, index) => {
       let iniVl = item.initValue;
@@ -387,7 +387,7 @@ export default class CDataSet {
     return s0;
   }
   formatVars(sinc) {
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     var deptInfo = user.deptInfo;
     sinc = sinc.replace(/\[!\]/g, deptInfo.deptCode);
     sinc = sinc.replace(/\[#\]/g, deptInfo.cmcCode);

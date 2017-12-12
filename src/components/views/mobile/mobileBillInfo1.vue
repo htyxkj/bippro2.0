@@ -259,7 +259,7 @@ export default {
       count = JSON.stringify(count);
       var data1 = {
         dbid: global.DBID,
-        usercode: JSON.parse(window.localStorage.getItem("user")).userCode,
+        usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
         apiId: global.APIID_FINDCELLDATA,
         pcell: this.dsm.pcell,
         pdata: count,

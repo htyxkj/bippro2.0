@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from 'axios';
 export default {
  
   data(){
@@ -117,7 +117,7 @@ export default {
             this.selFile = true
           }
       },
-      save(){
+      async save(){
           //   var files = this.selFiles[0]
           if(this.selFiles.length<1){
               this.$notify.danger({content: '请选择要上传的文件！'})
@@ -136,42 +136,52 @@ export default {
             var sumSize = 0;
             for(let i = 0;i<files.length;i++){
                 sumSize = sumSize + files[i].size
-                if(sumSize>(5*1024*1024)){
-                    this.$notify.danger({content: '文件大小超过限制！'})
-                    return;
-                }
+                // if(sumSize>(5*1024*1024)){
+                //     this.$notify.danger({content: '文件大小超过限制！'})
+                //     return;
+                // }
             }
             var arg = {
-                url:'http://localhost/upload2/servlet/UploadServlet',
                 data:{},
             };
             for(let i = 0;i<files.length;i++){
                 arg.data["file-"+i] = files[i];
             }
-            this.upload(arg);
+            // console.log(1111);
+            var res = await this.upLoad(arg);
+            if(res.data.id==0){
+                this.$notify.success({content: '上传成功！', placement: "mid-center" })
+            }else{
+                this.$notify.danger({content: '上传失败！', placement: "mid-center" })
+            }
+            // console.log(res);
           }
          
       },
       
-      upload(arg){
-          let form = new FormData();
-          for(let key in arg.data){
-              form.append(key+"",arg.data[key]);
-          }
-          let config = {
-            headers: {
-            'Content-Type': 'multipart/form-data'
-            }
-          }
-          axios.post(arg.url,form,config)
-          .then(response=>{
-              this.$notify.success({content: '上传成功！'})
-              this.clear()
-          })
-          .catch(errer=>{
-              this.$notify.danger({content: '上传失败！'})
-          })
-      },
+    //   upload(arg){
+    //       let form = new FormData();
+    //       for(let key in arg.data){
+    //           form.append(key+"",arg.data[key]);
+    //       }
+    //       let config = {
+    //         headers: {
+    //         'Content-Type': 'multipart/form-data'
+    //         },
+    //         params:{
+    //             sn:'32131',
+    //             dbid:'ZT1'
+    //         }
+    //       }
+    //       axios.post(arg.url,form,config)
+    //       .then(response=>{
+    //           this.$notify.success({content: '上传成功！'})
+    //           this.clear()
+    //       })
+    //       .catch(errer=>{
+    //           this.$notify.danger({content: '上传失败！'})
+    //       })
+    //   },
     openDialog() {
       this.$refs.fDia.open();
       this.showImg()

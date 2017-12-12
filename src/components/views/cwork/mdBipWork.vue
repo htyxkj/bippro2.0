@@ -53,7 +53,7 @@ export default {
       users: [],
       list: [],
       cea: null,
-      currUser: JSON.parse(window.localStorage.getItem("user")).userCode,
+      currUser: JSON.parse(window.sessionStorage.getItem("user")).userCode,
       billuser: ""
     };
   },

@@ -2,14 +2,15 @@ var path = require('path')
 var utils = require('./utils')
 var config = require('../config')
 var vueLoaderConfig = require('./vue-loader.conf')
-
+var webpack = require('webpack');
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
 module.exports = {
   entry: {
-    app: './src/main.js'
+    app: './src/main.js',
+    configfile: './src/js/bip-common-js.js'
   },
   output: {
     path: config.build.assetsRoot,
@@ -18,6 +19,11 @@ module.exports = {
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
   },
+  plugins:[
+    new webpack.optimize.CommonsChunkPlugin({
+     name: 'configfile'
+    }),
+  ],
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {

@@ -58,6 +58,8 @@ export default {
           if (this.cell.editName == 'UPDOWN') {
             this.inputType = this.INPUT_FILE;
             return ;
+          }else if(this.cell.editName == 'COPY'){
+            this.inputType = this.INPUT_COMMON;
           }else {
             if(this.cell.editType==1){
               this.inputType = this.INPUT_LIST;
@@ -67,10 +69,10 @@ export default {
             return ;
           }
         } else {
-          this.inputType = 0;
+          this.inputType = this.INPUT_COMMON;
           var refv = this.cell.refValue;
           if(refv == '{&DATETIME}'){
-            this.inputType = 0;
+            this.inputType = this.INPUT_COMMON;
             return ;
           }
           if (refv !== undefined &&refv !=='') {

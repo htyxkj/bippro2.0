@@ -43,7 +43,7 @@ export default {
        var pcell = this.mparams.pcell;
        var data1 = {
         'dbid': global.DBID,
-        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
         'apiId': global.APIID_CELLPARAMS,
         'pcell': pcell
       }
@@ -75,14 +75,14 @@ export default {
       if(pflow){
         data1 = {
           'dbid': global.DBID,
-          'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+          'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
           'apiId': 'buid',
           'buid': pflow
         }
         var bb = await this.getDataByAPINewSync(data1);
         if(bb.data.id==0)
           this.opera = new Operation(bb.data.data.opt);
-          console.log(this.opera);
+          // console.log(this.opera);
       }
      }
    },

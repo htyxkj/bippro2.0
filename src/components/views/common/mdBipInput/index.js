@@ -6,7 +6,8 @@ import mdBipInput from './mdBipInput.vue';
 import mdBipInputRef from './mdBipInputRef.vue';
 import mdBipDia from './mdBipDia.vue';
 import mdBipInputEntity from './mdBipInputEntity'
-import mdBipInputFileTmp from './mdBipInputFileTmp'
+// import mdBipInputFileTmp from './mdBipInputFileTmp'
+import mdBipInputFileTmp from './mdBipInputFileUp'
 export default function install(Vue) {
   if (install.installed) {
     console.warn('Vue core is already installed.');

@@ -77,8 +77,8 @@
         } else {
           this.filename = $event.target.value.split('\\').pop();
         }
-
-        this.$emit('selected', files || $event.target.value);
+        this.$emit('selected',$event);
+        // this.$emit('selected', files || $event.target.value);
         this.$emit('input', this.filename);
       }
     },

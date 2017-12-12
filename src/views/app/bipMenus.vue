@@ -43,7 +43,7 @@ export default {
     }
   },
   mounted() {
-    this.menus = JSON.parse(window.localStorage.getItem('menulist'))
+    this.menus = JSON.parse(window.sessionStorage.getItem('menulist'))
     // console.log('menus')
     // console.log(this.menus)
     // // this.$refs['mainSidenav'].close()

@@ -6,7 +6,8 @@ export default {
 
     Vue.prototype.getDataByAPINew = async function (posParams,success,error) {
       var returnobj = null;
-      returnobj = await axios.post(global.BIPAPIURL, qs.stringify(posParams))
+      const url = global.BIPAPIURL+global.API_COM;
+      returnobj = await axios.post(url, qs.stringify(posParams))
         .then(success)
         .catch(error)
       return returnobj;
@@ -15,13 +16,14 @@ export default {
     Vue.prototype.getCeaCheckInfo = async function (ceaParam,id) {
       var checkParasm = {
         dbid: global.DBID,
-        usercode: JSON.parse(window.localStorage.getItem("user")).userCode,
+        usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
         apiId: global.APIID_CHKUP,
         chkid:id,
         cea:JSON.stringify(ceaParam)
       }
       var returnobj = null;
-      returnobj = await axios.post(global.BIPAPIURL, qs.stringify(checkParasm));
+      const url = global.BIPAPIURL+global.API_COM;
+      returnobj = await axios.post(url, qs.stringify(checkParasm));
       return returnobj;
     }
 
@@ -63,7 +65,7 @@ export default {
     Vue.prototype.getCLByAPI = async function(params){
       var  posParams = {
         'dbid': global.DBID,
-        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
         'apiId': global.APIID_AID,
         'assistid': '',
         'cont':'',
@@ -73,7 +75,8 @@ export default {
     }
     // 同步获取资源
     Vue.prototype.getDataByAPINewSync = async function (posParams) {
-      var returnobj  = await axios.post(global.BIPAPIURL, qs.stringify(posParams))
+      const url = global.BIPAPIURL+global.API_COM;
+      var returnobj  = await axios.post(url, qs.stringify(posParams))
         .then(function(res){
           return res;
         })
@@ -86,13 +89,14 @@ export default {
     Vue.prototype.getAssistDataByAPICout = function (mdRefID,cont,success,error) {
       var  posParams = {
         'dbid': global.DBID,
-        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
         'apiId': global.APIID_AIDO,
         'assistid': mdRefID,
         'cont':cont
       }
-      var returnobj = null
-      axios.post(global.BIPAPIURL, qs.stringify(posParams))
+      var returnobj = null;
+      const url = global.BIPAPIURL+global.API_COM;
+      axios.post(url, qs.stringify(posParams))
         .then(success)
         .catch(error)
       return returnobj;
@@ -117,15 +121,16 @@ export default {
     Vue.prototype.getAssistODataByAPI = async function (params,success,error) {
       var  posParams = {
         'dbid': global.DBID,
-        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
         'apiId': global.APIID_AIDO,
         'assistid': '',
         'cont':'',
         'pageSize': 20,
         'page':1,
       }
-      posParams = Object.assign(posParams, params)
-      var returnobj = await axios.post(global.BIPAPIURL, qs.stringify(posParams))
+      posParams = Object.assign(posParams, params);
+      const url = global.BIPAPIURL+global.API_COM;
+      var returnobj = await axios.post(url, qs.stringify(posParams))
         .then(success)
         .catch(error)
       return returnobj;
@@ -134,14 +139,15 @@ export default {
     Vue.prototype.saveData = async function (params,success,error) {
       var  posParams = {
         'dbid': global.DBID,
-        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
         'apiId': global.APIID_SAVEDATA,
         'pcell': '',
         'jsonstr':'',
         'datatype':1
       }
-      posParams = Object.assign(posParams, params)
-      var returnobj  = await axios.post(global.BIPAPIURL, qs.stringify(posParams))
+      posParams = Object.assign(posParams, params);
+      const url = global.BIPAPIURL+global.API_COM;
+      var returnobj  = await axios.post(url, qs.stringify(posParams))
         .then(success)
         .catch(error)
       return returnobj;
@@ -149,13 +155,13 @@ export default {
 
     // 获取用户信息
     Vue.prototype.getUserInfo = function () {
-      return JSON.parse(window.localStorage.getItem('user'))
+      return JSON.parse(window.sessionStorage.getItem('user'))
     }
 
     Vue.prototype.getAssist = function (rfid,code,success,error){
       var data1 = {
         'dbid': global.DBID,
-        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
         'apiId': global.APIID_AID,
         'assistid': rfid,
         'cont': code
@@ -163,11 +169,29 @@ export default {
       this.getAssistBySync(data1,success,error);
     }
     Vue.prototype.getAssistBySync = function (posParams,success,error) {
-      var returnobj = null
-      axios.post(global.BIPAPIURL, qs.stringify(posParams))
+      var returnobj = null;
+      const url = global.BIPAPIURL+global.API_COM;
+      axios.post(url, qs.stringify(posParams))
         .then(success)
         .catch(error)
       return returnobj;
+    }
+
+    Vue.prototype.upLoad = async function(arg){
+      const url = global.BIPAPIURL+global.API_UPD;
+      let config = {
+        headers: {
+        'Content-Type': 'multipart/form-data'
+        },
+        params:{
+            snkey:JSON.parse(window.sessionStorage.getItem('snkey')),
+        }
+      };
+      let form = new FormData();
+      for(let key in arg.data){
+        form.append(key+"",arg.data[key]);
+      }
+      return await axios.post(url,form,config);
     }
 
     Vue.prototype.base64Encode = function (password) {

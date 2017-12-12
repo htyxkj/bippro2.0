@@ -69,7 +69,7 @@ export default {
     }
   },
   mounted(){
-    this.user = JSON.parse(window.localStorage.getItem('user'))
+    this.user = JSON.parse(window.sessionStorage.getItem('user'))
     this.deptInfo = this.user.deptInfo
   }
 };

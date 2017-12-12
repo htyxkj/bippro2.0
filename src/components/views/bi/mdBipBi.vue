@@ -172,7 +172,7 @@ export default {
        var pcell = this.mparams.pcell;
        var data1 = {
         'dbid': global.DBID,
-        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
         'apiId': global.APIID_CELLPARAMS,
         'pcell': pcell
       }
@@ -218,7 +218,7 @@ export default {
       var pdata = JSON.stringify(this.ds_cont.currRecord);
       var data1 = {
         dbid: global.DBID,
-        usercode: JSON.parse(window.localStorage.getItem("user")).userCode,
+        usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
         apiId: global.APIID_FINDCELLDATA,
         pcell: this.ds_m.pcell,
         pdata: pdata,
@@ -229,22 +229,11 @@ export default {
       };
       var res = await this.getDataByAPINewSync(data1);
       if(res.data.id==0){
-        // this.groupTJ = res.data.data.bcount;
         var pages = res.data.data.pages;
-        // // console.log(pages);
-        // if(this.groupTJ){
-        //   console.log(res);
-        //   this.groupfilds = res.data.data.groupfilds;
-        //   this.groupdatafilds = res.data.data.groupdatafilds;
-        //   this.tjcell = await this.makeCellCL(res.data.data.tjlayCels);
-        //   this.tjpage = res.data.data.pages;
-        //   this.ctype = res.data.data.chartType;
-        // }else{
-          this.ds_m.cdata = pages.celData;
-          this.pageInfo.page = pages.currentPage;
-          this.pageInfo.size = pages.pageSize;
-          this.pageInfo.total = pages.totalItem;
-        // }
+        this.ds_m.cdata = pages.celData;
+        this.pageInfo.page = pages.currentPage;
+        this.pageInfo.size = pages.pageSize;
+        this.pageInfo.total = pages.totalItem;
       }
       this.loading--;
     },

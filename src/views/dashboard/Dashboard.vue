@@ -128,7 +128,7 @@ export default {
     async fetchTaskData() {
       var data1 = {
         'dbid': global.DBID,
-        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
         'apiId': global.APIID_CELLPARAM,
         'pcell': 'SYRW',
         'pdata': '{brd:0,}',
@@ -147,7 +147,7 @@ export default {
       let year = commUtil.now('YYYY');
       var data1 = {
         'dbid': global.DBID,
-        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
         'apiId': global.APIID_CELLPARAM,
         'pcell': 'SYBMSX',
         'pdata': '{yy:' + year + '}',

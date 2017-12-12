@@ -30,7 +30,7 @@ export default {
       this.menuTitle = this.$route.query.title
       var data1 = {
         'dbid': global.DBID,
-        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
         'apiId': global.APIID_MPARAMS,
         'pbuid': this.pbuid,
         'pmenuid': this.pmenuid
@@ -47,18 +47,18 @@ export default {
         }
       }
     },
-    getCallBack(res){
-      // 获取返回值
-      if(res.data.id==0){
-        this.mparams = res.data.data.mparams
-      }else{
-        console.log(res);
-        this.$notify.warning({content: res.data.message,placement:'mid-center'});
-      }
-    },
-    getCallError(res) {
-      console.log(res)
-    }
+    // getCallBack(res){
+    //   // 获取返回值
+    //   if(res.data.id==0){
+    //     this.mparams = res.data.data.mparams
+    //   }else{
+    //     console.log(res);
+    //     this.$notify.warning({content: res.data.message,placement:'mid-center'});
+    //   }
+    // },
+    // getCallError(res) {
+    //   console.log(res)
+    // }
   },
   watch: {
     '$route': ['fetchParams']
