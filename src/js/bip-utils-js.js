@@ -158,24 +158,24 @@ export default {
       return JSON.parse(window.sessionStorage.getItem('user'))
     }
 
-    Vue.prototype.getAssist = function (rfid,code,success,error){
-      var data1 = {
-        'dbid': global.DBID,
-        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
-        'apiId': global.APIID_AID,
-        'assistid': rfid,
-        'cont': code
-      };
-      this.getAssistBySync(data1,success,error);
-    }
-    Vue.prototype.getAssistBySync = function (posParams,success,error) {
-      var returnobj = null;
-      const url = global.BIPAPIURL+global.API_COM;
-      axios.post(url, qs.stringify(posParams))
-        .then(success)
-        .catch(error)
-      return returnobj;
-    }
+    // Vue.prototype.getAssist = function (rfid,code,success,error){
+    //   var data1 = {
+    //     'dbid': global.DBID,
+    //     'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
+    //     'apiId': global.APIID_AID,
+    //     'assistid': rfid,
+    //     'cont': code
+    //   };
+    //   this.getAssistBySync(data1,success,error);
+    // }
+    // Vue.prototype.getAssistBySync = function (posParams,success,error) {
+    //   var returnobj = null;
+    //   const url = global.BIPAPIURL+global.API_COM;
+    //   axios.post(url, qs.stringify(posParams))
+    //     .then(success)
+    //     .catch(error)
+    //   return returnobj;
+    // }
 
     Vue.prototype.upLoad = async function(arg){
       const url = global.BIPAPIURL+global.API_UPD;
@@ -192,6 +192,20 @@ export default {
         form.append(key+"",arg.data[key]);
       }
       return await axios.post(url,form,config);
+    }
+
+    Vue.prototype.upLoadSlice = async function(form,configs){
+      const url = global.BIPAPIURL+global.API_UPD;
+      let defaultConfig = {
+        headers: {
+        'Content-Type': 'multipart/form-data'
+        },
+        params:{
+            snkey:JSON.parse(window.sessionStorage.getItem('snkey')),
+        }
+      };
+      defaultConfig = Object.assign(defaultConfig, configs);
+      return await axios.post(url,form,defaultConfig);
     }
 
     Vue.prototype.base64Encode = function (password) {
