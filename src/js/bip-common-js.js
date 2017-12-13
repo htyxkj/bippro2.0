@@ -1,10 +1,11 @@
-// global.BIPAPIURL = 'http://115.28.191.203:8080/safema/api';
+// global.BIPAPIURL = 'http://115.28.191.203:8080/dtpmp/';
 // global.BIPAPIURL = 'http://115.28.191.203:8080/airfence/api'
-// global.DBID = '40';
+// global.DBID = '01';
 global.BIPAPIURL = 'http://192.168.0.102:9999/jd/';
+global.DBID = 'ZT1';
 global.API_COM = 'api';
 global.API_UPD = 'upd';
-global.DBID = 'ZT1';
+
 global.APIID_MPARAMS = 'mparam';
 global.APIID_CELLPARAM = 'cellparam';
 global.APIID_CELLPARAMS = 'cellparams';

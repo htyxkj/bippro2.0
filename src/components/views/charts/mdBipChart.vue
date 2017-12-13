@@ -332,7 +332,7 @@ export default {
             }
           }
         } else {
-          name += items[fld] + "-";
+          name += items[id] + "-";
         }
       }
       if (name.indexOf("-") > 0) name = name.substr(0, name.length - 1);

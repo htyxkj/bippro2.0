@@ -215,6 +215,12 @@ export default {
       return pwd
     }
 
+    Vue.prototype.makePath = function(fileName){
+      const key = 999;
+      var add1 = Math.floor(Math.random() * (key));
+      return add1;
+    }
+
     Vue.prototype.uuid = function () {
       var s = []
       var hexDigits = '0123456789abcdef'
