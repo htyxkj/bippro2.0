@@ -30,6 +30,7 @@ export default {
     Vue.prototype.makeCellCL = async function(cells){
       for(var i=0;i<cells.cels.length;i++){
         var cell = cells.cels[i];
+        cell.c_par = cells;
         var s0 = cell.refValue;
         if(s0){
           var cc = s0.charAt(0);
@@ -84,6 +85,31 @@ export default {
           return res;
         });
       return returnobj;
+    }
+
+        // 同步获取资源
+    Vue.prototype.getFileByAPINewSync = async function (posParams) {
+      const url = global.BIPAPIURL+global.API_UPD;
+      var returnobj  = await axios.post(url, qs.stringify(posParams))
+        .then(function(res){
+          return res;
+        })
+        .catch(function(res){
+          return res;
+        });
+      return returnobj;
+    }
+
+    Vue.prototype.getSize = function(size){
+      size =
+      size > 1024
+        ? size / 1024 > 1024
+          ? size / (1024 * 1024) > 1024
+            ? (size / (1024 * 1024 * 1024)).toFixed(2) + "GB"
+            : (size / (1024 * 1024)).toFixed(2) + "MB"
+          : (size / 1024).toFixed(2) + "KB"
+        : size.toFixed(2) + "B";
+    return size;
     }
 
     Vue.prototype.getAssistDataByAPICout = function (mdRefID,cont,success,error) {
@@ -219,6 +245,32 @@ export default {
       const key = 999;
       var add1 = Math.floor(Math.random() * (key));
       return add1;
+    }
+
+    Vue.prototype.getFileIcon  = function(name){
+      if(name.substring(0,name.lastIndexOf('.')).length>4){
+        name = name.substring(0,3)+'...'+name.substring(name.lastIndexOf('.')+1)
+      }
+      var kzm = name.substring(name.lastIndexOf('.')+1);
+      var _srcs = {};
+      if(kzm=='doc' || kzm =='docx'){
+          _srcs = {'src':require('@/components/../img/uploadImg/word.png'),'name':name};
+      }else if(kzm=='xls' || kzm=='xlsx'){
+          _srcs = {'src':require('@/components/../img/uploadImg/excel.png'),'name':name};
+      }else if(kzm == 'pdf'){
+          _srcs = {'src':require('@/components/../img/uploadImg/pdf.png'),'name':name};
+      }else if(kzm == 'txt'){
+          _srcs = {'src':require('@/components/../img/uploadImg/txt.png'),'name':name};
+      }else if(kzm == 'zip' || kzm =='rar'){
+          _srcs = {'src':require('@/components/../img/uploadImg/zip.png'),'name':name};
+      }else if(kzm =='html'){
+          _srcs = {'src':require('@/components/../img/uploadImg/html.png'),'name':name};
+      }else if(kzm == 'ppt' || kzm=='pptx'){
+          _srcs = {'src':require('@/components/../img/uploadImg/ppt.png'),'name':name};
+      }else{
+          _srcs = {'src':require('@/components/../img/uploadImg/noFound.png'),'name':name};
+      }
+      return _srcs;
     }
 
     Vue.prototype.uuid = function () {

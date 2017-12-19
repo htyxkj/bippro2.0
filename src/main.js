@@ -8,7 +8,7 @@ import Components from './components';
 import App from './views/app/myApp';
 import VuejsDialog from "vuejs-dialog"
 import "babel-polyfill";
-
+import 'font-awesome/css/font-awesome.css';
 import './sass/app.scss';
 import './js/bip-common-js.js';
 import utils from './js/bip-utils-js';

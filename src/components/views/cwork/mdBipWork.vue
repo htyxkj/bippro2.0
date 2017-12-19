@@ -281,7 +281,7 @@ export default {
     getYes() {
       // console.log(this.chkinfo);
       if (this.chkinfo) {
-        if (this.chkinfo.state == "0") {
+        if (this.chkinfo.state == "0" || this.chkinfo.state == "1" || this.chkinfo.state == "5") {
           return "提交";
         }
       }
@@ -319,7 +319,7 @@ export default {
         if (this.chkinfo.state === "0" || this.chkinfo.state === "1") {
           return true;
         }
-        if (this.chkinfo.checked) {
+        if (this.chkinfo.checked&&this.chkinfo.chkInfos) {
           if(this.chkinfo.chkInfos[0].userCode === this.currUser)
             return false;
           return true;

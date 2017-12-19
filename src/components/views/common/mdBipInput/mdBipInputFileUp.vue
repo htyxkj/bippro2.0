@@ -39,7 +39,7 @@
             <!-- 3 -->
             <md-layout md-column md-gutter md-flex="10">
                 <md-layout>
-                    <md-button class="md-primary md-raised mybtn" @click="download" :disabled="!(progress[index]==100)">下载</md-button>
+                    <md-button class="md-primary md-raised mybtn" @click="download(index)" :disabled="!(progress[index]==100)">下载</md-button>
                 </md-layout>
             </md-layout>
             <!-- 4 -->
@@ -51,19 +51,21 @@
         </md-layout>
     </md-dialog-content>
     <md-dialog-actions class="actionC">
-         <md-button class="md-primary md-raised" @click="save" :disabled="btndis">上传文件</md-button>
-        <md-button class="md-accent md-raised" @click="clear()" :disabled="btndis">清空列表</md-button>
-        <md-button class="md-raised" @click="closeDialog('fDia')">取消</md-button>
+      <md-button class="md-primary md-raised" @click="ok()">确定</md-button>
+      <md-button class="md-primary md-raised" @click="save" :disabled="btndis">上传文件</md-button>
+      <md-button class="md-accent md-raised" @click="clear()" :disabled="btndis">清空列表</md-button>
+      <md-button class="md-raised" @click="closeDialog('fDia')">取消</md-button>
     </md-dialog-actions>
     </div>
     </md-dialog>
-      <md-input :placeholder="upmsg" readonly></md-input>
+      <md-input :placeholder="cell.labelString" readonly v-model="modal[cell.id]"></md-input>
       <md-button class="md-icon-button md-clear-input" id="upfile" @click="openDialog()"><md-icon>insert_drive_file</md-icon></md-button>
     </md-input-container>
 </template>
 
 <script>
 import axios from "axios";
+import comm from './modal.js';
 export default {
   data() {
     return {
@@ -82,8 +84,12 @@ export default {
 			imgClassB: "imgClassB",
       progress:[0],
       btndis:true,
+      bfjRoot:false,
+      upLoadFils:[],
+      upLoadDid:''
     };
   },
+  mixins:[comm],
   watch:{
     'srcs':function(){
         if(this.srcs.length==0){
@@ -95,11 +101,48 @@ export default {
   },
   methods: {
     //下载文件
-    download(){
+    async download(index){
+      console.log(index,this.selFiles[index]);
+      var name = this.selFiles[index].name;
+      // var params = {
+      //   snkey: JSON.parse(window.sessionStorage.getItem('snkey')),
+      //   fjroot: this.bfjRoot?this.modal.fj_root:'',
+      //   fjname: name,
+      //   updid: global.APIID_FILEDOWN
+      // };
+      var snkey = JSON.parse(window.sessionStorage.getItem('snkey'));
+      var fjroot = this.bfjRoot?this.modal.fj_root:'';
+      var updid =  global.APIID_FILEDOWN;
+      // console.log(params)
+      //window.open(global.BIPAPIURL+'db_ZT1/'+params.fjroot+"/"+params.fjname);
+      // var res = await this.getFileByAPINewSync(params);
+      // console.log(res);
+      // var f = new File(res.data);
+      // console.log(f);
+      // console.log(res);
+     window.location.href = global.BIPAPIURL+global.API_UPD+'?snkey='+snkey+'&fjroot='+fjroot+'&updid='+updid+'&fjname='+name;
     },
     //预览文件
     view(){
 
+    },
+    //确定完成输入
+    ok(){
+      var fjroot = this.upLoadDid;//附件地址
+      var fjname = "";
+      if(this.upLoadFils.length>0){
+        _.forEach(this.upLoadFils,flv=>{
+          if(this.bfjRoot){
+            fjname+=flv+';';
+          }else{
+            fjname+=fjroot+'/'+flv+';'
+          }
+        });
+        fjname = fjname.substring(0,fjname.length-1);
+        console.log(fjname);
+        this.$set(this.modal,this.cell.id,fjname);
+        this.$set(this.modal,'fj_root',fjroot);
+      }
     },
     //清空列表
     clear() {
@@ -108,18 +151,8 @@ export default {
       this.selFile = false;
       this.placeholder = null;
 			this.srcs = [];
-      this.progress = [];      
-    },
-    getSize(size) {
-      size =
-        size > 1024
-          ? size / 1024 > 1024
-            ? size / (1024 * 1024) > 1024
-              ? (size / (1024 * 1024 * 1024)).toFixed(2) + "GB"
-              : (size / (1024 * 1024)).toFixed(2) + "MB"
-            : (size / 1024).toFixed(2) + "KB"
-          : size.toFixed(2) + "B";
-      return size;
+      this.progress = [];
+      this.upLoadFils = []; 
     },
     delImg(index) {
       console.log(this.selFiles);
@@ -144,30 +177,13 @@ export default {
           return ;
         }
         var size = this.getSize(e.target.files[i].size)
-        if(name.substring(0,name.lastIndexOf('.')).length>4){
-            name = name.substring(0,3)+'...'+name.substring(name.lastIndexOf('.')+1)
-        }
+        // if(name.substring(0,name.lastIndexOf('.')).length>4){
+        //     name = name.substring(0,3)+'...'+name.substring(name.lastIndexOf('.')+1)
+        // }
         this.selFiles.push(file);
         if (!(/^image\/.*$/i.test(file.type))) {  
-            var kzm = name.substring(name.lastIndexOf('.')+1);
-            var _srcs = {};
-            if(kzm=='doc' || kzm =='docx'){
-                _srcs = {'src':require('@/components/../img/uploadImg/word.png'),'name':name};
-            }else if(kzm=='xls' || kzm=='xlsx'){
-                _srcs = {'src':require('@/components/../img/uploadImg/excel.png'),'name':name};
-            }else if(kzm == 'pdf'){
-                _srcs = {'src':require('@/components/../img/uploadImg/pdf.png'),'name':name};
-            }else if(kzm == 'txt'){
-                _srcs = {'src':require('@/components/../img/uploadImg/txt.png'),'name':name};
-            }else if(kzm == 'zip' || kzm =='rar'){
-                _srcs = {'src':require('@/components/../img/uploadImg/zip.png'),'name':name};
-            }else if(kzm =='html'){
-                _srcs = {'src':require('@/components/../img/uploadImg/html.png'),'name':name};
-            }else if(kzm == 'ppt' || kzm=='pptx'){
-                _srcs = {'src':require('@/components/../img/uploadImg/ppt.png'),'name':name};
-            }else{
-                _srcs = {'src':require('@/components/../img/uploadImg/noFound.png'),'name':name};
-            }
+            // var kzm = name.substring(name.lastIndexOf('.')+1);
+            var _srcs = this.getFileIcon(name);
             _srcs.size = size;
             this.srcs.push(_srcs);
             continue; //不是图片 就跳出这一次循环  
@@ -181,7 +197,7 @@ export default {
             that.srcs.push(_srcs)
         };
       }
-  },
+    },
     save() {
       if (this.selFiles.length < 1) {
         this.$notify.danger({ content: "请选择要上传的文件！" });
@@ -221,9 +237,10 @@ export default {
         var config  = dfconfig;
         config.params.name = name;
         config.params.total = shardCount;//总片数
-        config.params.index = i;//当前是第几片
         config.params.fkey = fkey;//当前是第几片
         config.params.fid = _idx;//当前是第几片
+        config.params.fjkey = this.cell.c_par.obj_id;
+        config.params.updid = global.APIID_FILEUP;
         form.append("index", i);
         form.append("total",shardCount);
 				form.append("data", file.slice(start,end));  //slice方法用于切出文件的一部分
@@ -238,7 +255,9 @@ export default {
             var id = res.data.data.fid;
             this.setProgress(id,pro);
             if(res.data.id==0){
-              this.$notify.danger({ content: "上传完成！", placement: "mid-center" });
+              this.$notify.success({ content: "上传完成！", placement: "mid-center" });
+              this.upLoadFils[id] = res.data.data.fname;
+              this.upLoadDid = res.data.data.fj_root;
             }
           }
           console.log(res);
@@ -251,16 +270,55 @@ export default {
 			this.$set(this.progress,index,data);
 		},
     openDialog() {
+      this.initFile();
       this.$refs.fDia.open();
     },
     closeDialog() {
       this.$refs.fDia.close();
+    },
+    async initFile(){
+      this.clear();
+      var vls = this.modal[this.cell.id];
+      if(!vls)
+        return ;
+      var params = {
+        snkey: JSON.parse(window.sessionStorage.getItem('snkey')),
+        fjroot: this.bfjRoot?this.modal.fj_root:'',
+        fjname: vls,
+        updid: global.APIID_FILEINFO
+      };
+      var res = await this.getFileByAPINewSync(params);
+      if(res.data.id==0){
+        this.selFiles = res.data.data.files;
+      }
+      var fis = vls.split(';');
+      _.forEach(fis,(name,index)=>{
+        var _srcs = this.getFileIcon(name);
+        _srcs.size = this.getSize(this.selFiles[index].size);
+        this.srcs.push(_srcs);
+        this.upLoadFils.push(name);
+        this.progress[index]=100;
+      });
+    }
+  },
+  mounted(){
+    if(this.cell){
+      if(this.cell.c_par){
+        var ii = _.findIndex(this.cell.c_par.cels,item=>{
+          return item.id === 'fj_root';
+        })
+        if(ii>=0){
+          this.bfjRoot = true;
+        }else{
+          this.bfjRoot = false;
+        }
+      }
     }
   }
 };
 </script>
 
-<style scoped>
+<style scoped> 
 /* .md-layout{margin:0;} */
 .md-button.md-icon-button{height: 0;}
 .md-dialog-content:first-child{padding-top: 0;}

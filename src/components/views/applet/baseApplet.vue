@@ -91,6 +91,7 @@ export default {
        this.ds_m = null;
        this.getCell();
        this.blist = true;
+       this.opera = null;
      }
    },
   computed: {

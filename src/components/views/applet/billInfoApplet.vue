@@ -79,7 +79,8 @@ export default {
         } else {
           this.dsm.createRecord();
           this.dsm.canEdit = true;
-          this.dsm.ds_sub[0].clearData();
+          if(this.dsm.haveChild())
+            this.dsm.ds_sub[0].clearData();
           this.chkinfo = null;
         }
       }

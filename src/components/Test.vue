@@ -92,6 +92,8 @@ export default {
       console.log(this);
       this.$refs['cc'].open('fdsfds');
     }
+  },
+  mounted(){
   }
 }
 </script>

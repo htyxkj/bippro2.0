@@ -14,7 +14,7 @@
       <md-bip-input-list :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-list>
     </template>
     <template v-if="inputType == INPUT_FILE">
-      <md-bip-input-file-tmp></md-bip-input-file-tmp>
+      <md-bip-input-file-tmp :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-file-tmp>
     </template>
   </md-layout>
 </template>
