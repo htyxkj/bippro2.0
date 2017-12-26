@@ -46,14 +46,14 @@ import enumCache from '../../../core/utils/enumCache';
         this.selectedValue=modelValue;
       },
       loadData(enumID){
-        console.log(enumID);
+        // console.log(enumID);
         if(!window.gmfEnums){
           window.gmfEnums={};
         }
         if(enumID){
           if(enumCache.get(enumID)){
             this.enumInfo = enumCache.get(enumID);
-            console.log(this.enumInfo);
+            // console.log(this.enumInfo);
           // if(window.gmfEnums&&window.gmfEnums[enumID]){
             // this.enumInfo=window.gmfEnums&&window.gmfEnums[enumID];
           }else{

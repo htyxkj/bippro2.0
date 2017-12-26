@@ -34,7 +34,8 @@ export default {
     width: { default: '150px' },
     script:{default:'',type:String},
     attr:{default:0,type: Number},
-    ccPoint:{default:0,type:Number}
+    ccPoint:{default:0,type:Number},
+    refValue:{default:'',type:String}
   },
 };
 </script>

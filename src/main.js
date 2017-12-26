@@ -11,6 +11,7 @@ import "babel-polyfill";
 import 'font-awesome/css/font-awesome.css';
 import './sass/app.scss';
 import './js/bip-common-js.js';
+import './js/bipcfg.js';
 import utils from './js/bip-utils-js';
 import bipDateUtil from './js/bip-date-js';
 Vue.use(utils)

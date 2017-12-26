@@ -50,7 +50,7 @@
                       <md-list>
                         <md-layout class="flex layout-column">
                             <md-layout>
-                              <md-bip-input v-for="(item,itemIndex) in dsm.ds_sub[0].ccells.cels" :ref="item.id" :key="item.id" :cell="item" :modal="dj" :btj="false" class="bip-input" @change="childChange"></md-bip-input>
+                              <md-bip-input v-for="item in dsm.ds_sub[0].ccells.cels" :ref="item.id" :key="item.id" :cell="item" :modal="dj" :btj="false" class="bip-input" @change="childChange"></md-bip-input>
                             </md-layout>
                         </md-layout>
                       </md-list>
@@ -93,7 +93,7 @@ export default {
   methods: {
     dataChange(res) {
       // console.log(res);
-      console.log(res, "dataChange");
+      // console.log(res, "dataChange");
       this.dsm.checkEdit(res);
     },
     create() {
@@ -118,10 +118,6 @@ export default {
     list() {
       var crd = this.dsm.currRecord;
       if ((crd.sys_stated & billS.INSERT) > 0) {
-        // var _self = this;
-        // var bb = this.confirm('111');
-        //var bb = this.$dialog.open({title:'系统提示',showYes:true,showCancel:true,content:'当前单据没有保存，是否保存？'});
-        // console.log(bb);
       } else {
         this.$emit("list");
       }
@@ -176,14 +172,12 @@ export default {
       var options = { pcell: this.dsm.pcell, jsonstr: str };
       var res = await this.saveData(options);
       if (res.data.id == 0) {
-        console.log(this.dsm.currRecord);
         if (this.dsm.currRecord.sys_stated === 4) {
           this.$notify.success({ content: "删除成功！", placement: "mid-center" });
           this.dsm.deleteRow(-1);
           this.dsm.createRecord();
           this.dsm.currRecord.sys_stated = 3;
           if (this.curr_dsm) {
-            console.log(this.curr_dsm);
             this.curr_dsm.clearData();
           }
         } else {
@@ -283,67 +277,65 @@ export default {
       if (state === "1" || state === "0") this.dsm.canEdit = true;
       // console.log(res, "fdfdsfds");
     },
-    getDataType(item) {
-      if (
-        item.type == 91 ||
-        item.type == 93 ||
-        item.chkRule == "{DATE}" ||
-        item.chkRule == "{DATETIME}"
-      ) {
-        return "date";
-      }
-      if (item.assist || item.editName) {
-        return "entity";
-      }
-      if (item.editType == 1) {
-        return "enum";
-      }
-      if (item.type < 12) {
-        return "numeric";
-      }
-      return "string";
+    onRemove(row) {
+      if (!this.dsm.canEdit) return;
+        this.curr_dsm.deleteRecord(row);
+      // console.log(rows);
     },
-    onLineAdd(subdsm) {
+        //step2 添加子单据
+    addDj(subdsm) {
+      // console.log(subdsm)
       this.curr_dsm = subdsm;
       var subId = subdsm.ccells.obj_id;
-      if (!this.dsm.canEdit) return;
       var crd = subdsm.createRecord();
-      // console.log(subdsm,subId,crd);
       if (!this.dsm.currRecord[subId]) {
         this.dsm.currRecord[subId] = [];
       }
+      //currRecord
+      // console.log(subdsm.cdata);
       this.dsm.currRecord[subId] = subdsm.cdata;
-    },
-    onRemove(rows) {
-      if (!this.dsm.canEdit) return;
-      console.log(this.curr_dsm);
-      _.forEach(rows.data, row => {
-        this.curr_dsm.deleteRecord(row);
+      this.$nextTick(() => {
+        // console.log(this.$refs.expand)
+        var _index = this.$refs.expand.length-1
+        subdsm.currRecord = subdsm.cdata[_index]
+        for(var i = 0;i<_index;i++){
+          this.$refs.expand[i].$parent.active = false
+        }
+        this.$refs.expand[_index].$parent.active = true
       });
-      // console.log(rows);
+      const state = this.dsm.currRecord.sys_stated ;
+      this.dsm.currRecord.sys_stated = state | billS.EDITED;
+      
     },
-    rowClick(subdsm) {
+        //删除所有子单据
+    deleteAll(subdsm){
+      subdsm.clearData();
+      this.dsm.currRecord.sys_stated = this.dsm.currRecord.sys_stated|billS.REPLACESUB;
+    },
+        //删除某行单据
+    deleteDj(subdsm,index){
+      this.itemClick(subdsm,index);
       this.curr_dsm = subdsm;
+      this.onRemove(index);
+      var _len = this.curr_dsm.cdata.length;
+      if(_len>0){
+        this.$refs.expand[_len-1].$parent.active = true
+      }
       // console.log(this.curr_dsm);
     },
-    rowChange(row) {
-      console.log("row Change", row);
-      const state = this.dsm.currRecord.sys_stated;
-      if (this.chkinfo) {
-        if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
-          return;
-        }
-      }
-      this.dsm.currRecord.sys_stated = state | billS.EDITED;
+    finish(){
+      if((this.dsm.currRecord.sys_stated&billS.EDITED)>0)
+        this.save();
     },
-    formatter(value, data, column) {
-      if (column.dataType === "numeric") {
-        let pit = column.ccPoint;
-        value = common.formatDecimal(value, { precision: pit });
-        // data[column.field] = value;
-        return value;
-      }
-      return value;
+    childChange(res){
+      this.curr_dsm.checkEdit(res);
+      this.dsm.currRecord.sys_stated = this.dsm.currRecord.sys_stated | billS.EDITED;
+    },
+    //listitem 点击step2 单据
+    itemClick(subdsm,index){
+      //当前点击行号
+      this.curr_dsm = subdsm;
+      subdsm.currRecord = subdsm.cdata[index];
     },
     async getChildData(subdsm) {
       if (!subdsm) {
@@ -366,12 +358,18 @@ export default {
         pageSize: 20,
         cellid: objId
       };
-      // console.log(data1, "findChild");
       var res = await this.getDataByAPINewSync(data1);
       if (res.data.id === 0) {
-        this.dsm.currRecord[objId] = res.data.data.pages.celData;
-        subdsm.cdata = res.data.data.pages.celData;
-        // console.log(subdsm);
+       var data = res.data.data.pages.celData;
+        var ccdata = _.take(data,data.length);
+        for(let i=0;i<ccdata.length;i++){
+          var crd = ccdata[i];
+          crd.sys_stated = billS.DICT;
+          ccdata[i] = crd;
+        }
+        this.dsm.currRecord[objId] = ccdata;
+        subdsm.cdata = ccdata;
+        this.curr_dsm = subdsm;
       }
     }
   },
@@ -450,11 +448,6 @@ export default {
           return true;
         }
         if (this.chkinfo) {
-          // if(this.chkinfo.state=='6'){
-          //   return true;
-          // }else{
-          //   return false;
-          // }
         }
         return false;
       }

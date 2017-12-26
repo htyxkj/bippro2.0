@@ -13,6 +13,29 @@ export default {
       return returnobj;
     }
 
+    Vue.prototype.logout = async function(){
+      var params = {
+        dbid: global.DBID,
+        usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+        username: JSON.parse(window.sessionStorage.getItem("user")).userName,
+        snkey: JSON.parse(window.sessionStorage.getItem("snkey")),
+        apiId: global.APIID_LOGOUT,
+      };
+      const url = global.BIPAPIURL+global.API_COM;
+      var returnobj = await axios.post(url, qs.stringify(params));
+      return returnobj;
+    }
+
+    Vue.prototype.taskMsg = function(taskid,success,error){
+      var params = {
+        snkey: JSON.parse(window.sessionStorage.getItem("snkey")),
+        apiId: global.APIID_TA_MSG,
+        'tskim':taskid
+      };
+      const url = global.BIPAPIURL+global.API_COM;
+      axios.post(url, qs.stringify(params)).then(success).catch(error);
+    }
+
     Vue.prototype.getCeaCheckInfo = async function (ceaParam,id) {
       var checkParasm = {
         dbid: global.DBID,

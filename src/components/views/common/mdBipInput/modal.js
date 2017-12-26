@@ -29,7 +29,7 @@ export default {
       oldValue:""
     }
   },
-  props: {cell:Object,isSearch: {Boolean,default:false},modal:{},btj:{default:false,type:Boolean}},
+  props: {cell:Object,isSearch: {type:Boolean,default:false},modal:{},btj:{default:false,type:Boolean}},
   mounted () {
     this.oldValue = '';
     if(this.cell) {

@@ -23,18 +23,18 @@
       <template v-if="dsm&&!dsm.haveChild">
         <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null">
           <md-layout>
-            <md-bip-input v-for="(cell, index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+            <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
           </md-layout>
         </md-content>
       </template>
       <template v-else>
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
           <md-layout>
-            <md-bip-input v-for="(cell, index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+            <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
           </md-layout>
           <md-layout class="flex layout-column" v-if="dsm.ds_sub&&dsm.ds_sub.length==1">
               <md-bip-grid :datas="dsm.ds_sub[0].cdata" ref="grid" :row-focused="true" :auto-load="true" @onAdd="onLineAdd(dsm.ds_sub[0])" @onRemove="onRemove" :showAdd="canAddChild" :showRemove="canAddChild" @rowChange="rowChange" @click="rowClick(dsm.ds_sub[0])">
-                <md-bip-grid-column v-for="(item,itemIndex) in dsm.ds_sub[0].ccells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName||item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :dataType="getDataType(item)" :formatter="formatter">
+                <md-bip-grid-column v-for="item in dsm.ds_sub[0].ccells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName || item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :refValue="item.refValue" :dataType="getDataType(item)" :formatter="formatter">
                 </md-bip-grid-column>
               </md-bip-grid>
           </md-layout>
@@ -63,7 +63,7 @@ export default {
   methods: {
     dataChange(res) {
       // console.log(res);
-      console.log(res, "dataChange");
+      // console.log(res, "dataChange");
       this.dsm.checkEdit(res);
     },
     create() {
@@ -110,6 +110,7 @@ export default {
         };
         var ceaParams = new CeaPars(params);
         var billuser = crd[this.opera.smakefld];
+        // console.log(billuser);
         this.$refs["cc"].open(ceaParams, billuser);
       }
       // var res = await this.getDataByAPINew(checkParasm);
@@ -146,14 +147,14 @@ export default {
       var options = { pcell: this.dsm.pcell, jsonstr: str };
       var res = await this.saveData(options);
       if (res.data.id == 0) {
-        console.log(this.dsm.currRecord);
+        // console.log(this.dsm.currRecord);
         if (this.dsm.currRecord.sys_stated === 4) {
           this.$notify.success({ content: "删除成功！", placement: "mid-center" });
           this.dsm.deleteRow(-1);
           this.dsm.createRecord();
           this.dsm.currRecord.sys_stated = 3;
           if (this.curr_dsm) {
-            console.log(this.curr_dsm);
+            // console.log(this.curr_dsm);
             this.curr_dsm.clearData();
           }
         } else {
@@ -286,7 +287,8 @@ export default {
     },
     onRemove(rows) {
       if (!this.dsm.canEdit) return;
-      console.log(this.curr_dsm);
+      if(!this.curr_dsm)
+        this.curr_dsm = this.dsm.ds_sub[0];
       _.forEach(rows.data, row => {
         this.curr_dsm.deleteRecord(row);
       });
@@ -297,7 +299,7 @@ export default {
       // console.log(this.curr_dsm);
     },
     rowChange(row) {
-      console.log("row Change", row);
+      // console.log("row Change", row);
       const state = this.dsm.currRecord.sys_stated;
       if (this.chkinfo) {
         if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {

@@ -9,10 +9,35 @@
         <md-input class="md-header-search-input" placeholder="搜索"></md-input>
       </md-input-container>
     </div>
-    <md-button class="md-icon-button">
-      <md-icon>notifications</md-icon>
-    </md-button>
-    <md-menu md-direction="bottom left" ref="menuUser">
+    <md-menu md-direction="bottom left" ref="taskMSG">
+      <md-button class="md-icon-button" md-menu-trigger>
+        <span class="bip-badge" v-if="counts>0">{{counts}}</span>
+        <md-icon>notifications</md-icon>
+      </md-button>
+      <md-menu-content>
+        <md-list class="custom-list">
+          <md-subheader class="badge-success">任务</md-subheader>
+          <md-list-item class="bip-task-item">
+            <!-- <md-button class="md-icon-button md-list-action"> -->
+              <md-icon class="md-accent">access_time</md-icon>
+            <!-- </md-button> -->
+            <div class="md-table-cell-container">未处理renw</div>
+            <span class="badge badge-info" >+{{taskNum}}</span>
+            <md-divider></md-divider>
+          </md-list-item>
+          <md-subheader class="badge-warning">消息</md-subheader>
+          <md-list-item class="bip-task-item">
+            <md-button class="md-icon-button md-list-action">
+              <md-icon class="md-accent">access_time</md-icon>
+            </md-button>
+            <div class="md-table-cell-container">未处理消息</div>
+            <span class="badge badge-success" >+{{msgNum}}</span>
+            <md-divider></md-divider>
+          </md-list-item>
+        </md-list>
+      </md-menu-content>
+    </md-menu>
+    <md-menu md-direction="bottom left" ref="menuUser" class="bip-task">
       <md-button class="md-icon-button md-avatar" md-menu-trigger>
         <md-avatar>
           <img src="../../img/avatar/1.jpg">
@@ -49,68 +74,252 @@
   </md-toolbar>
 </template>
 <script>
+const BIPTASK = "biptask",
+  BIPMSG = "bipmsg";
+import Stomp from "stompjs";
 export default {
-  data () {
+  data() {
     return {
       user: {},
-      deptInfo: {}
-    }
+      deptInfo: {},
+      client: null,
+      taskNum: 0,
+      msgNum: 0,
+      isconnt: false
+    };
   },
   props: {
     mdToken: String,
     mdTitle: String
   },
+  created() {
+    if (!this.isconnt) this.connectQ();
+  },
   methods: {
     toggle() {
-      this.$emit('toggle');
+      this.$emit("toggle");
     },
-    logOut() {
-      this.$emit('logout')
+    async logOut() {
+      // console.log(111111);
+      // var res = await this.logout();
+      // console.log(res);
+      this.disconnect();
+      this.$emit("logout");
+    },
+    onConnected: function(frame) {
+      this.isconnt = true;
+      console.log("Connected: " + frame);
+      //订阅频道
+      var topic =
+        "/exchange/" +
+        BIPTASK +
+        "/" +
+        BIPTASK +
+        "." +
+        global.DBID +
+        "." +
+        this.user.userCode;
+      var topic1 =
+        "/exchange/" +
+        BIPMSG +
+        "/" +
+        BIPMSG +
+        "." +
+        global.DBID +
+        "." +
+        this.user.userCode;
+      console.log(topic, topic1);
+      this.client.subscribe(topic, this.responseCallback);
+      this.client.subscribe(topic1, this.responseCallback);
+      this.taskMsg(global.APIID_TM_ALL);
+    },
+    onFailed: function(frame) {
+      console.log("Failed: " + frame);
+    },
+    responseCallback: function(frame) {
+      console.log("responseCallback msg=>" + frame.body);
+      var info = JSON.parse(frame.body);
+      if (info.type === 1) {
+        if (this.taskNum !== info.count) {
+          this.taskNum = info.count;
+          this.$notify.warning({ content: "您有" + this.taskNum + "条任务未处理！" });
+        }
+      }
+      if (info.type === 2) {
+        this.msgNum = info.count;
+        this.$notify.info({ content: "您有" + this.msgNum + "条消息未处理！" });
+      }
+      console.log(frame);
+      // 接收消息
+    },
+    connectQ: function() {
+      //初始化mqtt客户端，并连接mqtt服务
+      var ws = new WebSocket(global.MQTT_SERVICE);
+      this.client = Stomp.over(ws);
+      var headers = {
+        login: global.MQTT_USERNAME, //用户名
+        passcode: global.MQTT_PASSWORD, //密码
+        host: global.MQTT_HOST // 虚拟空间
+      };
+      this.client.connect(headers, this.onConnected, this.onFailed);
+    },
+    disconnect() {
+      this.client.disconnect();
     }
   },
-  mounted(){
-    this.user = JSON.parse(window.sessionStorage.getItem('user'))
-    this.deptInfo = this.user.deptInfo
+  mounted() {
+    this.user = JSON.parse(window.sessionStorage.getItem("user"));
+    this.deptInfo = this.user.deptInfo;
+  },
+  computed: {
+    counts() {
+      return this.taskNum + this.msgNum;
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-
-.md-input-container.md-flex.md-header-search{
-  margin:0 0 0 60% ;
-  .md-header-search-input{
+.md-input-container.md-flex.md-header-search {
+  margin: 0 0 0 60%;
+  .md-header-search-input {
     border-radius: 0.04rem;
-      width: 80%;
+    width: 80%;
   }
-
 }
-.md-input-container{
-  min-height: .3rem;
+.md-input-container {
+  min-height: 0.3rem;
 }
 
-.md-title{
-  font-family:  "微软雅黑", STHeiti, "WenQuanYi Micro Hei", SimSun, sans-serif;
+.md-title {
+  font-family: "微软雅黑", STHeiti, "WenQuanYi Micro Hei", SimSun, sans-serif;
   font-size: 0.18rem;
 }
 
 @media (max-width: 600px) {
-  .md-title{
-    font-family:  "微软雅黑", STHeiti, "WenQuanYi Micro Hei", SimSun, sans-serif;
+  .md-title {
+    font-family: "微软雅黑", STHeiti, "WenQuanYi Micro Hei", SimSun, sans-serif;
     font-size: 0.14rem;
   }
 }
-
 
 .md-input-container.md-has-value input {
   font-size: 0.14rem;
 }
 
 .md-avatar {
-    width: 0.3rem;
-    min-width: 0.3rem;
-    height: 0.3rem;
-    min-height: 0.3rem;
-    border-radius: 0.3rem;
+  width: 0.3rem;
+  min-width: 0.3rem;
+  height: 0.3rem;
+  min-height: 0.3rem;
+  border-radius: 0.3rem;
+}
+.bip-badge {
+  position: absolute;
+  right: 0;
+  top: 3px;
+  height: 15px;
+  line-height: 15px;
+  background-color: #f75d5d;
+  color: #fff;
+  border-radius: 15px;
+  font-size: 0.14rem;
+  text-align: center;
+  white-space: nowrap;
+  padding: 0 2px;
+  z-index: 9;
+}
+.md-button.md-icon-button {
+  border-radius: 0;
+}
+.md-subheader {
+  &.bip-task {
+    background-color: aquamarine;
+    min-height: .38rem;
+    margin-top: .0rem;
+  }
+}
+.md-list-item.bip-task-item{
+    &.md-list-item-container{
+      height: 0.48rem;
+    }
+}
+.bip-task-item{
+  min-height: .48rem;
+  .md-list-item-container{
+    height: 0.48rem;
+  }
+  .md-list.md-triple-line .md-list-item .md-list-item-container{
+    min-height: 0.48rem;
+  }
+}
+.md-list.md-triple-line .md-list-item .md-list-item-container {
+    min-height: .48rem;
+}
+.badge {
+ padding-top:1px;
+ padding-bottom:3px;
+ line-height:15px
+}
+.badge.radius-1 {
+ border-radius:1px
+}
+.badge.radius-2 {
+ border-radius:2px
+}
+.badge.radius-3 {
+ border-radius:3px
+}
+.badge.radius-4 {
+ border-radius:4px
+}
+.badge.radius-5 {
+ border-radius:5px
+}
+.badge.radius-6 {
+ border-radius:6px
+}
+.badge-transparent,.badge.badge-transparent,.label-transparent,.label.label-transparent {
+ background-color:transparent
+}
+.badge-grey,.badge.badge-grey,.label-grey,.label.label-grey {
+ background-color:#A0A0A0
+}
+.badge-info,.badge.badge-info,.label-info,.label.label-info {
+ background-color:#3A87AD
+}
+.badge-primary,.badge.badge-primary,.label-primary,.label.label-primary {
+ background-color:#428BCA
+}
+.badge-success,.badge.badge-success,.label-success,.label.label-success {
+ background-color:#82AF6F
+}
+.badge-danger,.badge-important,.badge.badge-danger,.badge.badge-important,.label-danger,.label-important,.label.label-danger,.label.label-important {
+ background-color:#D15B47
+}
+.badge-inverse,.badge.badge-inverse,.label-inverse,.label.label-inverse {
+ background-color:#333
+}
+.badge-warning,.badge.badge-warning,.label-warning,.label.label-warning {
+ background-color:#F89406
+}
+.badge-pink,.badge.badge-pink,.label-pink,.label.label-pink {
+ background-color:#D6487E
+}
+.badge-purple,.badge.badge-purple,.label-purple,.label.label-purple {
+ background-color:#9585BF
+}
+.badge-yellow,.badge.badge-yellow,.label-yellow,.label.label-yellow {
+ background-color:#FEE188
+}
+.badge-light,.badge.badge-light,.label-light,.label.label-light {
+ background-color:#E7E7E7
+}
+.badge-yellow,.label-yellow {
+ color:#963;
+ border-color:#FEE188
+}
+.badge-light,.label-light {
+ color:#888
 }
 </style>

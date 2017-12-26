@@ -5,22 +5,13 @@ global.BIPAPIURL = 'http://192.168.0.108:9999/jd/';
 global.DBID = 'ZT1';
 global.API_COM = 'api';
 global.API_UPD = 'upd';
+//队列消息配置
+global.MQTT_SERVICE = 'ws://192.168.0.108:15674/ws';
+global.MQTT_USERNAME='bipmq';
+global.MQTT_PASSWORD='bipmq';
+global.MQTT_HOST='bipmq';
 
-global.APIID_MPARAMS = 'mparam';
-global.APIID_CELLPARAM = 'cellparam';
-global.APIID_CELLPARAMS = 'cellparams';
-global.APIID_MENUPARAM = 'menuparam';
-global.APIID_LOGIN = 'login';
-global.APIID_AID = 'assist';
-global.APIID_AIDO = 'assisto';
-global.APIID_VAR = 'variable';
-global.APIID_FINDDATA = 'finddata';
-global.APIID_FINDCELLDATA = 'findcelldata';
-global.APIID_SAVEDATA = 'savedata';
-global.APIID_CHKUP = 'chkup';
-global.FULLDATE = '^(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)$';
-global.YEARMONTH = '^(?:(?!0000)[0-9]{4}-(?:0[1-9]|1[0-2])|[0-9]{4})$';
-global.APIID_FILEUP = 33; //上传文件
-global.APIID_FILEDEL= 34;//删除文件
-global.APIID_FILEINFO = 35;//文件信息
-global.APIID_FILEDOWN = 36;//下载文件列表
+
+
+
+

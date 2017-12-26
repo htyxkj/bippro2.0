@@ -21,12 +21,12 @@ class enumCache {
   }
   getEnum(name, item) {
     if (!name || !item) return null;
-    console.log(`${this.storageKey}.${name}:${item}`);
+    // console.log(`${this.storageKey}.${name}:${item}`);
     return JSON.parse(localStorage.getItem(`${this.storageKey}.${name}:${item}`));
   }
   getEnumName(name, item) {
     const v = this.getEnum(name, item);
-    console.log(name,item,v);
+    // console.log(name,item,v);
     return v ? v.comment : '';
   }
 }

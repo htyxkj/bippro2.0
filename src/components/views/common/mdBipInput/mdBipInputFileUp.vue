@@ -8,46 +8,56 @@
         </md-input-container>
         <div v-if="selFile">已选择{{num}}个文件</div>
         <div v-else>可以上传图片或者文件</div>
+        <!-- content -->
+        <md-layout :class="ISPC()?imgClassA:imgClassB">
+            <!-- row -->
         <md-layout md-gutter="8" v-for="(file,index) in srcs" :key="index" class="itemClass">
-            <!-- 1 -->
-            <md-layout md-column md-gutter class="colClass" md-flex="10">
-                <md-layout><md-image :md-src="file.src"></md-image></md-layout>
+            <!-- 编号 -->
+            <md-layout md-column md-gutter class="colClass" md-flex="5" md-flex-xsmall="10" md-flex-small="10">
+                <md-layout>
+                    {{index+1}}.
+                </md-layout>
+            </md-layout>
+        <!-- 1 -->
+            <md-layout md-column md-gutter class="colClass" md-flex="10" md-hide-small md-hide-xsmall >
+              <md-layout><md-image :md-src="file.src"></md-image></md-layout>
             </md-layout>
             <!-- 2 -->
-            <md-layout md-column md-gutter md-flex="70" md-flex-xsmall="50" md-flex-small="50" md-flex-medium="70">
+            <md-layout md-column md-gutter md-flex="50" md-flex-xsmall="45" md-flex-small="45" md-flex-medium="50">
                 <md-layout md-flex="25">
-                    <md-layout md-column md-gutter md-flex="65">
-                        <span class="md-subheading">{{file.name}}</span>
-                        <md-tooltip v-if="selFiles">{{selFiles[index].name}}</md-tooltip>
+                     <md-layout md-column md-gutter md-flex="60" md-flex-xsmall="100" md-flex-small="100">
+                      <span class="md-subheading">{{file.name}}</span>
+                      <md-tooltip v-if="selFiles">{{selFiles[index].name}}</md-tooltip>
                     </md-layout>
-                    <md-layout md-column md-gutter md-flex="15" md-flex-offset="15">
+                    <md-layout md-column md-gutter md-flex="20" md-flex-offset="20" md-hide-small md-hide-xsmall>
                         <span class="md-subheading">{{file.size}}</span>
                     </md-layout>
                 </md-layout>
                 <md-layout>
-                    <md-layout md-flex="80" md-column md-gutter>
-                        <md-progress :md-progress="progress[index]"></md-progress>
+                    <md-layout md-flex="80" md-column md-gutter md-flex-xsmall="100" md-flex-small="100">
+                      <md-progress :md-progress="progress[index]"></md-progress>
                     </md-layout>
-                    <md-layout md-column md-gutter md-flex="20" md-flex-offset="20">
-                        <md-button v-if="!(progress[index]==100)" class="md-accent md-icon-button md-dense cancelClass" @click="delImg(index)">
-                            <md-icon>cancel</md-icon>
-                        </md-button>
-                        <md-icon v-else class="iconClass">check_circle</md-icon>
+                    <md-layout md-column md-gutter md-flex="20" md-flex-offset="20" md-hide-small md-hide-xsmall>
+                      <md-button v-if="!(progress[index]==100)" class="md-accent md-icon-button md-dense cancelClass" @click="delImg(index)">
+                        <md-icon>cancel</md-icon>
+                      </md-button>
+                      <md-icon v-else class="iconClass">check_circle</md-icon>
                     </md-layout>
                 </md-layout>
             </md-layout>
             <!-- 3 -->
-            <md-layout md-column md-gutter md-flex="10">
-                <md-layout>
-                    <md-button class="md-primary md-raised mybtn" @click="download(index)" :disabled="!(progress[index]==100)">下载</md-button>
+            <md-layout md-column md-gutter md-flex="10" md-flex-xsmall="20" md-flex-small="20">
+              <md-layout>
+                    <md-button class="md-accent md-raised mybtn" @click="delFile(index)" :disabled="!(progress[index]==100)">删除</md-button>
                 </md-layout>
             </md-layout>
             <!-- 4 -->
             <md-layout md-column md-gutter md-flex="10">
-                <md-layout>
-                    <md-button class="md-primary md-raised mybtn" @click="view" :disabled="!(progress[index]==100)">预览</md-button>
+              <md-layout>
+                    <md-button class="md-primary md-raised mybtn" @click="download(index)" :disabled="!(progress[index]==100)">下载</md-button>
                 </md-layout>
             </md-layout>
+        </md-layout>
         </md-layout>
     </md-dialog-content>
     <md-dialog-actions class="actionC">
@@ -102,32 +112,42 @@ export default {
   methods: {
     //下载文件
     async download(index){
-      console.log(index,this.selFiles[index]);
+      // console.log(index,this.selFiles[index]);
       var name = this.selFiles[index].name;
-      // var params = {
-      //   snkey: JSON.parse(window.sessionStorage.getItem('snkey')),
-      //   fjroot: this.bfjRoot?this.modal.fj_root:'',
-      //   fjname: name,
-      //   updid: global.APIID_FILEDOWN
-      // };
       var snkey = JSON.parse(window.sessionStorage.getItem('snkey'));
       var fjroot = this.bfjRoot?this.modal.fj_root:'';
       var updid =  global.APIID_FILEDOWN;
-      // console.log(params)
-      //window.open(global.BIPAPIURL+'db_ZT1/'+params.fjroot+"/"+params.fjname);
-      // var res = await this.getFileByAPINewSync(params);
-      // console.log(res);
-      // var f = new File(res.data);
-      // console.log(f);
-      // console.log(res);
      window.location.href = global.BIPAPIURL+global.API_UPD+'?snkey='+snkey+'&fjroot='+fjroot+'&updid='+updid+'&fjname='+name;
     },
     //预览文件
-    view(){
-
+    async delFile(index){
+      var name = this.selFiles[index].name;
+      var params = {
+        snkey: JSON.parse(window.sessionStorage.getItem('snkey')),
+        fjroot: this.bfjRoot?this.modal.fj_root:'',
+        fjname: name,
+        updid: global.APIID_FILEDEL
+      };
+      var fl = this.selFiles[index];
+      if(fl.size>0){
+        var res = await this.getFileByAPINewSync(params);
+        if(res.data.id==0){
+          this.removeIndex(index);
+        }
+      }else{
+        this.removeIndex(index);
+      }
+    },
+    removeIndex(index){
+      this.srcs.splice(index, 1);
+      this.selFiles.splice(index, 1);
+      this.progress.splice(index, 1);
+      this.myFiles.splice(index, 1);
+      this.upLoadFils.splice(index, 1);
     },
     //确定完成输入
     ok(){
+      // console.log('ok');
       var fjroot = this.upLoadDid;//附件地址
       var fjname = "";
       if(this.upLoadFils.length>0){
@@ -139,10 +159,18 @@ export default {
           }
         });
         fjname = fjname.substring(0,fjname.length-1);
-        console.log(fjname);
+        // console.log(fjname);
         this.$set(this.modal,this.cell.id,fjname);
         this.$set(this.modal,'fj_root',fjroot);
+      }else{
+        this.$set(this.modal,this.cell.id,'');
+        this.$set(this.modal,'fj_root','');
       }
+      var sta = this.modal.sys_stated;
+      sta = sta | 2;
+      // console.log(sta,'state');
+      this.$set(this.modal,'sys_stated',sta);
+      this.$refs.fDia.close();
     },
     //清空列表
     clear() {
@@ -243,10 +271,10 @@ export default {
         config.params.updid = global.APIID_FILEUP;
         form.append("index", i);
         form.append("total",shardCount);
+        form.append("fjroot",this.upLoadDid);
 				form.append("data", file.slice(start,end));  //slice方法用于切出文件的一部分
-        // this.upLoadSlice(form,config);
         axios.post(url,form,config).then((res)=>{
-          console.log(res);
+          // console.log(res);
           if(res.data.id==-1){
             this.$notify.danger({ content: "上传失败！", placement: "mid-center" });
           }else{
@@ -260,7 +288,7 @@ export default {
               this.upLoadDid = res.data.data.fj_root;
             }
           }
-          console.log(res);
+          // console.log(res);
         });
         // console.log(i,'fdsfds');
       }
@@ -278,12 +306,13 @@ export default {
     },
     async initFile(){
       this.clear();
+      this.upLoadDid = this.bfjRoot?this.modal.fj_root:'';
       var vls = this.modal[this.cell.id];
       if(!vls)
         return ;
       var params = {
         snkey: JSON.parse(window.sessionStorage.getItem('snkey')),
-        fjroot: this.bfjRoot?this.modal.fj_root:'',
+        fjroot: this.upLoadDid,
         fjname: vls,
         updid: global.APIID_FILEINFO
       };
@@ -318,29 +347,56 @@ export default {
 };
 </script>
 
-<style scoped> 
+<style scoped>
 /* .md-layout{margin:0;} */
 .md-button.md-icon-button{height: 0;}
 .md-dialog-content:first-child{padding-top: 0;}
 .md-input-container input{font-weight: 700;}
-.classA{min-height:2.1rem;max-width:6rem;max-height: 5rem;min-width:6rem;}
-.classB{min-height:2.5rem;max-width:6rem;max-height: 6rem;}
+.classA{min-height:5rem;max-width:6rem;max-height: 5rem;min-width:6rem;}
+
 .actionC{position: absolute;bottom:.1rem;right: .1rem}
 .contentC{margin-bottom: .7rem;padding-bottom: 0;}
 .myimg{position: relative;width:10% !important;height: 10% !important;}
-.imgClassA{overflow: auto;max-height: 3rem;}
-.imgClassB{overflow: auto;max-height: 2.5rem;}
+.imgClassA{overflow-y: auto;max-height: 3rem;overflow-x:hidden; }
+@media screen and (min-width:300px) and (max-width:321px){
+    .classB{min-height:5rem;max-height: 5rem;}
+    .imgClassB{
+        overflow-y: auto;max-height: 2.3rem;overflow-x: hidden;
+    }
+}
+@media screen and (min-width:321px) and (max-width:361px){
+    .classB{min-height:5rem;max-height: 5rem;}
+    .imgClassB{
+        overflow-y: auto;max-height: 2.8rem;overflow-x: hidden;
+    }
+}
+@media screen and (min-width:362px) and (max-width:380px){
+    .classB{min-height:5rem;max-height: 5rem;}
+    .imgClassB{
+        overflow-y: auto;max-height: 3.3rem;overflow-x: hidden;
+    }
+}
+@media screen and (min-width:381px) and (max-width:412px){
+    .classB{min-height:6rem;max-height: 6rem;}
+    .imgClassB{
+        overflow-y: auto;max-height: 3.8rem;overflow-x: hidden;
+    }
+}
+@media screen and (min-width:413px){
+    .classB{min-height:6rem;max-height: 6rem;}
+    .imgClassB{
+        overflow-y: auto;max-height: 4rem;overflow-x: hidden;
+    }
+}
 .iClass{max-height: 1rem !important;min-height: 1rem !important;max-width: 1.1rem !important;}
-/* .cancelClass{margin:0;padding: 0;min-width: .24rem;min-height: .24rem;position: absolute;right: .1rem;} */
-/* .myicon{margin:0;position: absolute;right: .1rem;bottom:.15rem;color:#22bf22;} */
-
-.itemClass{max-height: .6rem;position: relative;}
+.itemClass{max-height: .6rem;position: relative;width: 100%;}
 .iconClass{padding-bottom: .2rem;color:#22bf22; }
 /* .cancelClass{margin:0;padding: 0;min-width: .24rem;min-height: .24rem;} */
 .mybtn{min-width: .4rem;min-height: .3rem;font-size: .12rem;line-height: .3rem;padding: 0;}
 .md-gutter-8 .md-column > .md-layout{padding-bottom: 0;}
-.cancelClass{position: absolute;bottom: .15rem;margin-left: .2rem;}
-/* .colClass{max-width: .5rem;} */
+.cancelClass{position: absolute;bottom: .15rem;margin-left: .18rem;}
+.checkClass{position: absolute;bottom: .15rem;margin-left: .18rem;color:#22bf22;}
+.colClass{max-height: .6rem;line-height: .5rem;}
 </style>
 
 

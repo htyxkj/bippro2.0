@@ -25,7 +25,7 @@
         <md-radio v-model="stateId" v-for="(item,index) in list" :key="index" :id="item.stateId" name="group1" :md-value="item.stateId">{{item.stateName}}</md-radio>
         <md-subheader>审批人:</md-subheader>
         <!-- <md-radio v-model="userId" v-for="(item,index) in users" :key="item.userCode" :id="item.userCode" name="group1" :md-value="item.userCode">{{item.userName}}</md-radio> -->
-        <md-checkbox  v-for="(item,index) in users" :key="item.userCode" :id="item.userCode" :name="item.userCode" v-model="userIds" :md-value="item.userCode">{{item.userName}}</md-checkbox>
+        <md-checkbox  v-for="item in users" :key="item.userCode" :id="item.userCode" :name="item.userCode" v-model="userIds" :md-value="item.userCode">{{item.userName}}</md-checkbox>
 
         <md-input-container md-theme="red">
           <label>说明</label>
@@ -76,9 +76,10 @@ export default {
           this.$notify.danger({ content: "没有审批人", placement: "mid-center" });
         } else {
           res = await this.getCeaCheckInfo(this.cea, 34);
+          console.log(res);
         }
       }
-      // console.log(res);
+      console.log(res);
       if (res.data.id == 0) {
         this.$emit("dataCheckUp", this.stateId);
         this.$notify.success({ content: "提交成功！", placement: "mid-center" });
@@ -135,7 +136,7 @@ export default {
       this.cea.bup = "2";
       this.cea.tousr = bup ? "#" : this.billuser;
       var res = await this.getCeaCheckInfo(this.cea, 34);
-      console.log(res, "驳回！");
+      // console.log(res, "驳回！");
       if(res.data.id === 0)
         this.$emit("dataCheckUp",res.data.data.info);
     },
@@ -169,7 +170,8 @@ export default {
       this.cea = ceaparam;
       // this.$notify.danger({ content: "没有审批人", placement: "mid-center" });
       this.billuser = billU;
-      if (this.cea.statefr === "0" || this.cea.statefr === "1") {
+      // console.log(billU,this.currUser);
+      if (this.cea.statefr == "0" || this.cea.statefr == "1" || this.cea.statefr == "5") {
         if (billU !== this.currUser) {
           this.$notify.danger({
             content: "只有制单人可以提交!",
@@ -192,7 +194,7 @@ export default {
         } else {
           if (this.cea.statefr !== "6") {
             this.$notify.danger({
-              content: "没有审批人fdsfds!",
+              content: "没有审批人!",
               placement: "mid-center"
             });
           }
@@ -202,7 +204,7 @@ export default {
       this.$refs["dialog"].open();
     },
     cancel() {
-      console.log("cccc");
+      // console.log("cccc");
       this.$refs["dialog"].close();
     },
     makeUsers() {
@@ -246,7 +248,7 @@ export default {
       this.makeUsers();
     },
     chkinfo() {
-      console.log("chkinfoChange");
+      // console.log("chkinfoChange");
       this.initEA();
       // this.getYes();
     }
@@ -259,7 +261,7 @@ export default {
       //0：新建状态，1:驳回状态；2:待审核；3:已审核;4:执行状态
       var id = 0;
       if (this.chkinfo) {
-        if (this.chkinfo.state == "0") {
+        if (this.chkinfo.state == "0" || this.chkinfo.state == "5") {
           id = 0;
         } else if (this.chkinfo.state == "1") {
           id = 1;
@@ -315,9 +317,12 @@ export default {
     },
     canTH() {
       if (this.chkinfo.state) {
-        console.log(this.chkinfo);
+        // console.log(this.chkinfo);
         if (this.chkinfo.state === "0" || this.chkinfo.state === "1") {
           return true;
+        }
+        if(this.chkinfo.state === "5"){
+          return false;
         }
         if (this.chkinfo.checked&&this.chkinfo.chkInfos) {
           if(this.chkinfo.chkInfos[0].userCode === this.currUser)
@@ -335,7 +340,7 @@ export default {
     },
     canBH() {
       if (this.chkinfo) {
-        if (this.chkinfo.state === "0" ||this.chkinfo.state === "1" ||this.chkinfo.state === "6") {
+        if (this.chkinfo.state === "0" ||this.chkinfo.state === "1" || this.chkinfo.state === "5" ||this.chkinfo.state === "6") {
           return true;
         }
          var exitu = "";

@@ -109,7 +109,7 @@ export default {
   methods:{
     open(){
       this.$refs['dialog'].open()
-      console.log('open')
+      // console.log('open')
       this.doQuery('')
     },
     onRefClose(){
@@ -131,7 +131,7 @@ export default {
         'assistid': this.mdRefId,
         'cont': word
       };
-      console.log(this.mdRefId);
+      // console.log(this.mdRefId);
       if (this.mdRefId) {
         this.getAssistODataByAPI(option,this.getCallBack,this.getCallError);
       }
@@ -153,7 +153,7 @@ export default {
       }
     },
     getCallError(res){
-      console.log(res);
+      // console.log(res);
       this.$notify.danger({content: res.data.message});
     },
     cancel(){
@@ -187,7 +187,7 @@ export default {
       this.close();
     },
     onTablePagination(page){
-      console.log(page);
+      // console.log(page);
       this.pageInfo.page = page.page;
       this.pageInfo.size = page.size;
       this.doQuery();

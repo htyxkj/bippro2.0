@@ -66,6 +66,7 @@
 }
 </style>
 <script>
+import Stomp from 'stompjs';
 export default {
   name: 'hello',
   data () {
@@ -73,8 +74,12 @@ export default {
       msg: 'Welcome to Your Vue.js App',
       title:'',
       showDialog:false,
-      checkbox3:[]
+      checkbox3:[],
+      client: Stomp.client(global.MQTT_SERVICE)
     }
+  },
+  created () {
+    this.connect()
   },
   methods:{
     selectData(_data){
@@ -91,7 +96,31 @@ export default {
     ccc(){
       console.log(this);
       this.$refs['cc'].open('fdsfds');
-    }
+    },
+    connect() {
+      //初始化mqtt客户端，并连接mqtt服务
+      var clientid = '1';
+      var headers = {
+        'login': global.MQTT_USERNAME,
+        'passcode': global.MQTT_PASSWORD,
+        // 'client-id': clientid
+        // additional header
+      }
+      this.client.connect(headers, this.onConnected, this.onFailed)
+    },
+    onConnected(frame) {
+      console.log('Connected: ' + frame)
+      var topic = '/topic/jt_test_queue'  
+      //订阅频道
+      this.client.subscribe(topic, this.responseCallback, this.onFailed) 
+    },
+    onFailed: function (frame) {
+      console.log('Failed: ' + frame)
+    },
+    responseCallback: function (frame) {
+      console.log('responseCallback msg=>' + frame.body)
+      // 接收消息
+    },
   },
   mounted(){
   }

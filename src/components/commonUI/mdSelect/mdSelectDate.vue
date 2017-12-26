@@ -2,7 +2,7 @@
 $dateWidth:300px;
 $dateFW:300;
 .cov-date-body {
-  background: #009688;
+  background: #2196f3;
   overflow: hidden;
   font-size: 16px;
   font-family: 'san';
@@ -447,6 +447,8 @@ export default {
         })
         if (i === Math.ceil(moment(currentMoment).format('D')) && moment(oldtime, this.option.format).year() === moment(currentMoment).year() && moment(oldtime, this.option.format).month() === moment(currentMoment).month()) {
           days[i - 1].checked = true
+        }else if(this.checked.day == i){
+          days[i - 1].checked = true;
         }
         this.checkBySelectDays(i, days)
       }

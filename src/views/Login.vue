@@ -67,7 +67,7 @@ export default {
         var res = await this.getDataByAPINew(logindata);
         this.loginSuccess(res);
       }catch(e){
-        this.$notify.danger({content: '系统连接错误！'})
+        this.$notify.danger({content: '系统连接错误！'});
       }
       this.loading--;
     },

@@ -106,7 +106,7 @@ export default {
       this.isShow = false
       setTimeout(() => {
         this.$destroy();
-        console.log(this);
+        // console.log(this);
         this.$el.remove();
       }, 100)
     },

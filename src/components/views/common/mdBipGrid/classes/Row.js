@@ -20,33 +20,34 @@ export default class Row {
       if(id==='' || id ===undefined){
         return '';
       }
-      // if((column.attr&0x10000)==0){
-      //   return id;
-      // }
-      
       var val = null;
       var bref = false;
       if(column.refValues&&column.refValues.values){
         bref = true;
-        _.forEach(column.refValues.values,(item,index)=>{
-          if(item[column.refValues.cols[0]] === id){
-            if((column.attr&0x10000)>0){
-              val = item[column.refValues.cols[1]];
-            }else{
-              val =id;
+        if(column.refValue){
+          _.forEach(column.refValues.values,(item,index)=>{
+            if(item[column.refValues.cols[0]] === id){
+              if((column.attr&0x40000)>0){
+                val = id;
+              }else{
+                val = item[column.refValues.cols[1]];
+              }
             }
-            // val = item[column.refValues.cols[1]];
-          }
-        });
+          });
+        }else{
+          val = id;
+        }
       }
       if(val){
         return val;
         // return id;
       }else{
-        val = this.getAssistDataByAPICout(column.refId,id,res=>{
-          if(bref){
+        this.getAssistDataByAPICout(column.refId,id,res=>{
+          // console.log(11111,res);
+          if(column.refValues){
             let values = res.data.values;
             _.forEach(values,(row,index)=>{
+              // console.log(row,111);
               column.refValues.values.push(row);
             });
           }else{
@@ -55,6 +56,7 @@ export default class Row {
             column.refValues.values = res.data.values;
           }
         });
+        // console.log(column);
         return id;
       }
       return id;

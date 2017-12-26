@@ -3,6 +3,7 @@ import BillState from './billState'
 import common from '../../core/utils/common.js';
 import scriptProc from './BipScriptProc';
 import BipScriptProc from './BipScriptProc';
+import billState from './billState';
 // 整体的数据类型
 export default class CDataSet {
   constructor(ccells) {
@@ -68,7 +69,7 @@ export default class CDataSet {
     if(cell){
       const attr = cell.attr;
       if ((attr & 0x100000) > 0) {
-        console.log('多列计算')
+        // console.log('多列计算')
         this.checkMulCols(cell);
       }
     }
@@ -143,11 +144,29 @@ export default class CDataSet {
     }
     var delRow = _.pullAt(this.cdata,row);
     this.cdata = _.without(this.cdata,delRow);
-    console.log(this.cdata);
+    // console.log(this.cdata);
     if(!(delRow.sys_stated&BillState.INSERT)==0){
       delRow.sys_stated = 4;
       this.removeData.push(delRow);
     }
+    if(this.ds_par){
+      var cell = this.ccells.cels[this.x_pk];
+      if(cell&&cell.type==5){
+        for(let i=0;i<this.cdata.length;i++){
+          var itemRow = this.cdata[i];
+          var itmId = itemRow[cell.id] ;
+          var newId = (i+1)+'';
+          if(itmId !== newId){
+            itemRow[cell.id] = newId;
+          }
+          itemRow.sys_stated = itemRow.sys_stated|billState.EDITED|billState.INSERT;
+          this.cdata[i] = itemRow;
+          this.ds_par.currRecord.sys_stated = this.ds_par.currRecord.sys_stated|billState.REPLACESUB;
+        }
+      }
+      this.ds_par.currRecord.sys_stated = this.ds_par.currRecord.sys_stated | billState.EDITED;
+    }
+
     if(row==0){
       if(this.cdata.length==0){
         this.currRecord = undefined;
@@ -164,16 +183,13 @@ export default class CDataSet {
     if(this.ds_par){
       this.ds_par.currRecord[this.ccells.obj_id] = this.cdata;
     }
-    // this.cdata = _.remove(this.cdata, (n) => {
-    //   return n === row;
-    // });
   }
 
   deleteRecord(row){
     var rowIndex =  _.findIndex(this.cdata, (chr) => {
       return chr == row;
     });
-    console.log(rowIndex,row,'fdsfdsf');
+    // console.log(rowIndex,row,'fdsfdsf');
     this.deleteRow(rowIndex);
     // this.cdata = _.remove(this.cdata,(n) =>{
     //   if(n === row){
@@ -293,7 +309,7 @@ export default class CDataSet {
           iniVl = parseInt(iniVl) + '';
         }
       }
-      modal[item.id] = iniVl;
+      modal[item.id] = iniVl?iniVl:'';
       // this.$set(modal, item.id, iniVl);
     });
     return modal;

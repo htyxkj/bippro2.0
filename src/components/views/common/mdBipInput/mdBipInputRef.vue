@@ -29,7 +29,6 @@ export default {
       }else{
         this.oldValue = '';
       }
-      // console.log(this.oldValue,this.cell.id);
     }
     this.initVV();
   },
@@ -42,6 +41,7 @@ export default {
         this.onBlur();
       }else{
         this.refValue='';
+        this.refData = {};
         // console.log(this.refData);
       }
     },
@@ -65,7 +65,7 @@ export default {
       }
     },
     makeRefInput(data){
-      console.log(this.cell);
+      // console.log(this.cell);
       if (this.cell.refValue) {
         this.refValue = data.value[data.cols[1]];
       } else {
@@ -153,19 +153,12 @@ export default {
     getCallError(res){
       this.$notify.danger({content: res.data.message});
     },
-    // parentChange(){
-    //   console.log('parentChange');
-    //   this.initVV();
-    // }
   }, 
   watch:{
     modal(){
-      // console.log('modalcc');
+      this.oldValue = this.modal[this.cell.id];
       this.initVV();
     },
-    // refValue(){
-    //   this.initVV();
-    // }
   } 
 }
 </script>

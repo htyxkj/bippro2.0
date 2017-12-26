@@ -69,10 +69,6 @@ export default {
   },
   watch: {
     value(value) {
-      // if (!common.isObject(value)) {
-      //   value = null;
-      // }
-      console.log(value);
       this.setValue(value);
     },
     selectedValues(v) {
@@ -89,7 +85,7 @@ export default {
   },
   methods: {
     setValue(value) {
-      console.log("select values", this.selectedValues);
+      // console.log("select values", this.selectedValues);
       this.setParentValue(value);
     },
     openRef() {
@@ -107,7 +103,6 @@ export default {
         this.refInfo.cols = parentRefs.cols;
         this.refInfo.value = [];
         var vv = this.value.split(';')||this.value.split(',');
-        // console.log(vv);
         _.forEach(vv,v =>{
           _.forEach(parentRefs.values,item=>{
             if(item[this.refInfo.cols[0]]==v){
@@ -156,7 +151,6 @@ export default {
         this.selectedValues.push(value);
         const _ii = this.getColumnValueIndex(value);
         if (_ii < 0) {
-          console.log(value);
           this.$parent.$parent.column.refValues.cols = this.cols;
           if(!this.$parent.$parent.column.refValues.values){
             this.$parent.$parent.column.refValues.values = [];
@@ -247,10 +241,10 @@ export default {
       }
       return this.selectedValues;
     },
-    getCallBack(res) {
-      console.log(res);
-    },
-    getCallError(res) {}
+    // getCallBack(res) {
+    //   console.log(res);
+    // },
+    // getCallError(res) {}
   },
   mounted() {
     this.$nextTick(() => {
