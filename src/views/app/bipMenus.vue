@@ -13,7 +13,7 @@
         </router-link>
       </md-list-item>
       </div>
-      <bip-menu v-for="(mm,index) in menus" :key="mm.menuId" :menuItem="mm"></bip-menu>
+      <bip-menu v-for="mm in menus" :key="mm.menuId" :menuItem="mm"></bip-menu>
       <div>
       <!-- <md-list-item>
         <router-link exact to="/ht">
@@ -22,9 +22,15 @@
         </router-link>
       </md-list-item> -->
       <md-list-item>
-        <router-link exact to="/about">
-          <md-icon>folder</md-icon>
-          <span>系统设置</span>
+        <router-link exact to="/task">
+          <md-icon v-colors="{color:'red-700-0.8'}">send</md-icon>
+          <span>我的任务</span>
+        </router-link>
+      </md-list-item>
+      <md-list-item>
+        <router-link exact to="/msg">
+          <md-icon v-colors="{color:'green-700-0.8'}">message_bulleted</md-icon>
+          <span>我的消息</span>
         </router-link>
       </md-list-item>
       </div>
@@ -43,14 +49,7 @@ export default {
     }
   },
   mounted() {
-    this.menus = JSON.parse(window.sessionStorage.getItem('menulist'))
-    // console.log('menus')
-    // console.log(this.menus)
-    // // this.$refs['mainSidenav'].close()
-    window.addEventListener('hashchange', () => {
-      //this.console('hashchange')
-      // this._self.$refs['mainSidenav'].close();
-    })
+    this.menus = JSON.parse(window.sessionStorage.getItem('menulist'));
   },
   components: { 'bip-menu': BipMenuItem },
   methods: {

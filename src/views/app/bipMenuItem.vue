@@ -11,7 +11,7 @@
         <span>{{menuName}}</span>
          <md-list-expand v-if="menuItem.haveChild">
           <md-list>
-            <bip-menu v-for="(mm,index) in menuItem.childMenu" :key="mm.menuId" :menuItem="mm" class="bip-child-inset"></bip-menu>
+            <bip-menu v-for="(mm) in menuItem.childMenu" :key="mm.menuId" :menuItem="mm" class="bip-child-inset"></bip-menu>
           </md-list>
          </md-list-expand>
     </md-list-item>

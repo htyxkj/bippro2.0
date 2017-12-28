@@ -3,7 +3,8 @@ import Router from 'vue-router'
 import Test from '@/components/Test'
 import CommLayUI from '@/views/common/commonLayUI'
 import Dashbord from '@/views/dashboard/Dashboard'
-
+import Task from '@/views/base/bipTask'
+import Message from '@/views/base/bipMsg'
 Vue.use(Router)
 
 let basePro = window.location.pathname;
@@ -32,6 +33,18 @@ export default new Router({
       path: '/test',
       name: '测试',
       component: Test
+    }
+    ,
+    {
+      path: '/task',
+      name: '任务',
+      component: Task
+    }
+    ,
+    {
+      path: '/msg',
+      name: '任务',
+      component: Message
     }
   ]
 })

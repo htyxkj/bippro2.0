@@ -25,4 +25,5 @@ global.APIID_TM_TASK  = 201;//只获取未处理任务
 global.APIID_TM_TASK_DTL  = 211;//任务明细
 global.APIID_TM_MSG  = 202;//只获取未处理消息
 global.APIID_TM_MSG_DTL  = 212;//只获取未处理消息
+global.APIID_TM_MSG_UPD  = 213;//更新消息状态
 global.APIID_TM_RL  = 249;//重新加载RMQ配置信息

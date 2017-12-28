@@ -39,13 +39,13 @@ export default {
      list(){
        this.blist = true;
      },
-     async getCell(){
-       var pcell = this.mparams.pcell;
-       var data1 = {
-        'dbid': global.DBID,
-        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
-        'apiId': global.APIID_CELLPARAMS,
-        'pcell': pcell
+    async getCell(){
+      var pcell = this.mparams.pcell;
+      var data1 = {
+      'dbid': global.DBID,
+      'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
+      'apiId': global.APIID_CELLPARAMS,
+      'pcell': pcell
       }
       var res = await this.getDataByAPINewSync(data1);
       var data = res.data;

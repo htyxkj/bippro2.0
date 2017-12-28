@@ -76,10 +76,10 @@ export default {
           this.$notify.danger({ content: "没有审批人", placement: "mid-center" });
         } else {
           res = await this.getCeaCheckInfo(this.cea, 34);
-          console.log(res);
+          // console.log(res);
         }
       }
-      console.log(res);
+      // console.log(res);
       if (res.data.id == 0) {
         this.$emit("dataCheckUp", this.stateId);
         this.$notify.success({ content: "提交成功！", placement: "mid-center" });

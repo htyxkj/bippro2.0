@@ -12,9 +12,12 @@
         ref="tabHeader"
         v-wave="!header.disabled" >
         <div class="md-tab-header-container">
-          <md-icon v-if="header.icon">{{ header.icon }}</md-icon>
-          <span v-if="header.label">{{ header.label }}</span>
-          <md-tooltip v-if="header.tooltip" :md-direction="header.tooltipDirection" :md-delay="header.tooltipDelay">{{ header.tooltip }}</md-tooltip>
+              <slot name="header-item" :header="header">
+                <md-icon v-if="header.icon">{{ header.icon }}</md-icon>
+                <md-icon v-else-if="header.iconset" :md-iconset="header.iconset">{{ header.icon }}</md-icon>
+                <md-icon v-else-if="header.iconSrc" :md-src="header.iconSrc"></md-icon>
+                <span v-if="header.label">{{ header.label }}</span>
+              </slot>
         </div>
       </button>
       <span class="md-tab-indicator" :class="indicatorClasses" ref="indicator"></span>

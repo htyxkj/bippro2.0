@@ -88,6 +88,16 @@
     .md-icon {
       margin: 0;
     }
+
+    .label-with-new-badge{
+      font-weight: bolder;
+      .new-badge{
+        background-color: red;
+        color: #fff;
+        padding: 3px;
+        border-radius: 3px;
+      }
+    }
   }
 
   .md-tab-indicator {

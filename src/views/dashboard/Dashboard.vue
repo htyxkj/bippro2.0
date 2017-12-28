@@ -54,16 +54,19 @@
                 </md-table-body>
               </md-table>
             </md-tab>
-            <md-tab md-label="最新邮件">
+            <md-tab md-label="未读消息" >
+              <!-- :md-options="{new_badge: 13}" -->
               <!-- <md-grid :datas="datas" :auto-load="true" :row-focused="false">
                 <md-grid-column field="id" label="id" :width="50" />
                 <md-grid-column field="code" label="编码" :width="50"  editable/>
                 <md-grid-column field="name" label="名称" :width="150"  />
                 <md-grid-column field="date" label="日期" :width="150"  :formatter="formatter" />
               </md-grid> -->
-              <md-grid :datas="datas" :auto-load="true" :row-focused="false" :multiple="false" :showActions="false">
+              <!-- <md-grid :datas="datas" :auto-load="true" :row-focused="false" :multiple="false" :showActions="false">
                 <md-grid-column v-for="(item,index) in cols" :key="index" :field="item.field" :label="item.label" :width="item.width" :hidden="item.field ==='id'" :headerClass="hdcls" :cellClass="hdcls"/>
-              </md-grid>
+              </md-grid> -->
+
+              
             </md-tab>
           </md-tabs>
         </md-card>
@@ -156,8 +159,9 @@ export default {
         'pageSize': 9999,
         'cellid': ''
       }
-      var res = await this.getDataByAPINew(data1);
-      this.getXSCallBack(res);
+      // var res = await this.getDataByAPINew(data1);
+      this.getDataByAPINew(data1,this.getXSCallBack);
+      // this.getXSCallBack(res);
     },
     // async getTaskCallBack(res) {
     //   if (res.data.id == 0) {
@@ -192,7 +196,6 @@ export default {
       }
     },
     dblclick(row) {
-
     },
     setRowColor(_index) {
       _index = _index % 2;

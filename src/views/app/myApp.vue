@@ -38,6 +38,10 @@ export default {
       }else{
         if(this.$route.path == '/' || this.$route.path == '/index'){
           this.mdTitle = '首页';
+        }else if(this.$route.path == '/task'){
+          this.mdTitle = '任务';
+        }else if(this.$route.path == '/msg'){
+          this.mdTitle = '消息';
         }else{
           this.mdTitle = this.$route.path;
         }
@@ -63,7 +67,7 @@ export default {
     this.setTitle();
   },
   watch: {
-    '$route': 'toggle'
+    '$route': 'setTitle'
   }
 };
 </script>

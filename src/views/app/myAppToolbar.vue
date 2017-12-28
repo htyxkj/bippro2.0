@@ -16,23 +16,17 @@
       </md-button>
       <md-menu-content>
         <md-list class="custom-list">
-          <md-subheader class="badge-success">任务</md-subheader>
           <md-list-item class="bip-task-item">
-            <!-- <md-button class="md-icon-button md-list-action"> -->
-              <md-icon class="md-accent">access_time</md-icon>
-            <!-- </md-button> -->
-            <div class="md-table-cell-container">未处理renw</div>
-            <span class="badge badge-info" >+{{taskNum}}</span>
-            <md-divider></md-divider>
+            <router-link to='/task' @click.native="selItem">
+              <div class="md-table-cell-container">我的任务</div>
+              <span class="badge badge-info" >+{{taskNum}}</span>
+            </router-link>
           </md-list-item>
-          <md-subheader class="badge-warning">消息</md-subheader>
           <md-list-item class="bip-task-item">
-            <md-button class="md-icon-button md-list-action">
-              <md-icon class="md-accent">access_time</md-icon>
-            </md-button>
-            <div class="md-table-cell-container">未处理消息</div>
-            <span class="badge badge-success" >+{{msgNum}}</span>
-            <md-divider></md-divider>
+            <router-link to='/msg' @click.native="selItem">
+              <div class="md-table-cell-container">我的消息</div>
+              <span class="badge badge-success" >+{{msgNum}}</span>
+            </router-link>
           </md-list-item>
         </md-list>
       </md-menu-content>
@@ -142,12 +136,14 @@ export default {
       if (info.type === 1) {
         if (this.taskNum !== info.count) {
           this.taskNum = info.count;
-          this.$notify.warning({ content: "您有" + this.taskNum + "条任务未处理！" });
+          if(this.taskNum>0)
+            this.$notify.warning({ content: "您有" + this.taskNum + "条任务未处理！" });
         }
       }
       if (info.type === 2) {
         this.msgNum = info.count;
-        this.$notify.info({ content: "您有" + this.msgNum + "条消息未处理！" });
+        if(this.msgNum>0)
+          this.$notify.info({ content: "您有" + this.msgNum + "条消息未处理！" });
       }
       console.log(frame);
       // 接收消息
@@ -165,6 +161,11 @@ export default {
     },
     disconnect() {
       this.client.disconnect();
+    },
+    selItem(path1){
+      // console.log(path1);
+      // this.$router.push({ path: path1 })
+      this.$refs.taskMSG.close()
     }
   },
   mounted() {
@@ -232,13 +233,7 @@ export default {
 .md-button.md-icon-button {
   border-radius: 0;
 }
-.md-subheader {
-  &.bip-task {
-    background-color: aquamarine;
-    min-height: .38rem;
-    margin-top: .0rem;
-  }
-}
+
 .md-list-item.bip-task-item{
     &.md-list-item-container{
       height: 0.48rem;

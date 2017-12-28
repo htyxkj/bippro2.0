@@ -7,6 +7,8 @@ import Chart from './charts';
 import Excel from './excel';
 import Cwork from './cwork';
 import BI from './bi'
+import taskApp from './taskApp'
+import msgDia from './mdBipMsgDialog'
 export default function install(Vue) {
   if (install.installed) {
     console.warn('Vue core is already installed.');
@@ -19,7 +21,8 @@ export default function install(Vue) {
   // Vue.use(ReportUI);
   Vue.use(Cwork);
   Vue.use(Applet);
-  // Vue.use(Bill);
+  Vue.prototype.$msgDialog = msgDia;
+  Vue.use(taskApp);
   Vue.use(Chart);
   Vue.use(Excel);
   Vue.use(BI);

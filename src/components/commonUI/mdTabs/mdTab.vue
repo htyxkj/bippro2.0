@@ -9,14 +9,19 @@
   import getClosestVueParent from '../../core/utils/getClosestVueParent';
 
   export default {
+    name: 'md-tab',
     props: {
       id: [String, Number],
       mdLabel: [String, Number],
       mdIcon: String,
+      mdIconset: String,
+      mdIconSrc: String,
       mdActive: Boolean,
       mdDisabled: Boolean,
+      mdOptions: {
+        default: undefined
+      },
       mdTooltip: String,
-      mdTag: String,
       mdTooltipDelay: {
         type: String,
         default: '0'
@@ -44,6 +49,18 @@
       mdIcon() {
         this.updateTabData();
       },
+      mdIconset() {
+        this.updateTabData();
+      },
+      mdIconSrc() {
+        this.updateTabData();
+      },
+      mdOptions: {
+        deep: true,
+        handler() {
+          this.updateTabData();
+        }
+      },
       mdLabel() {
         this.updateTabData();
       },
@@ -55,10 +72,7 @@
       },
       mdTooltipDirection() {
         this.updateTabData();
-      },
-      mdTag() {
-        this.updateTabData();
-      },
+      }
     },
     computed: {
       styles() {
@@ -74,12 +88,14 @@
           id: this.tabId,
           label: this.mdLabel,
           icon: this.mdIcon,
+          iconset: this.mdIconset,
+          iconSrc: this.mdIconSrc,
+          options: this.mdOptions,
           active: this.mdActive,
           disabled: this.mdDisabled,
           tooltip: this.mdTooltip,
           tooltipDelay: this.mdTooltipDelay,
           tooltipDirection: this.mdTooltipDirection,
-          tag:this.mdTag,
           ref: this
         };
       },
