@@ -46,8 +46,11 @@ export default class Row {
           // console.log(11111,res);
           if(column.refValues){
             let values = res.data.values;
+            if(!column.refValues.values){
+              column.refValues.values = [];
+            }
             _.forEach(values,(row,index)=>{
-              // console.log(row,111);
+              console.log(row,111,column.refValues);
               column.refValues.values.push(row);
             });
           }else{

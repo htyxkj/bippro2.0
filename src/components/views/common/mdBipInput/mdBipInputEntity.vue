@@ -97,7 +97,6 @@ export default {
     onRefClose(resdata) {
       if (resdata) {
         this.refInfo = resdata;
-        // this.refData = this.refInfo.value;
       }else if(this.value){
         var parentRefs = this.$parent.$parent.column.refValues;
         this.refInfo.cols = parentRefs.cols;
@@ -155,7 +154,7 @@ export default {
           if(!this.$parent.$parent.column.refValues.values){
             this.$parent.$parent.column.refValues.values = [];
           }
-            this.$parent.$parent.column.refValues.values.push(value);
+          this.$parent.$parent.column.refValues.values.push(value);
         }
         const nv = this.formatValue();
         this.$emit("input", nv);
@@ -189,12 +188,6 @@ export default {
         ) {
           return i;
         }
-        if (
-          value[this.cols[1]] &&
-          this.selectedValues[i][this.cols[1]] == value[this.cols[1]]
-        ) {
-          return i;
-        }
       }
       return -1;
     },
@@ -208,12 +201,12 @@ export default {
           ) {
             return i;
           }
-          if (
-            value[this.cols[1]] &&
-            values[i][this.cols[1]] == value[this.cols[1]]
-          ) {
-            return i;
-          }
+          // if (
+          //   value[this.cols[1]] &&
+          //   values[i][this.cols[1]] == value[this.cols[1]]
+          // ) {
+          //   return i;
+          // }
         }
       }
       return -1;
@@ -237,7 +230,6 @@ export default {
         } else {
           return "";
         }
-        // return this.selectedValues.length ? this.selectedValues[0] : null;
       }
       return this.selectedValues;
     },

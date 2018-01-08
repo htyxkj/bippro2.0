@@ -15,7 +15,7 @@ export default {
   },
   methods:{
     getFile(file){
-      console.log(file);
+      // console.log(file);
     }
   }
 }

@@ -47,7 +47,7 @@
         };
       },
       realValue() {
-        console.log(this.value);
+        // console.log(this.value);
       }
     },
     methods: {

@@ -78,16 +78,17 @@ export default {
       }
     },
     onBlur(){
-      // console.log('fdsfds',this.refData);
+      console.log('fdsfds',this.refData);
       if (this.refData.cols){
         if(this.refValue ===''){
           this.refData.value[this.refData.cols[0]]="";
           this.refData.value[this.refData.cols[1]]="";
           this.refData.oldValue = this.oldValue;
-          if(this.refData.value[this.refData.cols[0]] !== this.oldValue){
-            this.$set(this.modal,this.cell.id,'');
-            this.$emit('change',this.refData);
-          }
+          // if(this.refData.value[this.refData.cols[0]] !== this.oldValue){
+          this.$set(this.modal,this.cell.id,'');
+          
+          this.$emit('change',this.refData);
+          // }
         }else{
           if(this.refValue==this.refData.value[this.refData.cols[0]]){
             this.$set(this.modal,this.cell.id,this.refValue);

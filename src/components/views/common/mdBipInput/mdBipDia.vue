@@ -146,10 +146,13 @@ export default {
         this.refData = data.values;
         this.pageInfo.total = data.total;
         this.pageInfo.size = data.size;
-      }else if (data.code==0){
-        this.$notify.warning({content: data.message});
-      }else{
-        this.$notify.danger({content: data.message});
+      }
+      // else if (data.code==0){
+      //   // this.$notify.warning({content: data.message});
+      else{
+        this.refData = [];
+        this.pageInfo.total = 0;
+        // this.$notify.danger({content: data.message});
       }
     },
     getCallError(res){
@@ -190,12 +193,12 @@ export default {
       // console.log(page);
       this.pageInfo.page = page.page;
       this.pageInfo.size = page.size;
-      this.doQuery();
+      this.doQuery(this.word);
     }
   },
   watch:{
     word(val){
-      this.doQuery(val)
+      // this.doQuery(val)
     },
   },
  

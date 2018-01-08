@@ -183,7 +183,7 @@ export default {
         if (this.chkinfo.chkInfos) {
           var exitu = "";
           _.forEach(this.chkinfo.chkInfos, item => {
-            if (item.userCode === this.currUser) {
+            if (item.userCode&&item.userCode === this.currUser) {
               exitu = this.currUser;
             }
           });
@@ -200,7 +200,6 @@ export default {
           }
         }
       }
-
       this.$refs["dialog"].open();
     },
     cancel() {
@@ -324,12 +323,19 @@ export default {
         if(this.chkinfo.state === "5"){
           return false;
         }
+        if(this.chkinfo.state === "6" && this.chkinfo.upState === "0"){
+          if(this.currUser === this.billuser){
+            return false;
+          }else{
+            return true;
+          }
+        }
         if (this.chkinfo.checked&&this.chkinfo.chkInfos) {
           if(this.chkinfo.chkInfos[0].userCode === this.currUser)
             return false;
           return true;
         }
-        if (this.currUser === this.chkinfo.upUser.userCode) {
+        if (this.chkinfo.upUser&&this.currUser === this.chkinfo.upUser.userCode) {
           return false;
         } else {
           return true;

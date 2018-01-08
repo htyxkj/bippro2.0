@@ -29,6 +29,8 @@ export default {
     created(){
     },
     toggle() {
+      // if(this.$route.path != '/task' &&this.$route.path != '/msg')
+      console.log(this.$refs.menu);
       this.$refs.menu.toggle();
       this.setTitle();
     },
@@ -67,7 +69,7 @@ export default {
     this.setTitle();
   },
   watch: {
-    '$route': 'setTitle'
+    '$route': 'toggle'
   }
 };
 </script>

@@ -55,7 +55,7 @@
               this.enumInfo = response.data.data;
               window.gmfEnums[enumID]=response.data.data;
             }, response => {
-              console.log(response);
+              // console.log(response);
             });
           }
         }else{

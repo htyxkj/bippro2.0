@@ -77,9 +77,11 @@ export default {
     this.fetchTaskData();
     this.connectQ();
   },
-  beforeDestory(){
-    if(this.isconnt)
+  beforeDestroy(){
+    if(this.isconnt){
       this.disconnect();
+    }
+      
   },
   methods: {
     gotask(){
@@ -101,7 +103,7 @@ export default {
     },
     onConnected: function(frame) {
       this.isconnt = true;
-      console.log("Connected: " + frame);
+      // console.log("Connected: " + frame);
       //订阅频道
       var topic ="/exchange/" +BIPTASK +"/" + BIPTASK +"." +global.DBID +"." +this.userCode;
       this.taskCli.subscribe(topic, this.responseCallback);
@@ -123,7 +125,7 @@ export default {
         cellid: ""
       };
       var res = await this.getDataByAPINew(data1);
-      console.log(res);
+      // console.log(res);
       if (res.data.id == 0) {
         this.taskLayCel = await this.makeCellCL(res.data.data.layCels);
         this.taskValues = res.data.data.pages.celData;
@@ -133,7 +135,7 @@ export default {
       }
     },
     async rowClick(row) {
-      console.log(row);
+      // console.log(row);
       row.brd = 1;
       var pflow = row.buid;
       var data1 = {
@@ -147,7 +149,7 @@ export default {
       if (this.opera) {
         var menuid = this.opera.pmenuid;
         var bb = this.getMenuById(this.menuList, menuid);
-        console.log(bb);
+        // console.log(bb);
         // this.bdj = true;
         if(bb)
           await this.fetchParams(pflow,menuid);
@@ -176,7 +178,7 @@ export default {
         'pageSize': 1,
         'cellid': ''
       }
-      console.log(data1);
+      // console.log(data1);
       var res = await this.getDataByAPINewSync(data1);
       if(res.data.id==0){
         if(this.ds_m.cdata.length>0){
@@ -196,7 +198,7 @@ export default {
       return false;
     },
     onTablePagination(page) {
-      console.log(page);
+      // console.log(page);
       this.pageInfo.size = page.size;
       this.pageInfo.page = page.page;
       this.fetchTaskData();
@@ -234,7 +236,7 @@ export default {
         if (res.data.id == 0) {
           this.mparams = res.data.data.mparams;
         } else {
-          console.log(res);
+          // console.log(res);
           this.$notify.warning({
             content: res.data.message,
             placement: "mid-center"

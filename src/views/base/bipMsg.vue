@@ -101,7 +101,7 @@ export default {
         size:this.pageInfo.size
       };
       var res = await this.getDataByAPINew(data1);
-      console.log(res);
+      // console.log(res);
       if(res.data.id==0){
         this.msgs = res.data.data.page.celData;
         this.pageInfo.page = res.data.data.page.currentPage;
@@ -123,7 +123,7 @@ export default {
         state:2
       };
       var res = await this.getDataByAPINew(data1);
-      console.log(res,'1111');
+      // console.log(res,'1111');
       if(res.data.id==0){
         this.msgs[index].brd = 2;
       }

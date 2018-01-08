@@ -111,7 +111,7 @@
           <md-input-container>
             <label for="ctype">图表类型</label>
             <md-select v-model="ctype">
-              <md-option v-for="(item, index) in chartList"
+              <md-option v-for="(item) in chartList"
                 :key="item.id"
                 :value="item.id">
                 {{item.name}}
@@ -178,7 +178,7 @@ export default {
       }
       var res = await this.getDataByAPINewSync(data1);
       var data = res.data;
-      console.log(data);
+      // console.log(data);
       if(data.id===0){
         var cells = data.data.layCels;
         const celL = cells.length;
@@ -279,7 +279,10 @@ export default {
       }
     },
     list(){
-      this.groupTJ = false;
+      if(this.groupTJ){
+        this.groupTJ = false;
+        this.fetchUIData();
+      }
     },
     searchCount (ref) {
       this.$refs[ref].open();

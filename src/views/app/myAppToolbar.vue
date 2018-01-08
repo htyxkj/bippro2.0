@@ -102,7 +102,7 @@ export default {
     },
     onConnected: function(frame) {
       this.isconnt = true;
-      console.log("Connected: " + frame);
+      // console.log("Connected: " + frame);
       //订阅频道
       var topic =
         "/exchange/" +
@@ -122,16 +122,16 @@ export default {
         global.DBID +
         "." +
         this.user.userCode;
-      console.log(topic, topic1);
+      // console.log(topic, topic1);
       this.client.subscribe(topic, this.responseCallback);
       this.client.subscribe(topic1, this.responseCallback);
       this.taskMsg(global.APIID_TM_ALL);
     },
     onFailed: function(frame) {
-      console.log("Failed: " + frame);
+      // console.log("Failed: " + frame);
     },
     responseCallback: function(frame) {
-      console.log("responseCallback msg=>" + frame.body);
+      // console.log("responseCallback msg=>" + frame.body);
       var info = JSON.parse(frame.body);
       if (info.type === 1) {
         if (this.taskNum !== info.count) {
@@ -145,7 +145,7 @@ export default {
         if(this.msgNum>0)
           this.$notify.info({ content: "您有" + this.msgNum + "条消息未处理！" });
       }
-      console.log(frame);
+      // console.log(frame);
       // 接收消息
     },
     connectQ: function() {

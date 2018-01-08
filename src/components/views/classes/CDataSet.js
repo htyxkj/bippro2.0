@@ -304,7 +304,7 @@ export default class CDataSet {
       }
       if (item.type <= 5) {
         if (iniVl == undefined)
-          iniVl = 0 + '';
+          iniVl = '';
         else {
           iniVl = parseInt(iniVl) + '';
         }

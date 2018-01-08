@@ -33,6 +33,10 @@ export default {
           var selectList = this.cell.refValue.split(";");
           // console.log(selectList)
           _(this.values).take(0);
+          if(!this.cell.isReq){
+            var item = { code: '', name: '' };
+            this.values.push(item);
+          }
           for (let i = 0; i < selectList.length; i++) {
             var key = selectList[i];
             var datas = key.split(":");
@@ -80,6 +84,10 @@ export default {
         }
         if (data.code == 1) {
           this.values = data.values;
+          if(!this.cell.isReq){
+            var item = { code: '', name: '' };
+            this.values.splice(0, 0, item);  
+          }
         }
       }
     },

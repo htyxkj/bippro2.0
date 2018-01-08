@@ -262,7 +262,7 @@ export default {
         var item = this.chartData[i];
         var name = await this.getGroupFldName(item);
         categories.push(name);
-        console.log(categories,name);
+        // console.log(categories,name);
         _.each(this.groupdatafilds, (fld, key1) => {
           let colname = this.getFldName(fld);
           var _idx = _.findIndex(series, function(im) {

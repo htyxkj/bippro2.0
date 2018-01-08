@@ -213,7 +213,7 @@
       content: " ";
       position: absolute;
       left: 0;
-      background: #009688;
+      background: #a3b4b3; //选中行
       width: 3px;
       height: 100%;
       top: 0;
@@ -237,11 +237,11 @@
       height: .35rem;
     }
     tr.focused.row-focused {
-      background: #0ec2aa;
-      color: #fff;
+      background: #d6e9e6;
+      color: #000;
       td,
       th {
-        border-right-color: #5ad6c1;//选中边框颜色
+        border-right-color: #cfe2df;//选中边框颜色
       }
     }
   }
