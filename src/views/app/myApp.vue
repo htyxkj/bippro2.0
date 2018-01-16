@@ -30,7 +30,7 @@ export default {
     },
     toggle() {
       // if(this.$route.path != '/task' &&this.$route.path != '/msg')
-      console.log(this.$refs.menu);
+      // console.log(this.$refs.menu);
       this.$refs.menu.toggle();
       this.setTitle();
     },

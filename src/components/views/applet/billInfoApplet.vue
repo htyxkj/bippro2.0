@@ -311,7 +311,13 @@ export default {
     formatter(value, data, column) {
       if (column.dataType === "numeric") {
         let pit = column.ccPoint;
-        value = common.formatDecimal(value, { precision: pit });
+        // console.log(value,typeof(value));
+        const v = Number.parseFloat(value);
+        if(v !== 0)
+          value = common.formatDecimal(value, { precision: pit });
+        else{
+          value = '';
+        }
         // data[column.field] = value;
         return value;
       }

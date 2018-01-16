@@ -349,25 +349,28 @@ export default {
   },
   data() {
     function hours() {
-      let list = []
-      let hour = 24
+      let list = [];
+      let hour = 24;
+      let now = moment().hour();
       while (hour > 0) {
-        hour--
-        list.push({
-          checked: false,
+        hour--;
+        var item = {
+          checked: now=== hour?true:false,
           value: hour < 10 ? '0' + hour : hour
-        })
+        };
+        list.push(item);
       }
-      return list
+      return list;
     }
 
     function mins() {
       let list = []
-      let min = 60
+      let min = 60;
+      let now = moment().minute();
       while (min > 0) {
-        min--
+        min--;
         list.push({
-          checked: false,
+          checked: min==now?true:false,
           value: min < 10 ? '0' + min : min
         })
       }
@@ -711,7 +714,9 @@ export default {
     }
   },
   mounted() {
-
+    this.checked.hour = moment().hour();
+    this.checked.min = moment().minute();
+    console.log(this.checked);
   }
 };
 </script>

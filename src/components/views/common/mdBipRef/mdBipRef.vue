@@ -1,5 +1,10 @@
 <template>
-  <div class="md-bip-ref">{{refData.name | formartObj(bipRefId,refData.name)}}</div>
+  <div class="md-bip-ref">
+    <template v-if="bpk"><a @click="pkclick">{{refData.name | formartObj(bipRefId,refData.name)}}</a></template>
+    <template v-else>
+      {{refData.name | formartObj(bipRefId,refData.name)}}
+    </template>
+  </div>
 </template>
 <script>
 import common from '../../commonModal.js'
@@ -19,12 +24,26 @@ export default {
     // if(this.inputValue)
       this.initValue();
   },
+  computed:{
+    bpk(){
+      if(this.bipRefId){
+        if((this.bipRefId.attr&1)>0){
+          return true;
+        }
+      }
+        return false;
+    }
+  },
   watch: {
     'inputValue': function () {
       this.initValue();
     }
   },
   methods: {
+    pkclick(){
+      console.log(11);
+      this.$emit('pkclick');
+    },
     initValue(){
       this.refData.code = this.inputValue;
       this.refData.name = this.inputValue;
@@ -79,6 +98,14 @@ export default {
 .md-bip-ref{
   width: 100%;
   height: 100%;
+  a{
+    color: rgba(10, 61, 83, 0.76);
+    // text-decoration-line: underline;
+  }
+  a:hover{
+    color: red;
+    font-weight:bold;
+  }
 }
 </style>
 

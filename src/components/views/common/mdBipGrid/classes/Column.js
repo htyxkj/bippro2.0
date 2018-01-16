@@ -16,6 +16,9 @@ export default class Column {
     for (const property in properties) {
       this[property] = mixins[property];
     }
+    if((this.attr&0x40)>0){
+      this.editable = false;
+    }
     if (mixins.$scopedSlots && mixins.$scopedSlots.default) {
       this.template = mixins.$scopedSlots.default;
     }

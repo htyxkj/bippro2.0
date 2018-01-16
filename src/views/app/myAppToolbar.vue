@@ -94,10 +94,8 @@ export default {
       this.$emit("toggle");
     },
     async logOut() {
-      // console.log(111111);
-      // var res = await this.logout();
-      // console.log(res);
-      this.disconnect();
+      if(this.isconnt)
+        this.disconnect();
       this.$emit("logout");
     },
     onConnected: function(frame) {

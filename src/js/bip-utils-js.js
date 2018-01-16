@@ -110,7 +110,7 @@ export default {
       return returnobj;
     }
 
-        // 同步获取资源
+        // 同步获取文件资源
     Vue.prototype.getFileByAPINewSync = async function (posParams) {
       const url = global.BIPAPIURL+global.API_UPD;
       var returnobj  = await axios.post(url, qs.stringify(posParams))
