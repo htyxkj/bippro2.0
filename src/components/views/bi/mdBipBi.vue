@@ -15,6 +15,9 @@
         <md-button @click.native="searchCount('dialog')">统计</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
+        <md-button @click.native="exportFile()">导出Ex</md-button>
+      </md-part-toolbar-group>
+      <md-part-toolbar-group>
           <md-button @click.native="showSearchInfo">{{showContLabel}}</md-button>
       </md-part-toolbar-group>
       <span class="flex"></span>
@@ -133,7 +136,8 @@
 <script>
 import CDataSet from '../classes/CDataSet';
 import billS from '../classes/billState';
-import common from '../commonModal.js'
+import common from '../commonModal.js';
+// import util from '../classes/excelUtils';
 export default {
   data(){
     return {
@@ -168,6 +172,40 @@ export default {
   mixins:[common],
   props: ['mdTitle','mparams'],
   methods:{
+    async exportFile(){
+      if(this.ds_m.cdata.length==0)
+        return ;
+      var header = [];
+      var _data = {};
+      for(let i=0;i<this.ds_m.ccells.cels.length;i++){
+        const cell = this.ds_m.ccells.cels[i];
+        header[i] = cell.id;
+        _data[cell.id] = cell.labelString;
+      }
+      // var arr = [];
+      var cdata = this.ds_m.cdata;
+      if(this.pageInfo.total>this.ds_m.cdata.length){
+        // console.log('big fff，服务端导出数据');
+        let pdata = JSON.stringify(this.ds_cont.currRecord);
+        let data1 = {
+          dbid: global.DBID,
+          usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+          apiId: global.APIID_EXPDATA,
+          pcell: this.ds_m.pcell,
+          pdata: pdata,
+          bebill: 0,
+          currentPage: 1,
+          pageSize: this.pageInfo.total,
+          cellid: this.ds_m.ccells.obj_id
+        };
+        var res = await this.downFile(data1);
+        const content = res.data;
+        this.exportFilesServ(content,this.mdTitle);
+      }else{
+        this.exportFiles(header,cdata,_data,'',this.mdTitle);
+      }      
+    },
+
     async getCell(){
        var pcell = this.mparams.pcell;
        var data1 = {

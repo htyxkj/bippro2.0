@@ -8,6 +8,7 @@ global.APIID_AID = 'assist';
 global.APIID_AIDO = 'assisto';
 global.APIID_VAR = 'variable';
 global.APIID_FINDDATA = 'finddata';
+global.APIID_EXPDATA = 'expdata';
 global.APIID_FINDCELLDATA = 'findcelldata';
 global.APIID_SAVEDATA = 'savedata';
 global.APIID_CHKUP = 'chkup';

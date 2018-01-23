@@ -341,11 +341,12 @@ export default {
         pdata: count,
         bebill: 1,
         currentPage: 1,
-        pageSize: 20,
+        pageSize: 99999,
         cellid: objId
       };
       // console.log(data1, "findChild");
       var res = await this.getDataByAPINewSync(data1);
+      console.log(res);
       if (res.data.id === 0) {
         this.dsm.currRecord[objId] = res.data.data.pages.celData;
         subdsm.cdata = res.data.data.pages.celData;
@@ -444,6 +445,7 @@ export default {
         var crd = this.dsm.currRecord;
         if (crd) {
           var state = crd[this.opera.statefld];
+          state = state ===''?'0':state;
           if (state === '0' || state === '1') {
             return true;
           }

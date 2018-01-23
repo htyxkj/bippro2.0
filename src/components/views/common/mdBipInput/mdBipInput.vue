@@ -1,5 +1,5 @@
 <template>
-  <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" v-if="cell.isShow">
+  <md-layout md-flex-xsmall="100" :md-flex-small="callsmall" :md-flex-medium="callmedium" :md-flex-large="calllarge" v-if="cell.isShow">
     <slot name="editor"></slot>
     <template v-if="inputType == INPUT_COMMON" >
       <md-bip-input-comm :cell="cell" :modal="modal"  :ref="cell.id" @change="dataChange"></md-bip-input-comm>
@@ -38,6 +38,39 @@ export default {
       // console.log('modal input');
       // this.onBlur();
     }
+  },
+  computed:{
+    callsmall(){
+      if(this.cell){
+        const w = this.cell.ccHorCell>0?this.cell.ccHorCell:1;
+        if(w === 1) {
+          return "50";
+        }else{
+          return "100";
+        }
+      }
+    },
+    callmedium(){
+      if(this.cell){
+        const w = this.cell.ccHorCell>0?this.cell.ccHorCell:1;
+        if(w === 1) {
+          return "33";
+        }else if(w===2){
+          return "66";
+        }else{
+          return "100";
+        }
+      }
+    },
+    calllarge(){
+      const i = 25;
+      if(this.cell){
+        const w = this.cell.ccHorCell>0?this.cell.ccHorCell:1;
+        const t = w*i;
+        return t>100?"100":t+'';
+      }
+    }
+
   },
   methods: {
     dataChange (data) {
@@ -90,7 +123,6 @@ export default {
     list(){
       this.$emit('list');
     }
-
   }
 }
 </script>

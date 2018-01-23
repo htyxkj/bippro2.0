@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     pkclick(){
-      console.log(11);
+      // console.log(11);
       this.$emit('pkclick');
     },
     initValue(){

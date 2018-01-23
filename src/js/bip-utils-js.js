@@ -110,6 +110,25 @@ export default {
       return returnobj;
     }
 
+    // 同步获取资源
+    Vue.prototype.downFile = async function (posParams) {
+      const url = global.BIPAPIURL+global.API_COM;
+
+      var returnobj  = await axios({
+        method:'post',
+        url:url,
+        responseType:'arraybuffer',
+        data: qs.stringify(posParams)
+      })
+        .then(function(res){
+          return res;
+        })
+        .catch(function(res){
+          return res;
+        });
+      return returnobj;
+    }
+
         // 同步获取文件资源
     Vue.prototype.getFileByAPINewSync = async function (posParams) {
       const url = global.BIPAPIURL+global.API_UPD;

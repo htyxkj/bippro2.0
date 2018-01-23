@@ -8,6 +8,7 @@
         <md-button @click.native="delList">删除</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
+        <md-button @click.native="exportFile" :disabled="canexp">导出</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-pager @paging="paging" :options="pager"></md-part-toolbar-pager>
       <span class="flex"></span>
@@ -70,6 +71,7 @@
 </template>
 <script>
 import BillState from '../classes/billState';
+import common from '../commonModal.js';
 export default {
   data () {
     return {
@@ -89,6 +91,7 @@ export default {
       }
     }
   },
+  mixins:[common],
   props: {dsm:Object,dsext:Array,dscont:Object,mdTitle:String,opera:Object},
   created(){
     if(this.dsm){
@@ -96,6 +99,36 @@ export default {
     }
   },
   methods:{
+    async exportFile(){
+      if(this.dsm.cdata.length==0)
+        return ;
+      var header = [];
+      var _data = {};
+      for(let i=0;i<this.dsm.ccells.cels.length;i++){
+        const cell = this.dsm.ccells.cels[i];
+        header[i] = cell.id;
+        _data[cell.id] = cell.labelString;
+      }
+      var cdata = this.dsm.cdata;
+      if(this.pageInfo.total>this.dsm.cdata.length){
+        let data1 = {
+          dbid: global.DBID,
+          usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+          apiId: global.APIID_EXPDATA,
+          pcell: this.dsm.pcell,
+          pdata: '',
+          bebill: 0,
+          currentPage: 1,
+          pageSize: this.pageInfo.total,
+          cellid: this.dsm.ccells.obj_id
+        };
+        var res = await this.downFile(data1);
+        const content = res.data;
+        this.exportFilesServ(content,this.mdTitle);
+      }else{
+        this.exportFiles(header,cdata,_data,'',this.mdTitle);
+      }
+    },
     pkclick(row){
       console.log(row);
     },
@@ -117,13 +150,13 @@ export default {
     onTableSelect(item){
       this.selectData = item;
     },
-    setRowColor(_index){
-      _index = _index % 2;
-      if ( _index !== 0){
-        return true;
-      }
-      return false;
-    },
+    // setRowColor(_index){
+    //   _index = _index % 2;
+    //   if ( _index !== 0){
+    //     return true;
+    //   }
+    //   return false;
+    // },
     onTablePagination (pager) {
       this.pageInfo.page = pager.page;
       this.pageInfo.size = pager.size;
@@ -161,11 +194,11 @@ export default {
       }
       this.loading--;
     },
-    numRed (vals,cell) {
-      if(cell.type === 3 &&vals<0)
-        return true;
-      return false;
-    },
+    // numRed (vals,cell) {
+    //   if(cell.type === 3 &&vals<0)
+    //     return true;
+    //   return false;
+    // },
     dblclick(row,index){
       // console.log(row,index);
       this.dsm.currRecord = row;
@@ -218,6 +251,16 @@ export default {
         this.initInfo();
         this.fetchUIData();
       }
+    }
+  },
+  computed:{
+    canexp(){
+      if(this.dsm){
+        if(this.dsm.cdata.length>0){
+          return false;
+        }
+      }
+      return true;
     }
   }
 }

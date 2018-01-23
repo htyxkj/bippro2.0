@@ -22,21 +22,19 @@ export default class BipScriptProc {
       // TODO 后续处理
     } else {
       s0 = this.expcalc(s0, true);
-      // console.log(s0);
       return this.keepRound(s0, cell); //;--单行公式
     }
+    return "";//处理其他运算
   }
 
   expcalc(s0, istrue) {
-    if (typeof (s0) == 'string') {
+    if (typeof (s0) === 'string') {
       s0 = this.bdstovec(s0);
     }
-    if (typeof (s0) == 'object') {
+    if (typeof (s0) === 'object') {
       var bb = [];
       return this.expcalc1(s0, bb, 0, s0.length);
     }
-    // console.log(s0);
-    // console.log(typeof (s0));
     return s0;
   }
 
@@ -96,6 +94,7 @@ export default class BipScriptProc {
             }
             bufs[idx] = ov;
           } else {
+            console.log(sv0);
             bufs[idx] = this.expItem(sv0, true);
           }
         } else {
@@ -126,9 +125,88 @@ export default class BipScriptProc {
     var c0 = s0.charAt(0);
     var bfh = c0 == '-';
     if (bfh || (c0 >= '0' && c0 <= '9')) {
+      if(s0.indexOf('.')>0)
+        return new Number(s0);
+      c0 = x1 > 1 ? s0.charAt(1) : '0';
+      let x0 = 0, ird = 10;
+      if (c0 === 'X' || c0 === 'x') {
+        x0 = bfh ? 3 : 2;
+        ird = 16;//;--16进制。
+      }
+      c0 = s0.charAt(x1);
+      let bL = c0 === 'L' || c0 === 'l';
+      if (x0 > 0 || bL) {
+        s0 = s0.substring(x0, bL ? x1 : x1 + 1);
+        if (x0 === 3)
+          s0 = "-" + s0;
+      }
       return new Number(s0);
     }
+    if (bds) {
+      if (c0 === '\'' && x1 === 2) {
+        if(x1===2)
+          return s0.charAt(1);
+        return this.expItem2(s0,null);
+      }
+      if(c0==='"'){
+        if(s0.charAt(x1) === '"'){
+          return s0.substring(1,x1);
+        }
+        return this.expItem2(s0,null);
+      }
+      return this.expItem2(s0,null);
+    }
+    x1 = c0 >= 'A' ? s0.indexOf('.') : 0;
+    if (x1 > 0)
+      console.log('varfield');
+      //return varfield(s0, x1);
+    //getVar(new CVar(s0, -1, null));
     return s0;
+  }
+
+  expItem2(s0,oins) {
+    let x0 = s0.length-1;
+    if(x0>1&&s0.charAt(0) === '$' && s0.charAt(1) ==='(' && s0.charAt(x0) === ')'){
+      return s0.substring(2,x0);
+    }
+    let o0 = this.expItema(s0);
+    console.log(o0);
+
+  }
+  expItema(s0) {
+    console.log(s0);
+    let il0 = s0.length, x0;
+    let c0 = '(', cs0 = s0.split('');
+    for (x0 = 0;x0 < il0;x0++) {
+      c0 = cs0[x0];
+      if (c0 === '(' || c0 === '[')
+        break;
+    }
+    if (x0 >= il0)
+      return s0;
+    var ors = [];
+    ors[0] = c0 == '[' ? "1" : null;
+    ors[1] = s0.substring(0, x0);
+    ors[2] = null;
+    ors[3] = null;
+    let x1 = this.nextBarcket4(cs0, x0, il0, c0);
+    let s1 = s0.substring(x0+1,x1).replace(/(^\s*)|(\s*$)/g, "");
+    console.log(s1,'fffff');
+    if (s1.length > 0)
+      ors[2] = this.procexpret(s1);//;--参数值
+      x1 += 1;
+      if (x1 < il0) {
+        if (s0.charAt(x1) === '.')
+          x1++;//;-调用标识 A().xxxx或a[].bbbb,没有的直接为A()[...]
+        ors[3] = s0.substring(x1);//;--更多功能
+      }
+    return ors;
+  }
+
+  procexpret(s1){
+    var ov = this.bdstovec(s1);
+    // console.log(ov);
+    return s1;
   }
 
   calcTwoItem(o0, o1, cfh) {
