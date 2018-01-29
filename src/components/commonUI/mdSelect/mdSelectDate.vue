@@ -716,7 +716,7 @@ export default {
   mounted() {
     this.checked.hour = moment().hour();
     this.checked.min = moment().minute();
-    console.log(this.checked);
+    // console.log(this.checked);
   }
 };
 </script>

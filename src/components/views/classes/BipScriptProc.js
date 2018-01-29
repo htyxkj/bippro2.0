@@ -1,3 +1,5 @@
+import baseV from './base.vue';
+const baseTool = baseV.methods;
 export default class BipScriptProc {
   constructor(data, cells) {
     this.data = data;
@@ -22,7 +24,10 @@ export default class BipScriptProc {
       // TODO 后续处理
     } else {
       s0 = this.expcalc(s0, true);
-      return this.keepRound(s0, cell); //;--单行公式
+      if(s0 instanceof Array){
+        return s0;
+      }else
+        return this.keepRound(s0, cell); //;--单行公式
     }
     return "";//处理其他运算
   }
@@ -33,7 +38,7 @@ export default class BipScriptProc {
     }
     if (typeof (s0) === 'object') {
       var bb = [];
-      return this.expcalc1(s0, bb, 0, s0.length);
+      return this.expcalc1(s0, bb, 0, s0.length)[0];
     }
     return s0;
   }
@@ -55,7 +60,7 @@ export default class BipScriptProc {
         if (c0 == c1) {
           if (c0 == '|' || c0 == '&') {
             for (idx--; idx >= 0; idx--)
-              bufs[idx] = this.calcTwoItem(bufs[idx], bufs[idx + 1], cfhs[idx]);
+              bufs[idx] = baseTool.calcTwoItem(bufs[idx], bufs[idx + 1], cfhs[idx]);
             b0 = new Boolean(bufs[0]);
             if ((b0 && c0 == '|') || (c0 == '&' && !b0))
               return bufs[0];
@@ -76,7 +81,7 @@ export default class BipScriptProc {
           cfh = sv0.charAt(0);
           if (cfh == '(' || cfh == '[') {
             t1 = sv0.length;
-            cx0 = this.nextBarcket4(sv0.split(''), 0, t1, cfh);
+            cx0 = baseTool.nextBarcket4(sv0.split(''), 0, t1, cfh);
             t1--;
             if (cx0 >= t1 || cx0 < 1) {
               sv0 = sv0.substring(1, t1); // [xxxx]
@@ -94,23 +99,21 @@ export default class BipScriptProc {
             }
             bufs[idx] = ov;
           } else {
-            console.log(sv0);
             bufs[idx] = this.expItem(sv0, true);
           }
         } else {
           bufs[idx] = ov;
         }
         if (idx > 1)
-          idx = this.calcItems(bufs, cfhs, idx);
+          idx = baseTool.calcItems(bufs, cfhs, idx);
       }
       bfh = !bfh;
     }
     if (!bfh)
       idx--;
     for (var i = idx - 1; i >= 0; i--)
-      bufs[i] = this.calcTwoItem(bufs[i], bufs[i + 1], cfhs[i]);
-    ov = bufs[0];
-    return ov;
+      bufs[i] = baseTool.calcTwoItem(bufs[i], bufs[i + 1], cfhs[i]);
+    return bufs;
   }
 
   expItem(s0, bds) {
@@ -126,7 +129,7 @@ export default class BipScriptProc {
     var bfh = c0 == '-';
     if (bfh || (c0 >= '0' && c0 <= '9')) {
       if(s0.indexOf('.')>0)
-        return new Number(s0);
+        return new Number(s0).valueOf();
       c0 = x1 > 1 ? s0.charAt(1) : '0';
       let x0 = 0, ird = 10;
       if (c0 === 'X' || c0 === 'x') {
@@ -140,7 +143,7 @@ export default class BipScriptProc {
         if (x0 === 3)
           s0 = "-" + s0;
       }
-      return new Number(s0);
+      return new Number(s0).valueOf();
     }
     if (bds) {
       if (c0 === '\'' && x1 === 2) {
@@ -170,11 +173,114 @@ export default class BipScriptProc {
       return s0.substring(2,x0);
     }
     let o0 = this.expItema(s0);
-    console.log(o0);
+    let s1='',idx = -1,b10 = true,bf = false;//bf:是否方法
+    let fps = null;
+    if(typeof(o0) !== 'string'){
+      s0 = o0[1];
+      fps = o0[2];
+      s1 = o0[3];
+      if (o0[0] != null)
+        idx = parseInt(o0[0]);
+      else
+        bf = true;
+      b10 = s1 == null||s1.length<1;
+    }
+    // console.log(oins);
+    if (oins != null)
+      return this.expItem6(s0, oins, fps, bf, idx, s1);//;--带实例
+    // console.log(o0);
+    x0 = s0.indexOf('.');
+    if(x0<1){
+      if(bf){
+        oins = this.invokefun(s0, fps);
+        return oins;
+      }
+    }
+    return 1;
+  }
+
+  invokefun(scf, fps){
+    let x0 = scf.length;
+    if (x0 === 1 && scf.charAt(0) === 'M'){
+      return this.invokemem(fps);
+    }
+    if (x0 === 3) {
+      if (scf ==="var")
+        return this.invokemem(fps);
+      if ("def"===scf) {
+        let ov = fps[0];//--为空时启用缺省值。
+        if (fps.size() < 2 || (ov !==null && (typeof(ov) !=='string' || ov.length>0))){
+          return ov;
+        }
+        return fps[1];
+      }
+    }
+    x0 = scf.lastIndexOf('.');
+    if(x0<0){
+      let fn = eval('this.f_'+scf);
+      if(fn)
+        return this.doCallBackFn(fn,[fps]);
+      else{
+        console.log('没有这个方法:'+scf);
+        return null;
+      }
+    }
 
   }
+
+  invokemem (fps) {
+    let ov  = fps[1];
+    return ov;
+  }
+  /**
+   * 调整日期。
+   * 参数：日期,日[天,月,年,小时,分钟]] 
+   */
+  f_dateadd(fps){
+    return baseTool.dateAdd(fps);
+  }
+  /**
+   * 两个日期做减法
+   * @param {日期1，日期2，{0:year,1:month,2:day}} fps 
+   */
+  f_datesub(fps){
+    return baseTool.dateSub(fps);
+  }
+
+  f_sql(fps){
+    let cc = fps.length;
+    let sql='',vid='',sf='';
+    if(cc==1){
+      sql = fps[0];
+      vid = null;
+      sf = 'queryOne';
+    }else{
+      vid = fps[0];
+      sql = fps[1];
+      let c0 = vid.charAt(0);
+      //;--R=行,C=列,其它字符=单个。
+      sf = c0 === 'R'?'queryRow':(c0 === 'C'?'queryCol':'queryOne');
+      vid = vid.length < 2 ? null:vid.substr(1); 
+    }
+    if(sql.length<15 && sql.indexOf(' ')<0){
+      // 长文本中获取sql
+      return null;
+    }
+    sql = baseTool.formatVarMacro(sql,this.cells,this.data);
+    if(sql !== null){
+      return [sql,sf];
+    }
+    return null;
+  }
+
+
+
+  doCallBackFn(fn,args){
+      var o0 = fn.apply(this,args);
+      return o0;
+  }
+
   expItema(s0) {
-    console.log(s0);
     let il0 = s0.length, x0;
     let c0 = '(', cs0 = s0.split('');
     for (x0 = 0;x0 < il0;x0++) {
@@ -189,9 +295,8 @@ export default class BipScriptProc {
     ors[1] = s0.substring(0, x0);
     ors[2] = null;
     ors[3] = null;
-    let x1 = this.nextBarcket4(cs0, x0, il0, c0);
+    let x1 = baseTool.nextBarcket4(cs0, x0, il0, c0);
     let s1 = s0.substring(x0+1,x1).replace(/(^\s*)|(\s*$)/g, "");
-    console.log(s1,'fffff');
     if (s1.length > 0)
       ors[2] = this.procexpret(s1);//;--参数值
       x1 += 1;
@@ -203,92 +308,36 @@ export default class BipScriptProc {
     return ors;
   }
 
+  /**
+   * 处理表达式
+   * @param {*} s1 
+   */
   procexpret(s1){
     var ov = this.bdstovec(s1);
-    // console.log(ov);
-    return s1;
-  }
-
-  calcTwoItem(o0, o1, cfh) {
-    // console.log('calcTwoItem');
-    var c0 = String.fromCharCode(cfh & 0xFF),
-      c1 = String.fromCharCode(cfh >>> 8);
-    if (c1 == '=' || c0 == '<' || c0 == '>') {
-      // 逻辑比较值
-      return true;
-    }
-    return this.calcTwoValue(o0, o1, c0);
-  }
-
-  //最终的两个数值运算，可以直接在接口中调用。 
-  calcTwoValue(o0, o1, ysf) {
-    if (ysf == '+' || ysf == '|') {
-      if (o0 == null)
-        return o1;
-      if (o1 == null)
-        return o0;
-        // console.log(o0)
-      if (ysf == '+' && typeof (o0) != 'date' && (typeof (o0) != 'number' || typeof (o1) != 'number'))
-        return o0 + '' + o1;
-    }
-    return this.calcTwoObject(o0, o1, ysf, 0);
-  }
-
-  calcTwoObject(o0, o1, ysf, cpnt) {
-    return this.calcTwoNumber(o0, o1, ysf, cpnt);
-  };
-
-  // 两个数值做运算
-  calcTwoNumber(o0, o1, cfh, cpnt) {
-    if (cfh == '+' || cfh == '-' || cfh == '*' || cfh == '/') {
-      if (cfh == '+') {
-        var a = new Number(o0) + (new Number(o1));
-        return a;
+    let fps = [];
+    let k = 0;
+    if(typeof(ov) !== 'string'){
+      let x0 = 0, x1 = 0, rr = ov.length;
+      let bufs = [];
+      while (x1 < rr) {
+        let o = ov[x1++];
+        if(o === ','){
+          bufs = this.expcalc1(ov,bufs, x0,x1-1);
+          let cc = bufs[0]
+          if(cc){
+            fps[k] = cc;
+          }else{
+            fps[k] = 0;
+          }
+          x0 = x1;
+          k++;
+        }
       }
-      if (cfh == '-') {
-        var a = new Number(o0) - (new Number(o1));
-        return a;
-      }
-      if (cfh == '*') {
-        var a = new Number(o0) * (new Number(o1));
-        return a;
-      }
-      if (cfh == '/') {
-        var a = new Number(o0) / (new Number(o1));
-        return a;
-      }
-    }
-  }
-
-  calcItems(ovs, fhs, idx) {
-    var x0 = idx - 2,
-      x1 = idx - 1,
-      c0 = this.tolevel(fhs[x0]);
-    if (c0 < 1 || c0 < this.tolevel(fhs[x1]))
-      return idx; //注意赋值语句
-    // console.log('calcItems');
-    ovs[x0] = this.calcTwoItem(ovs[x0], ovs[x1], fhs[x0]);
-    ovs[x1] = ovs[idx];
-    fhs[x0] = fhs[x1];
-    idx--;
-    if (idx > 1)
-      idx = this.calcItems(ovs, fhs, idx);
-    return idx;
-  }
-
-  tolevel(c01) {
-    var c0 = (c01 & 0xff);
-    c0 = String.fromCharCode(c0);
-    if (c01 == '=')
-      return 0; //不支持等号与运算符连用,如"+=","*="等，用"A=A+..."表示
-    if (c0 == '&' || c0 == '|' || c0 == '^')
-      return 1;
-    if (c0 == '>' || c0 == '<')
-      return 2;
-    if (c0 == '+' || c0 == '-')
-      return 3;
-    if (c0 == '*' || c0 == '/' || c0 == '%')
-      return 4;
+      ov = this.expcalc1(ov, bufs, x0, x1)[0];
+    }else
+      ov = this.expItem( ov, false);
+    fps[k] = ov;
+    return fps;
   }
 
   invokeref(s0) {
@@ -353,11 +402,11 @@ export default class BipScriptProc {
         if (c0 <= ' ')
           break;
         if (c0 == '"' || c0 == '\'') {
-          var retn = this.nextQuote(buf, cs0, x0, t0, c0);
+          var retn = baseTool.nextQuote(buf, cs0, x0, t0, c0);
           x0 = retn[0];
           buf = retn[1];
         } else if (c0 == '(' || c0 == '[') {
-          var retn = this.nextBarcket(buf, cs0, x0, t0, c0);
+          var retn = baseTool.nextBarcket(buf, cs0, x0, t0, c0);
           x0 = retn[0];
           buf = retn[1];
         } else {
@@ -400,105 +449,16 @@ export default class BipScriptProc {
     return vgs;
   }
 
-  nextQuote(buf, cs0, x0, x1, ch) {
-    buf += ch;
-    for (x0++; x0 < x1; x0++) {
-      var c0 = cs0[x0];
-      if (c0 == ch) {
-        buf += ch;
-        return [x0, buf];
-      }
-      if (c0 == '\\') {
-        x0++;
-        if (x0 < x1) {
-          c0 = cs0[x0];
-          if (c0 == 'n')
-            c0 = '\n';
-          else if (c0 == 't')
-            c0 = '\t';
-          else if (c0 == 'r')
-            c0 = '\r';
-        }
-      }
-      buf += c0;
-    }
-    return [x1, buf];
-  }
-
-  nextBarcket(buf, cs0, x0, x1, chL) {
-    var c0, chR = chL == '(' ? ')' : (chL == '[' ? ']' : '}');
-    buf += (chL);
-    x0++;
-    for (var ct = 0; x0 < x1; x0++) {
-      c0 = cs0[x0];
-      if (c0 == chR) {
-        buf += (c0);
-        if (ct < 1)
-          return [x0, buf];
-        ct--;
-      } else if (c0 == '\'' || c0 == '"') {
-        var retn = this.nextQuote(buf, cs0, x0, x1, c0);
-        x0 = retn[0]; //;-括号中的不算。
-        buf = retn[1];
-      } else {
-        buf += (c0);
-        if (c0 == chL)
-          ct++;
-        else if (c0 == '\\') {
-          x0++;
-          if (x0 < x1)
-            buf += cs0[x0];
-        }
-      }
-    }
-    // console.log(buf);
-    return [x1, buf];
-  }
-
-  nextBarcket4(cs0, x0, x1, chL) {
-    var chR = chL == '[' ? ']' : chL == '(' ? ')' : '}';
-    var ct = 0;
-    for (x0++; x0 < x1; x0++) {
-      var c0 = cs0[x0];
-      if (c0 == chR) {
-        if (ct < 1)
-          return x0;
-        ct--;
-      } else if (c0 == chL) {
-        ct++;
-      } else if (c0 == '\\') {
-        x0++;
-      } else if ((c0 == '\'') || (c0 == '"')) {
-        x0 = this.nextQuote4(cs0, x0, x1, c0);
-      }
-    }
-    return x1;
-  }
-
-  nextQuote4(cs0, x0, x1, ch) {
-    for (x0++; x0 < x1; x0++) {
-      var c0 = cs0[x0];
-      if (c0 == ch)
-        return x0;
-      if (c0 == '\\')
-        x0++;
-    }
-    return x1;
-  }
-
   // 四舍五入计算，按照列的小数位数，如果是numeric则进行计算，
   // 其他直接返回原值
-  keepRound = function (v0, cell) {
+  keepRound (v0, cell) {
     if(cell.type<12&&cell.type>2){
       v0 = new Number(v0).toFixed(cell.ccPoint);
       if(isNaN(v0)){
         v0="";
       }
     }
-    
     this.data[cell.id] = v0;
-    // console.log(v0);
-    // console.log(column.ccPoint,column);
     return v0;
   }
   // 获取列信息

@@ -28,3 +28,7 @@ global.APIID_TM_MSG  = 202;//只获取未处理消息
 global.APIID_TM_MSG_DTL  = 212;//只获取未处理消息
 global.APIID_TM_MSG_UPD  = 213;//更新消息状态
 global.APIID_TM_RL  = 249;//重新加载RMQ配置信息
+
+//执行selectSQL语句
+
+global.APIID_SQL  = 'sts';//执行sql查询
