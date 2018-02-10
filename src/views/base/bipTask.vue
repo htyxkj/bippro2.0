@@ -5,7 +5,7 @@
         <md-table class="flex">
           <md-table-header>
             <md-table-row>
-              <md-table-head>操作</md-table-head>
+              <md-table-head>операционная</md-table-head>
               <md-table-head v-for="item in taskLayCel.cels" :key="item.id" v-if="item.isShow" :md-numeric="item.type===3">{{item.labelString}}</md-table-head>
             </md-table-row>
           </md-table-header>

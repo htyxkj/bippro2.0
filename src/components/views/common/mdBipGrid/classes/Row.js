@@ -50,7 +50,7 @@ export default class Row {
               column.refValues.values = [];
             }
             _.forEach(values,(row,index)=>{
-              console.log(row,111,column.refValues);
+              // console.log(row,111,column.refValues);
               column.refValues.values.push(row);
             });
           }else{

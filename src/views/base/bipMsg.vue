@@ -3,7 +3,7 @@
     <section class="content-container">
       <div class="grid-content bg-purple-light">
         <div class="breadcrumb-container">
-          <strong class="title">我的消息</strong>
+          <strong class="title">Мое сообщение</strong>
         </div>
         <div class="content-wrapper">
           <section>
@@ -21,7 +21,7 @@
                 <div class="form-item">
                   <div class="item-content">
                     <button type="button" class="btn" @click="search" >
-                      <span>查询</span>
+                      <span>найти</span>
                     </button>
                   </div>
                 </div>
@@ -29,7 +29,7 @@
                 <div class="form-item">
                   <div class="item-content">
                     <button type="button" class="btn" @click="getMsg">
-                      <span>未读消息</span>
+                      <span>непрочитанный</span>
                     </button>
                   </div>
                 </div>
@@ -40,11 +40,11 @@
                 <md-table @select="onSelect">
                   <md-table-header>
                     <md-table-row>
-                      <md-table-head>编号</md-table-head>
-                      <md-table-head>标题</md-table-head>
-                      <md-table-head>创建时间/更新时间</md-table-head>
-                      <md-table-head>消息状态</md-table-head>
-                      <md-table-head>操作</md-table-head>
+                      <md-table-head>номер</md-table-head>
+                      <md-table-head>заголовок</md-table-head>
+                      <md-table-head>обновления</md-table-head>
+                      <md-table-head>состояние</md-table-head>
+                      <md-table-head>операционная</md-table-head>
                     </md-table-row>
                   </md-table-header>
                   <md-table-body>
@@ -55,13 +55,13 @@
                       <md-table-cell>{{getStatus(row.brd)}}</md-table-cell>
                       <!-- <md-table-cell v-for="(col,colIndex) in row" :key="col.id" v-if="colIndex!='content'">{{col}}</md-table-cell> -->
                       <md-table-cell class="cell">
-                        <button type="button" class="small-btn" @click="view(index)">查看</button>
-                        <button type="button" class="small-btn md-btn" @click="del(index)">删除</button>
+                        <button type="button" class="small-btn" @click="view(index)">вид</button>
+                        <button type="button" class="small-btn md-btn" @click="del(index)">удалять</button>
                       </md-table-cell>
                     </md-table-row>
                   </md-table-body>
                 </md-table>
-                <md-table-pagination :md-size="pageInfo.size" :md-total="pageInfo.total" :md-page="pageInfo.page" md-label="每页" md-separator="/共" :md-page-options="[5, 10,15, 25, 50]" @pagination="onPagination" class="flex"></md-table-pagination>
+                <md-table-pagination :md-size="pageInfo.size" :md-total="pageInfo.total" :md-page="pageInfo.page" md-label="На страницу" md-separator="/общий" :md-page-options="[5, 10,15, 25, 50]" @pagination="onPagination" class="flex"></md-table-pagination>
               </md-table-card>
             </div>
           </section>

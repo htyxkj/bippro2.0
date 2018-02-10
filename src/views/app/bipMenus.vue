@@ -15,24 +15,25 @@
       </div>
       <bip-menu v-for="mm in menus" :key="mm.menuId" :menuItem="mm"></bip-menu>
       <div>
-      <!-- <md-list-item>
-        <router-link exact to="/ht">
-          <md-icon>menu</md-icon>
-          <span>合同管理</span>
+      <md-list-item>
+        <router-link exact to="/ktz">
+          <md-icon v-colors="{color:'green-700-0.8'}">dashboard</md-icon>
+          <span>Список приложений</span>
         </router-link>
-      </md-list-item> -->
+      </md-list-item>
       <md-list-item>
         <router-link exact to="/task">
           <md-icon v-colors="{color:'red-700-0.8'}">send</md-icon>
-          <span>我的任务</span>
+          <span>Моя задача</span>
         </router-link>
       </md-list-item>
       <md-list-item>
         <router-link exact to="/msg">
           <md-icon v-colors="{color:'green-700-0.8'}">message_bulleted</md-icon>
-          <span>我的消息</span>
+          <span>Мое сообщение</span>
         </router-link>
       </md-list-item>
+
       </div>
     </md-list>
   </md-sidenav>

@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.16.2",
     "babel-polyfill": "^6.26.0",
+    "echarts": "^4.0.2",
     "font-awesome": "^4.7.0",
     "highcharts": "^v5.0.14",
     "iscroll": "^5.2.0",

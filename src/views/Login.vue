@@ -22,6 +22,11 @@
           </button>
         </span>
       </div>
+      <div class="input-group">
+         <md-radio v-model="lang" id="cn" name="cn" md-value="cn">中文</md-radio>
+        <md-radio v-model="lang" id="rs" name="rs" md-value="rs">русский</md-radio>
+        <!-- <md-radio v-model="lang" id="en" name="en" md-value="3">English</md-radio> -->
+      </div>
       <div class="checkbox forPwd">
         <label>
           <input type="checkbox">记住密码
@@ -45,7 +50,8 @@ export default {
       showPwd: true,
       notShow: false,
       type: 'password',
-      loading:0
+      loading:0,
+      lang:'cn'
     }
   },
   mounted() {
@@ -61,7 +67,8 @@ export default {
         apiId: global.APIID_LOGIN,
         dbid: global.DBID,
         usercode: this.usercode,
-        pwd: this.base64Encode(psss)
+        pwd: this.base64Encode(psss),
+        lang:this.lang
       }
       try{
         var res = await this.getDataByAPINew(logindata);
