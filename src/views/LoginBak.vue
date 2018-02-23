@@ -2,19 +2,19 @@
   <div class="container cbody">
     <div class="panel panel-default login-box opa bgcolor" @keyup.enter="loginRemote">
       <div class="panel-heading bgcolor">
-      <h2 class="panel-title">{{$t('sysTitle')}}</h2>
+        <h2 class="panel-title">BIP管理应用平台登录</h2>
       </div>
       <div class="input-group">
         <span class="input-group-addon">
           <span class="glyphicon glyphicon-user"></span>
         </span>
-        <input type="text" class="form-control" :placeholder="$t('login.usercode')" v-model="usercode">
+        <input type="text" class="form-control" placeholder="请输入用户名" v-model="usercode">
       </div>
       <div class="input-group">
         <span class="input-group-addon">
           <span class="glyphicon glyphicon-lock"></span>
         </span>
-        <input :type="type" class="form-control" :placeholder="$t('login.password')" id="pwd">
+        <input :type="type" class="form-control" placeholder="请输入密码" id="pwd">
         <span class="input-group-btn">
           <button class="btn btn-default" type="button" @click="showOrNot">
             <span class="glyphicon glyphicon-eye-open" v-if="showPwd"></span>
@@ -22,15 +22,20 @@
           </button>
         </span>
       </div>
+      <div class="input-group">
+        <md-radio v-model="lang" id="cn" name="cn" md-value="cn">中文</md-radio>
+        <md-radio v-model="lang" id="rs" name="rs" md-value="rs">русский</md-radio>
+        <!-- <md-radio v-model="lang" id="en" name="en" md-value="3">English</md-radio> -->
+      </div>
       <div class="checkbox forPwd">
         <label>
-          <input type="checkbox">{{$t('login.rememberPwd')}}
+          <input type="checkbox">记住密码
         </label>
         <div class="forgetPwd">
-          <a href="#">{{$t('login.forgetPwd')}}</a>
+          <a href="#">忘记密码</a>
         </div>
       </div>
-      <button type="button" class="btn btn-success btn-block btn-my" @click="loginRemote">{{$t('login.loginBtn')}}</button>
+      <button type="button" class="btn btn-success btn-block btn-my" @click="loginRemote">登录</button>
     </div>
     <md-loading :loading="loading"></md-loading>
   </div>
@@ -46,7 +51,7 @@ export default {
       notShow: false,
       type: 'password',
       loading:0,
-      lang:'rs'
+      lang:'cn'
     }
   },
   mounted() {

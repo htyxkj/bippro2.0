@@ -78,7 +78,7 @@ export default {
       }
     },
     onBlur(){
-      console.log('fdsfds',this.refData);
+      // console.log('fdsfds',this.refData);
       if (this.refData.cols){
         if(this.refValue ===''){
           this.refData.value[this.refData.cols[0]]="";

@@ -2,19 +2,19 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-button @click.native="create">新建</md-button>
+        <md-button @click.native="create">{{$t('commBtn.B_ADD')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button @click.native="delList">删除</md-button>
+        <md-button @click.native="delList">{{$t('commBtn.B_DEL')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button @click.native="exportFile" :disabled="canexp">导出</md-button>
+        <md-button @click.native="exportFile" :disabled="canexp">{{$t('commBtn.B_EXP')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-pager @paging="paging" :options="pager"></md-part-toolbar-pager>
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
         <md-part-toolbar-crumb>{{mdTitle}}</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>列表</md-part-toolbar-crumb>
+        <md-part-toolbar-crumb>{{$t('commBtn.B_LIST')}}</md-part-toolbar-crumb>
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
@@ -24,7 +24,7 @@
             <md-table @select="onTableSelect" class="flex">
               <md-table-header>
                 <md-table-row v-if="dsm">
-                  <md-table-head v-for="(item, index) in dsm.ccells.cels" :key="item.id" v-if="item.isShow" :md-numeric="item.type===3">{{item.labelString}}</md-table-head>
+                  <md-table-head v-for="(item) in dsm.ccells.cels" :key="item.id" v-if="item.isShow" :md-numeric="item.type===3">{{item.labelString}}</md-table-head>
                 </md-table-row>
               </md-table-header>
               <md-table-body v-if="dsm">
@@ -34,7 +34,7 @@
                         <md-button class="md-fab md-fab-center-center">
                         <md-icon>verified_user</md-icon>
                       </md-button>
-                      <span class="md-fab-center-center">没有获取到数据</span></md-content>
+                      <span class="md-fab-center-center">{{$t('commInfo.noDatas')}}</span></md-content>
                   </md-layout>
                 </md-table-row>
                 <md-table-row v-else :class="setRowColor(rowIndex)?'md-tr-color':''" v-for="(row, rowIndex) in dsm.cdata" 
@@ -55,7 +55,7 @@
                   :md-size="pageInfo.size"
                   :md-total="pageInfo.total"
                   :md-page="pageInfo.page"
-                  md-label="每页"
+                  :md-label="$t('commInfo.Per')"
                   md-separator="/"
                   :md-page-options="[10,20, 30, 50]"
                   @pagination="onTablePagination"
@@ -214,7 +214,7 @@ export default {
           var state = item[this.opera.statefld];
           var sid  = item[this.opera.pkfld];
           if(state !== '0' && state !=='1'){
-            this.$notify.warning({content: '不能删除'+sid+'!'});
+            this.$notify.warning({content: this.$t('commInfo.canNotDel')+sid+'!'});
           }else{
             item.sys_stated = 4;
             var str = JSON.stringify(item);
@@ -223,7 +223,7 @@ export default {
             // console.log(res);
           }
         }
-        console.log(item);
+        // console.log(item);
       });
       // var _self = this;
       // _.forEach(this.selectData,function(n,key){
@@ -237,7 +237,7 @@ export default {
     },
     delSuccess(res){
       if(res.data.id == 0){
-        this.$notify.info({content: '删除成功！'});
+        this.$notify.info({content: this.$t('commInfo.deleteSucc')});
         this.fetchUIData();
       }
     },

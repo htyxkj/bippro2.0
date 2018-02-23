@@ -21,8 +21,8 @@
     </md-dialog-content>
 
     <md-dialog-actions class="actionC">
-        <md-button class="md-primary md-raised" @click="closeDialogY('dialog')" v-if="showYes">确定</md-button>
-        <md-button class="md-raised" @click="closeDialogC('dialog')" v-if="showCancel">取消</md-button>
+        <md-button class="md-primary md-raised" @click="closeDialogY('dialog')" v-if="showYes">{{$t('commInfo.ok')}}</md-button>
+        <md-button class="md-raised" @click="closeDialogC('dialog')" v-if="showCancel">{{$t('commInfo.cancel')}}</md-button>
         <md-button class="md-primary md-raised" @click="closeDialogM('dialog')" v-if="showMyBtn" v-for="(b,index) in btns" :key="index">{{b}}</md-button>
     </md-dialog-actions>
   </div>

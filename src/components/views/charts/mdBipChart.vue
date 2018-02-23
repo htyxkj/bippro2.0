@@ -24,7 +24,7 @@
           </md-table>
           <md-table-tool>
             <md-layout class="flex"></md-layout>
-            <md-table-pagination :md-size="pageInfo.size" :md-total="pageInfo.total" :md-page="pageInfo.page" md-label="每页" md-separator="/" :md-page-options="[10,20, 30, 50]" @pagination="onTablePagination">
+            <md-table-pagination :md-size="pageInfo.size" :md-total="pageInfo.total" :md-page="pageInfo.page" :md-label="$t('commInfo.Per')" md-separator="/" :md-page-options="[10,20, 30, 50]" @pagination="onTablePagination">
             </md-table-pagination>
           </md-table-tool>
         </md-table-card>
@@ -218,7 +218,7 @@ export default {
           type: "column"
         },
         title: {
-          text: this.getTitle() + "统计"
+          text: this.getTitle()+' ' + this.$t('commLabel.L_Statist_Name')
         },
         subtitle: {
           text: ""

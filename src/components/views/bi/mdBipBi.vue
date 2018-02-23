@@ -2,20 +2,20 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-button @click.native="search()">查询</md-button>
+        <md-button @click.native="search()">{{$t('commBtn.B_FIND')}}</md-button>
         <!-- <md-button @click.native="clear">清空</md-button> -->
       </md-part-toolbar-group>
       <!-- <md-part-toolbar-group>
         <md-button>复制</md-button>
       </md-part-toolbar-group> -->
       <md-part-toolbar-group>
-        <md-button @click.native="list()">列表</md-button>
+        <md-button @click.native="list()">{{$t('commBtn.B_LIST')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button @click.native="searchCount('dialog')">统计</md-button>
+        <md-button @click.native="searchCount('dialog')">{{$t('commBtn.B_STATISTICS')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button @click.native="exportFile()">导出Ex</md-button>
+        <md-button @click.native="exportFile()">{{$t('commBtn.B_EXP')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
           <md-button @click.native="showSearchInfo">{{showContLabel}}</md-button>
@@ -23,7 +23,7 @@
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
         <md-part-toolbar-crumb>{{mdTitle}}</md-part-toolbar-crumb>
-        <md-part-toolbar-crumb>列表</md-part-toolbar-crumb>
+        <md-part-toolbar-crumb>{{$t('commBtn.B_LIST')}}</md-part-toolbar-crumb>
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
@@ -31,7 +31,7 @@
         <template v-if="showCont">
           <md-layout md-gutter="4" v-if="ds_cont">
             <template v-if="showAllCont">
-              <md-bip-input v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
+              <md-bip-input v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
             </template>
             <template v-else>
               <md-bip-input v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"></md-bip-input>
@@ -71,7 +71,7 @@
                     :md-size="pageInfo.size"
                     :md-total="pageInfo.total"
                     :md-page="pageInfo.page"
-                    md-label="每页"
+                    :md-label="$t('commInfo.Per')"
                     md-separator="/"
                     :md-page-options="[10,20, 30, 50]"
                     @pagination="onTablePagination"
@@ -89,10 +89,10 @@
        </md-content>
         <md-loading :loading="loading"></md-loading>
        <md-dialog ref="dialog" class="md-bip-dialog" v-if="ds_m">
-        <md-dialog-title>{{mdTitle}}--统计选择</md-dialog-title>
+        <md-dialog-title>{{mdTitle}}--{{$t('commLabel.L_Statist_Title')}}</md-dialog-title>
         <md-dialog-content>
           <md-input-container>
-            <label for="groupfilds" >统计项选择</label>
+            <label for="groupfilds">{{$t('commLabel.L_Statist_Y')}}</label>
             <md-select id="groupfilds" multiple v-model="groupfilds" required>
               <md-option v-for="(cell, index) in ds_m.ccells.cels"
                 :key="index"
@@ -102,7 +102,7 @@
             </md-select>
           </md-input-container>
           <md-input-container>
-            <label for="groupdatafilds">数据项选择</label>
+            <label for="groupdatafilds">{{$t('commLabel.L_Statist_X')}}</label>
             <md-select multiple v-model="groupdatafilds" required>
               <md-option v-for="(cell, index) in ds_m.ccells.cels"
                 :key="index"
@@ -112,7 +112,7 @@
             </md-select>
           </md-input-container>
           <md-input-container>
-            <label for="ctype">图表类型</label>
+            <label for="ctype">{{$t('commLabel.L_Statist_CType')}}</label>
             <md-select v-model="ctype">
               <md-option v-for="(item) in chartList"
                 :key="item.id"
@@ -122,12 +122,12 @@
             </md-select>
           </md-input-container>
           <md-input-container>
-            <md-checkbox id="my-test1" name="my-test1" v-model="checkShowC">是否显示图表</md-checkbox>
+            <md-checkbox id="my-test1" name="my-test1" v-model="checkShowC">{{$t('commLabel.L_Statist_ChartHidden')}}</md-checkbox>
           </md-input-container>
         </md-dialog-content>
         <md-dialog-actions>
-          <md-button class="md-primary" @click="closeDialog('dialog')">取消</md-button>
-          <md-button class="md-primary" @click="okDialog('dialog')">确定</md-button>
+          <md-button class="md-primary" @click="closeDialog('dialog')">{{$t('commInfo.cancel')}}</md-button>
+          <md-button class="md-primary" @click="okDialog('dialog')">{{$t('commInfo.ok')}}</md-button>
         </md-dialog-actions>
       </md-dialog>
     </md-part-body>
@@ -142,7 +142,7 @@ export default {
   data(){
     return {
       showCont: false,
-      showContLabel: '显示条件',
+      showContLabel: this.$t('commInfo.showCont'),
       ds_cont:null,
       ds_m:null,
       ds_ext:[],
@@ -156,7 +156,7 @@ export default {
       mdSelection: false,
       groupfilds: [],
       groupdatafilds: [],
-      chartList:[{id:'pie',name:'饼图'},{id:'line',name:'线图'},{id:'column',name:'柱状图'}],
+      chartList:[{id:'pie',name:this.$t('chart.pie')},{id:'line',name:this.$t('chart.line')},{id:'column',name:this.$t('chart.column')}],
       checkShowC:1,
       ctype:'line',
       loading:0,
@@ -166,7 +166,7 @@ export default {
       tjpage:{},
       doSearCh:0,
       showAllCont:false,
-      tipLaber:'更多条件'
+      tipLaber:this.$t('commInfo.moreCont')
     }
   },
   mixins:[common],
@@ -299,7 +299,8 @@ export default {
     },
     showSearchInfo () {
       this.showCont = !this.showCont;
-      this.showContLabel = this.showCont ? '隐藏条件' : '显示条件';
+      console.log(this.$t('commInfo.hiddenCont'));
+      this.showContLabel = this.showCont ? this.$t('commInfo.hiddenCont') : this.$t('commInfo.showCont');
       if(!this.showCont){
         this.showAllCont = false;
       }
@@ -359,21 +360,20 @@ export default {
   },
   watch:{
     showCont(){
-      this.showContLabel = this.showCont?'隐藏条件':'显示条件'
+      this.showContLabel = this.showCont?this.$t('commInfo.hiddenCont'):this.$t('commInfo.showCont')
     },
     mparams(){
       this.initCell();
     },
     showAllCont(){
       if(this.showAllCont){
-        this.tipLaber = '隐藏其他条件';
+        this.tipLaber = this.$t('commInfo.hiddenOtherCont');
       }else{
-         this.tipLaber = '更多条件';
+         this.tipLaber = this.$t('commInfo.moreCont');
       }
     }
   },
   computed:{
-
   }
 }
 </script>

@@ -2,12 +2,9 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-button :disabled="canCreate" @click.native="create">новый</md-button>
-        <md-button class="md-accent" :disabled="canDelete" @click.native="delData">Удалить</md-button>
-        <md-button @click.native="save" :disabled="canSave">Сохранить</md-button>
-      </md-part-toolbar-group>
-      <md-part-toolbar-group>
-        <md-button @click.native="list">список</md-button>
+        <md-button :disabled="canCreate" @click.native="create">новый/Add</md-button>
+        <md-button class="md-accent" :disabled="canDelete" @click.native="delData">Удалить/DEL</md-button>
+        <md-button @click.native="save" :disabled="canSave">Сохранить/SAVE</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <!-- <md-button>审核</md-button> -->
@@ -111,14 +108,32 @@ export default {
   methods: {
     create() {
       // this.getCells();
+      let state = this.dsm.currRecord.sys_stated & 1;
+      if(state>0)
+        return ;
+      this.dsm.clearData();
+      this.dsm.ds_sub[0].clearData();
+      this.dsm.createRecord();
     },
-    delData() {},
+    delData() {
+      let state = this.dsm.currRecord.sys_stated & 1;
+      if(state>0)
+        return ;
+      this.dsm.currRecord.sys_stated = 4;
+      this.save();
+    },
     async save() {
+      let state = this.dsm.currRecord.sys_stated;
       var str = JSON.stringify(this.dsm.currRecord);
       console.log(str);
       var options = { pcell: this.pcell, jsonstr: str };
       var res = await this.saveData(options);
       // console.log(res);
+      if(state ===4 ){
+        this.$notify.success({ content: "DELETE SUCCESSFULL！", placement: "mid-center" });
+        this.create();
+        return ;
+      }
       let data = res.data.data;
       let _self = this;
       _.forEach(data, function(val, key) {

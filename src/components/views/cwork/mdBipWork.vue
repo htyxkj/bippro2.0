@@ -13,7 +13,7 @@
   </md-avatar>
   <md-dialog ref="dialog" class="md-work-dialog" :md-click-outside-to-close="false" :md-esc-to-close="false">
     <md-toolbar>
-      <h1 class="md-title">{{title}}</h1>
+      <h1 class="md-title">{{$t('cwork.title')}}</h1>
         <md-input-container class="md-flex md-header-search">
         </md-input-container>
       <md-button class="md-icon-button" @click.native="cancel()">
@@ -21,23 +21,23 @@
       </md-button>
     </md-toolbar>
     <md-dialog-content>
-        <md-subheader>下一节点:</md-subheader>
+        <md-subheader>{{$t('cwork.nextNode')}}</md-subheader>
         <md-radio v-model="stateId" v-for="(item,index) in list" :key="index" :id="item.stateId" name="group1" :md-value="item.stateId">{{item.stateName}}</md-radio>
-        <md-subheader>审批人:</md-subheader>
+        <md-subheader>{{$t('cwork.approver')}}</md-subheader>
         <!-- <md-radio v-model="userId" v-for="(item,index) in users" :key="item.userCode" :id="item.userCode" name="group1" :md-value="item.userCode">{{item.userName}}</md-radio> -->
         <md-checkbox  v-for="item in users" :key="item.userCode" :id="item.userCode" :name="item.userCode" v-model="userIds" :md-value="item.userCode">{{item.userName}}</md-checkbox>
 
         <md-input-container md-theme="red">
-          <label>说明</label>
+          <label>{{$t('cwork.reasons')}}</label>
           <md-input v-model="content"></md-input>
         </md-input-container>
     </md-dialog-content>
     <md-dialog-actions>
         <md-button class="md-primary md-raised" @click.native="checkUp()" :disabled="canYes">{{getYes}}</md-button>
-        <md-button class="md-accent md-raised" @click.native="checkBack()" :disabled="canBH">驳回</md-button>
+        <md-button class="md-accent md-raised" @click.native="checkBack()" :disabled="canBH">{{$t('cwork.reject')}}</md-button>
         <!-- <md-button class="md-accent md-raised" @click.native="checkBack()" :disabled="canBH">驳回到上一节点</md-button> -->
-        <md-button class="md-accent md-raised" @click.native="cancelCheck()" :disabled="canTH">退回</md-button>
-        <md-button class="md-raised" @click.native="close(false)">取消</md-button>
+        <md-button class="md-accent md-raised" @click.native="cancelCheck()" :disabled="canTH">{{$t('cwork.back')}}</md-button>
+        <md-button class="md-raised" @click.native="close(false)">{{$t('commInfo.cancel')}}</md-button>
     </md-dialog-actions>
   </md-dialog>
 </div>
@@ -46,10 +46,9 @@
 export default {
   data() {
     return {
-      title: "系统窗口",
       stateId: "",
       userIds: [],
-      content: "已同意",
+      content: this.$t('cwork.agree'),
       users: [],
       list: [],
       cea: null,
@@ -283,10 +282,10 @@ export default {
       // console.log(this.chkinfo);
       if (this.chkinfo) {
         if (this.chkinfo.state == "0" || this.chkinfo.state == "1" || this.chkinfo.state == "5") {
-          return "提交";
+          return this.$t('cwork.submit');
         }
       }
-      return "同意";
+      return this.$t('cwork.agree');
     },
     canYes() {
       if (this.chkinfo) {

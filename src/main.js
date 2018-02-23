@@ -14,17 +14,28 @@ import './js/bip-common-js.js';
 import './js/bipcfg.js';
 import utils from './js/bip-utils-js';
 import bipDateUtil from './js/bip-date-js';
+
+import {getCookie} from './js/cookie';
 Vue.use(utils)
 Vue.use(bipDateUtil)
 Vue.config.productionTip = false;
 Vue.use(Components)
 
 Vue.use(VuejsDialog);
-
+import VueI18n from 'vue-i18n'
+Vue.use(VueI18n);
+const i18n = new VueI18n({
+  locale: getCookie('PLAY_LANG','en'),    // 语言标识
+  messages: {
+    'zh': require('../static/lang/zh'),
+    'en': require('../static/lang/en')
+  }
+})
 
 new Vue({
   el: '#app',
   router,
+  i18n,
   template: '<App/>',
   components: { App }
 });
