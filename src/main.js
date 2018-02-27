@@ -25,7 +25,7 @@ Vue.use(VuejsDialog);
 import VueI18n from 'vue-i18n'
 Vue.use(VueI18n);
 const i18n = new VueI18n({
-  locale: getCookie('PLAY_LANG','en'),    // 语言标识
+  locale: getCookie('PLAY_LANG','zh'),    // 语言标识
   messages: {
     'zh': require('../static/lang/zh'),
     'en': require('../static/lang/en')

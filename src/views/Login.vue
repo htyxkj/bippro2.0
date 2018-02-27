@@ -46,7 +46,7 @@ export default {
       notShow: false,
       type: 'password',
       loading:0,
-      lang:'rs'
+      lang:''
     }
   },
   mounted() {
