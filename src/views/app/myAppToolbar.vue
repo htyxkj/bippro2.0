@@ -18,13 +18,13 @@
         <md-list class="custom-list">
           <md-list-item class="bip-task-item">
             <router-link to='/task' @click.native="selItem">
-              <div class="md-table-cell-container">我的任务</div>
+              <div class="md-table-cell-container">{{$t('biptask.title')}}</div>
               <span class="badge badge-info" >+{{taskNum}}</span>
             </router-link>
           </md-list-item>
           <md-list-item class="bip-task-item">
             <router-link to='/msg' @click.native="selItem">
-              <div class="md-table-cell-container">我的消息</div>
+              <div class="md-table-cell-container">{{$t('bipmsg.title')}}</div>
               <span class="badge badge-success" >+{{msgNum}}</span>
             </router-link>
           </md-list-item>
@@ -135,13 +135,13 @@ export default {
         if (this.taskNum !== info.count) {
           this.taskNum = info.count;
           if(this.taskNum>0)
-            this.$notify.warning({ content: "您有" + this.taskNum + "条任务未处理！" });
+            this.$notify.warning({ content: this.$t('common.you') + this.taskNum + this.$t('biptask.info') });
         }
       }
       if (info.type === 2) {
         this.msgNum = info.count;
         if(this.msgNum>0)
-          this.$notify.info({ content: "您有" + this.msgNum + "条消息未处理！" });
+          this.$notify.info({ content: this.$t('common.you') + this.msgNum + this.$t('bipmsg.info') });
       }
       // console.log(frame);
       // 接收消息

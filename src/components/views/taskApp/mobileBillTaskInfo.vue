@@ -7,7 +7,7 @@
         <md-button @click.native="save" :disabled="canSave">保存</md-button>
       </md-part-toolbar-group>-->
       <md-part-toolbar-group>
-        <md-button @click.native="gotask">列表</md-button>
+        <md-button @click.native="gotask">{{$t('biptask.gotask')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <!-- <md-button>复制</md-button> -->
@@ -16,7 +16,7 @@
       </md-part-toolbar-group>
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>审核单据</md-part-toolbar-crumb>
+        <md-part-toolbar-crumb>{{$t('biptask.audit')}}</md-part-toolbar-crumb>
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
@@ -30,22 +30,22 @@
       <template v-if="dsm&&dsm.ds_sub.length>0">
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
           <md-stepper md-vertical  @completed="finish">
-            <md-step id="step1" :md-label="dsm.ccells.desc" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成" :mdEditable="true">
+            <md-step id="step1" :md-label="dsm.ccells.desc" :mdButtonContinue="$t('commBtn.child.next')" :mdButtonBack="$t('commBtn.child.back')" :mdButtonFinish="$t('commBtn.child.finish')" :mdEditable="true">
               <md-layout>
                 <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
               </md-layout>
             </md-step>
-            <md-step id="step2" md-label="子项" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成" :mdEditable="true">
+            <md-step id="step2" :md-label="$t('commBtn.child.title')" :mdButtonContinue="$t('commBtn.child.next')" :mdButtonBack="$t('commBtn.child.back')" :mdButtonFinish="$t('commBtn.child.finish')" :mdEditable="true">
               <div>
                 <md-list>
                   <md-list-item v-for="(dj,djIndex) in dsm.ds_sub[0].cdata" :key="djIndex" @click.stop="itemClick(dsm.ds_sub[0],djIndex)">
                     <!-- 删除 -->
                      <md-button class="md-icon-button md-list-action" @click="deleteDj(dsm.ds_sub[0],djIndex)" :disabled="!canEditChild">
                       <md-icon class="md-accent">close</md-icon>
-                      <md-tooltip md-direction="top">删除行</md-tooltip>
+                      <md-tooltip md-direction="top">{{$t('commBtn.child.delLine')}}</md-tooltip>
                     </md-button>
                     <!-- <md-icon>list</md-icon> -->
-                    <h5>第 {{djIndex+1}} 行</h5>
+                    <h5>{{$t('commInfo.No')}} {{djIndex+1}} {{$t('commInfo.Line')}}</h5>
                     <md-list-expand ref="expand">
                       <md-list>
                         <md-layout class="flex layout-column">
@@ -58,10 +58,10 @@
                 </md-list-item>
                 </md-list>
                 <md-button class=" md-raised md-primary" @click="addDj(dsm.ds_sub[0])" :disabled="!canEditChild">
-                  添加行
+                   {{$t('commBtn.child.addLine')}}
                 </md-button>
                 <md-button class=" md-raised md-accent" @click="deleteAll(dsm.ds_sub[0])" :disabled="!canEditChild">
-                  删除所有
+                   {{$t('commBtn.child.delAll')}}
                 </md-button>
               </div>
               </md-step>
@@ -462,13 +462,13 @@ export default {
         if (crd) {
           var state = crd[this.opera.statefld];
           if (state === '0' || state === '1' || state === '5') {
-            return "提交/退回";
+            return this.$t('commBtn.B_SUB');
           } else {
-            return "审核/退回";
+            return this.$t('commBtn.B_CHK');
           }
         }
       }
-      return "提交/退回";
+      return this.$t('commBtn.B_SUB');
     },
     canAddChild(){
       if (this.opera) {

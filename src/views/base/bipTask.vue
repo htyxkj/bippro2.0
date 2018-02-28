@@ -5,7 +5,7 @@
         <md-table class="flex">
           <md-table-header>
             <md-table-row>
-              <md-table-head>операционная</md-table-head>
+              <md-table-head>{{$t('biptask.title')}}</md-table-head>
               <md-table-head v-for="item in taskLayCel.cels" :key="item.id" v-if="item.isShow" :md-numeric="item.type===3">{{item.labelString}}</md-table-head>
             </md-table-row>
           </md-table-header>
@@ -30,7 +30,7 @@
             :md-size="pageInfo.size"
             :md-total="pageInfo.total"
             :md-page="pageInfo.page"
-            md-label="每页"
+            :md-label="$t('commInfo.Per')"
             md-separator="/"
             :md-page-options="[10,20, 30, 50]"
             @pagination="onTablePagination"

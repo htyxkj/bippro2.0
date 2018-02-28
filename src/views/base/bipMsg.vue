@@ -3,7 +3,7 @@
     <section class="content-container">
       <div class="grid-content bg-purple-light">
         <div class="breadcrumb-container">
-          <strong class="title">Мое сообщение</strong>
+          <strong class="title">{{$t('bipmsg.title')}}</strong>
         </div>
         <div class="content-wrapper">
           <section>
@@ -13,7 +13,7 @@
                 <div class="form-item">
                   <div class="item-content">
                     <div class="inp">
-                      <input type="text" placeholder="关键词" class="input-inner" v-model="words" @keyup.enter="search">
+                      <input type="text" :placeholder="$t('bipmsg.keyword')" class="input-inner" v-model="words" @keyup.enter="search">
                     </div>
                   </div>
                 </div>
@@ -21,7 +21,7 @@
                 <div class="form-item">
                   <div class="item-content">
                     <button type="button" class="btn" @click="search" >
-                      <span>найти</span>
+                      <span>{{$t('bipmsg.btnFind')}}</span>
                     </button>
                   </div>
                 </div>
@@ -29,7 +29,7 @@
                 <div class="form-item">
                   <div class="item-content">
                     <button type="button" class="btn" @click="getMsg">
-                      <span>непрочитанный</span>
+                      <span>{{$t('bipmsg.btnUnRead')}}</span>
                     </button>
                   </div>
                 </div>
@@ -40,11 +40,11 @@
                 <md-table @select="onSelect">
                   <md-table-header>
                     <md-table-row>
-                      <md-table-head>номер</md-table-head>
-                      <md-table-head>заголовок</md-table-head>
-                      <md-table-head>обновления</md-table-head>
-                      <md-table-head>состояние</md-table-head>
-                      <md-table-head>операционная</md-table-head>
+                      <md-table-head>{{$t('bipmsg.head.sid')}}</md-table-head>
+                      <md-table-head>{{$t('bipmsg.head.title')}}</md-table-head>
+                      <md-table-head>{{$t('bipmsg.head.time')}}</md-table-head>
+                      <md-table-head>{{$t('bipmsg.head.state')}}</md-table-head>
+                      <md-table-head>{{$t('bipmsg.head.oper')}}</md-table-head>
                     </md-table-row>
                   </md-table-header>
                   <md-table-body>
@@ -55,13 +55,13 @@
                       <md-table-cell>{{getStatus(row.brd)}}</md-table-cell>
                       <!-- <md-table-cell v-for="(col,colIndex) in row" :key="col.id" v-if="colIndex!='content'">{{col}}</md-table-cell> -->
                       <md-table-cell class="cell">
-                        <button type="button" class="small-btn" @click="view(index)">вид</button>
-                        <button type="button" class="small-btn md-btn" @click="del(index)">удалять</button>
+                        <button type="button" class="small-btn" @click="view(index)">{{$t('bipmsg.btnView')}}</button>
+                        <button type="button" class="small-btn md-btn" @click="del(index)">{{$t('bipmsg.btnDel')}}</button>
                       </md-table-cell>
                     </md-table-row>
                   </md-table-body>
                 </md-table>
-                <md-table-pagination :md-size="pageInfo.size" :md-total="pageInfo.total" :md-page="pageInfo.page" md-label="На страницу" md-separator="/общий" :md-page-options="[5, 10,15, 25, 50]" @pagination="onPagination" class="flex"></md-table-pagination>
+                <md-table-pagination :md-size="pageInfo.size" :md-total="pageInfo.total" :md-page="pageInfo.page" :md-label="$t('commInfo.Per')" md-separator="/" :md-page-options="[5, 10,15, 25, 50]" @pagination="onPagination" class="flex"></md-table-pagination>
               </md-table-card>
             </div>
           </section>
@@ -157,9 +157,9 @@ export default {
     },
     getStatus(id){
       if(id===1 || id==0){
-        return '未读';
+        return this.$t('bipmsg.btnUnRead');
       }else{
-        return '已读';
+        return this.$t('bipmsg.btnRead');
       }
     }
   },

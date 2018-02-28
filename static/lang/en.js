@@ -21,7 +21,17 @@ module.exports = {
     B_UP:'Up',
     B_LAST:'Last',
     B_FIND:'FIND',
-    B_STATISTICS:'STATISTICS'
+    B_STATISTICS:'STATISTICS',
+    child:{
+      title:'SubLines',
+      next:'Next',
+      up:'UP',
+      back:'Back',
+      finish:'Finish',
+      delLine:'Delete Line',
+      addLine:'Add Line',
+      delAll:'Delete All'
+    }
   },
   commLabel:{
     L_AddM:'Add/Modify',
@@ -55,5 +65,42 @@ module.exports = {
     pie:'Pie graph',
     line:'Line graph',
     column:'Bar graph'
+  },
+  cwork:{
+    title:'System Windows',
+    nextNode:'Next Node:',
+    approver:'Approver：',
+    reasons:'Reasons',
+    agree:'Agree',
+    submit:'Submit',
+    reject:'Reject',
+    back:'Back'
+  },
+  bipmsg:{
+    title:"My Message",
+    info:"messages are not handled！",
+    keyword:'Key Words',
+    btnFind:'Search',
+    btnUnRead:'Messages unread',
+    head:{
+      sid:'No.',
+      title:'title',
+      time:'time',
+      state:'state',
+      oper:'operation',
+      content:'content'
+    },
+    btnView:'Views',
+    btnDel:'Delete',
+    btnRead:'Read'
+  },
+  biptask:{
+    title:"My Task",
+    info:"tasks are not handled！！",
+    audit:'Audit Bills',
+    gotask:'go back list',
+  },
+  common:{
+    you:"you",
   }
 }

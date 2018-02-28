@@ -7,7 +7,7 @@
         <md-button @click.native="save" :disabled="canSave">保存</md-button>
       </md-part-toolbar-group> -->
       <md-part-toolbar-group>
-        <md-button @click.native="gotask">返回审核列表</md-button>
+        <md-button @click.native="gotask">{{$t('biptask.gotask')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <!-- <md-button>复制</md-button> -->
@@ -16,7 +16,7 @@
       </md-part-toolbar-group>
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>审核单据</md-part-toolbar-crumb>
+        <md-part-toolbar-crumb>{{$t('biptask.audit')}}</md-part-toolbar-crumb>
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
@@ -428,13 +428,13 @@ export default {
         if (crd) {
           var state = crd[this.opera.statefld];
           if (state === '0' || state === '1' || state === '5') {
-            return "提交/退回";
+            return this.$t('commBtn.B_SUB');
           } else {
-            return "审核/退回";
+            return this.$t('commBtn.B_CHK');
           }
         }
       }
-      return "提交/退回";
+      return this.$t('commBtn.B_SUB');
     },
     canAddChild(){
       if (this.opera) {

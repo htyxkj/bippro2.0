@@ -2,21 +2,21 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-button :disabled="canCreate" @click.native="create">新建</md-button>
-        <md-button class="md-accent" :disabled="canDelete" @click.native="delData">删除</md-button>
-        <md-button @click.native="save" :disabled="canSave">保存</md-button>
+        <md-button :disabled="canCreate" @click.native="create">{{$t('commBtn.B_ADD')}}</md-button>
+        <md-button class="md-accent" :disabled="canDelete" @click.native="delData">{{$t('commBtn.B_DEL')}}</md-button>
+        <md-button @click.native="save" :disabled="canSave">{{$t('commBtn.B_SAVE')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button @click.native="list">列表</md-button>
+        <md-button @click.native="list">{{$t('commBtn.B_LIST')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button>复制</md-button>
+        <md-button>{{$t('commBtn.B_COPY')}}</md-button>
         <!-- <md-button>审核</md-button> -->
         <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
       </md-part-toolbar-group>
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>新增/修改</md-part-toolbar-crumb>
+        <md-part-toolbar-crumb>{{$t('commLabel.L_AddM')}}</md-part-toolbar-crumb>
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
@@ -30,22 +30,22 @@
       <template v-if="dsm&&dsm.ds_sub.length>0">
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
           <md-stepper md-vertical  @completed="finish">
-            <md-step id="step1" :md-label="dsm.ccells.desc" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成" :mdEditable="true">
+            <md-step id="step1" :md-label="dsm.ccells.desc" :mdButtonContinue="$t('commBtn.child.next')" :mdButtonBack="$t('commBtn.child.back')" :mdButtonFinish="$t('commBtn.child.finish')" :mdEditable="true">
               <md-layout>
                 <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
               </md-layout>
             </md-step>
-            <md-step id="step2" md-label="子项" mdButtonContinue="下一步" mdButtonBack="返回" mdButtonFinish="完成" :mdEditable="true">
+            <md-step id="step2" :md-label="$t('commBtn.child.title')" :mdButtonContinue="$t('commBtn.child.next')" :mdButtonBack="$t('commBtn.child.back')" :mdButtonFinish="$t('commBtn.child.finish')" :mdEditable="true">
               <div>
                 <md-list>
                   <md-list-item v-for="(dj,djIndex) in dsm.ds_sub[0].cdata" :key="djIndex" @click.stop="itemClick(dsm.ds_sub[0],djIndex)">
                     <!-- 删除 -->
                      <md-button class="md-icon-button md-list-action" @click="deleteDj(dsm.ds_sub[0],djIndex)" :disabled="!canEditChild">
                       <md-icon class="md-accent">close</md-icon>
-                      <md-tooltip md-direction="top">删除行</md-tooltip>
+                      <md-tooltip md-direction="top">{{$t('commBtn.child.delLine')}}</md-tooltip>
                     </md-button>
                     <!-- <md-icon>list</md-icon> -->
-                    <h5>第 {{djIndex+1}} 行</h5>
+                    <h5>{{$t('commInfo.No')}} {{djIndex+1}} {{$t('commInfo.Line')}}</h5>
                     <md-list-expand ref="expand">
                       <md-list>
                         <md-layout class="flex layout-column">
@@ -58,10 +58,10 @@
                 </md-list-item>
                 </md-list>
                 <md-button class=" md-raised md-primary" @click="addDj(dsm.ds_sub[0])" :disabled="!canEditChild">
-                  添加行
+                  {{$t('commBtn.child.addLine')}}
                 </md-button>
                 <md-button class=" md-raised md-accent" @click="deleteAll(dsm.ds_sub[0])" :disabled="!canEditChild">
-                  删除所有
+                  {{$t('commBtn.child.delAll')}}
                 </md-button>
               </div>
               </md-step>
@@ -148,13 +148,13 @@ export default {
     },
     async delData() {
       this.$dialog
-        .confirm("确定删除吗？", {
-          okText: "确定",
-          cancelText: "取消"
+        .confirm(this.$t('commInfo.confirmInf'), {
+          okText: this.$t('commInfo.ok'),
+          cancelText: this.$t('commInfo.cancel')
         })
         .then(() => {
           if ((this.dsm.currRecord.sys_stated & billS.INSERT) > 0) {
-            alert("新建");
+            // alert("新建");
             return;
           }
           this.dsm.currRecord.sys_stated = 4;
@@ -173,7 +173,7 @@ export default {
       var res = await this.saveData(options);
       if (res.data.id == 0) {
         if (this.dsm.currRecord.sys_stated === 4) {
-          this.$notify.success({ content: "删除成功！", placement: "mid-center" });
+          this.$notify.success({ content: this.$t('commInfo.deleteSucc'), placement: "mid-center" });
           this.dsm.deleteRow(-1);
           this.dsm.createRecord();
           this.dsm.currRecord.sys_stated = 3;
@@ -189,7 +189,7 @@ export default {
           });
           // this.dsm.currRecord.sys_stated = billS.DICT;
           this.dsm.makeState(billS.DICT);
-          this.$notify.success({ content: "保存成功！", placement: "mid-center" });
+          this.$notify.success({ content: this.$t('commInfo.saveSucc'), placement: "mid-center" });
         }
         if (this.opera || this.opera !== null) {
           await this.makeCheckParams();
@@ -208,7 +208,7 @@ export default {
           // console.log(vl,this.dsm.currRecord);
           if (!vl) {
             this.$notify.warning({
-              content: "【" + item.labelString + "】不能为空！",
+              content: "【" + item.labelString + "】"+this.$t('commInfo.notNull')+"！",
               placement: "mid-center"
             });
             return false;
@@ -226,7 +226,7 @@ export default {
         if (dssub.cdata.length === 0 && !dssub.ccells.unNull) {
           isok = false;
           this.$notify.warning({
-            content: "【" + dssub.ccells.desc + "】不能为空！",
+            content: "【" + dssub.ccells.desc + "】"+this.$t('commInfo.notNull')+"!",
             placement: "mid-center"
           });
           return;
@@ -238,7 +238,7 @@ export default {
                 var vl = item[cell.id];
                 if (!vl) {
                   this.$notify.warning({
-                    content: "第"+(index+1)+"行【" + cell.labelString + "】不能为空！",
+                    content: this.$t('commInfo.No')+(index+1)+this.$t('commInfo.Line')+"【" + cell.labelString + "】"+this.$t('commInfo.notNull')+"！",
                     placement: "mid-center"
                   });
                   isok = false;
@@ -459,13 +459,13 @@ export default {
         if (crd) {
           var state = crd[this.opera.statefld];
           if (state === '0' || state === '1' || state === '5') {
-            return "提交/退回";
+            return this.$t('commBtn.B_SUB');
           } else {
-            return "审核/退回";
+            return this.$t('commBtn.B_CHK');
           }
         }
       }
-      return "提交/退回";
+      return this.$t('commBtn.B_SUB');
     },
     canAddChild(){
       if (this.opera) {

@@ -433,11 +433,11 @@ export default {
           if (state === '0' || state === '1' || state === '5') {
             return this.$t('commBtn.B_SUB');
           } else {
-            return this.$t('commBtn.B_CHK');;
+            return this.$t('commBtn.B_CHK');
           }
         }
       }
-      return this.$t('commBtn.B_SUB');;
+      return this.$t('commBtn.B_SUB');
     },
     canAddChild(){
       if (this.opera) {

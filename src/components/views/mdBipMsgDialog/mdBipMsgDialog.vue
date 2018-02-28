@@ -7,23 +7,23 @@
       <md-dialog-content class="contentC">
         <div class="content-area">
           <div class="c-area">
-            <label class="area-label">消息状态</label>
+            <label class="area-label">{{$t('bipmsg.head.state')}}</label>
             <span>{{msgStatus}}</span>
           </div>
           <div class="c-area">
-            <label class="area-label">时间</label>
+            <label class="area-label">{{$t('bipmsg.head.time')}}</label>
             <span>{{msgTM}}</span>
           </div>
           <div class="c-area">
-            <label class="area-label">消息內容</label>
+            <label class="area-label">{{$t('bipmsg.head.content')}}</label>
             <textarea class="area-inner" readonly v-model="msgContent"></textarea>
           </div>
         </div>
       </md-dialog-content>
       <!-- action -->
       <md-dialog-actions class="actionC">
-        <md-button class="md-primary md-raised" @click="read">已读</md-button>
-        <md-button class="md-raised" @click="closeDialog">取消</md-button>
+        <md-button class="md-primary md-raised" @click="read">{{$t('bipmsg.btnRead')}}</md-button>
+        <md-button class="md-raised" @click="closeDialog">{{$t('commInfo.cancel')}}</md-button>
       </md-dialog-actions>
     </div>
   </md-dialog>

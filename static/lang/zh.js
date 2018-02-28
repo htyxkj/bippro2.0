@@ -21,7 +21,17 @@ module.exports = {
     B_UP:'上页',
     B_LAST:'末页',
     B_FIND:'查询',
-    B_STATISTICS:'统计'
+    B_STATISTICS:'统计',
+    child:{
+      title:'子项',
+      next:'下一步',
+      up:'上一步',
+      back:'返回',
+      finish:'完成',
+      delLine:'删除行',
+      addLine:'添加行',
+      delAll:'删除所有'
+    }
   },
   commLabel:{
     L_AddM:'新增/修改',
@@ -65,6 +75,35 @@ module.exports = {
     submit:'提交',
     reject:'驳回',
     back:'退回'
+  },
+  bipmsg:{
+    title:"我的消息",
+    info:"条消息未处理！",
+    keyword:'关键词',
+    btnFind:'查询',
+    btnUnRead:'未读',
+    head:{
+      sid:'编号',
+      title:'标题',
+      time:'时间',
+      state:'消息状态',
+      oper:'操作',
+      content:'消息内容'
+    },
+    btnView:'查看',
+    btnDel:'删除',
+    btnRead:'已读'
+  },
+  biptask:{
+    title:"我的任务",
+    info:"条任务未处理！",
+    audit:'审核单据',
+    gotask:'返回列表',
+    
+  },
+  common:{
+    you:"您有",
   }
+
 
 }

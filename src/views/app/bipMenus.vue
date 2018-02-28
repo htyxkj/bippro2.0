@@ -24,13 +24,13 @@
       <md-list-item>
         <router-link exact to="/task">
           <md-icon v-colors="{color:'red-700-0.8'}">send</md-icon>
-          <span>Моя задача</span>
+          <span>{{$t('biptask.title')}}</span>
         </router-link>
       </md-list-item>
       <md-list-item>
         <router-link exact to="/msg">
           <md-icon v-colors="{color:'green-700-0.8'}">message_bulleted</md-icon>
-          <span>Мое сообщение</span>
+          <span>{{$t('bipmsg.title')}}</span>
         </router-link>
       </md-list-item>
 
