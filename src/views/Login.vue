@@ -22,14 +22,34 @@
           </button>
         </span>
       </div>
-      <div class="checkbox forPwd">
-        <label>
+      <!-- <div class="input-group">
+        <span class="input-group-addon">
+          <span class="glyphicon glyphicon-language"></span>
+        </span>
+        <input :type="type" class="form-control" :placeholder="$t('login.password')" id="pwd">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button" @click="showOrNot">
+            <span class="glyphicon glyphicon-eye-open" v-if="showPwd"></span>
+            <span class="glyphicon glyphicon-eye-close" v-if="notShow"></span>
+          </button>
+        </span>
+      </div> -->
+      <!-- <div class="checkbox forPwd"> -->
+        <!-- <label>
           <input type="checkbox">{{$t('login.rememberPwd')}}
-        </label>
-        <div class="forgetPwd">
+        </label> -->
+          <!-- <md-input-container> -->
+            <!-- <label for="lang">语言：</label> -->
+            <!-- <md-select name="lang" id="lang" v-model="lang">
+              <md-option value="zh">{{$t('login.lang.zh')}}</md-option>
+              < <md-option value="en">English</md-option> -->
+              <!-- <md-option value="rs">{{$t('login.lang.rs')}}</md-option>
+            </md-select>
+          </md-input-container> -->
+        <!-- <div class="forgetPwd">
           <a href="#">{{$t('login.forgetPwd')}}</a>
-        </div>
-      </div>
+        </div> -->
+      <!-- </div> -->
       <button type="button" class="btn btn-success btn-block btn-my" @click="loginRemote">{{$t('login.loginBtn')}}</button>
     </div>
     <md-loading :loading="loading"></md-loading>
@@ -46,7 +66,7 @@ export default {
       notShow: false,
       type: 'password',
       loading:0,
-      lang:''
+      lang:'zh'
     }
   },
   mounted() {
@@ -63,7 +83,7 @@ export default {
         dbid: global.DBID,
         usercode: this.usercode,
         pwd: this.base64Encode(psss),
-        lang:this.lang
+        lang:this.lang==='zh'?'':this.lang
       }
       try{
         var res = await this.getDataByAPINew(logindata);
