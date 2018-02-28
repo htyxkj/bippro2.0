@@ -5,7 +5,12 @@ module.exports = {
     password:'请输入密码',
     rememberPwd:'记住密码',
     forgetPwd:'忘记密码',
-    loginBtn:'登陆系统'
+    loginBtn:'登陆系统',
+    lang:{
+      zh:'中文',
+      en:'英文',
+      rs:'俄文'
+    }
   },
   commBtn:{
     B_ADD:'新建',
