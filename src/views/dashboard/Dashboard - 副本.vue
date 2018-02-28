@@ -1,10 +1,79 @@
 <template>
-  <!-- <md-layout> -->
-    <!-- <md-image src="../../img/dashboard/01.png"></md-image> -->
+  <md-layout md-gutter md-column>
     <md-layout md-gutter md-row>
-     <img src="../../img/dashboard/01.png">
-    </md-layout>
-  <!-- </md-layout> -->
+      <md-layout md-flex-small="100" md-flex="66">
+        <md-card>
+          <md-card-media>
+            <md-chart class="myChart" ref="xsChart" :options="columnChart" :autoResize="true"></md-chart>
+          </md-card-media>
+          <md-card-media>
+            <md-layout>
+              <md-layout md-flex="33" md-flex-xsmall="100">
+                <!-- <md-chart ref="groupStructure"></md-chart> -->
+                <md-chart ref="pieChart" :options="pieChart" :autoResize="true"></md-chart>
+              </md-layout>
+              <md-layout md-flex="66" md-flex-xsmall="100">
+                <!-- <md-chart ref="groupRank"></md-chart> -->
+                <md-chart ref="groupRank" :options="lineChart" :autoResize="true"></md-chart>
+              </md-layout>
+            </md-layout>
+          </md-card-media>
+        </md-card>
+      </md-layout>
+      <md-layout md-flex-small="100" md-flex="33">
+        <md-card>
+          <md-tabs md-fixed :md-dynamic-height="false" style="min-height:4rem" class="md-primary layout-fill">
+            <md-tab md-label="公告通知">
+              <md-list class="custom-list md-triple-line">
+                <md-list-item v-for="item in model.news" :key="item.sid">
+                  <div class="md-list-text-container">
+                    <span>{{ item.title }}</span>
+                    <p>{{ item.content }}</p>
+                    <span>{{ item.mkdate }}</span>
+                  </div>
+                  <md-button class="md-icon-button md-list-action">
+                    <md-icon class="md-primary">star</md-icon>
+                  </md-button>
+                  <md-divider></md-divider>
+                </md-list-item>
+              </md-list>
+            </md-tab>
+            <md-tab md-label="待办事宜" >
+              <md-table class="flex">
+                <md-table-header>
+                  <md-table-row>
+                    <md-table-head v-for="(item) in taskLayCel.cels" :key="item.id" v-if="item.isShow" :md-numeric="item.type===3">{{item.labelString}}</md-table-head>
+                  </md-table-row>
+                </md-table-header>
+                <md-table-body>
+                  <md-table-row :class="setRowColor(rowIndex)?'md-tr-color':''" v-for="(row, rowIndex) in taskValues" :key="rowIndex" :md-item="row" @dblclick.native="dblclick(row)">
+                    <md-table-cell v-for="(column, columnIndex) in taskLayCel.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12">
+                      <md-bip-ref :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row"></md-bip-ref>
+                    </md-table-cell>
+                  </md-table-row>
+                </md-table-body>
+              </md-table>
+            </md-tab>
+            <md-tab md-label="未读消息" >
+              <!-- :md-options="{new_badge: 13}" -->
+              <!-- <md-grid :datas="datas" :auto-load="true" :row-focused="false">
+                <md-grid-column field="id" label="id" :width="50" />
+                <md-grid-column field="code" label="编码" :width="50"  editable/>
+                <md-grid-column field="name" label="名称" :width="150"  />
+                <md-grid-column field="date" label="日期" :width="150"  :formatter="formatter" />
+              </md-grid> -->
+              <!-- <md-grid :datas="datas" :auto-load="true" :row-focused="false" :multiple="false" :showActions="false">
+                <md-grid-column v-for="(item,index) in cols" :key="index" :field="item.field" :label="item.label" :width="item.width" :hidden="item.field ==='id'" :headerClass="hdcls" :cellClass="hdcls"/>
+              </md-grid> -->
+
+              
+            <!-- </md-tab>
+          </md-tabs>
+        </md-card>
+      </md-layout>
+      <md-loading :loading="loading"></md-loading>
+    </md-layout> -->
+  </md-layout>
   
 </template>
 <script>
@@ -31,13 +100,13 @@ export default {
       loading:0,
       datas:[],
       cols:[],
-      hdcls:'biphead',
+      hdcls:'biphead'
 
     }
   },
   created(){
-    // this.doQuery();
-    // this.getDatas({});
+    this.doQuery();
+    this.getDatas({});
   },
   methods: {
     async doQuery() {

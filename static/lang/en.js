@@ -102,5 +102,11 @@ module.exports = {
   },
   common:{
     you:"you",
+  },
+  ktz:{
+    f1:'Starting station',
+    f2:'Terminus',
+    f3:'Time',
+    f7:'GoodsName'
   }
 }

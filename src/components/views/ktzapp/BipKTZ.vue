@@ -2,9 +2,9 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-button :disabled="canCreate" @click.native="create">новый/Add</md-button>
-        <md-button class="md-accent" :disabled="canDelete" @click.native="delData">Удалить/DEL</md-button>
-        <md-button @click.native="save" :disabled="canSave">Сохранить/SAVE</md-button>
+        <md-button :disabled="canCreate" @click.native="create">{{$t('commBtn.B_ADD')}}</md-button>
+        <md-button class="md-accent" :disabled="canDelete" @click.native="delData">{{$t('commBtn.B_DEL')}}</md-button>
+        <md-button @click.native="save" :disabled="canSave">{{$t('commBtn.B_SAVE')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <!-- <md-button>审核</md-button> -->
@@ -12,7 +12,7 @@
       </md-part-toolbar-group>
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>новый/изменить</md-part-toolbar-crumb>
+        <md-part-toolbar-crumb>{{$t('commLabel.L_AddM')}}</md-part-toolbar-crumb>
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
@@ -46,31 +46,31 @@
             <md-layout>
             <md-layout md-flex-xsmall="100" md-flex-small="33" md-flex-medium="20" md-flex-large="20">
               <md-input-container>
-                <label>Начальная точка</label>
+                <label>{{$t('ktz.f1')}}</label>
                 <md-input v-model="f1"></md-input>
               </md-input-container>
             </md-layout>
             <md-layout md-flex-xsmall="100" md-flex-small="33" md-flex-medium="20" md-flex-large="20">
               <md-input-container>
-                <label>назначения</label>
+                <label>{{$t('ktz.f2')}}</label>
                 <md-input v-model="f2"></md-input>
               </md-input-container>
             </md-layout>
              <md-layout md-flex-xsmall="100" md-flex-small="33" md-flex-medium="20" md-flex-large="20">
               <md-input-container>
-                <label>время</label>
+                <label>{{$t('ktz.f3')}}</label>
                 <md-input v-model="f3"></md-input>
               </md-input-container>
             </md-layout>
              <md-layout md-flex-xsmall="100" md-flex-small="33" md-flex-medium="20" md-flex-large="20">
               <md-input-container>
-                <label>Наименование товара</label>
+                <label>{{$t('ktz.f7')}}</label>
                 <md-input v-model="f7"></md-input>
               </md-input-container>
             </md-layout>
             <md-layout md-flex-xsmall="100" md-flex-small="33" md-flex-medium="20" md-flex-large="20">
               <md-button class="md-raised md-primary" @click="makeQuery">
-                 <md-icon>search</md-icon>найти</md-button>
+                 <md-icon>search</md-icon>{{$t('commBtn.B_FIND')}}</md-button>
             </md-layout>
             </md-layout>
             <br/>
@@ -80,8 +80,8 @@
             </md-bip-grid>
           </md-dialog-content>
           <md-dialog-actions>
-            <md-button class="md-accent md-raised" @click="diacancel">отменить</md-button>
-            <md-button class="md-primary md-raised" @click="getSelectData">кнопку OK</md-button> 
+            <md-button class="md-accent md-raised" @click="diacancel">{{$t('commInfo.cancel')}}</md-button>
+            <md-button class="md-primary md-raised" @click="getSelectData">{{$t('commInfo.ok')}}</md-button> 
           </md-dialog-actions>
         </md-dialog>
     </md-part-body>
@@ -97,7 +97,7 @@ export default {
     dsm: null,
     chkinfo: null,
     pcell: "5003(5003A)",
-    dialogTitle: "интерфейс запроса",
+    dialogTitle: this.$t('cwork.title'),
     datas: [],
     f1: null,
     f2: null,
@@ -109,16 +109,14 @@ export default {
     create() {
       // this.getCells();
       let state = this.dsm.currRecord.sys_stated & 1;
-      if(state>0)
-        return ;
+      if (state > 0) return;
       this.dsm.clearData();
       this.dsm.ds_sub[0].clearData();
       this.dsm.createRecord();
     },
     delData() {
       let state = this.dsm.currRecord.sys_stated & 1;
-      if(state>0)
-        return ;
+      if (state > 0) return;
       this.dsm.currRecord.sys_stated = 4;
       this.save();
     },
@@ -129,10 +127,13 @@ export default {
       var options = { pcell: this.pcell, jsonstr: str };
       var res = await this.saveData(options);
       // console.log(res);
-      if(state ===4 ){
-        this.$notify.success({ content: "DELETE SUCCESSFULL！", placement: "mid-center" });
+      if (state === 4) {
+        this.$notify.success({
+          content:this.$t('commInfo.deleteSucc'),
+          placement: "mid-center"
+        });
         this.create();
-        return ;
+        return;
       }
       let data = res.data.data;
       let _self = this;
@@ -142,7 +143,7 @@ export default {
       });
       // this.dsm.currRecord.sys_stated = billS.DICT;
       this.dsm.makeState(billS.DICT);
-      this.$notify.success({ content: "保存成功！", placement: "mid-center" });
+      this.$notify.success({ content: this.$t('commInfo.saveSucc'), placement: "mid-center" });
     },
     list() {},
     submit() {},
@@ -230,13 +231,13 @@ export default {
       }
       // this.$refs['querygrid'].refresh();
     },
-    makeQuery(){
+    makeQuery() {
       let qdata = {
-        sid:'0+',
-        f1:this.f1,
-        f2:this.f2,
-        f3:this.f3,
-        f7:this.f7
+        sid: "0+",
+        f1: this.f1,
+        f2: this.f2,
+        f3: this.f3,
+        f7: this.f7
       };
       let data1 = {
         dbid: global.DBID,
@@ -251,30 +252,29 @@ export default {
       };
       this.getDataByAPINew(data1, this.successLoad);
     },
-    getSelectData(){
-      let selectRows = this.$refs['querygrid'].selectedRows;
+    getSelectData() {
+      let selectRows = this.$refs["querygrid"].selectedRows;
       let cc = [];
-      _.forEach(selectRows,key=>{
-        _.forEach(key,v=>{
+      _.forEach(selectRows, key => {
+        _.forEach(key, v => {
           cc.push(v);
         });
       });
-      for(let i=0;i<cc.length;i++){
+      for (let i = 0; i < cc.length; i++) {
         let cr0 = cc[i];
         let ccr0 = this.dsm.ds_sub[0].createRecord();
         ccr0.sys_stated = 3;
-        ccr0 = _.forEach(cr0,(key,v)=>{
-          if(v === 'sid'){
-            ccr0['slkid'] = key;
-          }else{
-            if(v!=='sys_stated')
-              ccr0[v] = key;
+        ccr0 = _.forEach(cr0, (key, v) => {
+          if (v === "sid") {
+            ccr0["slkid"] = key;
+          } else {
+            if (v !== "sys_stated") ccr0[v] = key;
           }
         });
         // ccr0.sys_stated = 3;
         // this.$set(ccr0,'slkid',cr0.sid);
       }
-      this.$set(this.dsm.currRecord,'5003A',this.dsm.ds_sub[0].cdata);
+      this.$set(this.dsm.currRecord, "5003A", this.dsm.ds_sub[0].cdata);
       this.$refs["dialog"].close();
       // this.dsm.currentPage['5003A'] = this.dsm.ds_sub[0].cdata;
     }
@@ -297,7 +297,7 @@ export default {
       return false;
     },
     getSH() {
-      return "ревизии/представления";
+      return this.$t('commBtn.B_SUB');
     },
     canAddChild() {
       return true;
