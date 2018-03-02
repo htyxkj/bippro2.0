@@ -13,12 +13,12 @@
         </router-link>
       </md-list-item>
       </div>
-      <bip-menu v-for="mm in menus" :key="mm.menuId" :menuItem="mm"></bip-menu>
+      <bip-menu v-for="mm in menus" :key="mm.menuId" v-if="mm.menuId !=='5003'" :menuItem="mm"></bip-menu>
       <div>
       <md-list-item>
         <router-link exact to="/ktz">
           <md-icon v-colors="{color:'green-700-0.8'}">dashboard</md-icon>
-          <span>Список приложений</span>
+          <span>申请单统计表</span>
         </router-link>
       </md-list-item>
       <md-list-item>

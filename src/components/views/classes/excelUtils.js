@@ -10,16 +10,17 @@ let exportExcel = function (...params) {
   //获取表头
   var headers = _headers
     // 为 _headers 添加对应的单元格位置
-    .map((v, i) => Object.assign({}, { v: v, position: String.fromCharCode(65 + i) + 1 }))
+    .map((v, i) => Object.assign({}, { v: v, position: this.getAA(i) + 1 }))
     // 转换成 worksheet 需要的结构
     .reduce((prev, next) => Object.assign({}, prev, { [next.position]: { v: next.v } }), {});
   var data = _data
     // 匹配 headers 的位置，生成对应的单元格数据
-    .map((v, i) => _headers.map((k, j) => Object.assign({}, { v: v[k], position: String.fromCharCode(65 + j) + (i + 1) })))
+    .map((v, i) => _headers.map((k, j) => Object.assign({}, { v: v[k], position: this.getAA(j)+ (i + 1) })))
     // 对刚才的结果进行降维处理（二维数组变成一维数组）
     .reduce((prev, next) => prev.concat(next))
     // 转换成 worksheet 需要的结构 
     .reduce((prev, next) => Object.assign({}, prev, { [next.position]: { v: next.v } }), {});
+    console.log(headers,data);
   const wopts = { bookType: 'xlsx', bookSST: false, type: 'binary' }; //xlsx格式
 
   var wb = {
@@ -30,7 +31,9 @@ let exportExcel = function (...params) {
   // 合并 headers 和 data
   var output = Object.assign({}, headers, data);
   // 获取所有单元格的位置
+  console.log(output,'888')
   var outputPos = Object.keys(output);
+  console.log(outputPos,'999');
   // 计算出范围
   var ref = outputPos[0] + ':' + outputPos[outputPos.length - 1];
   if (_title) {
@@ -49,6 +52,7 @@ let exportExcel = function (...params) {
       }
     }];
   }
+  // ref="A1:B3";
   wb.Sheets['Sheet1'] = Object.assign({}, data, { '!ref': ref });
   console.log(data);
   console.log(wb);
@@ -77,13 +81,29 @@ let s2ab = function (s) {
   }
 }
 
+let CHAC_S = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+let getAA = function(i){
+  console.log(i)
+  let n = parseInt(i%26);
+  let k = parseInt(i/26);
+  if(k>0){
+    let str = this.getAA(k-1)+this.CHAC_S[n];
+    console.log(str);
+    return this.getAA(k-1)+this.CHAC_S[n];
+  }else {
+    console.log(this.CHAC_S[n],'i<26');
+    return this.CHAC_S[n];
+  }
+}
 let nowR = function(){
   return Date.now();
 }
 const Tool = {
   exportExcel,
   s2ab,
-  nowR
+  nowR,
+  CHAC_S,
+  getAA
 }
 
 export default Tool

@@ -29,7 +29,6 @@
                         </div>
                         <div id="container"></div>
                         </div>
-                    </div>
                 </md-card>
                 <md-loading :loading="loading"></md-loading>
             </md-layout>

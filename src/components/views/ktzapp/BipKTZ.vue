@@ -89,22 +89,26 @@
 </template>
 <script>
 import CDataSet from "../classes/CDataSet";
+import CeaPars from "../classes/CeaPars";
 import billS from "../classes/billState";
 import Operation from "../operation/operation";
 import moment from "moment";
 export default {
-  data: () => ({
-    dsm: null,
-    chkinfo: null,
-    pcell: "5003(5003A)",
-    dialogTitle: this.$t('cwork.title'),
-    datas: [],
-    f1: null,
-    f2: null,
-    f3: moment().format("YYYY-MM"),
-    f7: null,
-    dsmSE: null
-  }),
+  data() {
+    return {
+      dsm: null,
+      chkinfo: null,
+      opera: null,
+      pcell: "5003(5003A)",
+      dialogTitle: this.$t('cwork.title'),
+      datas: [],
+      f1: null,
+      f2: null,
+      f3: moment().format("YYYY-MM"),
+      f7: null,
+      dsmSE: null
+    }
+  },
   methods: {
     create() {
       // this.getCells();
@@ -129,7 +133,7 @@ export default {
       // console.log(res);
       if (state === 4) {
         this.$notify.success({
-          content:this.$t('commInfo.deleteSucc'),
+          content: this.$t('commInfo.deleteSucc'),
           placement: "mid-center"
         });
         this.create();
@@ -144,9 +148,58 @@ export default {
       // this.dsm.currRecord.sys_stated = billS.DICT;
       this.dsm.makeState(billS.DICT);
       this.$notify.success({ content: this.$t('commInfo.saveSucc'), placement: "mid-center" });
+      if (this.opera || this.opera !== null) {
+        await this.makeCheckParams();
+      }
     },
     list() {},
-    submit() {},
+    submit() {
+      let crd = this.dsm.currRecord;
+      if (this.opera) {
+        let state = crd[this.opera.statefld];
+        state = state == ''?'0':state;
+        let params = {
+          sid: crd[this.opera.pkfld],
+          sbuid: crd[this.opera.buidfld],
+          statefr: state,
+          stateto: state,
+          tousr: ""
+        };
+        let ceaParams = new CeaPars(params);
+        let billuser = crd[this.opera.smakefld];
+        // console.log(billuser);
+        console.log(ceaParams,billuser);
+        this.$refs["cc"].open(ceaParams, billuser);
+      }
+    },
+    async makeCheckParams() {
+      if (this.opera === null) return;
+      var crd = this.dsm.currRecord;
+      // console.log(this.opera);
+      var params = {
+        sid: crd[this.opera.pkfld],
+        sbuid: crd[this.opera.buidfld],
+        statefr: crd[this.opera.statefld],
+        stateto: crd[this.opera.statefld],
+        spuserId: ""
+      };
+      var ceaParams = new CeaPars(params);
+      var res = await this.getCeaCheckInfo(ceaParams, 33);
+      if (res.data.id == 0) {
+        this.chkinfo = res.data.data.info;
+      } else {
+        this.chkinfo = {};
+      }
+      var state = crd[this.opera.statefld];
+      if (state === "1" || state === "0") this.dsm.canEdit = true;
+      // console.log(res, "fdfdsfds");
+    },
+
+    async dataCheckUp(state) {
+      this.dsm.currRecord[this.opera.statefld] = state;
+      this.dsm.currRecord.sys_stated = billS.POSTED;
+      await this.makeCheckParams();
+    },
     async getCells() {
       let data1 = {
         dbid: global.DBID,
@@ -170,6 +223,15 @@ export default {
         if (this.dsm.haveChild()) this.dsm.ds_sub[0].clearData();
         this.chkinfo = null;
       }
+      let data2 = {
+        dbid: global.DBID,
+        usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+        apiId: "buid",
+        buid: "5003"
+      };
+      var bb = await this.getDataByAPINewSync(data2);
+      console.log(bb);
+      if (bb.data.id == 0) this.opera = new Operation(bb.data.data.opt);
     },
     dataChange(data) {},
     onLineAdd() {
@@ -218,7 +280,7 @@ export default {
     },
     async successLoad(res) {
       let data = res.data;
-      console.log(data);
+      // console.log(data);
       if (data.id === 0) {
         let cells = data.data.layCels;
         // let cells0 = cells[0];
@@ -226,7 +288,7 @@ export default {
         // console.log(cells0);
         this.dsmSE = new CDataSet(cells);
         this.dsmSE.setPcell("5003-E");
-        console.log(this.dsmSE);
+        // console.log(this.dsmSE);
         this.dsmSE.cdata = data.data.pages.celData;
       }
       // this.$refs['querygrid'].refresh();

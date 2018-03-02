@@ -148,18 +148,20 @@ export default {
       if (bb.data.id == 0) this.opera = new Operation(bb.data.data.opt);
       if (this.opera) {
         var menuid = this.opera.pmenuid;
-        var bb = this.getMenuById(this.menuList, menuid);
-        // console.log(bb);
-        // this.bdj = true;
-        if(bb)
+        // var bb = this.getMenuById(this.menuList, menuid);
+        // // console.log(bb);
+        // // this.bdj = true;
+        // if(bb)
           await this.fetchParams(pflow,menuid);
-        else
-          this.mparams = null;
+        // else
+          // this.mparams = null;
+          console.log(this.mparams)
         if(this.mparams){
           await this.getCell();
           var pdata = {};
           pdata[this.opera.pkfld] = row.buno;
           await this.fetchUIData(pdata);
+          console.log(this.ds_m.cdata);
           if(this.ds_m.cdata.length>0)
             this.bdj = true;
         }

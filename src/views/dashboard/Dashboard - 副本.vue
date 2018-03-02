@@ -67,12 +67,12 @@
               </md-grid> -->
 
               
-            <!-- </md-tab>
+            </md-tab>
           </md-tabs>
         </md-card>
       </md-layout>
       <md-loading :loading="loading"></md-loading>
-    </md-layout> -->
+    </md-layout>
   </md-layout>
   
 </template>

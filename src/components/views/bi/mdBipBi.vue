@@ -183,6 +183,7 @@ export default {
         _data[cell.id] = cell.labelString;
       }
       // var arr = [];
+      console.log(header,_data);
       var cdata = this.ds_m.cdata;
       if(this.pageInfo.total>this.ds_m.cdata.length){
         // console.log('big fff，服务端导出数据');

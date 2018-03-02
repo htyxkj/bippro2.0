@@ -12,7 +12,7 @@
       <md-part-toolbar-group>
         <!-- <md-button>复制</md-button> -->
         <!-- <md-button>审核</md-button> -->
-        <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
+        <md-button @click.native="submit">{{getSH}}</md-button>
       </md-part-toolbar-group>
       <span class="flex"></span>
       <md-part-toolbar-crumbs>

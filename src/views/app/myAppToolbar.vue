@@ -58,7 +58,7 @@
           </md-menu>
           <md-card-actions>
             <div class="layout-row layout-fill layout-align-space-between-center">
-              <md-button>下载客户端</md-button>
+              <md-button @click="download">下载客户端</md-button>
               <md-button @click="logOut">退出</md-button>
             </div>
           </md-card-actions>
@@ -90,6 +90,9 @@ export default {
     if (!this.isconnt) this.connectQ();
   },
   methods: {
+    download(){
+      window.location.href='./bipcli.exe'
+    },
     toggle() {
       this.$emit("toggle");
     },
