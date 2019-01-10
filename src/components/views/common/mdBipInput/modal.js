@@ -10,9 +10,11 @@
 // const INPUT_FILE = 7;//文件
 // const INPUT_REF = 8;//参照
 // const INPUT_DATE = 9;//日期
+// const INPUT_TEXTAFC = 10;//富文本编辑 
 export default {
   data () {
-    return {
+    return { 
+      MULTIPLE:0x200000,//多项
       PRIMARY:0,
       NOTEDIT: 0x40,
       READONLY: 0x20,
@@ -25,8 +27,11 @@ export default {
       INPUT_FILE: 7,
       INPUT_REF: 8,
       INPUT_DATE: 9,
+      INPUT_TEXTAFC:10, 
       disabled: false,
-      oldValue:""
+      oldValue:"",
+      mdSelection:false, 
+      multiple:false
     }
   },
   props: {cell:Object,isSearch: {type:Boolean,default:false},modal:{},btj:{default:false,type:Boolean}},
@@ -38,6 +43,15 @@ export default {
       if(this.modal&&this.modal[this.cell.id]){
         this.oldValue = this.modal[this.cell.id];
       }
+      let _multiple=this.cell.attr&this.MULTIPLE
+      // console.log(_multiple)
+      if(_multiple>0){   
+        this.multiple =true;
+        this.mdSelection=true; 
+      }else{
+        this.multiple =false;
+        this.mdSelection=false;
+      } 
     }
 
   },

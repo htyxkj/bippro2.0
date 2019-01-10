@@ -50,11 +50,11 @@ export default class BipScriptProc {
     var idx = 0,
       cx0 = 0,
       t1 = 0;
-    var bfh = false, b0 = false;
+    var bfh = false,
+      b0 = false;
     for (var i = x0; i < x1; i++) {
       if (bfh) {
-        let cc1 = dvs[i]+'';
-        var cfh = cc1.charCodeAt(0);
+        var cfh = dvs[i].charCodeAt(0);
         c1 = (cfh >>> 8);
         c0 = (cfh & 0xff);
         if (c0 == c1) {

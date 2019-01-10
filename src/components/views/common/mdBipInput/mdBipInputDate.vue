@@ -1,7 +1,7 @@
 <template>
     <md-input-container>
-      <label>{{cell.labelString}}</label>
-      <md-date v-model="modal[cell.id]" :required="cell.isReq" :disabled="disabled" :btime="cell.type==93" @change="dataChange"></md-date>
+      <label>{{cell.labelString}}</label> 
+        <md-bip-date v-model="modal[cell.id]" :isReport="isReport" :cell="cell" :required="cell.isReq" :disabled="disabled"  @blur="onBlur" @change="dataChange" ></md-bip-date> 
     </md-input-container>
 </template>
 <script>
@@ -13,7 +13,13 @@ export default {
     }
   },
   mixins:[comm],
-  methods:{
+  props:['isReport'],
+  watch:{
+    modal(){
+      // console.log('modal change')
+    }
+  },
+  methods:{ 
     dataChange(value){
       // console.log(value+'');
       var refBackData = {
@@ -27,12 +33,38 @@ export default {
         this.upData = value;
         this.$emit('change',refBackData);
       }
-    }
+    },
+    onBlur(){ 
+      if(this.oldValue != this.modal[this.cell.id]){
+        var data = {};
+        data.cellId = this.cell.id;
+        data.value = this.modal[this.cell.id];
+        data.oldValue = this.oldValue;
+        data.multiple = false;
+        // this.oldValue = this.modal[this.cell.id];
+        // console.log('datachange');
+        this.$emit('change',data);
+      }
+    },
   },
   mounted(){
     if(this.modal&&this.modal[this.cell.id]!=undefined)
       this.oldValue = this.modal[this.cell.id];
       this.upData = this.modal[this.cell.id];
+  },
+  computed:{
+    getType(){
+      if(this.cell.type<12){
+        return "number";
+      }else if(this.cell.type === 91 || this.cell.type===93){
+        return 'dates';
+      }
+      return "string";
+    }
   }
 }
 </script>
+
+<style scoped>
+textarea.md-input{max-height:.32rem !important;overflow: auto !important;}
+</style>

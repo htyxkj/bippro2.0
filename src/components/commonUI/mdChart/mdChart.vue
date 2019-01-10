@@ -3,6 +3,7 @@
 </template>
 <script>
 import Highcharts from 'highcharts';
+// var Highcharts = import('highcharts');
 require('highcharts/highcharts-3d')(Highcharts);
 var defaultOpts = {
   credits: { enabled: false },

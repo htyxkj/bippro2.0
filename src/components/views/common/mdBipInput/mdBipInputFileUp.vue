@@ -20,7 +20,7 @@
             </md-layout>
         <!-- 1 -->
             <md-layout md-column md-gutter class="colClass" md-flex="10" md-hide-small md-hide-xsmall >
-              <md-layout><md-image :md-src="file.src"></md-image></md-layout>
+              <md-layout><md-image  :md-src="file.src"></md-image></md-layout>
             </md-layout>
             <!-- 2 -->
             <md-layout md-column md-gutter md-flex="50" md-flex-xsmall="45" md-flex-small="45" md-flex-medium="50">
@@ -194,7 +194,7 @@ export default {
         this.placeholder = this.selFiles[this.selFiles.length - 1][0].name;
       }
     },
-    selectFile(e){
+    selectFile(e){ 
       for (var i = 0; i < e.target.files.length; i++) {
         var file = e.target.files.item(i);  
         var name = e.target.files[i].name;
@@ -288,11 +288,8 @@ export default {
               this.upLoadDid = res.data.data.fj_root;
             }
           }
-          // console.log(res);
         });
-        // console.log(i,'fdsfds');
       }
-      
 		},
 		setProgress(index,data){
 			this.$set(this.progress,index,data);
@@ -315,15 +312,15 @@ export default {
         fjroot: this.upLoadDid,
         fjname: vls,
         updid: global.APIID_FILEINFO
-      };
+      }; 
       var res = await this.getFileByAPINewSync(params);
       if(res.data.id==0){
         this.selFiles = res.data.data.files;
       }
       var fis = vls.split(';');
       _.forEach(fis,(name,index)=>{
-        var _srcs = this.getFileIcon(name);
-        _srcs.size = this.getSize(this.selFiles[index].size);
+        var _srcs = this.getFileIcon(name);  
+        _srcs.size = this.getSize(this.selFiles[index].size);  
         this.srcs.push(_srcs);
         this.upLoadFils.push(name);
         this.progress[index]=100;
@@ -331,11 +328,13 @@ export default {
     }
   },
   mounted(){
+    console.log(this.modal)
     if(this.cell){
       if(this.cell.c_par){
         var ii = _.findIndex(this.cell.c_par.cels,item=>{
           return item.id === 'fj_root';
         })
+        console.log(ii)
         if(ii>=0){
           this.bfjRoot = true;
         }else{
@@ -397,6 +396,8 @@ export default {
 .cancelClass{position: absolute;bottom: .15rem;margin-left: .18rem;}
 .checkClass{position: absolute;bottom: .15rem;margin-left: .18rem;color:#22bf22;}
 .colClass{max-height: .6rem;line-height: .5rem;}
+
+ 
 </style>
 
 

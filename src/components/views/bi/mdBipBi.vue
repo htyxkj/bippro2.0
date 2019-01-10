@@ -2,6 +2,7 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
+        <!-- 查询 -->
         <md-button @click.native="search()">{{$t('commBtn.B_FIND')}}</md-button>
         <!-- <md-button @click.native="clear">清空</md-button> -->
       </md-part-toolbar-group>
@@ -9,17 +10,23 @@
         <md-button>复制</md-button>
       </md-part-toolbar-group> -->
       <md-part-toolbar-group>
-        <md-button @click.native="list()">{{$t('commBtn.B_LIST')}}</md-button>
+        <!-- 列表 -->
+        <!-- <md-button @click.native="list()">{{$t('commBtn.B_LIST')}}</md-button> -->
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button @click.native="searchCount('dialog')">{{$t('commBtn.B_STATISTICS')}}</md-button>
+        <!-- 统计 -->
+        <!-- <md-button @click.native="searchCount('dialog')">{{$t('commBtn.B_STATISTICS')}}</md-button> -->
       </md-part-toolbar-group>
       <md-part-toolbar-group>
+        <!-- 导出 -->
         <md-button @click.native="exportFile()">{{$t('commBtn.B_EXP')}}</md-button>
       </md-part-toolbar-group>
-      <md-part-toolbar-group>
+      <!-- 隐藏显示条件按钮  顶部 -->
+      <!-- <md-part-toolbar-group>
           <md-button @click.native="showSearchInfo">{{showContLabel}}</md-button>
-      </md-part-toolbar-group>
+      </md-part-toolbar-group> -->
+
+
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
         <md-part-toolbar-crumb>{{mdTitle}}</md-part-toolbar-crumb>
@@ -31,27 +38,28 @@
         <template v-if="showCont">
           <md-layout md-gutter="4" v-if="ds_cont">
             <template v-if="showAllCont">
-              <md-bip-input v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
+              <md-bip-input :isReport="true" v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
             </template>
             <template v-else>
-              <md-bip-input v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"></md-bip-input>
+              <md-bip-input :isReport="true" v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"></md-bip-input>
             </template>
-            <md-button class="bip-more md-icon-button" @click.native="showMore()">
+            <!-- 隐藏显示剩余条件 -->
+            <!-- <md-button class="bip-more md-icon-button" @click.native="showMore()">
               <md-tooltip md-direction="right">{{tipLaber}}</md-tooltip>
               <md-icon>list</md-icon>   
-            </md-button>
-          </md-layout>
-          
+            </md-button> -->
+          </md-layout> 
         </template>
-        <template v-if="!groupTJ">
+
+        <template v-if="!groupTJ"> 
           <md-layout class="flex">
             <md-table-card>
               <md-table class="flex" v-if="ds_m">
-                <md-table-header>
+                <md-table-header v-if="ds_m">
                   <md-table-row>
                     <md-table-head v-for="(item, index) in ds_m.ccells.cels" :key="index" v-if="item.isShow" :md-numeric="item.type<12">{{item.labelString}}</md-table-head>
                   </md-table-row>
-                </md-table-header>
+                </md-table-header>  
                 <md-table-body>
                   <md-table-row :class="setRowColor(rowIndex)?'md-tr-color':''" v-for="(row, rowIndex) in ds_m.cdata" 
                     :key="rowIndex"
@@ -60,13 +68,14 @@
                     :md-selection="mdSelection" 
                     @dblclick.native="dblclick(row)">
                     <md-table-cell v-for="(column, columnIndex) in ds_m.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
-                      <md-bip-ref :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type<12"></md-bip-ref>
+                      <md-bip-ref v-if="column.editName!='UPDOWN'" :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type<12" @pkclick="dblclick(row,rowIndex)"></md-bip-ref>
+                      <md-bip-button-file-tmp  v-else :cell="fileCell(row)" :modal="fileModal(row)" ref="fj_name"></md-bip-button-file-tmp>
                     </md-table-cell>
                   </md-table-row>
                 </md-table-body>
               </md-table>
               <md-table-tool>
-                <md-layout class="flex"></md-layout>
+                <md-layout class="flex"></md-layout> 
                 <md-table-pagination
                     :md-size="pageInfo.size"
                     :md-total="pageInfo.total"
@@ -83,7 +92,14 @@
         </template>
         <template v-else>
           <md-layout class="flex" >
-            <md-bip-chart :groupfilds="groupfilds" :groupdatafilds="groupdatafilds" :modal="ds_cont.currRecord" :pcell="ds_m.ccells.obj_id" :doSearch="doSearCh" :searchCelId="ds_cont.ccells.obj_id"  :chartType="ctype" :showChart="showChart"></md-bip-chart>
+            <md-layout v-if="groupfilds.length!=0 && groupdatafilds.length!=0" md-flex-small="100" md-flex="100">
+              <!-- 手工统计 -->
+              <md-bip-chart :showData="true" :groupfilds="groupfilds" :groupdatafilds="groupdatafilds" :modal="ds_cont.currRecord" :pcell="ds_m.ccells.obj_id" :doSearch="doSearCh" :searchCelId="ds_cont.ccells.obj_id"  :chartType="ctype" :showChart="showChart"></md-bip-chart>
+            </md-layout>
+            <md-layout v-else v-for="(item,index) in this.mparamsArr" :key="index"  md-flex-small="100" :md-flex="item.width">
+              <!-- 系统初始定义统计 -->
+              <md-bip-chart :showData="mparamsArr.length==1?true:false" :groupfilds="item.groupfilds" :groupdatafilds="item.sumfilds" :modal="ds_cont.currRecord" :pcell="ds_m.ccells.obj_id" :doSearch="doSearCh" :searchCelId="ds_cont.ccells.obj_id"  :chartType="item.ctype" :showChart="showChart"></md-bip-chart>
+            </md-layout> 
           </md-layout>
         </template>
        </md-content>
@@ -96,7 +112,7 @@
             <md-select id="groupfilds" multiple v-model="groupfilds" required>
               <md-option v-for="(cell, index) in ds_m.ccells.cels"
                 :key="index"
-                :value="cell.id" v-if="cell.type !== 3 &&cell.isShow">
+                :value="cell.id" v-if="(cell.type !== 2 && cell.type !== 3 && cell.type !== 4 && cell.type !== 5 && cell.type !== 6 && cell.type !== 8) &&cell.isShow">
                 {{cell.labelString}}
               </md-option>
             </md-select>
@@ -106,7 +122,7 @@
             <md-select multiple v-model="groupdatafilds" required>
               <md-option v-for="(cell, index) in ds_m.ccells.cels"
                 :key="index"
-                :value="cell.id" v-if="cell.type == 3&&cell.isShow">
+                :value="cell.id" v-if="(cell.type == 2 || cell.type == 3 || cell.type == 4 || cell.type == 5 || cell.type == 6 || cell.type == 8)&&cell.isShow">
                 {{cell.labelString}}
               </md-option>
             </md-select>
@@ -166,7 +182,9 @@ export default {
       tjpage:{},
       doSearCh:0,
       showAllCont:false,
-      tipLaber:this.$t('commInfo.moreCont')
+      tipLaber:this.$t('commInfo.moreCont'),
+      mparamsArr:[],
+      _mparams:null,
     }
   },
   mixins:[common],
@@ -207,8 +225,8 @@ export default {
       }      
     },
 
-    async getCell(){
-       var pcell = this.mparams.pcell;
+    async getCell(){ 
+       var pcell = this._mparams.pcell;
        var data1 = {
         'dbid': global.DBID,
         'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
@@ -216,11 +234,12 @@ export default {
         'pcell': pcell
       }
       var res = await this.getDataByAPINewSync(data1);
+
       var data = res.data;
       // console.log(data);
       if(data.id===0){
         var cells = data.data.layCels;
-        const celL = cells.length;
+        const celL = cells.length; 
         if(celL==1){
           var cells0 = cells[0];
           cells0 = await this.makeCellCL(cells0);
@@ -238,13 +257,12 @@ export default {
             var ds = new CDataSet(cellsi);
             this.ds_ext[i] = ds;
           }
-        }
-        if(!this.mparams.bgroup)
-          this.fetchUIData();
-        else{
-          this.groupfilds = this.mparams.groupfilds;
-          this.groupdatafilds = this.mparams.sumfilds;
-          this.ctype = this.mparams.ctype;
+        } 
+        if(!this._mparams.bgroup){
+          this.fetchUIData();//一进入页面不查询
+        }else{ 
+          this.groupfilds = [];
+          this.groupdatafilds = [];
           this.doSearCh++;
           this.groupTJ = true;
         }
@@ -280,23 +298,32 @@ export default {
       this.pageInfo.size=20;
       this.pageInfo.page = 1;
       this.pageInfo.total = 0;
-      this.showCont = false;
+      this.showCont = true;
       this.groupTJ = false;
-      this.showAllCont=false;
+      this.showAllCont=true;
     },
     initCell(){
-      this.initInf();
-      if(this.mparams.pcell){
+      this.initInf(); 
+      this.mparamsArr=this.mparams;
+      if(Array.isArray(this.mparamsArr)){
+        this._mparams=this.mparamsArr[0]
+      }else{
+        this._mparams=this.mparams
+      }
+      if(this._mparams.pcell){
         this.ds_m = null;
         this.ds_cont = null;
         this.ds_ext = [];
         this.getCell();
       }
     },
-    onTablePagination (pager) {
+    onTablePagination (pager) { 
+      if(parseInt(pager.size)!=parseInt(this.pageInfo.size)){
+        pager.page=1;
+      }
       this.pageInfo.page = pager.page;
       this.pageInfo.size = pager.size;
-      this.fetchUIData();
+      this.fetchUIData();//一进入页面不查询
     },
     showSearchInfo () {
       this.showCont = !this.showCont;
@@ -334,7 +361,7 @@ export default {
       if(this.groupdatafilds.length>0&&this.groupfilds.length>0){
         this.$refs[ref].close();
         this.groupTJ = true;
-        this.showCont = false;
+        this.showCont = true;
         if(this.doSearCh === Number.MAX_SAFE_INTEGER){
           this.doSearCh = 0;
         }else{
@@ -345,7 +372,7 @@ export default {
     search() {
       if(this.groupTJ){
         this.doSearCh++;
-        this.showCont = false;
+        this.showCont = true;
       }else{
         // this.pageInfo.page = 1;
         this.fetchUIData();
@@ -353,8 +380,31 @@ export default {
     },
     showMore(){
       this.showAllCont = !this.showAllCont;
-    }
+    },
     // async get
+    fileCell(row){
+      let rwcell={
+        c_par:{
+          obj_id:row.sbuid, 
+          cels:[
+            {id:"fj_root"}
+          ]
+        },
+        id:"fj_name",
+        isShow:true,
+        labelString:"附件名称",
+      };
+      return rwcell;
+    },
+    fileModal(row ){  
+      let rwmodal={
+        fj_name:row.fj_name,
+        fj_root:row.fj_root,
+        sbm:row.sbm,
+        sbuid:row.sbuid,
+      };
+      return rwmodal;
+    }
   },
   async mounted(){
     this.initCell();

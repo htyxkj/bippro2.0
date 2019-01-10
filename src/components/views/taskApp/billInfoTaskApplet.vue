@@ -262,7 +262,8 @@ export default {
         item.type == 91 ||
         item.type == 93 ||
         item.chkRule == "{DATE}" ||
-        item.chkRule == "{DATETIME}"
+        item.chkRule == "{DATETIME}"||
+        item.chkRule == "{H_S}"
       ) {
         return "date";
       }

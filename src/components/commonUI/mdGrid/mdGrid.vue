@@ -6,7 +6,7 @@
     </div>
     <div class="md-grid-wrapper layout layout-column">
       <md-grid-head :columns="columns" :is-selected-page="isSelectedPage" :scrollLeft="scrollLeft" @sort="onSorting" :width="width"></md-grid-head>
-      <md-grid-body :columns="columns" :rows="displayedRows" :width="width" :showAdd="showAdd" :filter-no-results="filterNoResults" class="flex"></md-grid-body>
+      <md-grid-body :columns="columns" :rows="displayedRows" :width="width" :showAdd="showAdd" :filter-no-results="filterNoResults" class="flex" style=" -webkit-box-flex: 1"></md-grid-body>
       <md-grid-foot :columns="columns" v-if="showSum" :scrollLeft="scrollLeft" :width="width"></md-grid-foot>
       <md-grid-actions v-if="showActions" :pager-info="pager" :showQuery="showQuery" :showAdd="showAdd" :showInsert="showInsert" :showRemove="showRemove" :showReload="showReload" :showConfirm="showConfirm" :showCancel="showCancel" @pagination="onPagination" @onQuery="onQuery" @onAdd="onAdd" @onInsert="onInsert" @onRemove="onRemove" @onReload="onReload" @onConfirm="onConfirm" @onCancel="onCancel">
       </md-grid-actions>
@@ -172,6 +172,7 @@ export default {
       this.$emit('onReload', options);
     },
     emitRowClick(row) {
+      console.log(row)
       if (!this.canFireEvents) return;
       var options = {};
       options.data = row.data;

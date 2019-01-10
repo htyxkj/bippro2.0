@@ -12,13 +12,15 @@ export default class Row {
     this.columns = columns;
     this.scriptProc = new ScriptProc(data,columns);
   }
-  getValue(columnName) {
+  getValue(columnName) { 
+    console.log(columnName)
     const column = this.getColumn(columnName);
-    if (column && column.dataType === 'entity') {
+    if (column && column.dataType === 'entity') { 
+
       // columnName += '.name';
       var id = this.data[column.field];
       if(id==='' || id ===undefined){
-        return '';
+        return this.data;
       }
       var val = null;
       var bref = false;
@@ -64,12 +66,13 @@ export default class Row {
       }
       return id;
     }
-    if (column && column.dataType === 'enum') {
+    if (column && column.dataType === 'enum') { 
         return enumCache.getEnumName(column.refId || column.refType, get(this.data, columnName));
-    }
+    } 
     return get(this.data, columnName);
   }
   async getAssistDataByAPICout (mdRefID,cont,success,error) {
+    
     var  posParams = {
       'dbid': global.DBID,
       'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,

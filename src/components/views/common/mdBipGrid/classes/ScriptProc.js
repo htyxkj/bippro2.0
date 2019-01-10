@@ -21,26 +21,26 @@ export default class ScriptProc {
     } else if (xlf > 0) {
       // TODO 后续处理
     } else {
-      s0 = this.expcalc(s0, true);
+      s0 = this.expcalc(s0, true,column);
       // console.log(s0);
       return this.keepRound(s0, column); //;--单行公式
     }
   }
 
-  expcalc(s0, istrue) {
+  expcalc(s0, istrue ,column) {
     if (typeof (s0) == 'string') {
       s0 = this.bdstovec(s0);
     }
     if (typeof (s0) == 'object') {
       var bb = [];
-      return this.expcalc1(s0, bb, 0, s0.length);
+      return this.expcalc1(s0, bb, 0, s0.length,column);
     }
     // console.log(s0);
     // console.log(typeof (s0));
     return s0;
   }
 
-  expcalc1(vgs, bufs, x0, x1) {
+  expcalc1(vgs, bufs, x0, x1,column) {
     var ov, dvs = vgs,sv0,sv1;
     var cfhs = ['+', '+', '+', '+'],
       cfh, c0, c1;
@@ -89,7 +89,7 @@ export default class ScriptProc {
               sv0 = sv0.substring(1, cx0);
               // console.log(sv0);
             }
-            ov = cfh == '(' ? this.expcalc(sv0, true) : this.invokeref(sv0);
+            ov = cfh == '(' ? this.expcalc(sv0, true,column) : this.invokeref(sv0,column);
             if (ov != null && sv1 != null) {
               // 有其他关联
             }
@@ -211,7 +211,7 @@ export default class ScriptProc {
       return 4;
   }
 
-  invokeref(s0) {
+  invokeref(s0,column) {
     var c0 = s0.charAt(0);
     if (c0 == '&') {
       // 暂时不处理
@@ -223,6 +223,12 @@ export default class ScriptProc {
     var b0 = c0 == '^' || c0 == '<';
     if (b0) {
       // 取父节点数据或者上一行数据
+      if(c0 =='^'){//获取父节点数据
+        //如果重新赋值 取后重新赋值的
+        if(this.data[column.field] !=null && this.data[column.field] !='null' ){
+          ov=this.data[column.field];
+        }
+      }
     } else if (c0 >= 'a' && c0 <= 'z') {
       // 当前数据
       ov = this.data[s0];
@@ -407,8 +413,9 @@ export default class ScriptProc {
     if(column.dataType == 'numeric'){
       v0 = new Number(v0).toFixed(column.ccPoint);
     }
-    if(isNaN(v0)) v0='';
-    v0+='';
+    // 不知道是什么???
+    // if(isNaN(v0)) v0='';
+    // v0+='';
 
     this.data[column.field] = v0;
     // console.log(v0);

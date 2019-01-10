@@ -71,3 +71,8 @@ export default {
   },
 };
 </script>
+<style>   
+.flex{
+  -webkit-box-flex: 1; 
+}
+</style>

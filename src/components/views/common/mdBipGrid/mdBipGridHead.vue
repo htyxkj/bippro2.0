@@ -9,7 +9,7 @@
           <md-bip-grid-cell v-if="multiple" :selection="true">
             <md-checkbox v-model="selected" @change="handleSelected"></md-checkbox>
           </md-bip-grid-cell>
-          <md-bip-grid-cell v-for="column in visibleColumns" :key="column.field" @click="clicked(column)" :class="headerClass(column)">
+          <md-bip-grid-cell v-for="column in visibleColumns" :key="column.field" @click="clicked(column)" :class="headerClass(column)" :style="column.isReq==true?'color:red':''">
             {{ column.label||column.field }}
           </md-bip-grid-cell>
         </tr>
@@ -56,11 +56,10 @@ export default {
     },
   },
   methods: {
-    headerClass(column) {
+    headerClass(column) { 
       if (!column.isSortable()) {
         return classList(column.headerClass);
-      }
-
+      } 
       if (column.field !== this.sort.field) {
         return classList('has-sort', column.headerClass);
       }

@@ -1,18 +1,18 @@
 import pick from 'lodash/pick';
 import extend from 'lodash/extend';
 export default class Column {
-  constructor(columnComponent) {
+  constructor(columnComponent) { 
     const
       options = {
         width: '150px'
       },
-      mixins = extend({}, options, columnComponent);
+      mixins = extend({}, options, columnComponent); 
     const properties = pick(mixins, [
       'field', 'label', 'dataType', 'sortable', 'sortBy', 'filterable', 'editable',
       'filterOn', 'hidden', 'formatter', 'cellClass', 'headerClass',
-      'width', 'isTool', 'refType', 'refId', 'refInit','multiple','refValues','script','attr','ccPoint','refValue'
-    ]);
-
+      'width', 'isTool', 'refType', 'refId', 'refInit','multiple','refValues','script','attr','ccPoint','refValue','isReq'
+      ,'editName','editType','assist','objid','assType'
+    ]); 
     for (const property in properties) {
       this[property] = mixins[property];
     }

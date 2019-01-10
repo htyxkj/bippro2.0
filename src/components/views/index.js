@@ -9,6 +9,8 @@ import Cwork from './cwork';
 import BI from './bi'
 import taskApp from './taskApp'
 import msgDia from './mdBipMsgDialog'
+import MapECharts from './mapecharts/airfence' 
+import ProgressBar from './progressBar' 
 export default function install(Vue) {
   if (install.installed) {
     console.warn('Vue core is already installed.');
@@ -26,4 +28,6 @@ export default function install(Vue) {
   Vue.use(Chart);
   Vue.use(Excel);
   Vue.use(BI);
+  Vue.use(MapECharts); 
+  Vue.use(ProgressBar);   
 }

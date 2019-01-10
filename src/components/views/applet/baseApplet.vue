@@ -1,8 +1,8 @@
 <template>
   <md-part>
     <template v-if="isPC">
-      <md-bip-bill-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" @list="list"></md-bip-bill-applet>
-      <md-bip-bill-list-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" :mdTitle="mdTitle" @addBill="addBill"  v-else></md-bip-bill-list-applet>
+      <md-bip-bill-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" :mparams="mparams" @list="list"></md-bip-bill-applet>
+      <md-bip-bill-list-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" :mdTitle="mdTitle" :mparams="mparams" @addBill="addBill"  v-else></md-bip-bill-list-applet>
     </template>
     <template v-else>
       <!-- <span>移动端信息</span> -->
@@ -32,9 +32,9 @@ export default {
    },
    methods:{
      addBill(){
-       this.blist = false;
+       this.blist = false;  
        if(this.ds_m.index<0)
-        this.ds_m.createRecord();
+        this.ds_m.createRecord(); 
      },
      list(){
        this.blist = true;
@@ -49,6 +49,7 @@ export default {
       }
       var res = await this.getDataByAPINewSync(data1);
       var data = res.data;
+      console.log(data)
       if(data.id===0){
         var cells = data.data.layCels;
         const celL = cells.length;
@@ -56,7 +57,7 @@ export default {
           var cells0 = cells[0];
           cells0 = await this.makeCellCL(cells0);
           this.ds_m = new CDataSet(cells0);
-          this.ds_m.setPcell(pcell);
+          this.ds_m.setPcell(pcell); 
         }else{
           var cells0 = await this.makeCellCL(cells[0]);
           this.ds_m = new CDataSet(cells0);
@@ -79,8 +80,8 @@ export default {
           'apiId': 'buid',
           'buid': pflow
         }
-        var bb = await this.getDataByAPINewSync(data1);
-        if(bb.data.id==0)
+        var bb = await this.getDataByAPINewSync(data1);  
+        if(bb.data.id==0) 
           this.opera = new Operation(bb.data.data.opt);
           // console.log(this.opera);
       }

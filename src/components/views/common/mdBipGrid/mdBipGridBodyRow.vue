@@ -1,9 +1,9 @@
 <template>
-  <tr @click="rowClicked" :class="['md-bip-data-rows',rowClass]" @dblclick="rowDblclick">
+  <tr @click="rowClicked" :class="['md-bip-data-rows',rowClass]" @dblclick="rowDblclick"  >
     <md-bip-grid-cell v-if="multiple" :selection="true">
       <md-checkbox v-model="selected" @change="handleSelected"></md-checkbox>
     </md-bip-grid-cell>
-    <md-bip-grid-cell v-for="(column,index) in visibleColumns" :row="row" :key="index" :column="column"></md-bip-grid-cell>
+    <md-bip-grid-cell v-for="(column,index) in visibleColumns" :row="row" :dsm="dsm" :key="index" :column="column"></md-bip-grid-cell>
   </tr>
 </template>
 <script>
@@ -11,7 +11,7 @@ import mdBipGridCell from './mdBipGridCell';
 import { classList } from './helpers';
 import getClosestVueParent from '@/components/core/utils/getClosestVueParent';
 export default {
-  props: ['columns', 'row', 'rowIndex'],
+  props: ['columns', 'row', 'rowIndex','dsm'],
 
   components: {
     mdBipGridCell,
@@ -60,6 +60,7 @@ export default {
       this.disabled = false;
     },
     rowClicked() {
+      
       if (!this.canFireEvents) return;
       if (this.autoSelect) {
         this.handleSelected(true);

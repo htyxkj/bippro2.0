@@ -5,10 +5,10 @@
       <a v-if="filter" @click="filter = ''" class="md-bip-grid-filter-clear">×</a>
     </div>
     <div class="md-bip-grid-wrapper layout layout-column">
-      <md-bip-grid-head :columns="columns" :is-selected-page="isSelectedPage" :scrollLeft="scrollLeft" @sort="onSorting" :width="width"></md-bip-grid-head>
-      <md-bip-grid-body :columns="columns" :rows="displayedRows" :width="width" :showAdd="showAdd" :filter-no-results="filterNoResults" class="flex"></md-bip-grid-body>
+      <md-bip-grid-head :columns="columns" :is-selected-page="isSelectedPage" :scrollLeft="scrollLeft" @sort="onSorting" :width="width" ></md-bip-grid-head>
+      <md-bip-grid-body :columns="columns" :rows="displayedRows" :width="width" :showAdd="isEntry==true?showAdd:false" :filter-no-results="filterNoResults" class="flex" :dsm ="dsm"></md-bip-grid-body>
       <md-bip-grid-foot :columns="columns" v-if="showSum" :scrollLeft="scrollLeft" :width="width"></md-bip-grid-foot>
-      <md-bip-grid-actions :pager-info="pager" :showQuery="showQuery" :showAdd="showAdd" :showInsert="showInsert" :showRemove="showRemove" :showReload="showReload" :showConfirm="showConfirm" :showCancel="showCancel" @pagination="onPagination" @onQuery="onQuery" @onAdd="onAdd" @onInsert="onInsert" @onRemove="onRemove" @onReload="onReload" @onConfirm="onConfirm" @onCancel="onCancel">
+      <md-bip-grid-actions v-if="isEntry==true?true:false" :pager-info="pager" :showQuery="showQuery" :showAdd="showAdd" :showInsert="showInsert" :showRemove="showRemove" :showReload="showReload" :showConfirm="showConfirm" :showCancel="showCancel" @pagination="onPagination" @onQuery="onQuery" @onAdd="onAdd" @onInsert="onInsert" @onRemove="onRemove" @onReload="onReload" @onConfirm="onConfirm" @onCancel="onCancel">
       </md-bip-grid-actions>
     </div>
     <div style="display:none;">
@@ -50,18 +50,17 @@ export default {
     showRemove: { default: false, type: Boolean },
     showReload: { default: true, type: Boolean },
     showConfirm: { default: false, type: Boolean },
-    showCancel: { default: false, type: Boolean },
-
-    rowFocused: { default: true, type: Boolean },
-
+    showCancel: { default: false, type: Boolean }, 
+    rowFocused: { default: true, type: Boolean }, 
     sortBy: { default: '', type: String },
-    sortOrder: { default: '', type: String },
-
+    sortOrder: { default: '', type: String }, 
     cacheKey: { default: null },
     cacheLifetime: { default: 5 },
     filterPlaceholder: { default: 'Filter table…' },
     filterNoResults: { default: '暂无数据！' },
     pagerSize: { default: 20, type: Number },
+    isEntry:{default:true,type:Boolean},//是否显示添加行
+    dsm:{default:null,type:Object},//整个页面对象  包括主子孙。。。。。。
   },
 
   data: () => ({
@@ -124,7 +123,6 @@ export default {
         `md-bip-grid.${this.cacheKey}` :
         `md-bip-grid.${window.location.host}${window.location.pathname}${this.cacheKey}`;
     },
-
   },
   methods: {
     onConfirm() {
@@ -189,7 +187,6 @@ export default {
       options.data = this.getSelectedDatas(true);
       this.$emit('select', options);
       this.refreshStatus();
-
     },
     emitFocusRow() {
       if (!this.canFireEvents) return;
@@ -326,7 +323,7 @@ export default {
       return this.columns.find(column => column.field === columnName);
     },
     getWidth() {
-      var w = 40;
+      var w = 40; 
       this.columns.forEach((c) => {
         // console.log(c,c.hidden,c.label);
         if (!c.hidden)
@@ -361,10 +358,11 @@ export default {
       return selected;
     },
 
-    setColumns(instances) {
+    setColumns(instances) {  
+      
       this.columns = instances.map(column => new Column(column));
     },
-    addColumn(instance) {
+    addColumn(instance) { 
       this.columns.push(new Column(instance));
     },
     addDatas(datas) {
@@ -410,22 +408,25 @@ export default {
     this.sort.field = this.sortBy;
     this.sort.order = this.sortOrder;
     this.restoreState();
+    
   },
 
-  async mounted() {
-    if (this.$slots.default && this.$slots.default.filter) {
+  async mounted() { 
+    
+    if (this.$slots.default && this.$slots.default.filter) { 
       const columnComponents = this.$slots.default
         .filter(column => column.componentInstance)
-        .map(column => column.componentInstance);
+        .map(column => column.componentInstance); 
       this.setColumns(columnComponents);
-
       columnComponents.forEach(columnCom => {
+  
         Object.keys(columnCom.$options.props).forEach(
           prop => columnCom.$watch(prop, () => {
             this.setColumns(columnComponents);
           })
         );
       });
+      
     }
     this.width = this.getWidth();
     this.pager.size=this.pagerSize;
@@ -435,7 +436,7 @@ export default {
     this.$nextTick(() => {
       this.canFireEvents = true;
       this.refreshStatus();
-    });
+    }); 
   },
 };
 </script>

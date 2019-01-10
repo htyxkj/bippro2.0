@@ -50,7 +50,7 @@ export default {
       return returnobj;
     }
 
-    Vue.prototype.makeCellCL = async function(cells){
+    Vue.prototype.makeCellCL = async function(cells){ 
       for(var i=0;i<cells.cels.length;i++){
         var cell = cells.cels[i];
         cell.c_par = cells;
@@ -66,6 +66,7 @@ export default {
               cell.refCl = true;
               if(!cc){
                 // console.log('服务端获取');
+                // console.log(cell.refValue)
                 cc = await this.getCLByAPI({'assistid':cell.refValue});
                 // console.log(cc);
                 window.sessionStorage.setItem(cell.refValue,JSON.stringify(cc.data));
@@ -311,7 +312,7 @@ export default {
           _srcs = {'src':require('@/components/../img/uploadImg/ppt.png'),'name':name};
       }else{
           _srcs = {'src':require('@/components/../img/uploadImg/noFound.png'),'name':name};
-      }
+      } 
       return _srcs;
     }
 

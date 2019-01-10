@@ -20,7 +20,7 @@ export default {
     async doQuery() {
       // console.log(this.cell.refValue)
       if (this.cell.refValue) {
-        if (this.cell.refValue.indexOf("$") > 0) {
+        if (this.cell.refValue.indexOf("$") > 0) { 
           var data = JSON.parse(window.sessionStorage.getItem(this.cell.refValue));
           this.makeData(data);
         }else if (this.cell.refValue.indexOf("&") > 0) {

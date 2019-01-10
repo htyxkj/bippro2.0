@@ -73,7 +73,7 @@ export default {
       }
       this.loading--;
     },
-    loginSuccess(res) {
+    loginSuccess(res) { 
       if (res.data.id === 0) {
         var userI = res.data.data.user;
         var mlist = res.data.data.menulist;
@@ -82,7 +82,7 @@ export default {
         window.sessionStorage.setItem('menulist', JSON.stringify(mlist));
         window.sessionStorage.setItem('snkey', JSON.stringify(snkey));
         this.$emit('emitLogin');
-         this.$notify.success({content: '成功登陆'})
+        this.$notify.success({content: '成功登陆'})
       } else {
         // console.log(res.data.message);
         this.$notify.danger({content: res.data.message})

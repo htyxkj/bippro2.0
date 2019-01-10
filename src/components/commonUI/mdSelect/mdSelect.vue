@@ -179,7 +179,6 @@
     },
     mounted() {
       this.parentContainer = getClosestVueParent(this.$parent, 'md-input-container');
-
       if (this.mdContainer&&this.parentContainer) {
         this.setParentDisabled();
         this.setParentRequired();

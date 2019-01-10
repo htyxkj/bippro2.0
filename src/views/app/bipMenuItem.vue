@@ -37,9 +37,13 @@ export default {
     }
   },
   mounted() {
-    this.menuName = this.menuItem.menuName;
+    this.menuName = this.menuItem.menuName;  
     if(this.menuItem.command){
-      this.commond = '/layoutui?' + this.menuItem.command + '&title=' + this.menuItem.menuName;
+      this.commond = '/layoutui?' + this.menuItem.command + '&title=' + this.menuItem.menuName; 
+      if(parseInt(this.menuItem.command.indexOf('customize'))!=-1 ){
+        var rout = this.menuItem.command.replace('customize', '');
+        this.commond = rout+'?title=' + this.menuItem.menuName;
+      }
     }else{
       this.commond="";
     }

@@ -5,7 +5,7 @@ module.exports = {
         spacing: [0, 0, 0, 0],
         margin: [0, 0, 0, 0],
         height: '180px'
-      },
+      }, 
       title: { text: '', floating: true, align: 'center', verticalAlign: 'middle', },
       colors: ['#F7464A', '#46BFBD', '#FDB45C','#4CBE5D'],
       plotOptions: {
@@ -23,13 +23,13 @@ module.exports = {
           point: {
             events: {
               click(e) {
-                this.series.chart.setTitle({ text: this.name + '<br/>' + Math.round(this.percentage * 100) / 100 + '%' });
+                this.chart.setTitle({ text: this.name + '<br/>' + Math.round(this.percentage * 100) / 100 + '%' });
               }
-            }
+            } 
           },
         }
       },
-      tooltip: { enabled: false },
+      tooltip: { pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>' },
       legend: {
         enabled: true,
         symbolRadius: 3,
@@ -40,12 +40,12 @@ module.exports = {
       },
       series: [{
         type: 'pie',
+        name: '占比',
         data: [
-          { name: '收入', y: 20 },
-          { name: '成本', y: 15 },
+          { name: '收11入', y: 200 },
+          { name: '成本', y: 152340 },
           { name: '利润', y: 5 },
         ]
       }]
-  
     }
-  }
+  } 

@@ -1,22 +1,31 @@
 <template>
   <td @click="handleClick" :class="[objClass]">
     <md-bip-grid-cell-edit v-if="status=='editor'" class="md-bip-grid-cell-container" :column="column" :row="row">
-      <template v-if="column&&column.templateEditor">
+      <template v-if="column&&inputType == INPUT_DATE">
+        <md-input-container>
+          <md-bip-child-date v-model="row.data[column.field]" :row="row"  :isReport="false" :column="column" :required="column.isReq"></md-bip-child-date>
+        </md-input-container>
+      </template>
+      <!-- <template v-else-if="column&&inputType == INPUT_LIST">
+        <md-input-container>
+          <md-bip-child-input-list :row="row" :column="column" :ref="column.field" ></md-bip-child-input-list>
+        </md-input-container>
+      </template> -->
+      <template v-else-if="column&&inputType == INPUT_FILE">
+          <md-bip-child-input-file :row="row"  v-model="row.data[column.field]" :column="column" :ref="column.field" ></md-bip-child-input-file>
+          <!-- <md-bip-child-input-list v-model="row.data[column.field]" :column="column" :ref="column.field" ></md-bip-child-input-list> -->
+      </template>
+      <template v-else-if="column&&column.templateEditor">
         <slot name="editor"></slot>
       </template>
       <template v-else-if="column&&column.dataType=='entity'">
         <md-input-container>
-          <md-bip-input-entity :mdRefId="column.refId||column.refType" @init="on_init_ref" v-model="row.data[column.field]"></md-bip-input-entity>
+          <md-bip-input-entity :script="script" :dsm="dsm" :column="column" :mdRefId="column.refId||column.refType" @init="on_init_ref" v-model="row.data[column.field]"></md-bip-input-entity>
         </md-input-container>
       </template>
       <template v-else-if="column&&column.dataType=='enum'">
         <md-input-container>
           <md-bip-enum :md-enum-id="column.refId||column.refType" v-model="row.data[column.field]"></md-bip-enum>
-        </md-input-container>
-      </template>
-      <template v-else-if="column&&column.dataType=='date'">
-        <md-input-container>
-          <md-date v-model="row.data[column.field]"></md-date>
         </md-input-container>
       </template>
       <template v-else>
@@ -35,7 +44,9 @@ import getClosestVueParent from '@/components/core/utils/getClosestVueParent';
 import mdBipGridCellShow from './mdBipGridCellShow';
 import mdBipGridCellEdit from './mdBipGridCellEdit';
 import billState from '../../classes/billState';
+import comm from '../mdBipInput/modal.js';
 export default {
+  mixins:[comm],
   components: {
     mdBipGridCellShow,
     mdBipGridCellEdit
@@ -45,26 +56,42 @@ export default {
     row: { type: Object },
     selection: { default: false, type: Boolean },
     type: { default: 'td', type: String },
+    dsm: { default: null, type: Object },
   },
   computed: {
-    objClass() {
+    objClass() { 
       return {
         'is-tool': this.column && this.column.isTool,
         'md-bip-grid-selection': this.selection,
         'cell-focused': this.focused,
-        'multiple': this.column && this.column.multiple
+        'multiple': this.column && this.column.multiple,
       };
     },
     editable() {
       return (this.row && this.row.data) && (!this.selection) && this.column && (this.column.templateEditor || this.column.editable);
     }
   },
+  watch:{ 
+    columns : function(){
+      this.initType();
+    }, 
+    // 深度 watch
+    dsm:{
+      handler: function () {this.analysisScript() },
+      deep: true
+    }
+  },
+  created(){
+    this.initType();
+  },
   data() {
     return {
       parentTable: {},
       status: 'display',
       focused: false,
-      oldValue: {}
+      oldValue: {},
+      inputType: 0,
+      script:{ default: null, type: Object },
     };
   },
   methods: {
@@ -74,7 +101,7 @@ export default {
       }
       this.focused = true;
     },
-    handleClick(event) {
+    handleClick(event) { 
       if (!this.canFireEvents) return;
       this.handleFocused();
       this.$emit('click', event);
@@ -138,6 +165,7 @@ export default {
     },
     // 多列计算
     checkMulCols(){
+      console.log("多列计算")
       var script = this.column.script;
       if(script){
         script = script.split('&');
@@ -168,13 +196,88 @@ export default {
           });
         }
       }
-    }
+    },
+    initType(){
+      if(this.column){ 
+        //先判断编辑器是什么类型，对应走什么组件
+        if(this.column.editType==this.INPUT_LIST){
+          this.inputType ="enum"//this.INPUT_LIST;
+          return;
+        }if(this.column.editType==this.INPUT_CHECK){
+          this.inputType = this.INPUT_CHECK;
+          return;
+        }if(this.column.editType==this.INPUT_RADIO){
+          this.inputType = this.INPUT_RADIO; 
+          return;
+        }if(this.column.editType==this.INPUT_TEXTAFC){
+          this.inputType = this.INPUT_TEXTAFC;
+          return;
+        }
+        //判断字段是辅助，并且是否是特殊辅助
+        if(this.column.assist){
+          this.analysisScript();   
+          var  editName = this.column.editName; 
+          if (editName == 'UPDOWN') {
+            this.inputType = this.INPUT_FILE;
+            return ; 
+          }else if("DATE、DATETIME、HS、H_S、H_SM、H_S_M、YM、Y-M".indexOf(editName)>-1){
+            this.inputType = this.INPUT_DATE;
+          }else if(editName == 'COPY'){
+            this.inputType = this.INPUT_COMMON;
+          }else{
+            this.inputType = this.INPUT_REF;
+          }
+          return;
+        }
+        // this.inputType = this.INPUT_COMMON;
+        // var refv = this.cell.refValue;
+        // if(refv == '{&DATETIME}'){
+        //   this.inputType = this.INPUT_COMMON;
+        //   return ;
+        // } 
+        // if (refv !== undefined &&refv !=='') {
+        //   var _index = refv.indexOf('&');
+        //   if (_index>0){
+        //     this.inputType = this.INPUT_REF;
+        //     return ;
+        //   }
+        //   this.inputType = this.INPUT_LIST;
+        //     return ;
+        // }
+      }
+    }, 
+    //C_GROUP公式解析
+    analysisScript(){      
+      if(this.column.assType == 'C_GROUP'){
+        var aa = this.column.script.split(";");      
+        var sc = aa[aa.length-1];
+        if(sc.indexOf("*") != -1){
+          var arr = sc.split("*");
+          this.checkScript(this.dsm,arr[0],arr[1])
+        }else{
+          this.checkScript(this.dsm,this.column.objid,sc)
+        }
+      }
+    },
+    //c_group 检查所有对像 中的字段
+    checkScript(cell,objid,valid){
+      if(cell.ccells.obj_id == objid){//先检查主对象
+        var len = parseInt(this.dsm.cdata.length)-1; 
+        this.script = this.dsm.cdata[len][valid];
+      }else{
+        if(cell.ccells.haveChild){
+          for(var i =0;i<cell.ds_sub.length;i++){
+            this.checkScript(cell.ds_sub[i],objid,valid);
+          }
+        }
+      }
+    },
   },
-  mounted() {
+  mounted() {   
     this.parentTable = getClosestVueParent(this.$parent, 'md-bip-grid');
     this.$nextTick(() => {
       this.canFireEvents = true;
-    });
+    }); 
   },
 };
 </script>

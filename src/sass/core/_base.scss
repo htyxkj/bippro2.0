@@ -79,13 +79,20 @@ ul:not(.md-list)>li+li {
 
 audio,
 img,
-svg,
 object,
 embed,
 canvas,
 video,
 iframe {
   max-width: 100%;
+  vertical-align: middle;
+  &:not(.md-image) {
+    height: auto;
+  }
+}
+
+svg{
+  // max-width: 100%;  //百度地图鼠标绘制 点线面  需要注释掉  注释掉暂未发现影响
   vertical-align: middle;
   &:not(.md-image) {
     height: auto;

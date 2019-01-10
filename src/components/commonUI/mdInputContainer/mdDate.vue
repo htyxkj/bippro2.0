@@ -9,7 +9,7 @@
        :disabled="disabled" 
        :required="required" 
        v-on:input="updateValue($event.target.value)" />
-    <md-select-date :value="value" @change="updateValue" :option="option" :disabled="disabled" ></md-select-date>
+    <md-select-date :value="value" @change="updateValue" :boption="option" :disabled="disabled" ></md-select-date>
   </div>
 </template>
 <script>
@@ -19,16 +19,17 @@ import moment from 'moment';
 export default {
   mixins: [common],
   props: {
-    btime:false,
+    btime:null,
+    btimeformat:null,
     option: {
       type: Object,
       default () {
         return {
-          type: this.btime ? 'min':'day',
+          type: this.btime ,
           SundayFirst: false,
           week: ['一', '二', '三', '四', '五', '六', '日'],
           month: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-          format: this.btime ? 'YYYY-MM-DD HH:mm:ss':'YYYY-MM-DD',
+          format: this.btimeformat ,
           color: {
             checked: '#F50057',
             header: '#3f51b5',
@@ -61,11 +62,16 @@ export default {
     },
   },
   methods: {
-    formattedValue(value){
-      if(this.btime){
-        this.option.format  = 'YYYY-MM-DD HH:mm'
+    formattedValue(value){   
+      if(this.option.type == 'hour'){ 
+        let val = value; 
+        if(val.indexOf("-")==-1){
+          val = '2018-06-27 '+value; 
+        } 
+        value = moment(val).format(this.option.format)  
+        return value;
       }
-      value= moment(value).format(this.option.format);
+      value= moment(value).format(this.option.format);  
       return value=='Invalid date'?'':value;
     },
     updateValue: function (value) {
@@ -74,7 +80,7 @@ export default {
       }
       if(this.disabled){
         return ;
-      }
+      } 
       var formattedValue =this.formattedValue(value);
       if (formattedValue !== value||this.$refs.input.value !=formattedValue) {
         this.$refs.input.value = formattedValue;
@@ -97,7 +103,7 @@ export default {
       this.setParentValue();
     },
   },
-  mounted() {
+  mounted() {  
     this.$nextTick(() => {
       this.parentContainer = getClosestVueParent(this.$parent, 'md-input-container');
 

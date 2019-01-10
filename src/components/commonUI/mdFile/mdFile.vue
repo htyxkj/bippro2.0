@@ -85,6 +85,7 @@
     mounted() {
       this.parentContainer = getClosestVueParent(this.$parent, 'md-input-container');
 
+
       if (!this.parentContainer) {
         this.$destroy();
 

@@ -39,8 +39,8 @@ export default {
         //var bb = await this.getDataByAPINew(data1,this.getCallBack,this.getCallError);
         var res = await this.getDataByAPINewSync(data1);
         // console.log(res);
-        if(res.data.id==0){
-          this.mparams = res.data.data.mparams
+        if(res.data.id==0){ 
+          this.mparams = res.data.data.mparams 
         }else{
           console.log(res);
           this.$notify.warning({content: res.data.message,placement:'mid-center'});

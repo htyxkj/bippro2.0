@@ -1,0 +1,188 @@
+<template>
+  <div class="md-date md-input-ref layout-row">
+    <input
+    class="md-input"
+    :id="dateID"
+    ref="input"
+    type="text"
+    :value="checkVal"
+    :disabled="disabled"
+    :required="required"
+    :placeholder="placeholder" 
+    @focus="onFocus"
+    @blur="onBlur"
+    @input="onInput"
+    @keydown.up="onInput"
+    @keydown.down="onInput"
+    v-on:input="updateValue($event.target.value)" />
+    <div md-menu-trigger v-on:click="dateIconClick">
+      <slot>
+        <md-button class="md-icon-button" :disabled="disabled" v-if="!disabled"><md-icon>date_range</md-icon></md-button>
+      </slot>
+    </div> 
+  </div>
+</template>
+
+<script>
+  import common from './common';
+  import getClosestVueParent from '../../../core/utils/getClosestVueParent';
+  import moment from 'moment';
+  export default {
+    mixins: [common],
+    props: {
+      cell:null,
+      isReport:null,
+    },
+    data () {
+      return { 
+        dateID:this._dateID(),
+        checkVal:"",  
+        dateFomt:'YYYY-MM-DD', 
+        range:false,
+      }
+    }, 
+    watch: {   
+      value(){ 
+        this.checkVal=this.formattedValue(this.value); 
+      },
+      checkVal(){ 
+        // this.$emit("change",this.checkVal);
+        if (this.checkVal == undefined) {
+          this.checkVal = '';
+        }
+        if(this.disabled){
+          return ;
+        }
+        var formattedValue =this.formattedValue(this.checkVal);
+        if (formattedValue !== this.checkVal||this.$refs.input.value !=formattedValue) {
+          this.$refs.input.value = formattedValue;
+        }
+        this.setParentValue(this.checkVal);
+        this.$emit('input',this.checkVal);
+        this.$emit('change',this.checkVal);  
+      },
+    },
+    methods: {   
+      _dateID(){ 
+        var reg = new RegExp( '\\.' , "g" ) 
+        // console.log(this.cell.id)
+        return this.cell.id.replace(/_/g, "").replace( reg , '' ); 
+      },
+      dateIconClick(){ 
+        jeDate('#'+this.dateID ,{ 
+          trigger:false,
+          format:this.dateFomt, 
+          range:this.range,
+          // isClear:false,
+          theme:{ bgcolor:"#2196F3",color:"#ffffff", pnColor:"#00CCFF"},
+          donefun: (obj) => { 
+            this.checkVal = obj.val 
+          },
+          clearfun:function(elem, val) {
+            this.checkVal = null;
+          },   
+        });
+      },
+      formtDate(){ 
+        // 文档地址:http://www.jemui.com/uidoc/jedate.html
+        // 注意：zz 的含义 就是补全00
+        // 例如 YYYY-MM-DD hh 得到的是 2017-05-02 10
+        // 如果 YYYY-MM-DD hh:zz 得到的是 2017-05-02 10:00
+        // 日期格式 可以随意组合，下面随意列出几种格式：
+        // 1、 YYYY-MM-DD hh:mm:ss   或者   MM-DD-YYYY hh:mm:ss   或者   MM/DD/YYYY hh:mm:ss
+        // 2、 YYYY-MM-DD hh:mm   或者   MM-DD-YYYY hh:mm   或者   MM/DD/YYYY hh:mm
+        // 3、 YYYY-MM-DD hh   或者   MM-DD-YYYY hh   或者   MM/DD/YYYY hh
+        // 4、 YYYY-MM-DD   或者   MM-DD-YYYY   或者   MM/DD/YYYY
+        // 5、 YYYY-MM
+        // 6、 YYYY
+        // 7、 hh:mm:ss
+        // 8、 hh:mm
+        // 9、 hh
+        // 10、 YYYY-MM-DD hh:zz
+        // 11、 hh:zz
+        // 规则  DATE、DATETIME、HS、H_S、H_SM、H_S_M、YM、Y-M
+        //       DATE:2018-07-01
+        //       DATETIME:2018-07-01 10:00:21
+        //       HS:0510
+        //       H_S:05:10
+        //       H_S_M:01:01:01
+        //       YM:201708
+        //       Y-M:2017-08
+        if(this.cell.editName=='DATE'){
+          this.dateFomt='YYYY-MM-DD';
+        }else if(this.cell.editName=='DATETIME'){
+          this.dateFomt='YYYY-MM-DD hh:mm:ss';
+        }else if(this.cell.editName=='HS'){ 
+          this.dateFomt='hh:mm';
+        }else if(this.cell.editName=='H_S'){ 
+          this.dateFomt='hh:mm';
+        }else if(this.cell.editName=='H_SM'){ 
+          this.dateFomt='hh:mm:ss';
+        }else if(this.cell.editName=='YM'){ 
+          this.dateFomt='YYYYMM';
+        }else if(this.cell.editName=='Y-M'){ 
+          this.dateFomt='YYYY-MM';
+        } 
+      },
+      updateValue: function (value) {
+        // console.log(value)
+        if (value == undefined) {
+          value = '';
+        }
+        if(this.disabled){
+          return ;
+        }  
+        var formattedValue =this.formattedValue(value);
+        if (formattedValue !== value||this.$refs.input.value !=formattedValue) {
+          this.$refs.input.value = formattedValue;
+        }
+        this.setParentValue(formattedValue);
+        this.$emit('input',formattedValue);
+        this.$emit('change',formattedValue);
+      },
+      formattedValue(value){ 
+        if(this.range == "~"){
+          return value;
+        }
+        if(value){
+          var format = this.dateFomt.replace('hh','HH')
+          value= moment(value).format(format);
+          return value=='Invalid date'?'':value;
+        }
+      },
+    },
+    mounted() {
+      this.formtDate()
+      if(this.isReport){
+        this.range="~"
+        if(this.value.indexOf("~") ==-1){
+          this.checkVal =this.formattedValue(""); 
+        }
+      }else{
+        this.checkVal =this.formattedValue(this.value); 
+      } 
+      // this.value = this.formattedValue(this.value);
+      
+      this.updateValue(this.checkVal);
+      this.$nextTick(() => {
+        this.parentContainer = getClosestVueParent(this.$parent, 'md-input-container'); 
+        if (!this.parentContainer) {
+          this.$destroy(); 
+          throw new Error('You should wrap the md-input in a md-input-container');
+        } 
+        this.setParentDisabled();
+        this.setParentRequired();
+        this.setParentPlaceholder();
+        this.handleMaxLength();
+        this.updateValues();
+      });
+    }
+  };
+</script>
+<style lang="scss">
+.jedate .jedate-content .daystable td .nolunar {
+    line-height: 31px;
+    font-size: 14px;
+    font-family: Arial, "\5b8b\4f53", 'sans-serif';
+}
+</style>

@@ -13,68 +13,102 @@
       <md-part-toolbar-pager @paging="paging" :options="pager"></md-part-toolbar-pager>
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
-        <md-part-toolbar-crumb>{{mdTitle}}</md-part-toolbar-crumb>
+        <!-- <md-part-toolbar-crumb>{{mdTitle}}</md-part-toolbar-crumb>
         <md-part-toolbar-crumb>{{$t('commBtn.B_LIST')}}</md-part-toolbar-crumb>
+         -->
+         <!-- <md-input-container>
+            <label for="plane">查询</label> 
+            <md-input v-model="allColumnsLike"></md-input>
+          </md-input-container> -->
+        <md-input-container style="margin:0px;padding:0px;     min-height: 0.28rem;">
+          <md-input v-model="allColumnsLike" class="md-header-search-input" placeholder="搜索"></md-input>
+        </md-input-container>
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
-      <md-content class="flex layout-column">
-         <md-layout class="flex">
-          <md-table-card>
-            <md-table @select="onTableSelect" class="flex">
-              <md-table-header>
-                <md-table-row v-if="dsm">
-                  <md-table-head v-for="(item) in dsm.ccells.cels" :key="item.id" v-if="item.isShow" :md-numeric="item.type===3">{{item.labelString}}</md-table-head>
-                </md-table-row>
-              </md-table-header>
-              <md-table-body v-if="dsm">
-                <md-table-row v-if="dsm.cdata.length==0">
-                  <md-layout>
-                      <md-content>                      
-                        <md-button class="md-fab md-fab-center-center">
-                        <md-icon>verified_user</md-icon>
-                      </md-button>
-                      <span class="md-fab-center-center">{{$t('commInfo.noDatas')}}</span></md-content>
+      <md-content class="flex layout-column"> 
+        <md-layout class="flex">
+          <md-layout v-show="leftShow" md-flex-small="100" md-flex="20">
+            <md-card>
+              <md-bip-tree :treeOption="treeOption" :code="tree_code" :value="tree_value"></md-bip-tree>
+            </md-card>
+          </md-layout>
+          <md-layout class="flex" md-flex-small="100" :md-flex="rightWidth">
+            <md-table-card>
+              <md-table @select="onTableSelect" class="flex">
+                <md-table-header>
+                  <md-table-row v-if="dsm">
+                    <md-table-head v-for="(item) in dsm.ccells.cels" :key="item.id" v-if="item.isShow" :md-numeric="item.type===3">{{item.labelString}}</md-table-head>
+                  </md-table-row>
+                </md-table-header>
+                <md-table-body v-if="dsm">
+                  <!-- <md-table-row v-if="dsm.cdata.length==0">
+                    <md-layout md-align="center">
+                        <md-content>                      
+                          <md-button class="md-fab md-fab-center-center">
+                          <md-icon>verified_user</md-icon>
+                        </md-button>
+                        <span class="md-fab-center-center">{{$t('commInfo.noDatas')}}</span></md-content>
+                    </md-layout>
+                  </md-table-row> -->
+                  <md-layout v-if="dsm.cdata.length==0">
+                    <md-content>                      
+                      <md-button class="md-fab md-fab-center-center">
+                      <md-icon>verified_user</md-icon>
+                    </md-button>
+                      <span class="md-fab-center-center">{{$t('commInfo.noDatas')}}</span>
+                    </md-content>
                   </md-layout>
-                </md-table-row>
-                <md-table-row v-else :class="setRowColor(rowIndex)?'md-tr-color':''" v-for="(row, rowIndex) in dsm.cdata" 
-                  :key="rowIndex"
-                  :md-item="row" 
-                  :md-auto-select="mdAutoSelect" 
-                  :md-selection="mdSelection" 
-                  @dblclick.native="dblclick(row,rowIndex)">
-                  <md-table-cell v-for="(column, columnIndex) in dsm.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
-                    <md-bip-ref :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" @pkclick="dblclick(row,rowIndex)"></md-bip-ref>
-                  </md-table-cell>
-                </md-table-row>
-              </md-table-body>
-            </md-table>
-             <md-table-tool>
-              <md-layout class="flex"></md-layout>
-              <md-table-pagination
-                  :md-size="pageInfo.size"
-                  :md-total="pageInfo.total"
-                  :md-page="pageInfo.page"
-                  :md-label="$t('commInfo.Per')"
-                  md-separator="/"
-                  :md-page-options="[10,20, 30, 50]"
-                  @pagination="onTablePagination"
-                  >
-              </md-table-pagination>
-            </md-table-tool>
-          </md-table-card>
+                  <md-table-row v-if="dsm.cdata.length>0" :class="setRowColor(rowIndex)?'md-tr-color':''" v-for="(row, rowIndex) in dsm.cdata" 
+                    :key="rowIndex"
+                    :md-item="row" 
+                    :md-auto-select="mdAutoSelect" 
+                    :md-selection="mdSelection" 
+                    @dblclick.native="dblclick(row,rowIndex)">
+                    <md-table-cell v-for="(column, columnIndex) in dsm.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
+                      <md-bip-ref  :row="row" :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" @pkclick="dblclick(row,rowIndex)"></md-bip-ref>
+                    </md-table-cell>
+                  </md-table-row>
+                </md-table-body>
+              </md-table>
+              <md-table-tool>
+                <md-layout class="flex"></md-layout>
+                <md-table-pagination
+                    :md-size="pageInfo.size"
+                    :md-total="pageInfo.total"
+                    :md-page="pageInfo.page"
+                    :md-label="$t('commInfo.Per')"
+                    md-separator="/"
+                    :md-page-options="[10,20, 30, 50]"
+                    @pagination="onTablePagination"
+                    >
+                </md-table-pagination>
+              </md-table-tool>
+              <!-- <md-layout v-if="dsm" md-align="center" >
+                <md-layout v-if="dsm.cdata.length==0">
+                    <md-content>                      
+                      <md-button class="md-fab md-fab-center-center">
+                      <md-icon>verified_user</md-icon>
+                    </md-button>
+                      <span class="md-fab-center-center">{{$t('commInfo.noDatas')}}</span>
+                    </md-content>
+                </md-layout>
+              </md-layout> -->
+            </md-table-card>
           <md-loading :loading="loading"></md-loading>
-         </md-layout>
+         </md-layout> 
+        </md-layout>
       </md-content>
     </md-part-body>
   </md-part>
 </template>
 <script>
 import BillState from '../classes/billState';
-import common from '../commonModal.js';
-export default {
+import common from '../commonModal.js'; 
+export default { 
   data () {
     return {
+      allColumnsLike:'',
       mdAutoSelect: true,
       mdSelection: true,
       loading:0,
@@ -88,15 +122,23 @@ export default {
         size:20,
         page:1,
         total:0
-      }
+      },
+      rightWidth:100,
+      leftShow:false,
+      treeOption:null,
+      tree_code:'',
+      tree_value:'',
     }
   },
   mixins:[common],
-  props: {dsm:Object,dsext:Array,dscont:Object,mdTitle:String,opera:Object},
+  props: {dsm:Object,dsext:Array,dscont:Object,mdTitle:String,opera:Object,mparams:Object},
   created(){
     if(this.dsm){
       this.fetchUIData();
-    }
+    }   
+  },
+  mounted(){
+    this.doLayout_0();  
   },
   methods:{
     async exportFile(){
@@ -133,6 +175,7 @@ export default {
       console.log(row);
     },
     create(){
+      // console.log("新建")
       this.dsm.index=-1;
       this.$emit('addBill');
     },
@@ -157,12 +200,15 @@ export default {
     //   }
     //   return false;
     // },
-    onTablePagination (pager) {
+    onTablePagination (pager) { 
+      if(parseInt(pager.size) != this.pageInfo.size){
+        pager.page=1;
+      }
       this.pageInfo.page = pager.page;
       this.pageInfo.size = pager.size;
       this.fetchUIData();
     },
-    async fetchUIData () {
+    async fetchUIData () {  
       this.loading++;
       var data1 = {
         'dbid': global.DBID,
@@ -173,7 +219,8 @@ export default {
         'bebill':  1,
         'currentPage': this.pageInfo.page,
         'pageSize': this.pageInfo.size,
-        'cellid': ''
+        'cellid': '',
+        'allColumnsLike':encodeURI(this.allColumnsLike)
       }
       var res = await this.getDataByAPINewSync(data1);
       if(res.data.id==0){
@@ -192,7 +239,7 @@ export default {
           this.pager.lastId = total==1?'':(this.pageInfo.page==total)?'':total+'';
         }
       }
-      this.loading--;
+      this.loading--; 
     },
     // numRed (vals,cell) {
     //   if(cell.type === 3 &&vals<0)
@@ -244,15 +291,67 @@ export default {
     // delError(res){
     //   this.$notify.danger({content: '出错了！'});
     // }
+    doLayout(){ 
+      let playout = this.mparams.playout; 
+      if(playout.indexOf("H:")!=-1){ 
+        if(playout.indexOf("U:TREE")!=-1){
+          this.rightWidth=80; 
+          this.leftShow=true;
+          this.leftTree();
+        }
+      }else{
+        this.rightWidth=100;
+        this.leftShow=false;
+      }
+    },
+    doLayout_0(){  
+      let playout = this.mparams.playout; 
+      if(playout.indexOf("H:")!=-1){
+        if(playout.indexOf("U:TREE")!=-1){
+          this.rightWidth=80; 
+          this.leftShow=true;
+          // this.leftTree();
+        }
+      }else{
+        this.rightWidth=100;
+        this.leftShow=false;
+      }
+    },
+    async leftTree(){  
+      var data1 = {
+        'dbid': global.DBID,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
+        'apiId': global.APIID_FINDCELLDATA,
+        'pcell': this.dsm.pcell,
+        'pdata': '',
+        'bebill':  1,
+        'currentPage': this.pageInfo.page,
+        'pageSize': 100000,
+        'cellid': '',
+        'allColumnsLike':encodeURI(this.allColumnsLike)
+      }
+      var res = await this.getDataByAPINewSync(data1);  
+      if(res.data.id==0){ 
+        this.treeOption=res.data.data.pages.celData;
+        this.tree_code=this.dsm.ccells.cels[0].id; 
+        this.tree_value=this.dsm.ccells.cels[1].id;  
+      }
+    }
+    
   },
-  watch:{
-    dsm(){
+  watch:{ 
+    dsm(){ 
       if(this.dsm){
+        this.doLayout();
         this.initInfo();
         this.fetchUIData();
       }
+    },
+    allColumnsLike:function(){
+      this.fetchUIData ();
     }
   },
+
   computed:{
     canexp(){
       if(this.dsm){

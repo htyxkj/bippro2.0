@@ -91,6 +91,7 @@ export default {
       this.taskCli.disconnect();
     },
     connectQ: function() {
+      console.log("//初始化mqtt客户端，并连接mqtt服务")
       //初始化mqtt客户端，并连接mqtt服务
       var ws = new WebSocket(global.MQTT_SERVICE);
       this.taskCli = Stomp.over(ws);

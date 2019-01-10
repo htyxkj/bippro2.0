@@ -5,10 +5,6 @@ import scriptProc from './BipScriptProc';
 import BipScriptProc from './BipScriptProc';
 import billState from './billState';
 // 整体的数据类型
-
-import axios from "axios";
-import qs from "qs";
-
 export default class CDataSet {
   constructor(ccells) {
     this.ccells = ccells;
@@ -69,7 +65,7 @@ export default class CDataSet {
       this.checkGS();
   }
 
-checkGS(cell) {
+  checkGS(cell) {
     if(cell){
       const attr = cell.attr;
       if ((attr & 0x100000) > 0) {
@@ -78,58 +74,17 @@ checkGS(cell) {
       }
     }
     this.scriptProc.data = this.currRecord;
-    _.forEach(this.ccells.cels, async col => {
+    _.forEach(this.ccells.cels, col => {
       let scstr = col.script;
       if (scstr && scstr.indexOf('=:') === 0) {
         scstr = scstr.replace('=:', '');
         // 公式计算
-        // console.log(scstr);
-        var vl = await this.scriptProc.execute(scstr,null,col);
-        // console.log(vl);
-        if(this.startWith(scstr,'sql(')){
-          if(vl !== null&& vl.length>1){
-            var res = await this.sqlQuery(vl[0],vl[1]);
-            if(res.data.id === 0){
-                this.currRecord[col.id] = res.data.data.key;
-              }else{
-                this.currRecord[col.id] = null;
-              }
-          }
-        }else{
-          this.currRecord[col.id] = vl;
-        } 
+        var vl = this.scriptProc.execute(scstr,null,col);
+        // console.log(vl,this.currRecord,col.id,scstr);
+        this.currRecord[col.id] = vl;
       }
     })
     // console.log(this.row);
-  }
-
-  async sqlQuery(sql, type) {
-    var posParams = {
-      snkey: JSON.parse(window.sessionStorage.getItem("snkey")),
-      apiId: global.APIID_SQL,
-      assistid: sql,
-      type: type
-    };
-    return await this.doAPi(posParams);
-  }
-
-  async doAPi(posParams) {
-    const url = global.BIPAPIURL + global.API_COM;
-    var res = await axios.post(url, qs.stringify(posParams));
-    // console.log(res);
-    return res;
-  }
-
-
-
-  startWith(str1,str){
-    if(str==null||str==""||this.length==0||str.length>this.length)
-      return false;
-    if(str1.substr(0,str.length)==str)
-      return true;
-    else
-      return false;
-    return true;
   }
 
   // 多列计算
@@ -166,6 +121,7 @@ checkGS(cell) {
 
   // 编辑检查
   checkEdit(res) {
+    // console.log("checkEdit",res)
     if(this.canEdit){
       // console.log(res);
       var cell = this.getCell(res.cellId);
@@ -282,14 +238,13 @@ checkGS(cell) {
   }
 
   createRecord() {
-    var modal = this.initModal(true);
+    var modal = this.initModal(true); 
     // console.log(modal);
-    modal.sys_stated = modal | BillState.INSERT | BillState.EDITED;
+    modal.sys_stated = modal | BillState.INSERT | BillState.EDITED; 
     this.addRow(modal);
     this.currRecord = modal;
-    this.canEdit = true;
-    return this.currRecord;
-
+    this.canEdit = true; 
+    return this.currRecord; 
   }
   initModal(isNew) {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
@@ -458,6 +413,5 @@ checkGS(cell) {
     sinc = sinc.replace(/\[YMD\]/g, common.now('YYYYMMDD'));
     return sinc;
   }
-
-
+ 
 }

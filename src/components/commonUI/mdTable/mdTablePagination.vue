@@ -58,22 +58,22 @@
         currentSize: 0
       };
     },
-    watch: {
-      'mdTotal': function (val) {
-        this.totalItems = isNaN(val) ? Number.MAX_SAFE_INTEGER : parseInt(val, 10);
-      },
-      'mdSize': function(val) {
+    watch: { 
+      'mdSize': function(val) {  
         this.currentSize = parseInt(val, 10);
       },
-      'mdPage': function (val) {
+      'mdPage': function (val) {  
         this.currentPage = parseInt(val, 10);
-      }
+      },
+      'mdTotal': function (val) { 
+        this.totalItems = isNaN(val) ? Number.MAX_SAFE_INTEGER : parseInt(val, 10);
+      },
     },
     computed: {
       lastPage() {
         return false;
       },
-      shouldDisable() {
+      shouldDisable() {   
         return this.currentSize * this.currentPage >= this.totalItems;
       },
       pageInfo(){

@@ -19,6 +19,11 @@
               <md-table-cell v-for="(name,index) in header" :key="index">
                 {{name}}
               </md-table-cell>
+              <!-- 辅助类型是 CGDIC 单独添加商品单位列 -->
+              <md-table-cell v-if='assType == "C_GDIC"'>
+                单位
+              </md-table-cell>
+
             </md-table-row>
           </md-table-header>
           <md-table-body>
@@ -27,7 +32,12 @@
               :md-item="row"
               :md-selection="mdSelection" md-auto-select>
               <md-table-cell v-for="(column, columnIndex) in showCols" :key="columnIndex"  @dblclick.native="dblclick(row)">
-                {{row[allCols[column]]}}
+              {{row[allCols[column]]}}
+              </md-table-cell>            
+              <md-table-cell v-if='assType == "C_GDIC"'>
+                <md-select v-model="row.cc">
+                  <md-option  v-for="(dw,index) in toJSONARR(row.ghsunit,row)" :key="index"  :value="dw.bzunit+'-'+dw.hsgx">{{dw.name}}</md-option>
+                </md-select>            
               </md-table-cell>
             </md-table-row>
           </md-table-body>
@@ -50,6 +60,8 @@
 </template>
 
 <script>
+import qs from 'qs'
+import axios from 'axios'
 export default {
   props: {
     value: {
@@ -84,7 +96,9 @@ export default {
     disabled:{
       type:Boolean,
       default:false
-    }
+    },
+    assType:null,//辅助类型
+    script:null,//公式解析后结果
   },
   data(){
     return{
@@ -100,43 +114,57 @@ export default {
       header: [],
       showCols:[],
       allCols:[],
-      title:''
+      title:'',
+      unit:null,
+
     } 
   },
   mounted(){
     // this.doQuery();
   },
   methods:{
-    open(){
+    async open(){
+      console.log(this.assType)
+      if(this.assType == 'C_GDIC'){
+        if(this.unit == null){
+          await this.getUNIT();
+        }
+      }
       this.$refs['dialog'].open()
-      // console.log('open')
       this.doQuery('')
     },
     onRefClose(){
     },
     selectedRow(items){
       if (this.multiple){
-        this.selectedRows = items;
+        this.selectedRows=[];
+        var i=0
+        for(var x in items){
+          this.selectedRows[i] = items[x]
+          i++;
+        }
       }else{
         this.selectedRows.splice();
         for(var x in items){
           this.selectedRows[0] = items[x]
         }
       }
+      items=[];
     },
-    doQuery(word){
+    doQuery(word){ 
       var option={
         'pageSize': this.pageInfo.size,
         'page':this.pageInfo.page,
         'assistid': this.mdRefId,
-        'cont': word
-      };
-      // console.log(this.mdRefId);
+        'cont': word,
+        'assType':this.assType,
+        'script':this.script,
+      }; 
       if (this.mdRefId) {
         this.getAssistODataByAPI(option,this.getCallBack,this.getCallError);
       }
     },
-    getCallBack(res){
+    getCallBack(res){ 
       var data = res.data;
       this.title = data.title;
       this.header = data.labers;
@@ -144,6 +172,14 @@ export default {
       this.allCols = data.allCols;
       if(data.code==1){
         this.refData = data.values;
+        if(this.assType == 'C_GDIC'){
+          for(var i=0;i<this.refData.length;i++){
+            this.refData[i].cc = this.refData[i][this.allCols[this.allCols.length-2]]+'-1';
+          }
+        }
+
+
+
         this.pageInfo.total = data.total;
         this.pageInfo.size = data.size;
       }
@@ -152,7 +188,7 @@ export default {
       else{
         this.refData = [];
         this.pageInfo.total = 0;
-        // this.$notify.danger({content: data.message});
+        this.$notify.danger({content: data.message});
       }
     },
     getCallError(res){
@@ -164,21 +200,33 @@ export default {
       this.$emit('close',false);
     },
     close(){
+      if(this.assType == 'C_GDIC'){
+        for(var i=0;i<this.selectedRows.length;i++){
+          var bb = this.selectedRows[i].cc+'';
+          var cc =bb.split("-");
+          this.selectedRows[i][this.allCols[this.allCols.length-2]]=cc[0];
+          this.selectedRows[i][this.allCols[this.allCols.length-1]]=cc[1];
+        }
+      }
       if(this.selectedRows.length>0){
         var refBackData = {
           cols:[],
           value:[],
-          multiple:false
+          multiple:this.multiple
         };
         refBackData.cols = this.allCols;
         if(!this.multiple){
           refBackData.value[0] = this.selectedRows[0];
+          // console.log(" this.selectedRows[0]", this.selectedRows[0]);
         }else{
           refBackData.multiple = true;
-          refBackData.value = this.selectedRows;
+          // for(var i=0;i<this.selectedRows.length;i++){
+          //   refBackData.value.push(this.selectedRows[i]);
+          // }
+          console
+          refBackData.value= this.selectedRows;
         }
         this.$emit('close',refBackData);
-
       }
       this.$refs['dialog'].close();
     },
@@ -194,6 +242,37 @@ export default {
       this.pageInfo.page = page.page;
       this.pageInfo.size = page.size;
       this.doQuery(this.word);
+    },
+    toJSONARR(json,row){  
+      if(this.unit == null){
+        this.getUNIT();
+      } 
+      var hsunit = row[this.allCols[this.allCols.length-2]];
+      var arr = {"bzunit":hsunit,"hsgx":"1","name":this.unit[hsunit]} 
+      var j = JSON.parse(json); 
+      j.unshift(arr); 
+      j=JSON.stringify( j ) 
+      return JSON.parse(j); 
+    },
+    //获取单位信息
+    async getUNIT(){ 
+        this.unit = {};
+        var option={
+          'dbid': global.DBID,
+          'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
+          'pageSize': 100000,
+          'page':1,
+          'assistid': '$D.UNIT',
+          'apiId': "assist",  
+        }; 
+        let _this = this;
+        await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(option)) .then(res=>{
+            for(var i=0;i<res.data.values.length;i++){
+              _this.unit[res.data.values[i].ubm] = res.data.values[i].umc;
+            }
+        }) .catch(err=>{
+            console.log(err)
+        }) 
     }
   },
   watch:{

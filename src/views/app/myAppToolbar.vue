@@ -5,11 +5,20 @@
     </md-button>
     <h2 class="md-title">{{mdTitle}}</h2>
     <div class="md-flex">
-      <md-input-container class="md-flex md-header-search">
+      <!-- <md-input-container class="md-flex md-header-search">
         <md-input class="md-header-search-input" placeholder="搜索"></md-input>
-      </md-input-container>
+      </md-input-container> --> 
     </div>
-    <md-menu md-direction="bottom left" ref="taskMSG">
+    <div style="font-size:20px">
+      <!-- 顶部栏显示名称 -->
+        {{cmcName}}
+    </div>
+    <md-button class="md-icon-button" md-menu-trigger  @click="isQP"> 
+        <md-tooltip md-direction="right">{{qpText}}</md-tooltip>
+        <!-- {{qpText}} -->
+        <md-icon>dashboard</md-icon>
+    </md-button> 
+    <md-menu v-if="TOOL_RABBITMQ" md-direction="bottom left" ref="taskMSG">
       <md-button class="md-icon-button" md-menu-trigger>
         <span class="bip-badge" v-if="counts>0">{{counts}}</span>
         <md-icon>notifications</md-icon>
@@ -18,13 +27,13 @@
         <md-list class="custom-list">
           <md-list-item class="bip-task-item">
             <router-link to='/task' @click.native="selItem">
-              <div class="md-table-cell-container">{{$t('biptask.title')}}</div>
+              <div class="md-table-cell-container">我的任务</div>
               <span class="badge badge-info" >+{{taskNum}}</span>
             </router-link>
           </md-list-item>
           <md-list-item class="bip-task-item">
             <router-link to='/msg' @click.native="selItem">
-              <div class="md-table-cell-container">{{$t('bipmsg.title')}}</div>
+              <div class="md-table-cell-container">我的消息</div>
               <span class="badge badge-success" >+{{msgNum}}</span>
             </router-link>
           </md-list-item>
@@ -58,7 +67,7 @@
           </md-menu>
           <md-card-actions>
             <div class="layout-row layout-fill layout-align-space-between-center">
-              <md-button @click="download">下载客户端</md-button>
+              <md-button>下载客户端</md-button>
               <md-button @click="logOut">退出</md-button>
             </div>
           </md-card-actions>
@@ -71,6 +80,8 @@
 const BIPTASK = "biptask",
   BIPMSG = "bipmsg";
 import Stomp from "stompjs";
+import qs from 'qs'
+import axios from 'axios' 
 export default {
   data() {
     return {
@@ -79,7 +90,11 @@ export default {
       client: null,
       taskNum: 0,
       msgNum: 0,
-      isconnt: false
+      isconnt: false,
+      qp:false,
+      qpText:"全屏",
+      cmcName:this.$t('sysTitle'),
+      TOOL_RABBITMQ:global.TOOL_RABBITMQ,
     };
   },
   props: {
@@ -87,12 +102,12 @@ export default {
     mdTitle: String
   },
   created() {
-    if (!this.isconnt) this.connectQ();
+    //启用RabbitMQ
+    if(global.TOOL_RABBITMQ){
+      if (!this.isconnt) this.connectQ();
+    }
   },
   methods: {
-    download(){
-      window.location.href='./bipcli.exe'
-    },
     toggle() {
       this.$emit("toggle");
     },
@@ -138,13 +153,13 @@ export default {
         if (this.taskNum !== info.count) {
           this.taskNum = info.count;
           if(this.taskNum>0)
-            this.$notify.warning({ content: this.$t('common.you') + this.taskNum + this.$t('biptask.info') });
+            this.$notify.warning({ content: "您有" + this.taskNum + "条任务未处理！" });
         }
       }
       if (info.type === 2) {
         this.msgNum = info.count;
         if(this.msgNum>0)
-          this.$notify.info({ content: this.$t('common.you') + this.msgNum + this.$t('bipmsg.info') });
+          this.$notify.info({ content: "您有" + this.msgNum + "条消息未处理！" });
       }
       // console.log(frame);
       // 接收消息
@@ -167,11 +182,83 @@ export default {
       // console.log(path1);
       // this.$router.push({ path: path1 })
       this.$refs.taskMSG.close()
+    },
+    load(){
+      if(window.sessionStorage.getItem('user')){
+        this.user = JSON.parse(window.sessionStorage.getItem("user"));
+        this.deptInfo = this.user.deptInfo;
+      }
+    },
+    isQP(){
+      if(this.qp==true){
+        this.exitFullScreen();
+        this.qp=false;
+        this.qpText="全屏"
+      }else{
+        this.fullScreen();
+        this.qp=true;
+        this.qpText="退出"
+      }
+    },
+    //全屏
+    fullScreen() {
+      var el = document.documentElement;
+      var rfs = el.requestFullScreen || el.webkitRequestFullScreen || 
+          el.mozRequestFullScreen || el.msRequestFullScreen;
+      if(typeof rfs != "undefined" && rfs) {
+          rfs.call(el);
+      } else if(typeof window.ActiveXObject != "undefined") {
+          //for IE，这里其实就是模拟了按下键盘的F11，使浏览器全屏
+          var wscript = new ActiveXObject("WScript.Shell");
+          if(wscript != null) {
+              wscript.SendKeys("{F11}");
+          }
+      }
+    },
+    //退出全屏
+    exitFullScreen() {
+      var el = document;
+      var cfs = el.cancelFullScreen || el.webkitCancelFullScreen || 
+          el.mozCancelFullScreen || el.exitFullScreen;
+      if(typeof cfs != "undefined" && cfs) {
+          cfs.call(el);
+      } else if(typeof window.ActiveXObject != "undefined") {
+          var wscript = new ActiveXObject("WScript.Shell");
+          if(wscript != null) {
+              wscript.SendKeys("{F11}");
+          }
+      }
+    },
+    //获取公司名称
+    getCMCName(){
+      let user = JSON.parse(window.sessionStorage.getItem('user')); 
+      if(user == null){
+        setTimeout(() => {
+          this.getCMCName();
+        }, 1000);
+        return;
+      } 
+      let cmcCode = user.deptInfo.cmcCode
+      let param={
+          apiId:"assisto",
+          dbid:`${global.DBID}`,
+          usercode: JSON.parse(window.sessionStorage.getItem('user')).userCode,
+          assistid:'SLNAME',
+      }; 
+      let _this = this;
+      axios.post(global.BIPAPIURL+global.API_COM, qs.stringify(param)).then(res => {
+        console.log(res)
+        if(res.data.id &&res.data.id !=-1){
+
+        }else if(res.data.code && res.data.code ==1){
+          _this.cmcName=res.data.values[0][res.data.allCols[0]];
+        }
+      }); 
     }
   },
   mounted() {
-    this.user = JSON.parse(window.sessionStorage.getItem("user"));
-    this.deptInfo = this.user.deptInfo;
+      this.load()
+      this.getCMCName()
   },
   computed: {
     counts() {

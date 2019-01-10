@@ -46,9 +46,11 @@ exports.cssLoaders = function (options) {
     // (which is the case during production build)
     if (options.extract) {
       return ExtractTextPlugin.extract({
+        // use: loaders,
+        // fallback: 'vue-style-loader'
         use: loaders,
-        fallback: 'vue-style-loader',
-        publicPath:'../../' //添加这句话
+        publicPath: '../../',//打包后图片路径不对
+        fallback: 'vue-style-loader'
       })
     } else {
       return ['vue-style-loader'].concat(loaders)

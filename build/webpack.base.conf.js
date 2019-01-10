@@ -3,18 +3,17 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 var webpack = require('webpack');
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
-
-
 module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
     app: './src/main.js',
-    configfile: './src/js/bip-common-js.js'
+    configfile: './src/js/bip-common-js.js',
   },
   output: {
     path: config.build.assetsRoot,
@@ -25,7 +24,28 @@ module.exports = {
   },
   plugins:[
     new webpack.optimize.CommonsChunkPlugin({
-     name: 'configfile'
+     name: ['configfile']
+    }),  
+	new BundleAnalyzerPlugin(
+        {
+         analyzerMode: 'server',
+         analyzerHost: '127.0.0.1',
+         analyzerPort: 8888,
+         reportFilename: 'report.html',
+         defaultSizes: 'parsed',
+         openAnalyzer: true,
+         generateStatsFile: false,
+         statsFilename: 'stats.json',
+         statsOptions: null,
+         logLevel: 'info'
+           }
+      ),
+         //在 plugins 中添加
+    new webpack.optimize.UglifyJsPlugin({
+      comments: false,        //去掉注释
+      compress: {
+          warnings: false    //忽略警告,要不然会有一大堆的黄色字体出现……
+      }
     }),
   ],
   resolve: {

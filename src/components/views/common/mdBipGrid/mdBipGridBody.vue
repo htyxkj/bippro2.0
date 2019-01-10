@@ -5,7 +5,7 @@
         <md-bip-grid-empty-row :columns="columns"></md-bip-grid-empty-row>
       </thead>
       <tbody>
-        <md-bip-grid-body-row v-for="row in rows" :key="row.vueRowId" @click="rowClicked" :row="row" :columns="columns"></md-bip-grid-body-row>
+        <md-bip-grid-body-row v-for="row in rows" :key="row.vueRowId" @click="rowClicked" :row="row" :columns="columns" :dsm="dsm"></md-bip-grid-body-row>
       </tbody>
     </table>
     <div v-if="rows.length === 0" class="md-bip-grid-body-empty layout layout-align-center-center">
@@ -32,6 +32,7 @@ export default {
     filterNoResults: { type: String },
     width: {  },
     showAdd: { default: false, type: Boolean },
+    dsm: { default: null, type: Object },
   },
   components: {
     mdBipGridEmptyRow,

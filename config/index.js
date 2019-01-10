@@ -13,8 +13,9 @@ module.exports = {
     proxyTable: {},
 
     // Various Dev Server settings
-    host: 'localhost', // can be overwritten by process.env.HOST
-    port: 8081, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    // host: 'localhost', // can be overwritten by process.env.HOST
+    host: '192.168.1.200', // can be overwritten by process.env.HOST
+    port: 8082, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
     notifyOnErrors: true,
@@ -31,7 +32,7 @@ module.exports = {
     // If you have problems debugging vue-files in devtools,
     // set this to false - it *may* help
     // https://vue-loader.vuejs.org/en/options.html#cachebusting
-    cacheBusting: true,
+    cacheBusting: false,
 
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
@@ -62,7 +63,7 @@ module.exports = {
     // Surge or Netlify already gzip all static assets for you.
     // Before setting to `true`, make sure to:
     // npm install --save-dev compression-webpack-plugin
-    productionGzip: false,
+    productionGzip: true,
     productionGzipExtensions: ['js', 'css'],
 
     // Run the build command with an extra argument to

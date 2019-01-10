@@ -16,7 +16,7 @@ export default {
     }
   },
   methods:{
-    onBlur(){
+    onBlur(){ 
       if(this.oldValue != this.modal[this.cell.id]){
         var data = {};
         data.cellId = this.cell.id;

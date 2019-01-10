@@ -23,21 +23,31 @@
       <template v-if="dsm&&!dsm.haveChild">
         <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null">
           <md-layout>
-            <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+            <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
           </md-layout>
         </md-content>
       </template>
       <template v-else>
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
           <md-layout>
-            <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
-          </md-layout>
-          <md-layout class="flex layout-column" v-if="dsm.ds_sub&&dsm.ds_sub.length==1">
-              <md-bip-grid :datas="dsm.ds_sub[0].cdata" ref="grid" :row-focused="true" :auto-load="true" @onAdd="onLineAdd(dsm.ds_sub[0])" @onRemove="onRemove" :showAdd="canAddChild" :showRemove="canAddChild" @rowChange="rowChange" @click="rowClick(dsm.ds_sub[0])">
-                <md-bip-grid-column v-for="item in dsm.ds_sub[0].ccells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName || item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :refValue="item.refValue" :dataType="getDataType(item)" :formatter="formatter">
+            <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+          </md-layout> 
+          <md-tabs :md-dynamic-height=false class="flex" v-if="childrens&&childrens.length>=1&&istabs">
+            <md-tab  style="padding:0px;display: -webkit-box; overflow:hidden;" v-for="(oneds,index) in childrens" :key="index" :id="oneds.id" :md-label="oneds.title">
+              <md-layout class="flex" style="margin-top:2px;" >
+                <md-bip-grid :dsm="dsm" :datas="oneds.data.cdata" ref="grid" :row-focused="true" :auto-load="true" @onAdd="onLineAdd(oneds.data)" @onRemove="onRemove" :showAdd="canAddChild" :showRemove="canAddChild"  @rowChange="rowChange" @click="rowClick(oneds.data)" :isEntry="isEntry(oneds.data)">
+                  <md-bip-grid-column v-for="item in oneds.data.ccells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName || item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :refValue="item.refValue" :width="item.ccCharleng" :isReq="item.isReq" :editName="item.editName" :editType="item.editType" :assist="item.assist" :dataType="getDataType(item)" :objid="oneds.data.ccells.obj_id" :formatter="formatter"  :assType="item.assType">
+                  </md-bip-grid-column>
+                </md-bip-grid>
+              </md-layout>
+            </md-tab>
+          </md-tabs> 
+          <md-layout class="flex layout-column" v-for="(oneds,index) in dsm.ds_sub" :key="index"  v-if="dsm.ds_sub&&dsm.ds_sub.length>=1&&!istabs">
+              <md-bip-grid :dsm="dsm" :datas="oneds.cdata" :ref="index" :row-focused="true" :auto-load="true" @onAdd="onLineAdd(oneds)" @onRemove="onRemove" :showAdd="canAddChild" :showRemove="canAddChild" @rowChange="rowChange" @click="rowClick(oneds)" :isEntry="isEntry(oneds)">
+                <md-bip-grid-column v-for="item in oneds.ccells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName || item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :refValue="item.refValue" :width="item.ccCharleng" :isReq="item.isReq" :editName="item.editName" :editType="item.editType" :assist="item.assist" :dataType="getDataType(item)" :objid="oneds.ccells.obj_id" :formatter="formatter" :assType="item.assType">
                 </md-bip-grid-column>
               </md-bip-grid>
-          </md-layout>
+          </md-layout> 
         </md-content>
       </template>
       <template v-if="chkinfo">
@@ -56,10 +66,12 @@ export default {
   data() {
     return {
       curr_dsm: null,
-      chkinfo: null
+      chkinfo: null,
+      childrens:[],
+      istabs:false,
     };
   },
-  props: { dsm: Object, dsext: Array, opera: Object },
+  props: { dsm: Object, dsext: Array, opera: Object ,mparams:Object},
   methods: {
     dataChange(res) {
       // console.log(res);
@@ -67,7 +79,8 @@ export default {
       this.dsm.checkEdit(res);
     },
     create() {
-      if (this.dsm) {
+      
+      if (this.dsm) { 
         var crd = this.dsm.currRecord;
         if ((crd.sys_stated & billS.INSERT) > 0) {
           this.$dialog.open({
@@ -79,8 +92,11 @@ export default {
         } else {
           this.dsm.createRecord();
           this.dsm.canEdit = true;
-          if(this.dsm.haveChild())
-            this.dsm.ds_sub[0].clearData();
+          if(this.dsm.haveChild()){
+            for(var i=0;i<this.dsm.ds_sub.length;i++){
+              this.dsm.ds_sub[i].clearData();
+            }
+          }
           this.chkinfo = null;
         }
       }
@@ -97,8 +113,8 @@ export default {
       }
       this.$emit("list");
     },
-    async submit() {
-      var crd = this.dsm.currRecord;
+    async submit() {  
+      var crd = this.dsm.currRecord; 
       if (this.opera) {
         var state = crd[this.opera.statefld];
         var params = {
@@ -136,7 +152,17 @@ export default {
         });
     },
     async save() {
-      var str = JSON.stringify(this.dsm.currRecord);
+      console.log("asdfasdfasdfsadfasdf");
+      if(this.dsm.ccells.subLayCells)
+      for(var i = 0; i<this.dsm.ccells.subLayCells.length; i++){
+        var aa = this.dsm.ccells.subLayCells[i];
+        var bb = 0x10000;
+        var cc = aa.attr&bb;
+        if(cc>0){  
+          this.dsm.currRecord[aa.obj_id]=[]; 
+        }
+      } 
+      var str = JSON.stringify(this.dsm.currRecord);  
       if((this.dsm.currRecord&billS.DELETE)==0){
         var isnull = this.checkNotNull(this.dsm);
           if(!isnull)
@@ -253,12 +279,14 @@ export default {
       if (state === "1" || state === "0") this.dsm.canEdit = true;
       // console.log(res, "fdfdsfds");
     },
-    getDataType(item) {
+    //判断字段类型
+    getDataType(item) {  
       if (
         item.type == 91 ||
         item.type == 93 ||
         item.chkRule == "{DATE}" ||
-        item.chkRule == "{DATETIME}"
+        item.chkRule == "{DATETIME}"||
+        item.chkRule == "{H_S}"
       ) {
         return "date";
       }
@@ -273,7 +301,7 @@ export default {
       }
       return "string";
     },
-    onLineAdd(subdsm) {
+    onLineAdd(subdsm) { 
       this.curr_dsm = subdsm;
       var subId = subdsm.ccells.obj_id;
       if (!this.dsm.canEdit) return;
@@ -351,7 +379,92 @@ export default {
         subdsm.cdata = res.data.data.pages.celData;
         // console.log(subdsm);
       }
-    }
+    },
+    //构成多子表标签数据
+    constituteChildrens(){
+      if(this.mparams.playout){
+        var playout = this.mparams.playout;
+        var indexT = playout.indexOf("T:");
+        if(indexT>0){
+          this.istabs=true;
+          var _aa = playout.indexOf(")");
+          playout = playout.substring(indexT,_aa)
+          _aa = playout.indexOf("(");
+          playout = playout.substring(_aa+1,playout.length)
+          var children = playout.split(";"); 
+          for(var i=0;i<children.length;i++){
+            var _chil =  children[i];
+            var title = _chil.substring(_chil.indexOf("/")+2,_chil.length) 
+            var beau = _chil.substring(0,_chil.indexOf("#")) 
+            for(var j=0;j<this.dsm.ds_sub.length;j++){
+              var _ds_sub = this.dsm.ds_sub[j];
+              if(_ds_sub.ccells.obj_id == beau){
+                var id=title+''+i
+                var _val = {id:id,title:title,data:_ds_sub}
+                this.childrens.push(_val);
+                break;
+              }
+            } 
+          }  
+        }  
+      } 
+      // console.log(this.childrens)
+    },
+    //计算宽度 
+    calculationWidth() { 
+      var width = document.body.clientWidth-83; 
+      for(var j=0;j<this.dsm.ds_sub.length;j++){
+        var _ds_sub = this.dsm.ds_sub[j];
+        var sumLeng=0; 
+        var positive=0;//正
+        var negative=0;//负
+        for(var i =0 ;i<_ds_sub.ccells.cels.length;i++){ 
+          var cell = _ds_sub.ccells.cels[i];
+          var aa = cell.ccCharleng+'';
+          if(aa.indexOf("px")!=-1){
+            return;
+          }
+          if(cell.isShow){ 
+            if(cell.ccCharleng==0)
+              cell.ccCharleng = 10
+            if(cell.ccCharleng<0){
+              negative+= Math.abs(cell.ccCharleng);
+            }else{
+              positive+= Math.abs(cell.ccCharleng);
+            } 
+          }
+        }
+        for(var i =0 ;i<_ds_sub.ccells.cels.length;i++){
+          var cell = _ds_sub.ccells.cels[i];
+          if(cell.isShow){
+            var aa = cell.ccCharleng+''; 
+            var fw=width-(positive*15)
+            if(fw<=100){ 
+              if(aa.indexOf("px")==-1)
+                cell.ccCharleng = parseInt(Math.abs(cell.ccCharleng)* parseInt(15)) +''+'px'
+            }else{
+              if(aa.indexOf("px")==-1){
+                if( cell.ccCharleng >0){
+                  cell.ccCharleng = parseInt(Math.abs(cell.ccCharleng)* parseInt(15)) +''+'px'
+                }else{
+                  cell.ccCharleng = Math.abs(cell.ccCharleng)/negative*fw+''+'px';
+                }
+              }
+            } 
+          }
+        }
+      }      
+    },  
+    //判断表单是否是录入单据属性  输出 打勾 =false
+    isEntry(data){ 
+      var bb = 0x10000;
+      var cc = data.ccells.attr&bb;
+      if(cc>0){  
+        return false;
+      }else{
+        return true;
+      }
+    } 
   },
   computed: {
     canCreate() {
@@ -406,12 +519,13 @@ export default {
         return true;
       }
     },
-    canSubmit() {
-      if (this.dsm && this.dsm.currRecord != null) {
+    canSubmit() { 
+      if (this.dsm && this.dsm.currRecord != null) {  
         if (
           (this.dsm.currRecord.sys_stated & billS.INSERT) > 0 ||
           (this.dsm.currRecord.sys_stated & billS.EDITED) > 0
         ) {
+          
           return true;
         }
         if (this.chkinfo) {
@@ -440,6 +554,7 @@ export default {
       return this.$t('commBtn.B_SUB');
     },
     canAddChild(){
+      
       if (this.opera) {
         var crd = this.dsm.currRecord;
         if (crd) {
@@ -452,17 +567,24 @@ export default {
         }
       }
       return true;
-    }
+    }, 
   },
-  async mounted() {
-    if (this.dsm) {
+  async mounted() { 
+    // console.log("asfd")
+    if (this.dsm) {   
+      this.calculationWidth();
+      this.constituteChildrens();
       const state = this.dsm.currRecord.sys_stated & billS.INSERT;
       if (this.dsm.ds_sub && state === 0) {
-        this.getChildData(this.dsm.ds_sub[0]);
-        await this.makeCheckParams();
+        for(var i =0;i<this.dsm.ds_sub.length;i++){
+          this.getChildData(this.dsm.ds_sub[i]);
+          await this.makeCheckParams();
+        }
       } else if (this.dsm.ds_sub.length > 0) {
-        this.dsm.ds_sub[0].clearData();
-      }
+        for(var i =0;i<this.dsm.ds_sub.length;i++){
+          this.dsm.ds_sub[i].clearData();
+        }  
+      }   
     }
   },
   watch: {
@@ -477,8 +599,18 @@ export default {
 };
 </script>
 
-<style lang="scss">
-
+<style scoped>  
+.md-tab-header:focus {
+ color: rgb(255, 0, 0);
+}
+.md-tab-header {
+  color: rgba(255, 0, 0, 0.54);
+}
+.md-tabs-navigation {
+  background-color: #ffffff;
+  height: .36rem;
+  min-height: .36rem;
+} 
 </style>
 
 

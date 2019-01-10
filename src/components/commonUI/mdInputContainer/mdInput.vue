@@ -29,14 +29,11 @@
     },
     mounted() {
       this.$nextTick(() => {
-        this.parentContainer = getClosestVueParent(this.$parent, 'md-input-container');
-
+        this.parentContainer = getClosestVueParent(this.$parent, 'md-input-container'); 
         if (!this.parentContainer) {
-          this.$destroy();
-
+          this.$destroy(); 
           throw new Error('You should wrap the md-input in a md-input-container');
-        }
-
+        } 
         this.setParentDisabled();
         this.setParentRequired();
         this.setParentPlaceholder();

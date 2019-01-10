@@ -205,8 +205,7 @@ $dateFW:300;
   width: 50%;
   text-align: center;
   height: 100%;
-  overflow: auto;
-  float: left;
+  overflow: auto; 
 }
 .hour-box ul,
 .min-box ul {
@@ -257,6 +256,19 @@ $dateFW:300;
             </div>
             <div class="cov-date-next" @click="nextMonth('next')">»</div>
           </div>
+
+          <div class="cov-date-box list-box" v-if="showInfo.year">
+            <div class="cov-picker-box date-list" id="yearList">
+              <div class="date-item" v-for="(yearItem,index) in library.year" :class="{'md-active':yearItem===checked.year}" :key="index" @click="setYear(yearItem)">{{yearItem}}</div>
+            </div>
+          </div>
+
+          <div class="cov-date-box list-box" v-if="showInfo.month">
+            <div class="cov-picker-box date-list">
+              <div class="date-item" v-for="(monthItem,index) in library.month" :class="{'md-active':(index+1)===parseInt(checked.month)}" :key="index" @click="setMonth(monthItem)">{{monthItem}}</div>
+            </div>
+          </div>
+
           <div class="cov-date-box" v-if="showInfo.day">
             <div class="cov-picker-box">
               <div class="week">
@@ -267,16 +279,7 @@ $dateFW:300;
               <div class="day" v-for="(day,index) in dayList" :key="index" @click="checkDay(day)" :class="{'checked':day.checked,'unavailable':day.unavailable,'passive-day': !(day.inMonth)}" :style="day.checked ? (option.color && option.color.checkedDay ? { background: option.color.checkedDay } : { background: '#F50057' }) : {}">{{day.value}}</div>
             </div>
           </div>
-          <div class="cov-date-box list-box" v-if="showInfo.year">
-            <div class="cov-picker-box date-list" id="yearList">
-              <div class="date-item" v-for="(yearItem,index) in library.year" :class="{'md-active':yearItem===checked.year}" :key="index" @click="setYear(yearItem)">{{yearItem}}</div>
-            </div>
-          </div>
-          <div class="cov-date-box list-box" v-if="showInfo.month">
-            <div class="cov-picker-box date-list">
-              <div class="date-item" v-for="(monthItem,index) in library.month" :class="{'md-active':(index+1)===parseInt(checked.month)}" :key="index" @click="setMonth(monthItem)">{{monthItem}}</div>
-            </div>
-          </div>
+
           <div class="cov-date-box list-box" v-if="showInfo.hour">
             <div class="cov-picker-box date-list">
               <div class="watch-box">
@@ -307,16 +310,18 @@ $dateFW:300;
 import moment from 'moment';
 export default {
   props: {
-    value: [String, Number, Object],
+    value: null,
+    boption:null,
+    disabled:null,
     option: {
       type: Object,
       default () {
         return {
-          type: 'day',
+          type: this.boption.type,
           SundayFirst: false,
           week: ['一', '二', '三', '四', '五', '六', '日'],
           month: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-          format: 'YYYY-MM-DD',
+          format: this.boption.format,
           color: {
             checked: '#F50057',
             header: '#3f51b5',
@@ -418,13 +423,13 @@ export default {
       type === 'next' ? next = moment(this.checked.currentMoment).add(1, 'M') : next = moment(this.checked.currentMoment).add(-1, 'M')
       this.showDay(next)
     },
-    showDay(time) {
+    showDay(time) { 
       if (time === undefined || !Date.parse(time)) {
         this.checked.currentMoment = moment()
       } else {
         this.checked.currentMoment = moment(time, this.option.format)
       }
-      this.showOne('day')
+      this.showOne(this.option.type);
       this.checked.year =parseInt(moment(this.checked.currentMoment).format('YYYY'));
       this.checked.month = moment(this.checked.currentMoment).format('MM')
       this.checked.day = moment(this.checked.currentMoment).format('DD')
@@ -492,6 +497,10 @@ export default {
         }
       }
       this.dayList = days
+    },
+    showDayHour(time) {  
+      this.showOne(this.option.type); 
+      this.dayList = time
     },
     checkBySelectDays(d, days) {
       this.selectedDays.forEach(day => {
@@ -589,7 +598,7 @@ export default {
         this.addYear()
       })
     },
-    showOne(type) {
+    showOne(type) { 
       switch (type) {
         case 'year':
           this.showInfo.hour = false
@@ -648,9 +657,12 @@ export default {
       if (this.value === '') {
         this.showDay()
       } else {
-        if (this.option.type === 'day' || this.option.type === 'min') {
+        if (this.option.type === 'day' || this.option.type === 'min' ) {
           this.checked.oldtime = this.value
           this.showDay(this.value)
+        } else if(this.option.type === 'hour'){
+          this.checked.oldtime = this.value
+          this.showDayHour(this.value)
         } else {
           this.selectedDays = JSON.parse(this.value)
           if (this.selectedDays.length) {
@@ -672,13 +684,17 @@ export default {
         }
       }
     },
-    picked() {
+    picked() { 
       var newValue = '';
       if (this.option.type === 'day' || this.option.type === 'min') {
         let ctime = this.checked.year + '-' + this.checked.month + '-' + this.checked.day + ' ' + this.checked.hour + ':' + this.checked.min
         this.checked.currentMoment = moment(ctime, 'YYYY-MM-DD HH:mm')
         newValue = moment(this.checked.currentMoment).format(this.option.format);
-      } else {
+      } else if(this.option.type === 'hour' ){ 
+        let ctime = '2018-05-27 ' + this.checked.hour + ':' + this.checked.min
+        this.checked.currentMoment = moment(ctime, 'YYYY-MM-DD HH:mm') 
+        newValue = moment(this.checked.currentMoment).format(this.option.format); 
+      }else {
         newValue = JSON.stringify(this.selectedDays)
       }
       this.showInfo.check = false;
@@ -687,6 +703,14 @@ export default {
       this.$refs.menu.close();
     },
     formattedValue(value) {
+      if(this.option.type == 'hour'){ 
+        let val = value; 
+        if(val.indexOf("-")==-1){
+          val = '2018-06-27 '+value; 
+        } 
+        value = moment(val).format(this.option.format)  
+        return value;
+      } 
       return moment(value || this.value).format(this.option.format);
     },
     updateValue: function(value) {

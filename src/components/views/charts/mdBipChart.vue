@@ -2,11 +2,14 @@
   <md-layout md-flex="100">
     <md-card>
       <md-card-media>
+        <md-layout class="chart-list-btn"  md-flex="1" md-flex-xsmall="1">
+          <md-button @click.native="isShow" >{{showText}}数据</md-button>
+        </md-layout>
         <md-layout md-flex="33" md-flex-xsmall="100" class="md-bip-chart" v-if="showChart">
           <md-chart ref="reportChart" :options="option" :autoResize="true"></md-chart>
         </md-layout>
       </md-card-media>
-      <md-layout class="flex">
+      <md-layout class="flex" v-if="show">
         <md-table-card v-if="tjcell">
           <md-table class="flex">
             <md-table-header>
@@ -39,7 +42,7 @@ export default {
     return {
       option: {},
       pageInfo: {
-        size: 999,
+        size: 20,
         total: 0,
         page: 1
       },
@@ -48,7 +51,9 @@ export default {
       startIndex: 1,
       endIndex: 0,
       refValues: [],
-      chartData: []
+      chartData: [],
+      show:false,
+      showText:'显示'
     };
   },
   mixins: [common],
@@ -60,7 +65,8 @@ export default {
     modal: Object,
     doSearch: Number,
     chartType: String,
-    showChart: { type: Boolean, default: true }
+    showChart: { type: Boolean, default: true },
+    showData: { type: Boolean, default: true }
   },
   mounted() {
     this.tjcell = this.ptjCell;
@@ -70,22 +76,31 @@ export default {
     this.searchData();
     if (this.tjpages) {
       this.makeColumnOpitons();
-    }
+    } 
+    this.show=this.showData; 
+    this.showText = this.show ==true?'隐藏':'显示'
   },
   watch: {
     // 'option': function() {
     // },
     doSearch: function() {
+       console.log("doSearch")
       if (this.doSearch) this.searchData();
     },
     pcell: function() {
+      console.log("pcell")
       this.searchData();
     },
     refValues: function() {
+      console.log("refValues")
       this.makeDataUI();
-    }
+    }, 
   },
   methods: {
+    isShow(){
+      this.show = this.show==true?false:true;
+      this.showText = this.showText =='显示'?'隐藏':'显示'
+    },
     async searchData() {
       this.pageInfo.page = 1;
       var data1 = {
@@ -115,22 +130,43 @@ export default {
           await this.makeDataUI();
         }
       }
+    }, 
+    async fetchUIData(){ 
+      this.loading++; 
+      // var pdata = JSON.stringify(this.ds_cont.currRecord);
+      var data1 = {
+        dbid: global.DBID,
+        usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+        apiId: global.APIID_FINDDATA,
+        pcell: this.pcell,
+        psearch: this.searchCelId,
+        pdata: JSON.stringify(this.modal),
+        currentPage: this.pageInfo.page,
+        pageSize: this.pageInfo.size,
+        groupfilds: JSON.stringify(this.groupfilds),
+        groupdatafilds: JSON.stringify(this.groupdatafilds)
+      };  
+      var res = await this.getDataByAPINew(data1);
+      if (res.data.id === 0) {
+        this.tjcell = res.data.data.tjlayCels;
+        this.tjpages = res.data.data.tjpages; 
+        // this.$set(this.pageInfo,'total',12)
+        this.pageInfo.size = this.tjpages.pageSize; 
+        this.pageInfo.total = new Number(this.tjpages.totalItem);
+        this.pageInfo.page = this.tjpages.currentPage;  
+        this.caclStartAndEndIndex(); 
+      } 
+      this.loading--; 
     },
-    // getCallBack(res) {
-    //   console.log(res, "bipchart");
-    //   if (res.data.id === 0) {
-    //     this.tjcell = res.data.data.tjlayCels;
-    //     this.tjpages = res.data.data.tjpages;
-    //     this.makeDataUI();
-    //   }
-    // },
     async makeDataUI() {
       this.pageInfo.total = this.tjpages.totalItem;
       this.pageInfo.size = this.tjpages.pageSize;
+      this.pageInfo.page = this.tjpages.currentPage;  
       this.chartData = [];
       if (this.pageInfo.total > 50) {
         console.log("数据太多了，页面无法显示，只能显示50行");
-        this.chartData = _.take(this.tjpages.celData, 50);
+        // this.chartData = _.take(this.tjpages.celData, 50);
+        this.chartData = this.tjpages.celData;
       } else {
         this.chartData = this.tjpages.celData;
       }
@@ -324,6 +360,7 @@ export default {
                   }
                   name += cldata.value[cldata.allCols[1]] + "-";
                   if (!window.sessionStorage.getItem(rr + "." + code))
+                   
                     window.sessionStorage.setItem(rr + "." + code,JSON.stringify(cldata));
                 } else {
                   name += code + "-";
@@ -355,13 +392,14 @@ export default {
       });
       return (title = title.substr(0, title.length - 1));
     },
-    onTablePagination(pager) {
+    onTablePagination(pager) { 
       this.pageInfo.page = pager.page;
       this.pageInfo.size = pager.size;
       this.caclStartAndEndIndex();
+      this.fetchUIData();
     },
-    caclStartAndEndIndex() {
-      this.startIndex = (this.pageInfo.page - 1) * this.pageInfo.size;
+    caclStartAndEndIndex() { 
+      this.startIndex = (this.pageInfo.page - 1) * this.pageInfo.size; 
       this.endIndex = this.startIndex + this.pageInfo.size - 1;
     },
     makeRef(refId, refData) {
@@ -402,5 +440,12 @@ export default {
 
 .md-bip-chart {
   height: 300px;
+}
+.chart-list-btn{
+  float: right;
+  position:relative; 
+  top:5px;
+  right: 100px;
+  width:0px;
 }
 </style>

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import XLSX from 'xlsx'
+// import XLSX from 'xlsx'
 
 export default {
   data () {
@@ -18,7 +18,8 @@ export default {
       tableData: {
         header: [],
         body: []
-      }
+      },
+      XLSX:null,
     }
   },
   props: {
@@ -32,6 +33,9 @@ export default {
       return window.xlsxEventBus.XLSX_EVENTS_DATA.options.rABS
     }
   },
+  async created(){
+    this.XLSX = await import('xlsx'); 
+  },
   methods: {
     handkeFileChange (e) {
       console.log(e)
@@ -42,7 +46,7 @@ export default {
       this.rawFile = e.target.files[0]
       this.fileConvertToWorkbook(this.rawFile)
         .then((workbook) => {
-          let xlsxArr = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]])
+          let xlsxArr = this.XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]])
           console.log(xlsxArr)
           this.workbook = workbook
           this.initTable(
@@ -69,11 +73,11 @@ export default {
             let data = renderEvent.target.result
             if(this.rABS) {
               /* if binary string, read with type 'binary' */
-              resolve(XLSX.read(data, {type: 'binary'}))
+              resolve(this.XLSX.read(data, {type: 'binary'}))
             } else {
               /* if array buffer, convert to base64 */
               let arr = fixdata(data)
-              resolve(XLSX.read(btoa(arr), {type: 'base64'}))
+              resolve(this.XLSX.read(btoa(arr), {type: 'base64'}))
             }
           }
           reader.onerror = (error) => {
