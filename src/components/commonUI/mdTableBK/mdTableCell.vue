@@ -8,7 +8,6 @@
 
 <script>
   export default {
-    name: 'md-table-cell',
     props: {
       mdNumeric: Boolean
     },

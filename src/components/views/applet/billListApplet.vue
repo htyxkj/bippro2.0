@@ -66,7 +66,7 @@
                     :md-selection="mdSelection" 
                     @dblclick.native="dblclick(row,rowIndex)">
                     <md-table-cell v-for="(column, columnIndex) in dsm.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
-                      <md-bip-ref  :row="row" :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" @pkclick="dblclick(row,rowIndex)"></md-bip-ref>
+                      <md-bip-ref  :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" :row="row"  @pkclick="dblclick(row,rowIndex)"></md-bip-ref>
                     </md-table-cell>
                   </md-table-row>
                 </md-table-body>

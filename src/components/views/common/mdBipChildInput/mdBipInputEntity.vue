@@ -85,7 +85,6 @@ export default {
       }
       this.setParentValue(v);
     },
-  
   },
   methods: {
     setValue(value) {

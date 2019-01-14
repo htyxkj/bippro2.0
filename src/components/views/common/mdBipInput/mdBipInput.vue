@@ -38,10 +38,10 @@ export default {
     return {
       inputType: 0,
       is_Report:false,
-      script:null,
+      script:null, 
     }
   },
-  created () {  
+  created () {   
     this.is_Report= this.isReport==undefined?false:true;  
     this.initType(); 
   },
@@ -50,12 +50,13 @@ export default {
       this.initType();
     },
     'modal':function(){
-      // console.log('modal input');
-      // this.onBlur();
+      // console.log(this.modal);
     },
     // 深度 watcher
     dsm:{
-      handler: function () { this.analysisScript() },
+      handler: function () {  
+        this.analysisScript() 
+      },
       deep: true
     }
   },
@@ -151,7 +152,7 @@ export default {
     list(){
       this.$emit('list');
     },
-     analysisScript(){
+     analysisScript(){ 
       if(this.cell.assType == 'C_GROUP'){
         var aa = this.cell.script.split(";");      
         var sc = aa[aa.length-1];

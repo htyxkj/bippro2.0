@@ -1,24 +1,18 @@
 <template>
   <th class="md-table-head" :class="classes" @click="changeSort">
-    <div class="md-table-head-container">
+    <div class="md-table-head-container" v-wave="!!mdSortBy">
       <div class="md-table-head-text md-test">
-        <md-icon class="md-sortable-icon" v-if="mdSortBy">arrow_upward</md-icon>
-
+        <md-icon class="md-sortable-icon" v-if="mdSortBy">arrow_downward</md-icon>
         <slot></slot>
-
         <md-tooltip v-if="mdTooltip">{{ mdTooltip }}</md-tooltip>
       </div>
-
-      <md-ink-ripple :md-disabled="!mdSortBy" />
     </div>
   </th>
 </template>
-
 <script>
   import getClosestVueParent from '../../core/utils/getClosestVueParent';
 
   export default {
-    name: 'md-table-head',
     props: {
       mdNumeric: Boolean,
       mdSortBy: String,
@@ -64,20 +58,15 @@
           this.parentTable.sortType = this.sortType;
           this.parentTable.emitSort(this.mdSortBy);
         }
-      },
-      initSort() {
-        if (this.hasMatchSort()) {
-          this.sorted = true;
-          this.sortType = this.parentTable.sortType || 'asc';
-        }
       }
     },
     mounted() {
       this.parentTable = getClosestVueParent(this.$parent, 'md-table');
-      this.initSort();
-      this.parentTable.$on('sortInput', () => {
-        this.initSort();
-      });
+
+      if (this.hasMatchSort()) {
+        this.sorted = true;
+        this.sortType = this.parentTable.sortType;
+      }
     }
   };
 </script>

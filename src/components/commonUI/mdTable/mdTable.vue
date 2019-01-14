@@ -11,13 +11,10 @@
   import getClosestVueParent from '../../core/utils/getClosestVueParent';
 
   export default {
+    name: 'md-table',
     props: {
       mdSortType: String,
-      mdSort: String,
-      multiple:{
-        type: Boolean,
-        default: true
-      }
+      mdSort: String
     },
     mixins: [theme],
     data() {
@@ -26,10 +23,20 @@
         sortBy: this.mdSort,
         hasRowSelection: false,
         data: [],
-        numberOfRows: 0,
-        numberOfSelected: 0,
-        selectedRows: {}
+        selectedRows: []
       };
+    },
+    computed: {
+      numberOfRows() {
+        return this.data ?
+          this.data.length :
+          0;
+      },
+      numberOfSelected() {
+        return this.selectedRows ?
+          this.selectedRows.length :
+          0;
+      }
     },
     methods: {
       emitSort(name) {
@@ -41,14 +48,44 @@
       },
       emitSelection() {
         this.$emit('select', this.selectedRows);
+      },
+      removeRow(row) {
+        const index = this.data.indexOf(row);
+
+        if (index !== -1) {
+          this.data.splice(index, 1);
+        }
+
+        this.removeSelectedRow(row);
+      },
+      removeSelectedRow(row) {
+        const selectedIndex = this.selectedRows.indexOf(row);
+
+        if (selectedIndex !== -1) {
+          this.selectedRows.splice(selectedIndex, 1);
+        }
+      },
+      setRowSelection(isSelected, row) {
+        if (isSelected) {
+          this.selectedRows.push(row);
+          return;
+        }
+        this.removeSelectedRow(row);
+      },
+      setMultipleRowSelection(isSelected) {
+        this.selectedRows = isSelected ?
+          Object.assign([], this.data) :
+          [];
       }
     },
     watch: {
-      data() {
-        this.numberOfRows = this.data.length;
+      mdSort() {
+        this.sortBy = this.mdSort;
+        this.$emit('sortInput');
       },
-      selectedRows() {
-        this.numberOfSelected = Object.keys(this.selectedRows).length;
+      mdSortType() {
+        this.sortType = this.mdSortType;
+        this.$emit('sortInput');
       }
     },
     mounted() {

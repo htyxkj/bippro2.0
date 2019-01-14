@@ -109,11 +109,11 @@
   tbody .md-table-row {
     border-bottom: 0.01rem solid #e0e0e0;
     &.md-selected .md-table-cell {
-      background-color: #f5f5f5;
+      background-color: #4eaf82;
     }
 
     &:hover .md-table-cell {
-      background-color: #eee;
+      background-color: #88ecde;
     }
   }
   thead.md-table-header {

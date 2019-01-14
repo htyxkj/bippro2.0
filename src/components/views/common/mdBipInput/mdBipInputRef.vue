@@ -251,14 +251,18 @@ export default {
     getCallError(res){
       this.$notify.danger({content: res.data.message});
     }, 
-   
   }, 
   watch:{
-    modal(){
-      this.oldValue = this.modal[this.cell.id];
-      this.initVV();
-    },
-
+    modal:{
+      handler: function () { 
+        if(this.oldValue !=this.modal[this.cell.id]){
+          this.oldValue = this.modal[this.cell.id];
+          this.initVV();
+        }
+      },
+      deep: true
+    }, 
   } 
 }
 </script>
+

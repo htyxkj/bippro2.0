@@ -77,7 +77,9 @@ export default {
     }, 
     // 深度 watch
     dsm:{
-      handler: function () {this.analysisScript() },
+      handler: function () {
+        this.analysisScript(); 
+      },
       deep: true
     }
   },

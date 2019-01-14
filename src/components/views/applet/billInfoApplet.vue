@@ -14,6 +14,16 @@
         <!-- <md-button>审核 Auditing</md-button> -->
         <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
       </md-part-toolbar-group>
+
+      <md-part-toolbar-group v-if="flowlist.length>0">
+        <md-menu>
+          <md-button md-menu-trigger style="vertical-align: baseline">来源单据({{flowlist.length}})</md-button>
+          <md-menu-content>
+              <md-menu-item v-for="fls in flowlist" :key="fls.buidfr" @selected="cliclItem(fls)">{{fls.buidfrName}}--></md-menu-item>
+          </md-menu-content>
+        </md-menu>
+      </md-part-toolbar-group>
+
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
         <md-part-toolbar-crumb>{{$t('commLabel.L_AddM')}}</md-part-toolbar-crumb>
@@ -53,6 +63,7 @@
       <template v-if="chkinfo">
         <md-bip-work  ref="cc" :chkinfo="chkinfo" @dataCheckUp="dataCheckUp"></md-bip-work>
       </template>
+      <md-work-copy-flow ref="cp" v-if="flowlist.length>0" @writeBack="writeBack"></md-work-copy-flow>
     </md-part-body>
   </md-part>
 </template>
@@ -68,7 +79,8 @@ export default {
       curr_dsm: null,
       chkinfo: null,
       childrens:[],
-      istabs:false,
+      istabs:false,//是否是多子表
+      flowlist:[],
     };
   },
   props: { dsm: Object, dsext: Array, opera: Object ,mparams:Object},
@@ -380,8 +392,81 @@ export default {
         // console.log(subdsm);
       }
     },
+    getWorlFlow(sbuid) {
+      var data1 = {
+        dbid: global.DBID,
+        usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+        apiId: "workflow",
+        buidto: sbuid
+      };
+      this.getDataByAPINew(data1, this.successBack);
+    },
+    successBack(res) {
+      console.log(res);
+      let rtn = res.data;
+      if (rtn.id == 0) {
+        this.flowlist = rtn.data.flowlist;
+      }
+    },
+    cliclItem(item) {
+      this.$refs["cp"].openCopy(item);
+    },
+    writeBack(res){ 
+      let rtnpar = res[0];
+      let crd = this.dsm.currRecord;
+      let _self = this;
+      _.forEach(rtnpar.cdata,function(key,v){
+        let i = _.findIndex(rtnpar.kft,function(n){
+          return n.keyf ===v;
+        });
+        if(i>-1){
+          _self.$set(_self.dsm.currRecord,rtnpar.kft[i].keyt,key);
+        }else{
+          _self.$set(_self.dsm.currRecord,v,key);
+        }
+      })
+      console.log("Set 子表")
+      //单子表
+      if(!this.istabs){
+        let oneChild = res[1]; 
+        _self.dsm.ds_sub[0].cdata=[];
+        _.forEach(oneChild.cdata,function(key,v){  
+          _self.onLineAdd(_self.dsm.ds_sub[0]); 
+          let data ={};
+          _.forEach(key,function(value,index){
+            let i = _.findIndex(oneChild.kft,function(n){ 
+              return n.keyf ===index;
+            }); 
+            if(i>-1){
+              _self.$set(_self.dsm.ds_sub[0].cdata[v],oneChild.kft[i].keyt,value); 
+            }else{ 
+              _self.$set(_self.dsm.ds_sub[0].cdata[v],index,value);
+            }   
+          }); 
+        }); 
+      }else{//多个子表
+        for(var p=1;p<=res.length;p++){
+          let oneChild = res[p]; 
+          _self.dsm.ds_sub[p].cdata=[];
+          _.forEach(oneChild.cdata,function(key,v){  
+             _self.onLineAdd(_self.dsm.ds_sub[p]);  
+            let data ={};
+            _.forEach(key,function(value,index){  
+              let i = _.findIndex(oneChild.kft,function(n){ 
+                return n.keyf ===index;
+              }); 
+              if(i>-1){
+                _self.$set(_self.childrens[p].data.cdata[v],oneChild.kft[i].keyt,value);  
+              }else{ 
+                _self.$set(_self.childrens[p].data.cdata[v],index,value); 
+              }   
+            }); 
+          });
+        }
+      } 
+    },
     //构成多子表标签数据
-    constituteChildrens(){
+    constituteChildrens(){ 
       if(this.mparams.playout){
         var playout = this.mparams.playout;
         var indexT = playout.indexOf("T:");
@@ -585,7 +670,11 @@ export default {
           this.dsm.ds_sub[i].clearData();
         }  
       }   
-    }
+      if(this.opera.buid){
+        this.getWorlFlow(this.opera.buid);
+      }
+    }  
+
   },
   watch: {
     chkinfo() {

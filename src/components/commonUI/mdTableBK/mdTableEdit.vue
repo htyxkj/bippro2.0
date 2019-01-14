@@ -21,7 +21,6 @@
 
 <script>
   export default {
-    name: 'md-table-edit',
     props: {
       value: [String, Number],
       mdLarge: Boolean,
@@ -48,7 +47,7 @@
         };
       },
       realValue() {
-        console.log(this.value);
+        // console.log(this.value);
       }
     },
     methods: {

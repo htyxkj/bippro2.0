@@ -13,7 +13,7 @@ export default class Row {
     this.scriptProc = new ScriptProc(data,columns);
   }
   getValue(columnName) { 
-    console.log(columnName)
+    // console.log(columnName)
     const column = this.getColumn(columnName);
     if (column && column.dataType === 'entity') { 
 

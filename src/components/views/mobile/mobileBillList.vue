@@ -212,9 +212,10 @@ export default {
   },
   watch:{
     dsm(){
-      if(this.dsm){
+      if(this.dsm){  
         this.initInfo();
-        this.fetchUIData();
+        this.fetchUIData(); 
+
       }
     }
   }

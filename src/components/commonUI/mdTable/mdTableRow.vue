@@ -1,151 +1,154 @@
 <template>
-  <tr class="md-table-row" :class="classes" @click="autoSelect">
-    <md-table-cell class="md-table-selection" v-if="hasSelection">
-      <md-checkbox v-model="checkbox" :disabled="isDisabled" @change="select"></md-checkbox>
+  <tr
+    class="md-table-row"
+    :class="classes"
+    @click="autoSelect"
+    @click.native="autoSelect">
+    <md-table-cell
+      v-if="hasSelection"
+      class="md-table-selection">
+      <md-checkbox
+        v-model="checkbox"
+        :disabled="isDisabled"
+        @change="select"
+        @change.native="select"/>
     </md-table-cell>
-    <slot></slot>
+
+    <slot/>
   </tr>
 </template>
+
 <script>
-import getClosestVueParent from '../../core/utils/getClosestVueParent';
+  import getClosestVueParent from '../../core/utils/getClosestVueParent';
+  import uniqueId from '../../core/utils/uniqueId';
 
-const transitionClass = 'md-transition-off';
+  const transitionClass = 'md-transition-off';
 
-export default {
-  props: {
-    mdAutoSelect: Boolean,
-    mdSelection: Boolean,
-    mdItem: Object
-  },
-  data() {
-    return {
-      parentTable: {},
-      headRow: false,
-      checkbox: false,
-      index: 0,
-      multiple: false
-    };
-  },
-  computed: {
-    isDisabled() {
-      return !this.mdSelection && !this.headRow;
+  export default {
+    name: 'md-table-row',
+    props: {
+      mdAutoSelect: Boolean,
+      mdSelection: Boolean,
+      mdItem: Object
     },
-    hasSelection() {
-      return this.mdSelection || this.headRow && this.parentTable.hasRowSelection;
-    },
-    classes() {
+    data() {
       return {
-        'md-selected': this.checkbox
+        parentTable: {},
+        headRow: false,
+        checkbox: false,
+        index: 0,
+        multiple:false,
+        uuid: `mdrow_uuid_${uniqueId()}`
       };
-    }
-  },
-  watch: {
-    mdItem(newValue, oldValue) {
-      let _index = this.index - 1;
-      this.parentTable.data[_index] = this.mdItem;
-      this.handleMultipleSelection(newValue === oldValue);
-    }
-  },
-  methods: {
-    setSelectedRow(value, index) {
-      if (value) {
-        this.parentTable.selectedRows[index] = this.parentTable.data[index];
-        ++this.parentTable.numberOfSelected;
-      } else {
-        delete this.parentTable.selectedRows[index];
-        --this.parentTable.numberOfSelected;
+    },
+    computed: {
+      isDisabled() {
+        return !this.mdSelection && !this.headRow;
+      },
+      hasSelection() {
+        return this.mdSelection || this.headRow && this.parentTable.hasRowSelection;
+      },
+      classes() {
+        return {
+          'md-selected': this.checkbox
+        };
       }
     },
-    handleSingleSelection(value) {
-      if (!this.multiple) {
-        this.parentTable.$children.forEach((row, index) => {
-          if (!row.headRow && row.index != this.index) {
-            row.checkbox = false;
-            row.setSelectedRow(row.checkbox, row.index - 1);
-          }
-        });
+    watch: {
+      mdItem(newValue, oldValue) {
+        this.parentTable.data[this.index] = this.mdItem;
+        this.handleMultipleSelection(newValue === oldValue);
       }
-      this.setSelectedRow(value, this.index - 1);
-      this.parentTable.$children[0].checkbox = this.parentTable.numberOfSelected === this.parentTable.numberOfRows;
     },
-    handleMultipleSelection(value) {
-      if (this.parentTable.numberOfRows > 25) {
-        this.parentTable.$el.classList.add(transitionClass);
-      }
-
-      this.parentTable.$children.forEach((row, index) => {
-        row.checkbox = value;
-
-        if (!row.headRow) {
-          this.setSelectedRow(value, index - 1);
+    methods: {
+      setRowSelection(value, row) {
+        this.parentTable.setRowSelection(value, row);
+      },
+      setHeadRowSelection() {
+        if (this.hasSelection) {
+          this.parentTable.$children[0].checkbox = this.parentTable.numberOfSelected > 0
+            && this.parentTable.numberOfSelected === this.parentTable.numberOfRows;
         }
-      });
+      },
+      handleSingleSelection(value) {
+        if (!this.multiple) {
+          this.parentTable.$children.forEach((row, index) => {
+            if(row.mdItem&&row.mdItem!==this.mdItem){
+              row.checkbox = false;
+              this.parentTable.setRowSelection(row.checkbox, row.mdItem);
+            }
+              
+          });
+        }
+        this.parentTable.setRowSelection(value, this.mdItem);
+        this.setHeadRowSelection();
+      },
+      handleMultipleSelection(value) {
+        if (this.parentTable.numberOfRows > 25) {
+          this.parentTable.$el.classList.add(transitionClass);
+        }
 
-      if (value) {
-        this.parentTable.numberOfSelected = this.parentTable.numberOfRows;
-      } else {
-        this.parentTable.numberOfSelected = 0;
-      }
+        this.parentTable.$children.forEach((row) => {
+          row.checkbox = value;
+        });
 
-      window.setTimeout(() => this.parentTable.$el.classList.remove(transitionClass));
-    },
-    select(value) {
-      if (this.hasSelection) {
+        this.parentTable.setMultipleRowSelection(value);
+        this.setHeadRowSelection();
+
+        window.setTimeout(() =>
+          this.parentTable.$el.classList.remove(transitionClass),
+          100);
+      },
+      select(value) {
+        if (!this.hasSelection) {
+          return;
+        }
+
         if (this.headRow) {
           this.handleMultipleSelection(value);
         } else {
           this.handleSingleSelection(value);
         }
+
         this.parentTable.emitSelection();
-      }
-    },
-    autoSelect() {
-      if (this.mdAutoSelect && !this.headRow) {
-        this.checkbox = !this.checkbox;
-        this.handleSingleSelection(this.checkbox);
-        this.parentTable.emitSelection();
-      }
-    },
-    getIndex() {
-      var ind = -1;
-      for (var i = 0; i < this.parentTable.data.length; i++) {
-        if (this.parentTable.data[i] == this.mdItem)
-          ind = i;
-      }
-      return ind;
-    }
-  },
-  mounted() {
-    this.parentTable = getClosestVueParent(this.$parent, 'md-table');
-    this.multiple = this.parentTable.multiple && this.mdSelection;
-    if (this.$el.parentNode.tagName.toLowerCase() === 'thead') {
-      this.headRow = true;
-    } else {
-      this.parentTable.numberOfRows++;
-      this.index = this.parentTable.numberOfRows;
+        this.$emit(value ? 'selected' : 'deselected', value);
+      },
+      autoSelect() {
+        // if (this.mdAutoSelect && this.hasSelection) {
+        //   this.checkbox = !this.checkbox;
+        //   this.handleSingleSelection(this.checkbox);
+        //   this.parentTable.emitSelection();
+        // }
 
-      if (this.mdSelection) {
-        this.parentTable.hasRowSelection = true;
-      }
+        if (this.mdAutoSelect && !this.headRow) {
+          this.checkbox = !this.checkbox;
+          this.handleSingleSelection(this.checkbox);
+          this.parentTable.emitSelection();
+        }
+      },
+      startTableRow() {
+        this.parentTable = getClosestVueParent(this.$parent, 'md-table');
 
-      if (this.mdItem) {
-        this.parentTable.data.push(this.mdItem);
-      }
-    }
-  },
-  destroyed() {
-    if (!this.headRow) {
-      var ind = this.getIndex();
-      if (ind >= 0) {
-        this.parentTable.data.splice(ind, 1);
-        this.parentTable.numberOfRows--;
+        if (this.$el.parentNode.tagName.toLowerCase() === 'thead') {
+          this.headRow = true;
+        } else {
+          if (!this.mdItem && this.mdSelection) {
+            throw new Error('You should set the md-item property when using mdSelection. Example: <md-table-row md-selection :md-item="ITEM" ...>');
+          }
 
-        if (this.parentTable.selectedRows[ind] != null) {
-          delete this.parentTable.selectedRows[ind];
-          --this.parentTable.numberOfSelected;
+          if (this.mdSelection) {
+            this.parentTable.hasRowSelection = true;
+          }
+          this.parentTable.data.push(this.mdItem);
         }
       }
+    },
+    destroyed() {
+      this.parentTable.removeRow(this.mdItem);
+      this.setHeadRowSelection();
+    },
+    mounted() {
+      this.startTableRow();
     }
-  }
-};
+  };
 </script>

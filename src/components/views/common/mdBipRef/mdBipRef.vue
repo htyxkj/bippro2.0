@@ -21,9 +21,8 @@ export default {
     }
   },
   mixins:[common],
-  props: {'inputValue':null,'bipRefId':Object,mdNumeric: Boolean,'row':{default:null,type:Object}},
-  mounted () {
-    // if(this.inputValue)
+  props: {'inputValue':{default:null},'bipRefId':Object,mdNumeric: Boolean,'row':{default:null,type:Object}},
+  mounted () { 
       this.initValue();
   },
   computed:{
@@ -45,7 +44,7 @@ export default {
     pkclick(){
       this.$emit('pkclick');
     },
-    initValue(){
+    initValue(){ 
       this.refData.code = this.inputValue;
       this.refData.name = this.inputValue;
       if (this.bipRefId && this.bipRefId.refValue) {
@@ -53,7 +52,7 @@ export default {
       }
     },
     async makeRefValue(){
-      console.log('makeRefValue');
+      // console.log('makeRefValue');
       var s0 = this.bipRefId.refValue;
       if(s0 == '{&DATETIME}' || s0=='{&DATE}'){
         return ;
@@ -82,12 +81,12 @@ export default {
             fh =""
           }
           var cldata = JSON.parse(window.sessionStorage.getItem(this.bipRefId.refValue+"."+codeArr[i]));
-          console.log("cldata:",cldata,codeArr[i])
+          // console.log("cldata:",cldata,codeArr[i])
           if(cldata){
             valName+=cldata.value[cldata.allCols[1]]+fh
             this.refData.name = valName;
           }else{
-            console.log(this.assType)
+            // console.log(this.assType)
             if(this.assType == 'C_GROUP'){
               var aa = this.bipRefId.script.split(";");      
               var sc = aa[aa.length-1];
@@ -101,20 +100,22 @@ export default {
             var cc = await this.getCLByAPI({'assistid':this.bipRefId.refValue,'cont':codeArr[i],'assType':this.assType,'script':this.script});
             // console.log('1111',cc);
             if(cc.data.code==1){
-              // for(var i0;i<cc.data.values.length;i++){
-                cldata = {'allCols':cc.data.allCols,'value':cc.data.values[0]};
+              for(var i0;i<cc.data.values.length;i++){
+                cldata = {'allCols':cc.data.allCols,'value':cc.data.values[i]};
                 // this.refData.name += cldata.value[cldata.allCols[1]]+fh;
-                valName+=cldata.value[cldata.allCols[1]]+fh
+                valName=cldata.value[cldata.allCols[1]]+fh
                 this.refData.name = valName;
                 // console.log("要Set了！")
-                if(!window.sessionStorage.getItem(this.bipRefId.refValue+"."+codeArr[i])){
-                  window.sessionStorage.setItem(this.bipRefId.refValue+"."+codeArr[i],JSON.stringify(cldata));
+                // if(!window.sessionStorage.getItem(this.bipRefId.refValue+"."+codeArr[i])){
+                //   window.sessionStorage.setItem(this.bipRefId.refValue+"."+codeArr[i],JSON.stringify(cldata));
+                // }
+                if(!window.sessionStorage.getItem(this.bipRefId.refValue+"."+cldata.value[cldata.allCols[0]])){
+                  window.sessionStorage.setItem(this.bipRefId.refValue+"."+cldata.value[cldata.allCols[0]],JSON.stringify(cldata));
                 }
-              // }
+              }
             }
         }
         }
-        
       }
     },
 

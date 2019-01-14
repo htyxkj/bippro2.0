@@ -54,7 +54,7 @@ export default class BipScriptProc {
       b0 = false;
     for (var i = x0; i < x1; i++) {
       if (bfh) {
-        var cfh = dvs[i].charCodeAt(0);
+        var cfh = (dvs[i]+'').charCodeAt(0);
         c1 = (cfh >>> 8);
         c0 = (cfh & 0xff);
         if (c0 == c1) {
