@@ -94,7 +94,7 @@
             <md-layout>
               <md-layout md-flex="33" md-flex-xsmall="33">   
                 <md-input-container>
-                  <label for="plane">作业区面积(平方米)</label> 
+                  <label for="plane">作业区面积(亩)</label> 
                   <md-input :required="false" v-model="area_1"></md-input>
                 </md-input-container> 
               </md-layout>  

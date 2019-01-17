@@ -32,7 +32,7 @@
               :md-item="row"
               :md-selection="mdSelection" md-auto-select>
               <md-table-cell v-for="(column, columnIndex) in showCols" :key="columnIndex"  @dblclick.native="dblclick(row)">
-              {{row[allCols[column]]}}
+                {{row[allCols[column]]}}
               </md-table-cell>            
               <md-table-cell v-if='assType == "C_GDIC"'>
                 <md-select v-model="row.cc">
@@ -97,8 +97,7 @@ export default {
       type:Boolean,
       default:false
     },
-    assType:null,//辅助类型
-    script:null,//公式解析后结果
+    assType:null,//辅助类型 
   },
   data(){
     return{
@@ -116,14 +115,15 @@ export default {
       allCols:[],
       title:'',
       unit:null,
-
+      script:null,
     } 
   },
   mounted(){
     // this.doQuery();
   },
   methods:{
-    async open(){
+    async open(script){
+      this.script = script;
       console.log(this.assType)
       if(this.assType == 'C_GDIC'){
         if(this.unit == null){
@@ -177,9 +177,6 @@ export default {
             this.refData[i].cc = this.refData[i][this.allCols[this.allCols.length-2]]+'-1';
           }
         }
-
-
-
         this.pageInfo.total = data.total;
         this.pageInfo.size = data.size;
       }
@@ -237,8 +234,7 @@ export default {
     dblclick(row){
       this.close();
     },
-    onTablePagination(page){
-      // console.log(page);
+    onTablePagination(page){ 
       this.pageInfo.page = page.page;
       this.pageInfo.size = page.size;
       this.doQuery(this.word);
@@ -251,7 +247,7 @@ export default {
       var arr = {"bzunit":hsunit,"hsgx":"1","name":this.unit[hsunit]} 
       var j = JSON.parse(json); 
       j.unshift(arr); 
-      j=JSON.stringify( j ) 
+      j=JSON.stringify( j )  
       return JSON.parse(j); 
     },
     //获取单位信息

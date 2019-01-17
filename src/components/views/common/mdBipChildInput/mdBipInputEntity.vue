@@ -28,7 +28,7 @@
       <md-button class="md-icon-button md-ref-filter" @click.native="openRef()">
         <md-icon>search</md-icon>
       </md-button>
-      <md-bip-dia :assType="column.assType" :script="script" ref="ref" :options="refOptions" :multiple="!!multiple" :md-ref-id="mdRefId" @open="onRefOpen" @close="onRefClose"></md-bip-dia>
+      <md-bip-dia :assType="column.assType" ref="ref" :options="refOptions" :multiple="!!multiple" :md-ref-id="mdRefId" @open="onRefOpen" @close="onRefClose"></md-bip-dia>
   </div>
 </template>
 
@@ -53,7 +53,6 @@ export default {
     },
     dsm:{default:null,type:Object},
     column:{default:null,type:Object},
-    script:null,
   },
   mixins: [commonInput],
   data() {
@@ -67,11 +66,11 @@ export default {
       canEdit: true,
       refIsOpened: false,
       refOptions: { wheres: {}, orders: {} },
-      cols: [],
+      cols: [], 
     };
   },
   watch: {
-    value(value) {
+    value(value) { 
       this.setValue(value);
     },
     selectedValues(v) {
@@ -84,7 +83,7 @@ export default {
         this.canEdit = this.selectedValues.length < 1;
       }
       this.setParentValue(v);
-    },
+    }, 
   },
   methods: {
     setValue(value) {
@@ -93,11 +92,16 @@ export default {
     },
     async openRef() {
       //进行公式解析 
-      this.refIsOpened = true;
-      this.$emit("init", this.refOptions);
-      this.$refs["ref"].open();
+      var script = await this.analysisScript(); 
+      console.log(script)
+      if(script){ 
+        this.refIsOpened = true;
+        this.$emit("init", this.refOptions);
+        this.$refs["ref"].open(script);
+      }
     },
-    onRefOpen(type) {},
+    async onRefOpen(type) { 
+    },
     onRefClose(resdata) {
       if (resdata) {
         this.refInfo = resdata;
@@ -241,7 +245,32 @@ export default {
     //   console.log(res);
     // },
     // getCallError(res) {}
-     
+    //C_GROUP公式解析
+    analysisScript(){      
+      if(this.column.assType == 'C_GROUP'){ 
+          var aa = this.column.script.split(";");      
+          var sc = aa[aa.length-1];
+          if(sc.indexOf("*") != -1){
+            var arr = sc.split("*");
+            return this.checkScript(this.dsm,arr[0],arr[1])
+          }else{
+            return this.checkScript(this.dsm,this.column.objid,sc)
+          } 
+      }
+    },
+    //c_group 检查所有对像 中的字段
+    checkScript(cell,objid,valid){
+      if(cell.ccells.obj_id == objid){//先检查主对象
+        var len = parseInt(this.dsm.cdata.length)-1;  
+        return this.dsm.cdata[len][valid];
+      }else{
+        if(cell.ccells.haveChild){
+          for(var i =0;i<cell.ds_sub.length;i++){
+            return this.checkScript(cell.ds_sub[i],objid,valid);
+          }
+        }
+      }
+    },
   },
   mounted() {
     this.$nextTick(() => {

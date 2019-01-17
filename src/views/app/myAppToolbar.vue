@@ -14,9 +14,8 @@
         {{cmcName}}
     </div>
     <md-button class="md-icon-button" md-menu-trigger  @click="isQP"> 
-        <md-tooltip md-direction="right">{{qpText}}</md-tooltip>
-        <!-- {{qpText}} -->
-        <md-icon>dashboard</md-icon>
+        <md-tooltip md-direction="left">{{qpText}}</md-tooltip>
+        <md-icon>open_with</md-icon>
     </md-button> 
     <md-menu v-if="TOOL_RABBITMQ" md-direction="bottom left" ref="taskMSG">
       <md-button class="md-icon-button" md-menu-trigger>
@@ -197,7 +196,7 @@ export default {
       }else{
         this.fullScreen();
         this.qp=true;
-        this.qpText="退出"
+        this.qpText="退出全屏"
       }
     },
     //全屏

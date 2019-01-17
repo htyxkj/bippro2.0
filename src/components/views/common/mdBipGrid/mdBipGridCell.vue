@@ -20,7 +20,7 @@
       </template>
       <template v-else-if="column&&column.dataType=='entity'">
         <md-input-container>
-          <md-bip-input-entity :script="script" :dsm="dsm" :column="column" :mdRefId="column.refId||column.refType" @init="on_init_ref" v-model="row.data[column.field]"></md-bip-input-entity>
+          <md-bip-input-entity :dsm="dsm" :column="column" :mdRefId="column.refId||column.refType" @init="on_init_ref" v-model="row.data[column.field]"></md-bip-input-entity>
         </md-input-container>
       </template>
       <template v-else-if="column&&column.dataType=='enum'">
@@ -75,13 +75,14 @@ export default {
     columns : function(){
       this.initType();
     }, 
-    // 深度 watch
-    dsm:{
-      handler: function () {
-        this.analysisScript(); 
-      },
-      deep: true
-    }
+    //深度 watch
+    // dsm:{
+    //   handler: function () {
+    //     console.log("GridCell")
+    //     this.analysisScript(); 
+    //   },
+    //   deep: true
+    // }
   },
   created(){
     this.initType();
@@ -217,7 +218,7 @@ export default {
         }
         //判断字段是辅助，并且是否是特殊辅助
         if(this.column.assist){
-          this.analysisScript();   
+          // this.analysisScript();   
           var  editName = this.column.editName; 
           if (editName == 'UPDOWN') {
             this.inputType = this.INPUT_FILE;
@@ -248,32 +249,32 @@ export default {
         // }
       }
     }, 
-    //C_GROUP公式解析
-    analysisScript(){      
-      if(this.column.assType == 'C_GROUP'){
-        var aa = this.column.script.split(";");      
-        var sc = aa[aa.length-1];
-        if(sc.indexOf("*") != -1){
-          var arr = sc.split("*");
-          this.checkScript(this.dsm,arr[0],arr[1])
-        }else{
-          this.checkScript(this.dsm,this.column.objid,sc)
-        }
-      }
-    },
-    //c_group 检查所有对像 中的字段
-    checkScript(cell,objid,valid){
-      if(cell.ccells.obj_id == objid){//先检查主对象
-        var len = parseInt(this.dsm.cdata.length)-1; 
-        this.script = this.dsm.cdata[len][valid];
-      }else{
-        if(cell.ccells.haveChild){
-          for(var i =0;i<cell.ds_sub.length;i++){
-            this.checkScript(cell.ds_sub[i],objid,valid);
-          }
-        }
-      }
-    },
+    // //C_GROUP公式解析
+    // analysisScript(){      
+    //   if(this.column.assType == 'C_GROUP'){ 
+    //       var aa = this.column.script.split(";");      
+    //       var sc = aa[aa.length-1];
+    //       if(sc.indexOf("*") != -1){
+    //         var arr = sc.split("*");
+    //         this.checkScript(this.dsm,arr[0],arr[1])
+    //       }else{
+    //         this.checkScript(this.dsm,this.column.objid,sc)
+    //       } 
+    //   }
+    // },
+    // //c_group 检查所有对像 中的字段
+    // checkScript(cell,objid,valid){
+    //   if(cell.ccells.obj_id == objid){//先检查主对象
+    //     var len = parseInt(this.dsm.cdata.length)-1; 
+    //     this.script = this.dsm.cdata[len][valid];
+    //   }else{
+    //     if(cell.ccells.haveChild){
+    //       for(var i =0;i<cell.ds_sub.length;i++){
+    //         this.checkScript(cell.ds_sub[i],objid,valid);
+    //       }
+    //     }
+    //   }
+    // },
   },
   mounted() {   
     this.parentTable = getClosestVueParent(this.$parent, 'md-bip-grid');

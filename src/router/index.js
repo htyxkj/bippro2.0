@@ -68,12 +68,12 @@ export default new Router({
     {
       path: '/',
       name: 'Index',
-      component: CarRealMap
+      component: BipMapCurrent
     },
     {
       path: '/index',
       name: 'Dashbord',
-      component: CarRealMap
+      component: BipMapCurrent
     },
     {
       path: '/task',

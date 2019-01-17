@@ -127,7 +127,7 @@ export default {
         this.gaugeseries.push(0) 
         this.setHeight()
         window.onresize = () => { 
-            this.clientHeight = document.body.clientHeight
+            this.setHeight()
         }
     },
     data() {

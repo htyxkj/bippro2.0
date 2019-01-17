@@ -92,8 +92,8 @@ export default {
         this.baiduMap()
         this.map.centerAndZoom(new BMap.Point(103.388611,53.563611), 5); 
         this.setHeight()
-        window.onresize = () => { 
-            this.clientHeight = document.body.clientHeight
+        window.onresize = () => {  
+            this.setHeight()
         }
         this.loading=1;
         this.getAllPoints()

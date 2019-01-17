@@ -201,8 +201,7 @@ export default {
         }
       }
     },
-    getCallBack(res){
-      console.log("getCallBack")
+    getCallBack(res){ 
       var data = res.data;
       if(data.code == 1) {
         var refBackData = {

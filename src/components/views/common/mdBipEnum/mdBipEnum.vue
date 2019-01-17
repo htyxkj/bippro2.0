@@ -32,10 +32,10 @@ import enumCache from '../../../core/utils/enumCache';
       };
     },
     watch: {
-      value(value) {
+      value(value) { 
         this.setTextAndValue(value);
       },
-      selectedValue(value) {
+      selectedValue(value) { 
         this.$emit('input', value);
         this.$emit('change',value);
       }

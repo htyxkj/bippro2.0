@@ -6,16 +6,17 @@
 // global.BIPAPIURL = 'http://115.28.191.203:8080/safema/'//安全工具
 // global.BIPAPIURL = 'http://jtdrp.juminfuwu.cn/' //集团管理
 // global.BIPAPIURL = 'http://211.144.37.205/vehicle-sched/'; //一风车辆
-// global.BIPAPIURL = 'http://211.144.37.205/airfencea/'; //一风飞防
+global.BIPAPIURL = 'http://211.144.37.205/airfencea/'; //一风飞防
 // global.BIPAPIURL = 'http://115.28.191.203:89/skxjtfile/';//京通档案
 // global.BIPAPIURL = 'http://192.168.100.13:8080/skxjtfile/';//京通档案（水科学院）
 
 // global.BIPAPIURL = 'http://192.168.0.200:8088/airfencea/';//本机测试环境
 // global.DBID = 'ZT1';
 // global.DBID = 'J1';
+global.DBID = '01';
 
-global.BIPAPIURL = 'http://192.168.1.200:9999/jd/';
-global.DBID = '115';//本机达博
+// global.BIPAPIURL = 'http://192.168.1.200:9999/jd/';
+// global.DBID = '115';//本机达博
 // global.DBID = '112';//车辆管理
 // global.DBID = '121';//一风车辆管理
 // global.DBID = '111';
