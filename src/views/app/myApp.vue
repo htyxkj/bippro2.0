@@ -49,8 +49,16 @@ export default {
       this.setTitle();
     },
     setTitle() {
-        if(this.$route.query.title){
+      if(this.$route.query.title){
         this.mdTitle = this.$route.query.title
+        var isPc = this.ISPC();
+        if (!isPc) {
+          var arr = this.mdTitle.split("");
+          if(arr.length>4){
+            this.mdTitle = arr[0]+arr[1]+arr[2]+arr[3]+'...'
+          }
+        }
+        
       }else{
         if(this.$route.path == '/' || this.$route.path == '/index'){
           this.mdTitle = '首页';

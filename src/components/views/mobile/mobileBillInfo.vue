@@ -23,7 +23,7 @@
       <template v-if="dsm&&dsm.ds_sub.length==0">
         <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null">
           <md-layout>
-            <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+            <md-bip-input  :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
           </md-layout>
         </md-content>
       </template>
@@ -32,7 +32,8 @@
           <md-stepper md-vertical  @completed="finish">
             <md-step id="step1" :md-label="dsm.ccells.desc" :mdButtonContinue="$t('commBtn.child.next')" :mdButtonBack="$t('commBtn.child.back')" :mdButtonFinish="$t('commBtn.child.finish')" :mdEditable="true">
               <md-layout>
-                <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+                <!-- <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input> -->
+                <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
               </md-layout>
             </md-step>
             <md-step id="step2" :md-label="$t('commBtn.child.title')" :mdButtonContinue="$t('commBtn.child.next')" :mdButtonBack="$t('commBtn.child.back')" :mdButtonFinish="$t('commBtn.child.finish')" :mdEditable="true">
@@ -50,7 +51,7 @@
                       <md-list>
                         <md-layout class="flex layout-column">
                             <md-layout>
-                              <md-bip-input v-for="item in dsm.ds_sub[0].ccells.cels" :ref="item.id" :key="item.id" :cell="item" :modal="dj" :btj="false" class="bip-input" @change="childChange"></md-bip-input>
+                              <md-bip-input :dsm="dsm" v-for="item in dsm.ds_sub[0].ccells.cels" :ref="item.id" :key="item.id" :cell="item" :modal="dj" :btj="false" class="bip-input" @change="childChange"></md-bip-input>
                             </md-layout>
                         </md-layout>
                       </md-list>

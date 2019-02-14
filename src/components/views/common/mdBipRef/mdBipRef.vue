@@ -52,7 +52,6 @@ export default {
       }
     },
     async makeRefValue(){
-      // console.log('makeRefValue');
       var s0 = this.bipRefId.refValue;
       if(s0 == '{&DATETIME}' || s0=='{&DATE}'){
         return ;
@@ -82,8 +81,10 @@ export default {
           }
           var cldata = JSON.parse(window.sessionStorage.getItem(this.bipRefId.refValue+"."+codeArr[i]));
           // console.log("cldata:",cldata,codeArr[i])
-          if(cldata){
-            valName+=cldata.value[cldata.allCols[1]]+fh
+          if(cldata && cldata!==null){
+            // var id = this.scriptReference()
+            var id = 1;
+            valName+=cldata.value[cldata.allCols[id]]+fh
             this.refData.name = valName;
           }else{
             // console.log(this.assType)
@@ -98,17 +99,15 @@ export default {
               }
             }
             var cc = await this.getCLByAPI({'assistid':this.bipRefId.refValue,'cont':codeArr[i],'assType':this.assType,'script':this.script});
-            // console.log('1111',cc);
-            if(cc.data.code==1){
-              for(var i0;i<cc.data.values.length;i++){
-                cldata = {'allCols':cc.data.allCols,'value':cc.data.values[i]};
-                // this.refData.name += cldata.value[cldata.allCols[1]]+fh;
-                valName=cldata.value[cldata.allCols[1]]+fh
+ 
+            if(cc.data.code==1){ 
+              for(var j=0;j<cc.data.values.length;j++){
+                cldata = {'allCols':cc.data.allCols,'value':cc.data.values[j]}; 
+                // var id = this.scriptReference()
+                var id =1;
+                valName=cldata.value[cldata.allCols[id]]+fh
                 this.refData.name = valName;
-                // console.log("要Set了！")
-                // if(!window.sessionStorage.getItem(this.bipRefId.refValue+"."+codeArr[i])){
-                //   window.sessionStorage.setItem(this.bipRefId.refValue+"."+codeArr[i],JSON.stringify(cldata));
-                // }
+                console.log("要Set了！") 
                 if(!window.sessionStorage.getItem(this.bipRefId.refValue+"."+cldata.value[cldata.allCols[0]])){
                   window.sessionStorage.setItem(this.bipRefId.refValue+"."+cldata.value[cldata.allCols[0]],JSON.stringify(cldata));
                 }
@@ -118,7 +117,23 @@ export default {
         }
       }
     },
-
+    //解析辅助公式中的复制参照
+    scriptReference(){
+      var id =1; 
+      if(this.bipRefId.script !=null && this.bipRefId.script !=''){
+        var aa = this.bipRefId.script.split(";");      
+        for(var i=0;i<aa.length;i++){
+          var sc = aa[i];
+          if(sc.indexOf('&') == -1){
+            continue;
+          }
+          var cc  = sc.split('&');
+          if(cc.length>1)
+          id=cc[1];
+        } 
+      }
+      return id;
+    },
     makeRef(cldata){
       _.find(cldata.values,(item)=>{
         // console.log(item,'fdsfds');

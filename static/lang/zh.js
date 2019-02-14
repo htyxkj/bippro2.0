@@ -1,5 +1,6 @@
 module.exports = {
-  sysTitle:'林业有害生物飞机防治工程规范化作业信息管理平台',  
+  // sysTitle:'林业有害生物飞机防治工程规范化作业信息管理平台',  
+  sysTitle:'CRM',
   // sysTitle:'BIP-OA',
   login:{
     usercode:'请输入用户名',

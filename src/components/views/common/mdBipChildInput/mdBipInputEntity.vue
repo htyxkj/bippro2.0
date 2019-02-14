@@ -92,13 +92,12 @@ export default {
     },
     async openRef() {
       //进行公式解析 
-      var script = await this.analysisScript(); 
-      console.log(script)
-      if(script){ 
+      var script = await this.analysisScript();  
+      // if(script){ 
         this.refIsOpened = true;
         this.$emit("init", this.refOptions);
         this.$refs["ref"].open(script);
-      }
+      // }
     },
     async onRefOpen(type) { 
     },
@@ -255,14 +254,15 @@ export default {
             return this.checkScript(this.dsm,arr[0],arr[1])
           }else{
             return this.checkScript(this.dsm,this.column.objid,sc)
-          } 
+          }
       }
     },
     //c_group 检查所有对像 中的字段
     checkScript(cell,objid,valid){
       if(cell.ccells.obj_id == objid){//先检查主对象
         var len = parseInt(this.dsm.cdata.length)-1;  
-        return this.dsm.cdata[len][valid];
+        // return this.dsm.cdata[len][valid];
+        return this.dsm.currRecord[valid];
       }else{
         if(cell.ccells.haveChild){
           for(var i =0;i<cell.ds_sub.length;i++){

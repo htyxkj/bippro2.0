@@ -14,7 +14,11 @@
     name: 'md-table',
     props: {
       mdSortType: String,
-      mdSort: String
+      mdSort: String,
+      multiple:{
+        type: Boolean,
+        default: true
+      }
     },
     mixins: [theme],
     data() {

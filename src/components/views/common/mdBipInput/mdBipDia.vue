@@ -124,7 +124,7 @@ export default {
   methods:{
     async open(script){
       this.script = script;
-      console.log(this.assType)
+      // console.log(this.assType)
       if(this.assType == 'C_GDIC'){
         if(this.unit == null){
           await this.getUNIT();

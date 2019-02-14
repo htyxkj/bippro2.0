@@ -58,13 +58,13 @@ export default {
   },
   mixins: [common],
   props: {
-    groupfilds: Array,
+    groupfilds: { type: Array},
     groupdatafilds: Array,
     pcell: String,
     searchCelId: String,
     modal: Object,
     doSearch: Number,
-    chartType: String,
+    chartType: String, 
     showChart: { type: Boolean, default: true },
     showData: { type: Boolean, default: true }
   },
@@ -113,17 +113,18 @@ export default {
         currentPage: this.pageInfo.page,
         pageSize: this.pageInfo.size,
         groupfilds: JSON.stringify(this.groupfilds),
-        groupdatafilds: JSON.stringify(this.groupdatafilds)
+        groupdatafilds: JSON.stringify(this.groupdatafilds), 
       };
       // console.log('chart serach',this.groupfilds.length,this.groupdatafilds.length,this.pcell,this.doSearch);
-      if (
+      
+      if ( 
         this.groupfilds.length > 0 &&
         this.groupdatafilds.length > 0 &&
         this.pcell &&
         this.doSearch >= 0
       ) {
         var res = await this.getDataByAPINew(data1);
-        // console.log(res);
+        console.log(res);
         if (res.data.id === 0) {
           this.tjcell = res.data.data.tjlayCels;
           this.tjpages = res.data.data.tjpages;
@@ -144,7 +145,7 @@ export default {
         currentPage: this.pageInfo.page,
         pageSize: this.pageInfo.size,
         groupfilds: JSON.stringify(this.groupfilds),
-        groupdatafilds: JSON.stringify(this.groupdatafilds)
+        groupdatafilds: JSON.stringify(this.groupdatafilds), 
       };  
       var res = await this.getDataByAPINew(data1);
       if (res.data.id === 0) {

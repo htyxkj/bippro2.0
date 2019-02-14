@@ -155,13 +155,15 @@ export default {
     return size;
     }
 
-    Vue.prototype.getAssistDataByAPICout = function (mdRefID,cont,success,error) {
+    Vue.prototype.getAssistDataByAPICout = function (mdRefID,cont,script,assType,success,error) {
       var  posParams = {
         'dbid': global.DBID,
         'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
         'apiId': global.APIID_AIDO,
         'assistid': mdRefID,
-        'cont':cont
+        'cont':cont,
+        'script':script,
+        'assType':assType,
       }
       var returnobj = null;
       const url = global.BIPAPIURL+global.API_COM;

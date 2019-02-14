@@ -19,10 +19,10 @@
 <script>
   // import common from './common';
   // import getClosestVueParent from '../../../core/utils/getClosestVueParent';
- 
+   import mobildDate from './mobileDate/datePicker.js';
   import moment from 'moment';
   export default {
-    // mixins: [common],
+    mixins: [mobildDate],
     props: {
       column:null,
       isReport:null, 
@@ -61,18 +61,32 @@
         return this.row.data.vueRowId.replace(/_/g, "").replace( reg , '' )+"row"; 
       },
       dateIconClick(){
-        jeDate('#'+this.dateID ,{ 
-          trigger:false,
-          format:this.dateFomt, 
-          range:this.range,
-          theme:{ bgcolor:"#2196F3",color:"#ffffff", pnColor:"#00CCFF"},
-          isClear:false,
-          donefun: (obj) => { 
-            this.checkVal = obj.val 
-          }, 
-          clearfun:(elem,val)=>{ 
-          },
-        });
+        var isPc = this.ISPC();
+        if(isPc){ 
+          jeDate('#'+this.dateID ,{ 
+            trigger:false,
+            format:this.dateFomt, 
+            range:this.range,
+            theme:{ bgcolor:"#2196F3",color:"#ffffff", pnColor:"#00CCFF"},
+            isClear:false,
+            donefun: (obj) => { 
+              this.checkVal = obj.val 
+            }, 
+            clearfun:(elem,val)=>{ 
+            },
+          });
+        }
+        else{  
+          this.pickerDate('#'+this.dateID,this.dateFomt,this.success,this.error);
+        } 
+      },
+      success(checkVal){
+        this.checkVal = this.formattedValue(checkVal); 
+        this.updateValue(checkVal) 
+      },
+      error(){
+        this.checkVal = '';
+        this.updateValue('') 
       },
       formtDate(){ 
         // 文档地址:http://www.jemui.com/uidoc/jedate.html
@@ -136,8 +150,7 @@
         return value=='Invalid date'?'':value;
       },
     },
-    mounted() {
-      console.log("sdsd")
+    mounted() { 
       var aa = 0x40;
       let notedit = this.column.attr & aa;
       this.disabled = notedit > 0 ? true : false; 

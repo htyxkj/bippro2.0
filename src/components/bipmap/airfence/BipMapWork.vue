@@ -239,6 +239,7 @@ export default {
                 if(res.data.total ==0){
                     this.$notify.warning({content:'该部门暂无作业区!'})
                 }
+                console.log(res)
             }) .catch(err=>{
                 console.log(err)
             })
@@ -348,7 +349,13 @@ export default {
             position : point1,    // 指定文本标注所在的地理位置
             offset   : new BMap.Size(0, -30)    //设置文本偏移量
             }
-            var label = new BMap.Label(item.township+"<br/>"+item.address, opts1); 
+            var co = '';
+            co = item.id+"<br/>"+item.name+"<br/>"+item.township+"<br/>"+item.address
+            if(item.area !=0){
+                co += "<br/>面积："+item.area+"亩";
+            } 
+
+            var label = new BMap.Label(co, opts1); 
             label.setStyle({
                 color : "red",
                 fontSize : "12px",

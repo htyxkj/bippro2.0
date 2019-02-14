@@ -46,7 +46,7 @@ export default {
           this.$notify.warning({content: res.data.message,placement:'mid-center'});
         }
       }
-    },
+    }, 
     // getCallBack(res){
     //   // 获取返回值
     //   if(res.data.id==0){

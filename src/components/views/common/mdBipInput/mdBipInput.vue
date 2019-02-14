@@ -9,7 +9,7 @@
       <md-bip-input-date :isReport="is_Report" :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-date>
     </template>
     <template v-if="inputType == INPUT_REF">
-      <md-bip-input-ref :script="script" :cell="cell" :modal="modal" @change="dataChange" :ref="cell.id"></md-bip-input-ref>
+      <md-bip-input-ref :dsm='dsm' :cell="cell" :modal="modal" @change="dataChange" :ref="cell.id"></md-bip-input-ref>
     </template>
     <template v-if="inputType == INPUT_LIST">
       <md-bip-input-list :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-list>
@@ -19,13 +19,17 @@
     </template>
       <!-- <md-bip-input-ueditor :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-ueditor> -->
     <template v-if="inputType == INPUT_TEXTAFC"> 
-      <md-bip-input-editor  :cell="cell" :modal="modal" :id="cell.id" :ref="cell.id"  @change="dataChange"></md-bip-input-editor >
+      <!-- <md-bip-input-editor  :cell="cell" :modal="modal" :id="cell.id" :ref="cell.id"  @change="dataChange"></md-bip-input-editor > -->
+      <md-bip-input-autograph :dsm='dsm' :cell="cell" :modal="modal" @change="dataChange" :ref="cell.id"></md-bip-input-autograph>
     </template>
     <template v-if="inputType == INPUT_CHECK">
       <md-bip-input-check :cell="cell"  :modal="modal"  :ref="cell.id" @change="dataChange"></md-bip-input-check>
     </template>
     <template v-if="inputType == INPUT_RADIO">
       <md-bip-input-radio :cell="cell"  :modal="modal"  :ref="cell.id" @change="dataChange"></md-bip-input-radio>
+    </template>
+    <template v-if="inputType == INPUT_AUTOGRAPH">
+      <md-bip-input-autograph :dsm='dsm' :cell="cell" :modal="modal" @change="dataChange" :ref="cell.id"></md-bip-input-autograph>
     </template>
   </md-layout>
 </template>
@@ -38,7 +42,7 @@ export default {
     return {
       inputType: 0,
       is_Report:false,
-      script:null, 
+      // script:null, 
     }
   },
   created () {   
@@ -53,12 +57,12 @@ export default {
       // console.log(this.modal);
     },
     // 深度 watcher
-    dsm:{
-      handler: function () {  
-        this.analysisScript() 
-      },
-      deep: true
-    }
+    // dsm:{
+    //   handler: function () {  
+    //     this.analysisScript() 
+    //   },
+    //   deep: true
+    // }
   },
   computed:{
     callsmall(){
@@ -114,10 +118,12 @@ export default {
         }if(this.cell.editType==this.INPUT_TEXTAFC){
           this.inputType = this.INPUT_TEXTAFC;  
           return;
+        }if(this.cell.editType==this.INPUT_AUTOGRAPH){
+          this.inputType = this.INPUT_AUTOGRAPH;  
+          return;
         }
         //判断字段是辅助，并且是否是特殊辅助
         if(this.cell.assist){
-          this.analysisScript()
           var  editName = this.cell.editName; 
           if (editName == 'UPDOWN') {
             this.inputType = this.INPUT_FILE;
@@ -151,33 +157,7 @@ export default {
     },
     list(){
       this.$emit('list');
-    },
-     analysisScript(){ 
-      if(this.cell.assType == 'C_GROUP'){
-        var aa = this.cell.script.split(";");      
-        var sc = aa[aa.length-1];
-        if(sc.indexOf("*") != -1){
-          var arr = sc.split("*");
-          this.checkScript(this.dsm,arr[0],arr[1])
-        }else{
-          this.checkScript(this.dsm,this.cell.c_par.obj_id,sc)
-        }
-      }
-    },
-    //c_group 检查所有对像 中的字段
-    checkScript(cell,objid,valid){
-      if(cell.ccells.obj_id == objid){//先检查主对象
-        var len = parseInt(this.dsm.cdata.length)-1; 
-        this.script = this.dsm.cdata[len][valid];
-      }else{
-        if(cell.ccells.haveChild){
-          for(var i =0;i<cell.ds_sub.length;i++){
-            this.checkScript(cell.ds_sub[i],objid,valid);
-          }
-        }
-      }
-    },
-
+    }, 
   }
 }
 </script>

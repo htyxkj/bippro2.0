@@ -1,8 +1,8 @@
 <template>
   <md-part>
     <template v-if="isPC">
-      <md-bip-bill-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" :mparams="mparams" @list="list"></md-bip-bill-applet>
-      <md-bip-bill-list-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" :mdTitle="mdTitle" :mparams="mparams" @addBill="addBill"  v-else></md-bip-bill-list-applet>
+      <md-bip-bill-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" :mparams="mparams" @list="list" :menuP="menuP"></md-bip-bill-applet>
+      <md-bip-bill-list-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" :mdTitle="mdTitle" :mparams="mparams" @addBill="addBill"  :menuP="menuP" v-else></md-bip-bill-list-applet>
     </template>
     <template v-else>
       <!-- <span>移动端信息</span> -->
@@ -15,30 +15,34 @@
 import CDataSet from '../classes/CDataSet';
 import billS from '../classes/billState';
 import Operation from '../operation/operation';
+import menuPattr from "../classes/menuPattr";
 export default {
   data(){
     return {
       ds_m:null,
       ds_cont:null,
       ds_ext:[],
-      blist:true,
+      blist:global.BLIST,
       opera:null,
-      isPC:this.ISPC()
+      isPC:this.ISPC(),
+      menuP:{},//顶部按钮权限
     }
   },
    props: {mdTitle:{type:String,default:''},mparams:Object},
    created(){
      this.getCell();
+     this.getMenuP();
    },
    methods:{
-     addBill(){
+    addBill(){
+       console.log(this.ds_m)
        this.blist = false;  
        if(this.ds_m.index<0)
         this.ds_m.createRecord(); 
-     },
-     list(){
+    },
+    list(){
        this.blist = true;
-     },
+    },
     async getCell(){
       var pcell = this.mparams.pcell;
       var data1 = {
@@ -49,7 +53,7 @@ export default {
       }
       var res = await this.getDataByAPINewSync(data1);
       var data = res.data;
-      console.log(data)
+      // console.log(data)
       if(data.id===0){
         var cells = data.data.layCels;
         const celL = cells.length;
@@ -85,14 +89,41 @@ export default {
           this.opera = new Operation(bb.data.data.opt);
           // console.log(this.opera);
       }
-     }
+    },
+    //顶部按钮权限！
+    getMenuP(){
+      // console.log("顶部按钮权限！")
+      this.menuP.INSERT=false;
+      // console.log(menuPattr)
+      // console.log(this.mparams.pattr & menuPattr.INSERT)
+      if((this.mparams.pattr & menuPattr.INSERT)>0){
+        this.menuP.INSERT=true;
+      }
+      this.menuP.DELETE=false;      
+      if((this.mparams.pattr & menuPattr.DELETE)>0){
+        this.menuP.DELETE=true;
+      }
+      this.menuP.SAVE=false;      
+      if((this.mparams.pattr & menuPattr.SAVE)>0){
+        this.menuP.SAVE=true;
+      }  
+      this.menuP.FILE=false;      
+      if((this.mparams.pattr & menuPattr.FILE)>0){
+        this.menuP.FILE=true;
+      }  
+      this.menuP.COUNT=false; 
+      if((this.mparams.pattr & menuPattr.COUNT)>0){
+        this.menuP.COUNT=true;
+      }  
+    }
    },
    watch:{
      mparams(){
        this.ds_m = null;
        this.getCell();
-       this.blist = true;
+       this.blist = global.BLIST;
        this.opera = null;
+       this.getMenuP();
      }
    },
   computed: {

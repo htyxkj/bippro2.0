@@ -12,6 +12,7 @@
 import pieC from './pieC.js';  
 import lineOneXC from './lineOneXC.js'
 import lineTwoXC from './lineTwoXC.js'
+import fChart from './funnelChart.js'
 import axios from 'axios';
 import qs from 'qs'; 
 export default {
@@ -72,9 +73,14 @@ export default {
                 }   
                 //柱状图
                 if(type=='bar'||type=='line'||type =='column'){
+                    if(x.length==2)
                     await this.line2XOpetion(x,Y,val,type,width);
+                    else
+                    await this.line1XOpetion(x,Y,val,type,width);
                 }else if(type == 'pie'){ 
-                    await this.pieOption(x,Y,val,type,width)
+                    await this.pieOption(x,Y,val,type,width);
+                }else if(type == 'funnel'){
+                    await this.funnelOption(x,Y,val,type,width);
                 }
             }
             //layoutFigure
@@ -132,10 +138,11 @@ export default {
             var x1 = x[0];
             var x1arr = x1.split("|");
             let paramsX1 = this.param; 
-            params.assistid=x1arr[0];
-            params.pagesize=100000; 
+            paramsX1.assistid=x1arr[0];
+            paramsX1.pagesize=100000; 
             await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(paramsX1)) .then(res=>{
                 X1Val=res.data;
+                console.log(X1Val)
             }) .catch(err=>{
                 console.log(err)
             }) 
@@ -147,15 +154,15 @@ export default {
                 var v=X1Val.values[i];
                 categories.push(v[X1Val.allCols[X1Val.showCols[0]]]) 
             }
-            lineChart.xAxis.categories=categories;
-            
+            lineChart.xAxis.categories=categories; 
+            //筛选数据  
+            let series=[];
             //查询X2数据
-            var x2 = x[1];
-            
+            var x2 = x[1]; 
             var x2arr = x2.split("|");
             let paramsX2 = this.param; 
-            params.assistid=x2arr[0];
-            params.pagesize=100000; 
+            paramsX2.assistid=x2arr[0];
+            paramsX2.pagesize=100000; 
             await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(paramsX2)) .then(res=>{
                 X2Val=res.data;
             }) .catch(err=>{
@@ -163,8 +170,7 @@ export default {
             }) 
             if(X2Val==null)
                 return;
-            //筛选数据  
-            let series=[];
+            
             for(var j=0;j<X2Val.values.length;j++){   
                 var c = xtwoData.concat()
                 var v2  = X2Val.values[j];
@@ -185,7 +191,6 @@ export default {
                     }
                 }
             }
-
             lineChart.series=series; 
             //图表类型
             lineChart.chart.type=type;  
@@ -198,7 +203,9 @@ export default {
             } 
             var _chart={options:lineChart,width:width}  
             this.Figure.push(_chart);
+            
         },
+
          //柱状图||折线图 ----一个X轴
         async line1XOpetion(x,Y,val,type,width){ 
             console.log(x,Y,val,type,width)
@@ -217,17 +224,16 @@ export default {
              }) 
              
              //初始化图表OptiOnsObject.assign({}, lineC.chart);
-             var lineChart = JSON.parse(JSON.stringify(lineTwoXC.chart));
+             var lineChart = JSON.parse(JSON.stringify(lineOneXC.chart));
              var categories=[];//X1轴 
              var X1Val=null;
-             var X2Val=null;
              var xtwoData = [];
              //查询X1数据
              var x1 = x[0];
              var x1arr = x1.split("|");
              let paramsX1 = this.param; 
-             params.assistid=x1arr[0];
-             params.pagesize=100000; 
+             paramsX1.assistid=x1arr[0];
+             paramsX1.pagesize=100000; 
              await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(paramsX1)) .then(res=>{
                  X1Val=res.data;
              }) .catch(err=>{
@@ -236,52 +242,31 @@ export default {
              if(X1Val.values==null)
                  return
              //设置X轴显示图例 
+             let series =[{
+                    data: [ ], 
+                }];
+            //  series: [{
+            //     data: [
+            //         ['上海', 24.25],
+            //     ], 
+            // }]
+             for(var j=0;j<X1Val.values.length;j++){   
+                var c = xtwoData.concat()
+                var v2  = X1Val.values[j];
+                var d=[v2[X1Val.allCols[X1Val.showCols[0]]],c]
+                series[0].data.push(d);
+            } 
              for(var i=0;i<X1Val.values.length;i++){
-                 xtwoData.push(0);
-                 var v=X1Val.values[i];
-                 categories.push(v[X1Val.allCols[X1Val.showCols[0]]]) 
-             }
-             lineChart.xAxis.categories=categories;
-             
-             //查询X2数据
-             var x2 = x[1];
-             
-             var x2arr = x2.split("|");
-             let paramsX2 = this.param; 
-             params.assistid=x2arr[0];
-             params.pagesize=100000; 
-             await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(paramsX2)) .then(res=>{
-                 X2Val=res.data;
-             }) .catch(err=>{
-                 console.log(err)
-             }) 
-             if(X2Val==null)
-                 return;
-             //筛选数据  
-             let series=[];
-             for(var j=0;j<X2Val.values.length;j++){   
-                 var c = xtwoData.concat()
-                 var v2  = X2Val.values[j];
-                 var d={name: v2[X2Val.allCols[X2Val.showCols[0]]],data:c}
-                 series.push(d);
-             } 
-             for(var i=0;i<X1Val.values.length;i++){
-                 var v1=X1Val.values[i]; 
-                 for(var j=0;j<X2Val.values.length;j++){
-                     var v2  = X2Val.values[j];
-                     for(var z = 0;z<value.length;z++){
-                         var _value = value[z];
-                         var _v1 = v1[x1arr[1]];
-                         var _v2 = v2[x2arr[1]];
-                         if(_value[_varr[1]]==_v1&&_value[_varr[2]]==_v2){ 
-                             series[j].data[i]=_value[Y]  
-                         }
-                     }
-                 }
-             }
- 
- 
-             lineChart.series=series; 
+                var v1=X1Val.values[i]; 
+                for(var z = 0;z<value.length;z++){
+                    var _value = value[z];
+                    var _v1 = v1[x1arr[1]];
+                    if(_value[_varr[1]]==_v1){ 
+                        series[0].data[i][1]=_value[Y]  
+                    }
+                }
+            }
+            lineChart.series=series; 
              //图表类型
              lineChart.chart.type=type;  
              //图表标题
@@ -290,10 +275,11 @@ export default {
                  if(fanhu.allCols[i]==Y){
                      lineChart.yAxis.title.text=fanhu.labers[i]
                  }
-             } 
+             }
+
              var _chart={options:lineChart,width:width}  
              this.Figure.push(_chart);
-             
+             console.log(_chart)
          },
         //饼状图
         async pieOption(x,Y,val,type,width){ 
@@ -305,11 +291,18 @@ export default {
             params.assistid=_varr[0];
             params.pagesize=100000;
             await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(params)) .then(res=>{
+                if(res.data.code && res.data.code ==-1){
+                    value = null;
+                    return;
+                }
                 value = res.data.values;
                 fanhu = res.data;
             }) .catch(err=>{
                 console.log(err)
             }) 
+            if(value == null){
+                return;
+            }
             //初始化图表OptiOnsObject.assign({}, lineC.chart);
             var pieChart = JSON.parse(JSON.stringify(pieC.bar));
             var X1Val=null; 
@@ -347,5 +340,65 @@ export default {
             var _chart={options:pieChart,width:width}  
             this.Figure.push(_chart);
         }, 
+
+        //漏洞图
+        async funnelOption(x,Y,val,type,width){ 
+            var fanhu=null;
+            var value = [];
+            var _varr = val.split("|");
+            //查询数据结果集
+            let params = this.param; 
+            params.assistid=_varr[0];
+            params.pagesize=100000;
+            await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(params)) .then(res=>{
+                if(res.data.code && res.data.code ==-1){
+                    value = null;
+                    return;
+                }
+                value = res.data.values;
+                fanhu = res.data;
+            }) .catch(err=>{
+                console.log(err)
+            }) 
+            if(value == null){
+                return;
+            }
+            //初始化图表OptiOnsObject.assign({}, lineC.chart);
+            var funnelChart = JSON.parse(JSON.stringify(fChart.chart));
+            var X1Val=null; 
+            
+            //查询X1数据
+            var x1 = x[0];
+            var x1arr = x1.split("|");
+            let paramsX1 = this.param; 
+            params.assistid=x1arr[0];
+            params.pagesize=100000; 
+            await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(paramsX1)) .then(res=>{
+                X1Val=res.data;
+            }) .catch(err=>{
+                console.log(err)
+            })   
+            var series_data=[];
+            // //{ name: '收11入', y: 200 },
+            // //筛选数据
+            for(var i=0;i<X1Val.values.length;i++){
+                for(var j=0;j<value.length;j++){
+                    var v = value[j];
+                    var x1 = X1Val.values[i];  
+                    if(v[_varr[1]]==x1[x1arr[1]]){ 
+                        let d=[x1[X1Val.allCols[X1Val.showCols[0]]],v[Y]]
+                        series_data.push(d);
+                    }
+                }
+            } 
+            //图表类型 
+            // funnelChart.series[0].type=type;   
+            //图表数据
+            funnelChart.series[0].data=series_data;   
+            //图表标题
+            funnelChart.title.text=fanhu.title
+            var _chart={options:funnelChart,width:width}  
+            this.Figure.push(_chart);
+        }
     }
 }

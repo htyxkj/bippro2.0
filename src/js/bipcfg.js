@@ -12,6 +12,7 @@ global.APIID_VAR = 'variable';
 global.APIID_FINDDATA = 'finddata';
 global.APIID_EXPDATA = 'expdata';
 global.APIID_FINDCELLDATA = 'findcelldata';
+global.APIID_DLG = 'dlg';
 global.APIID_SAVEDATA = 'savedata';
 global.APIID_CHKUP = 'chkup';
 global.FULLDATE = '^(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)$';

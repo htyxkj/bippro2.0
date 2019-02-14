@@ -6,7 +6,7 @@
         <md-button class="md-icon-button md-ref-filter" @click="openRef()" :disabled="disabled">
           <md-icon>search</md-icon>
         </md-button>
-        <md-bip-dia :assType="cell.assType" :script="script"  ref="ref" :mdRefId="cell.editName" :multiple="multiple" :mdSelection="mdSelection" @close="onRefClose" :disabled="disabled"></md-bip-dia>
+        <md-bip-dia :assType="cell.assType" ref="ref" :mdRefId="cell.editName" :multiple="multiple" :mdSelection="mdSelection" @close="onRefClose" :disabled="disabled"></md-bip-dia>
     </div>
   </md-input-container>
 </template>
@@ -14,12 +14,12 @@
 import comm from './modal.js';
 export default {
   mixins:[comm],
-  props: {script:{default:null}},
+  props: {dsm:{default:null,type:Object},},
   data(){
     return{
       refValue:'',
       refData:{},
-       
+      
       // mdSelection:false, 
       // multiple:false
     }
@@ -38,7 +38,7 @@ export default {
   methods:{
     async initVV(){
 
-      // console.log('modc')
+      console.log('initVV')
       var defv = this.modal[this.cell.id];
       if(defv){
         this.refValue = defv;
@@ -50,8 +50,9 @@ export default {
       }
     },
     async openRef(){
- 
-      this.$refs['ref'].open()
+      let script = await this.analysisScript()
+      // if(script)
+      this.$refs['ref'].open(script)
     },
     onRefClose(data){
       if(data){
@@ -93,18 +94,21 @@ export default {
     },
     makeRefInput(data){
       if (this.cell.refValue) {
+        // var id =this.scriptReference(); 
+        var id = 1;
         if(this.multiple){
           var  val='';
           for(var i=0;i<data.value.length;i++){
             if(i==data.value.length-1){
-              val = val +data.value[i][data.cols[1]]
+              val = val +data.value[i][data.cols[id]]
             }else{
-              val = val +data.value[i][data.cols[1]]+";"
+              val = val +data.value[i][data.cols[id]]+";"
             }
           }
           this.refValue=val;
         }else{
-          this.refValue = data.value[data.cols[1]];
+           
+          this.refValue = data.value[data.cols[id]];
         }
       } else {
          if(this.multiple){
@@ -144,7 +148,6 @@ export default {
     onBlur(){
       // console.log("onBlur")
       if (this.refData.cols){
-
         if(this.refValue ===''){
         //  console.log(166)
           this.refData.value=[];
@@ -156,9 +159,11 @@ export default {
         }else{
           if(this.refValue==this.refData.value[this.refData.cols[0]]){
             this.$set(this.modal,this.cell.id,this.refValue);
-            if(this.cell.refValue)
-              this.refValue=this.refData.value[this.refData.cols[1]];
-            else{
+            if(this.cell.refValue){
+              // var id =this.scriptReference(); 
+              var id =1;
+              this.refValue=this.refData.value[this.refData.cols[id]];
+            }else{
               this.refValue=this.refData.value[this.refData.cols[0]];
             }
             // console.log(165)
@@ -175,9 +180,10 @@ export default {
               }else{
                 count = this.refValue
               }
-              this.getAssistDataByAPICout(this.cell.editName,count,this.getCallBack,this.getCallError);
+              let script =  this.analysisScript();
+              let assType = this.cell.assType;
+              this.getAssistDataByAPICout(this.cell.editName,count,script,assType,this.getCallBack,this.getCallError);
             }
-             
           }   
         }
       }else{
@@ -194,7 +200,9 @@ export default {
               }else{
                 count = this.refValue
               }
-            this.getAssistDataByAPICout(this.cell.editName,count,this.getCallBack,this.getCallError);
+              let script =  this.analysisScript();
+              let assType = this.cell.assType;
+              this.getAssistDataByAPICout(this.cell.editName,count,script,assType,this.getCallBack,this.getCallError);
           }
         }else{
           this.modal[this.cell.id]='';
@@ -250,6 +258,50 @@ export default {
     getCallError(res){
       this.$notify.danger({content: res.data.message});
     }, 
+    analysisScript(){ 
+      // console.log(this.cell.assType);
+      if(this.cell.assType == 'C_GROUP'){
+        var aa = this.cell.script.split(";");      
+        var sc = aa[aa.length-1];
+        if(sc.indexOf("*") != -1){
+          var arr = sc.split("*");
+          return this.checkScript(this.dsm,arr[0],arr[1])
+        }else{
+          return this.checkScript(this.dsm,this.cell.c_par.obj_id,sc)
+        }
+      }
+    },
+    //c_group 检查所有对像 中的字段
+    checkScript(cell,objid,valid){
+      if(cell.ccells.obj_id == objid){//先检查主对象
+        // var len = parseInt(this.dsm.cdata.length)-1; 
+        // console.log(this.dsm.currRecord[valid])
+        return this.dsm.currRecord[valid];
+      }else{
+        if(cell.ccells.haveChild){
+          for(var i =0;i<cell.ds_sub.length;i++){
+            this.checkScript(cell.ds_sub[i],objid,valid);
+          }
+        }
+      }
+    },
+    //解析辅助公式中的复制参照
+    scriptReference(){
+      var id =1;
+      if(this.cell.script!=null && this.cell.script !=''){
+        var aa = this.cell.script.split(";");      
+        for(var i=0;i<aa.length;i++){
+          var sc = aa[i];
+          if(sc.indexOf('&') == -1){
+            continue;
+          }
+          var cc  = sc.split('&');
+          if(cc.length>1)
+          id=cc[1];
+        } 
+      }
+      return id;
+    }
   }, 
   watch:{
     modal:{

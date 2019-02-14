@@ -15,17 +15,20 @@
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <!-- 统计 -->
-        <!-- <md-button @click.native="searchCount('dialog')">{{$t('commBtn.B_STATISTICS')}}</md-button> -->
+        <md-button @click.native="searchCount('dialog')">{{$t('commBtn.B_STATISTICS')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <!-- 导出 -->
         <md-button @click.native="exportFile()">{{$t('commBtn.B_EXP')}}</md-button>
       </md-part-toolbar-group>
       <!-- 隐藏显示条件按钮  顶部 -->
-      <!-- <md-part-toolbar-group>
+      <md-part-toolbar-group>
           <md-button @click.native="showSearchInfo">{{showContLabel}}</md-button>
-      </md-part-toolbar-group> -->
-
+      </md-part-toolbar-group>
+      <!-- 常量定义的按钮 -->
+      <md-part-toolbar-group>
+          <md-button :disabled="btnDisabled" v-for="(item,index) in dlgBtn" :key="index" @click.native="dlgBtnClick(item)">{{item.name}}</md-button>
+      </md-part-toolbar-group>
 
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
@@ -44,31 +47,27 @@
               <md-bip-input :isReport="true" v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"></md-bip-input>
             </template>
             <!-- 隐藏显示剩余条件 -->
-            <!-- <md-button class="bip-more md-icon-button" @click.native="showMore()">
+            <md-button class="bip-more md-icon-button" @click.native="showMore()">
               <md-tooltip md-direction="right">{{tipLaber}}</md-tooltip>
               <md-icon>list</md-icon>   
-            </md-button> -->
+            </md-button>
           </md-layout> 
         </template>
 
         <template v-if="!groupTJ"> 
           <md-layout class="flex">
             <md-table-card>
-              <md-table class="flex" v-if="ds_m">
+              <md-table  @select="onTableSelect" class="flex" v-if="ds_m">
                 <md-table-header v-if="ds_m">
                   <md-table-row>
                     <md-table-head v-for="(item, index) in ds_m.ccells.cels" :key="index" v-if="item.isShow" :md-numeric="item.type<12">{{item.labelString}}</md-table-head>
                   </md-table-row>
                 </md-table-header>  
                 <md-table-body>
-                  <md-table-row :class="setRowColor(rowIndex)?'md-tr-color':''" v-for="(row, rowIndex) in ds_m.cdata" 
-                    :key="rowIndex"
-                    :md-item="row" 
-                    :md-auto-select="mdAutoSelect" 
-                    :md-selection="mdSelection" 
-                    @dblclick.native="dblclick(row)">
-                    <md-table-cell v-for="(column, columnIndex) in ds_m.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
-                      <md-bip-ref v-if="column.editName!='UPDOWN'" :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type<12" @pkclick="dblclick(row,rowIndex)"></md-bip-ref>
+                  <md-table-row :class="setRowColor(rowIndex)?'md-tr-color':''" v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" :md-item="row" :md-auto-select="mdAutoSelect"  :md-selection="mdSelection" >
+                    <!-- @dblclick.native="dblclick(row)" -->
+                    <md-table-cell v-for="(column, columnIndex) in ds_m.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''"  @dblclick.native="openrefs(row,rowIndex,columnIndex)">
+                      <md-bip-ref v-if="column.editName!='UPDOWN'" :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,columnIndex)"></md-bip-ref>
                       <md-bip-button-file-tmp  v-else :cell="fileCell(row)" :modal="fileModal(row)" ref="fj_name"></md-bip-button-file-tmp>
                     </md-table-cell>
                   </md-table-row>
@@ -97,14 +96,16 @@
               <md-bip-chart :showData="true" :groupfilds="groupfilds" :groupdatafilds="groupdatafilds" :modal="ds_cont.currRecord" :pcell="ds_m.ccells.obj_id" :doSearch="doSearCh" :searchCelId="ds_cont.ccells.obj_id"  :chartType="ctype" :showChart="showChart"></md-bip-chart>
             </md-layout>
             <md-layout v-else v-for="(item,index) in this.mparamsArr" :key="index"  md-flex-small="100" :md-flex="item.width">
+      
               <!-- 系统初始定义统计 -->
-              <md-bip-chart :showData="mparamsArr.length==1?true:false" :groupfilds="item.groupfilds" :groupdatafilds="item.sumfilds" :modal="ds_cont.currRecord" :pcell="ds_m.ccells.obj_id" :doSearch="doSearCh" :searchCelId="ds_cont.ccells.obj_id"  :chartType="item.ctype" :showChart="showChart"></md-bip-chart>
+              <md-bip-chart :showData="mparamsArr.length==1?true:false" :groupfilds="item.groupfilds" :chartType="item.ctype"  :groupdatafilds="item.sumfilds"   :modal="ds_cont.currRecord" :pcell="ds_m.ccells.obj_id" :doSearch="doSearCh" :searchCelId="ds_cont.ccells.obj_id"  :showChart="showChart" ></md-bip-chart>
+
             </md-layout> 
           </md-layout>
         </template>
-       </md-content>
-        <md-loading :loading="loading"></md-loading>
-       <md-dialog ref="dialog" class="md-bip-dialog" v-if="ds_m">
+      </md-content>
+      <md-loading :loading="loading"></md-loading>
+      <md-dialog ref="dialog" class="md-bip-dialog" v-if="ds_m">
         <md-dialog-title>{{mdTitle}}--{{$t('commLabel.L_Statist_Title')}}</md-dialog-title>
         <md-dialog-content>
           <md-input-container>
@@ -147,6 +148,7 @@
         </md-dialog-actions>
       </md-dialog>
     </md-part-body>
+    <bill-link-applet ref="sbill"  ></bill-link-applet>
   </md-part>
 </template>
 <script>
@@ -154,7 +156,9 @@ import CDataSet from '../classes/CDataSet';
 import billS from '../classes/billState';
 import common from '../commonModal.js';
 // import util from '../classes/excelUtils';
-export default {
+import billLinkApplet from '../applet/billLinkApplet'
+export default { 
+  components:{billLinkApplet},
   data(){
     return {
       showCont: false,
@@ -168,7 +172,7 @@ export default {
         page:1
       },
       // pages: {},
-      mdAutoSelect: false,
+      mdAutoSelect: true,
       mdSelection: false,
       groupfilds: [],
       groupdatafilds: [],
@@ -185,6 +189,9 @@ export default {
       tipLaber:this.$t('commInfo.moreCont'),
       mparamsArr:[],
       _mparams:null,
+      dlgBtn:[],//弹出框按钮
+      selectData:null,//表格选中行
+      btnDisabled:false,
     }
   },
   mixins:[common],
@@ -224,7 +231,6 @@ export default {
         this.exportFiles(header,cdata,_data,'',this.mdTitle);
       }      
     },
-
     async getCell(){ 
        var pcell = this._mparams.pcell;
        var data1 = {
@@ -298,13 +304,23 @@ export default {
       this.pageInfo.size=20;
       this.pageInfo.page = 1;
       this.pageInfo.total = 0;
-      this.showCont = true;
+      
+      
       this.groupTJ = false;
-      this.showAllCont=true;
+
+      if(global.BI_SHOWCONDITION){
+        this.showCont = true; //隐藏，显示条件
+        this.showAllCont=true;//隐藏，显示条件 剩余
+      }else{
+        this.showCont = false; //隐藏，显示条件
+        this.showAllCont=false;//隐藏，显示条件 剩余
+      }
     },
     initCell(){
       this.initInf(); 
       this.mparamsArr=this.mparams;
+      // this.mparamsArr.push(this.mparams);
+      
       if(Array.isArray(this.mparamsArr)){
         this._mparams=this.mparamsArr[0]
       }else{
@@ -334,6 +350,23 @@ export default {
       }
     },
     dblclick (row) {
+    },
+    async openrefs(row,index,columnIndex){
+      if(columnIndex>=0){
+        let cell = this.ds_m.ccells.cels[columnIndex];
+        let slkid = row[cell.id];
+        if((cell.attr&0x80000)>0){
+          let slkbuidCell = this.ds_m.ccells.cels[columnIndex+1];
+          let slkbuid = row[slkbuidCell.id];
+          if(slkid&&slkbuid){ 
+            console.log('调用我了');
+            this.$refs["sbill"].open(slkid,slkbuid);
+          }
+        }else{
+          console.log("dblclick")
+          this.dblclick(row,index);
+        }
+      }
     },
     clear(){
       if(this.ds_cont){
@@ -404,10 +437,58 @@ export default {
         sbuid:row.sbuid,
       };
       return rwmodal;
-    }
+    },
+    //获取弹出框按钮
+    async getDlg(){
+      this.dlgBtn=[];
+      var menuid = 'DLG.'+this.mparams.pbuid; 
+      let me = window.sessionStorage.getItem(menuid); 
+      if(me==null){
+        var data1 = {
+          dbid: global.DBID,
+          usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+          apiId: global.APIID_DLG, 
+          menuid:menuid,
+        };
+        var res = await this.getDataByAPINewSync(data1);
+        // console.log(res);
+        //创建客户;100305;cbm
+        if(res.data.id !=-1){ 
+          var data = res.data.data.btn;
+          for(var i=0;i<data.length;i++){
+            var btnOne = data[i];
+            var b = btnOne.split(";");
+            var btn = {name:b[0],cellID:b[1],key:b[2]};
+            this.dlgBtn.push(btn);
+          } 
+          window.sessionStorage.setItem(menuid, JSON.stringify(this.dlgBtn)); 
+        }
+      }else{ 
+        this.dlgBtn = JSON.parse(me); 
+      }
+    },
+    //点击弹出框按钮
+    async dlgBtnClick(btn){ 
+      if(this.selectData){
+        this.btnDisabled=true;
+        let _this = this;
+        this.$biDialog.open({ btnInfo: btn,selectData:this.selectData, getOpt(state) { 
+              _this.btnDisabled=false; 
+              if(state ==1){ 
+                _this.initCell()
+              }
+            } 
+        })
+      }
+    },
+    onTableSelect(item) {
+      this.selectData = Object.values(item)[0];
+      this.ds_m.currRecord = this.selectData; 
+    },
   },
   async mounted(){
     this.initCell();
+    this.getDlg();
   },
   watch:{
     showCont(){
@@ -415,6 +496,7 @@ export default {
     },
     mparams(){
       this.initCell();
+      this.getDlg();
     },
     showAllCont(){
       if(this.showAllCont){

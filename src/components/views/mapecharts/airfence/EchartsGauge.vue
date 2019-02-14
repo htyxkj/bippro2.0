@@ -17,12 +17,12 @@
     // var SolidGauge = import('highcharts/modules/solid-gauge.js');
 
 
-    import Highcharts from 'highcharts/highstock';
-    // 这个一定要引入 不然报错
-    import HighchartsMore from 'highcharts/highcharts-more';
-    import SolidGauge from 'highcharts/modules/solid-gauge.js'
-    HighchartsMore(Highcharts)
-    SolidGauge(Highcharts);
+    // import Highcharts from 'highcharts/highstock';
+    // // 这个一定要引入 不然报错
+    // import HighchartsMore from 'highcharts/highcharts-more';
+    // import SolidGauge from 'highcharts/modules/solid-gauge.js'
+    // HighchartsMore(Highcharts)
+    // SolidGauge(Highcharts);
 export default{
     name:'Highcharts1',
     data(){
@@ -31,24 +31,24 @@ export default{
             optionsK:null,
             containerSpeed:null, 
             containerK:null,
-            // Highcharts:null,
+            Highcharts:null,
         }
     },
     props:['gaugeseries'],
     methods:{
         async init(){
-            // if(this.Highcharts == null){
-            //     this.Highcharts = await import('highcharts/highstock'); 
-            //     let HighchartsMore = await import('highcharts/highcharts-more');
-            //     let SolidGauge = await import('highcharts/modules/solid-gauge.js');
-            //     HighchartsMore(this.Highcharts)
-            //     SolidGauge(this.Highcharts)
-            // }
+            if(this.Highcharts == null){
+                this.Highcharts = await import('highcharts/highstock'); 
+                let HighchartsMore = await import('highcharts/highcharts-more');
+                let SolidGauge = await import('highcharts/modules/solid-gauge.js');
+                HighchartsMore(this.Highcharts)
+                SolidGauge(this.Highcharts)
+            }
             if(this.containerSpeed!=null){
                 this.updateOpt();
                 return;
             }
-            Highcharts.setOptions({
+            this.Highcharts.setOptions({
 		        credits: {  
 		            enabled: false     //不显示LOGO 
 	            }, 
@@ -161,8 +161,10 @@ export default{
                     }
                 }]
             }
-            this.containerSpeed =  Highcharts.chart("containerSpeedID",this.optionsSpeed);
-            this.containerK =  Highcharts.chart("containerKID",this.optionsK);
+            // this.containerSpeed =  Highcharts.chart("containerSpeedID",this.optionsSpeed);
+            // this.containerK =  Highcharts.chart("containerKID",this.optionsK);
+            this.containerSpeed =  this.Highcharts.chart("containerSpeedID",this.optionsSpeed);
+            this.containerK =  this.Highcharts.chart("containerKID",this.optionsK);
 
             this.updateOpt();
         }, 

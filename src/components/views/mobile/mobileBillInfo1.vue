@@ -23,7 +23,7 @@
       <template v-if="dsm&&!dsm.haveChild">
         <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null">
           <md-layout>
-            <md-bip-input v-for="(cell, index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+            <md-bip-input :dsm="dsm" v-for="(cell, index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
           </md-layout>
         </md-content>
       </template>

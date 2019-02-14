@@ -149,6 +149,7 @@ export default {
       this.column && this.row && this.column.refInit && this.column.refInit(options, this.row.data, event);
     },
     checkGS(){
+      console.log("checkGS")
       const attr = this.column.attr;
       if((attr&0x100000)>0){
         this.checkMulCols();      
@@ -158,6 +159,7 @@ export default {
         if(scstr&&scstr.indexOf('=:')===0){
           scstr = scstr.replace('=:','');
           // 公式计算
+
           this.row.scriptProc.execute(scstr,null,col);
           // console.log(vl,this.row.data,col.field);
           // this.data[col.field] = vl;
@@ -231,50 +233,9 @@ export default {
             this.inputType = this.INPUT_REF;
           }
           return;
-        }
-        // this.inputType = this.INPUT_COMMON;
-        // var refv = this.cell.refValue;
-        // if(refv == '{&DATETIME}'){
-        //   this.inputType = this.INPUT_COMMON;
-        //   return ;
-        // } 
-        // if (refv !== undefined &&refv !=='') {
-        //   var _index = refv.indexOf('&');
-        //   if (_index>0){
-        //     this.inputType = this.INPUT_REF;
-        //     return ;
-        //   }
-        //   this.inputType = this.INPUT_LIST;
-        //     return ;
-        // }
+        } 
       }
-    }, 
-    // //C_GROUP公式解析
-    // analysisScript(){      
-    //   if(this.column.assType == 'C_GROUP'){ 
-    //       var aa = this.column.script.split(";");      
-    //       var sc = aa[aa.length-1];
-    //       if(sc.indexOf("*") != -1){
-    //         var arr = sc.split("*");
-    //         this.checkScript(this.dsm,arr[0],arr[1])
-    //       }else{
-    //         this.checkScript(this.dsm,this.column.objid,sc)
-    //       } 
-    //   }
-    // },
-    // //c_group 检查所有对像 中的字段
-    // checkScript(cell,objid,valid){
-    //   if(cell.ccells.obj_id == objid){//先检查主对象
-    //     var len = parseInt(this.dsm.cdata.length)-1; 
-    //     this.script = this.dsm.cdata[len][valid];
-    //   }else{
-    //     if(cell.ccells.haveChild){
-    //       for(var i =0;i<cell.ds_sub.length;i++){
-    //         this.checkScript(cell.ds_sub[i],objid,valid);
-    //       }
-    //     }
-    //   }
-    // },
+    },  
   },
   mounted() {   
     this.parentTable = getClosestVueParent(this.$parent, 'md-bip-grid');

@@ -21,18 +21,18 @@ export default {
   },
   methods:{ 
     dataChange(value){
-      // console.log(value+'');
+      
       var refBackData = {
           cellId:this.cell.id,
           value:value,
           oldValue:this.oldValue,
           multiple:false
       };
-      // console.log('321321',this.oldValue);
+      console.log(refBackData)
       if(value !== this.oldValue&&value!==this.upData){
         this.upData = value;
         this.$emit('change',refBackData);
-      }
+      } 
     },
     onBlur(){ 
       if(this.oldValue != this.modal[this.cell.id]){
@@ -48,9 +48,10 @@ export default {
     },
   },
   mounted(){
-    if(this.modal&&this.modal[this.cell.id]!=undefined)
-      this.oldValue = this.modal[this.cell.id];
-      this.upData = this.modal[this.cell.id];
+    console.log("mdInputDate_mounted")
+    if(this.modal&&this.modal[this.cell.id]!=undefined){
+      this.oldValue = this.modal[this.cell.id]; 
+    }
   },
   computed:{
     getType(){

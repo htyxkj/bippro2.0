@@ -2,17 +2,17 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-button :disabled="canCreate" @click.native="create">{{$t('commBtn.B_ADD')}}</md-button>
-        <md-button class="md-accent" :disabled="canDelete" @click.native="delData">{{$t('commBtn.B_DEL')}}</md-button>
-        <md-button @click.native="save" :disabled="canSave">{{$t('commBtn.B_SAVE')}}</md-button>
+        <md-button v-if="menuP.INSERT" :disabled="canCreate" @click.native="create">{{$t('commBtn.B_ADD')}}</md-button> <!--     -->
+        <md-button v-if="menuP.DELETE" class="md-accent" :disabled="canDelete" @click.native="delData">{{$t('commBtn.B_DEL')}}</md-button>
+        <md-button v-if="menuP.SAVE" @click.native="save" :disabled="canSave">{{$t('commBtn.B_SAVE')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <md-button @click.native="list">{{$t('commBtn.B_LIST')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button>{{$t('commBtn.B_COPY')}}</md-button>
+        <md-button @click="copy">{{$t('commBtn.B_COPY')}}</md-button>
         <!-- <md-button>审核 Auditing</md-button> -->
-        <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
+        <md-button  @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
       </md-part-toolbar-group>
 
       <md-part-toolbar-group v-if="flowlist.length>0">
@@ -52,7 +52,7 @@
               </md-layout>
             </md-tab>
           </md-tabs> 
-          <md-layout class="flex layout-column" v-for="(oneds,index) in dsm.ds_sub" :key="index"  v-if="dsm.ds_sub&&dsm.ds_sub.length>=1&&!istabs">
+          <md-layout  v-else class="flex layout-column" v-for="(oneds,index) in dsm.ds_sub" :key="index" >
               <md-bip-grid :dsm="dsm" :datas="oneds.cdata" :ref="index" :row-focused="true" :auto-load="true" @onAdd="onLineAdd(oneds)" @onRemove="onRemove" :showAdd="canAddChild" :showRemove="canAddChild" @rowChange="rowChange" @click="rowClick(oneds)" :isEntry="isEntry(oneds)">
                 <md-bip-grid-column v-for="item in oneds.ccells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName || item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :refValue="item.refValue" :width="item.ccCharleng" :isReq="item.isReq" :editName="item.editName" :editType="item.editType" :assist="item.assist" :dataType="getDataType(item)" :objid="oneds.ccells.obj_id" :formatter="formatter" :assType="item.assType">
                 </md-bip-grid-column>
@@ -80,21 +80,20 @@ export default {
       chkinfo: null,
       childrens:[],
       istabs:false,//是否是多子表
-      flowlist:[],
+      flowlist:[], 
     };
   },
-  props: { dsm: Object, dsext: Array, opera: Object ,mparams:Object},
+  props: { dsm: Object, dsext: Array, opera: Object ,mparams:Object,menuP:Object},
   methods: {
     dataChange(res) {
       // console.log(res);
       // console.log(res, "dataChange");
       this.dsm.checkEdit(res);
     },
-    create() {
-      
+    create() { 
       if (this.dsm) { 
         var crd = this.dsm.currRecord;
-        if ((crd.sys_stated & billS.INSERT) > 0) {
+        if ((crd.sys_stated & billS.INSERT) > 0) {// ==1
           this.$dialog.open({
             title: "系统提示",
             showYes: true,
@@ -114,6 +113,7 @@ export default {
       }
     },
     list() {
+      console.log(this.dsm.currRecord);
       var crd = this.dsm.currRecord;
       if ((crd.sys_stated & billS.INSERT) > 0) {
         // var _self = this;
@@ -206,7 +206,7 @@ export default {
           this.$notify.success({ content: this.$t('commInfo.saveSucc'), placement: "mid-center" });
         }
         if (this.opera || this.opera !== null) {
-          await this.makeCheckParams();
+            await this.makeCheckParams();
         }
         return true;
       }
@@ -271,8 +271,11 @@ export default {
     },
     async makeCheckParams() {
       if (this.opera === null) return;
+      if(this.dsm.ccells.cels[this.dsm.ccells.pkindex[this.dsm.ccells.pkindex.length-1]+1].id != this.opera.buidfld) {
+        return;
+      }
       var crd = this.dsm.currRecord;
-      // console.log(this.opera);
+      console.log('makeCheckParams',this.opera);
       var params = {
         sid: crd[this.opera.pkfld],
         sbuid: crd[this.opera.buidfld],
@@ -285,7 +288,7 @@ export default {
       if (res.data.id == 0) {
         this.chkinfo = res.data.data.info;
       } else {
-        this.chkinfo = {};
+        this.chkinfo = null;
       }
       var state = crd[this.opera.statefld];
       if (state === "1" || state === "0") this.dsm.canEdit = true;
@@ -386,11 +389,12 @@ export default {
       // console.log(data1, "findChild");
       var res = await this.getDataByAPINewSync(data1);
       console.log(res);
-      if (res.data.id === 0) {
-        this.dsm.currRecord[objId] = res.data.data.pages.celData;
-        subdsm.cdata = res.data.data.pages.celData;
-        // console.log(subdsm);
-      }
+      if(res.response)
+        return;
+        if (res.data.id === 0) {
+          this.dsm.currRecord[objId] = res.data.data.pages.celData;
+          subdsm.cdata = res.data.data.pages.celData;
+        }
     },
     getWorlFlow(sbuid) {
       var data1 = {
@@ -480,7 +484,12 @@ export default {
           for(var i=0;i<children.length;i++){
             var _chil =  children[i];
             var title = _chil.substring(_chil.indexOf("/")+2,_chil.length) 
-            var beau = _chil.substring(0,_chil.indexOf("#")) 
+            var beau 
+            if(_chil.indexOf("#") !=-1){
+              beau = _chil.substring(0,_chil.indexOf("#")) 
+            }else {
+              beau = _chil.substring(0,_chil.indexOf("/")) 
+            } 
             for(var j=0;j<this.dsm.ds_sub.length;j++){
               var _ds_sub = this.dsm.ds_sub[j];
               if(_ds_sub.ccells.obj_id == beau){
@@ -549,7 +558,38 @@ export default {
       }else{
         return true;
       }
-    } 
+    },
+    //复制拷贝当前单据
+    copy(){
+      console.log("复制当前单据！")
+      var currRecord = this.dsm.currRecord;
+      if(currRecord.sys_stated ==3){
+        this.$notify.warning({content: '请先保存当前数据！'});
+        return;
+      }
+      currRecord.sys_stated=3; 
+      let user = JSON.parse(window.sessionStorage.getItem('user'))
+      for(var i=0;i<this.dsm.ccells.cels.length;i++){
+        let cell = this.dsm.ccells.cels[i]
+        if((cell.attr&0x8000)>0){
+          let val_1 = cell.initValue;
+          if(cell.initValue == '[$]'){
+            val_1 = user.userCode;
+          }else if(cell.initValue == '[#]'){
+            val_1 = user.deptInfo.cmcCode;
+          } 
+          currRecord[cell.id] = val_1;
+        } 
+      }
+
+      for(var i=0;i<this.dsm.ccells.pkindex.length;i++){
+        var pkid = this.dsm.ccells.pkindex[i];
+        var k = this.dsm.ccells.cels[pkid].id;
+        currRecord[k]=this.dsm.ccells.cels[pkid].initValue;
+      }
+      this.dsm.cdata.push(currRecord)
+      this.dsm.currRecord = currRecord; 
+    }
   },
   computed: {
     canCreate() {
@@ -588,7 +628,7 @@ export default {
         if (crd) {
           if ((crd.sys_stated & billS.INSERT) > 0) return true;
           const state = crd[this.opera.statefld];
-          if (state == "0" || state == "1") {
+          if (state == "0" || state == "1" || state == undefined) {
             return false;
           } else {
             return true;
@@ -605,7 +645,7 @@ export default {
       }
     },
     canSubmit() { 
-      if (this.dsm && this.dsm.currRecord != null) {  
+      if (this.dsm && this.dsm.currRecord != null && this.chkinfo ) {  
         if (
           (this.dsm.currRecord.sys_stated & billS.INSERT) > 0 ||
           (this.dsm.currRecord.sys_stated & billS.EDITED) > 0
@@ -645,7 +685,7 @@ export default {
         if (crd) {
           var state = crd[this.opera.statefld];
           state = state ===''?'0':state;
-          if (state === '0' || state === '1') {
+          if (state === '0' || state === '1' || state === undefined)  {
             return true;
           }
           return false;
@@ -653,13 +693,13 @@ export default {
       }
       return true;
     }, 
-  },
-  async mounted() { 
-    // console.log("asfd")
-    if (this.dsm) {   
+  }, 
+  async mounted() {  
+    if (this.dsm) {    
+      // console.log("sdfasdfasdfasdf")
       this.calculationWidth();
       this.constituteChildrens();
-      const state = this.dsm.currRecord.sys_stated & billS.INSERT;
+      const state = this.dsm.currRecord.sys_stated & 1;
       if (this.dsm.ds_sub && state === 0) {
         for(var i =0;i<this.dsm.ds_sub.length;i++){
           this.getChildData(this.dsm.ds_sub[i]);
@@ -670,10 +710,11 @@ export default {
           this.dsm.ds_sub[i].clearData();
         }  
       }   
+      if(this.opera)
       if(this.opera.buid){
         this.getWorlFlow(this.opera.buid);
       }
-    }  
+    } 
 
   },
   watch: {
@@ -683,6 +724,11 @@ export default {
           this.dsm.canEdit = false;
         }
       }
+    },
+    dsm(){
+      this.calculationWidth();
+      this.constituteChildrens(); 
+      this.dsm.createRecord(); 
     }
   }
 };

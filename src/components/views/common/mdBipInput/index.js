@@ -1,16 +1,16 @@
-import mdBipInputComm from './mdBipInputComm'
-import mdBipInputDate from './mdBipInputDate'
-import mdBipInputTime from './mdBipInputTime'
-import mdBipInputFile from './mdBipInputFile'
-import mdBipInputList from './mdBipInputList'
-import mdBipInput from './mdBipInput.vue';
-import mdBipInputRef from './mdBipInputRef.vue';
-import mdBipDia from './mdBipDia.vue'; 
-import mdBipInputFileTmp from './mdBipInputFileUp'
-import mdBipButtonFileTmp from './mdBipButtonFileTmp'
-import mdBipInputEditor from './mdBipInputEditor'
-import mdBipInputCheck from './mdBipInputCheck'
-import mdBipInputRadio from './mdBipInputRadio'
+// import mdBipInputComm from './mdBipInputComm'
+// import mdBipInputDate from './mdBipInputDate'
+// import mdBipInputTime from './mdBipInputTime'
+// import mdBipInputFile from './mdBipInputFile'
+// import mdBipInputList from './mdBipInputList'
+// import mdBipInput from './mdBipInput.vue';
+// import mdBipInputRef from './mdBipInputRef.vue';
+// import mdBipDia from './mdBipDia.vue'; 
+// import mdBipInputFileTmp from './mdBipInputFileUp'
+// import mdBipButtonFileTmp from './mdBipButtonFileTmp'
+// import mdBipInputEditor from './mdBipInputEditor'
+// import mdBipInputCheck from './mdBipInputCheck'
+// import mdBipInputRadio from './mdBipInputRadio'
 export default function install(Vue) {
   if (install.installed) {
     console.warn('Vue core is already installed.');
@@ -43,4 +43,6 @@ export default function install(Vue) {
   Vue.component('md-bip-input-editor',() => import("./mdBipInputEditor"));
   Vue.component('md-bip-input-check',() => import("./mdBipInputCheck"));
   Vue.component('md-bip-input-radio',() => import("./mdBipInputRadio"));
+  Vue.component('md-bip-input-autograph',() => import("./mdBipInputAutograph"));
+  
 }

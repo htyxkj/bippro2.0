@@ -121,7 +121,7 @@ export default class CDataSet {
 
   // 编辑检查
   checkEdit(res) {
-    // console.log("checkEdit",res)
+    console.log("checkEdit",res)
     if(this.canEdit){
       // console.log(res);
       var cell = this.getCell(res.cellId);
@@ -137,6 +137,11 @@ export default class CDataSet {
 
   clearData() {
     this.cdata = _.take(this.cdata, 0);
+    if(this.ds_sub){
+      for(var i=0;i<this.ds_sub.length;i++){
+        this.ds_sub[i].clearData();
+      }
+    }
   }
 
   deleteRow(row) {

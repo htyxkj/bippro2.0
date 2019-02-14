@@ -67,7 +67,6 @@ import axios from 'axios'
 import LuShu from '../js/baiduMap.js' 
 import mapoptions from './mapoptions.js'
 import common from './common.js'
-// import { min } from '../../../../node_modules/_moment@2.22.2@moment';
 const LINE_COLOR = common.LINE_COLOR
 const LINE_WEIGHT = common.LINE_WEIGHT
 const LINE_OPACITY = common.LINE_OPACITY
@@ -434,6 +433,7 @@ export default {
             })
             .catch(err=>{
                 console.log(err)
+                this.loading=0;
             })
         },
         //设置飞机图标，（在显示实时在飞的所有飞机的时候）

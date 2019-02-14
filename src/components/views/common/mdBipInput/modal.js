@@ -11,6 +11,7 @@
 // const INPUT_REF = 8;//参照
 // const INPUT_DATE = 9;//日期
 // const INPUT_TEXTAFC = 10;//富文本编辑 
+// const INPUT_AUTOGRAPH =12;//电子签名
 export default {
   data () {
     return { 
@@ -28,6 +29,7 @@ export default {
       INPUT_REF: 8,
       INPUT_DATE: 9,
       INPUT_TEXTAFC:10, 
+      INPUT_AUTOGRAPH:12,
       disabled: false,
       oldValue:"",
       mdSelection:false, 
@@ -36,6 +38,7 @@ export default {
   },
   props: {cell:Object,isSearch: {type:Boolean,default:false},modal:{},btj:{default:false,type:Boolean}},
   mounted () {
+    // console.log("oldValue 赋值")
     this.oldValue = '';
     if(this.cell) {
       let notedit = this.cell.attr&this.NOTEDIT;

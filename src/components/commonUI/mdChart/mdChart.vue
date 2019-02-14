@@ -2,9 +2,9 @@
   <div class="md-chart"></div>
 </template>
 <script>
-import Highcharts from 'highcharts';
-// var Highcharts = import('highcharts');
-require('highcharts/highcharts-3d')(Highcharts);
+// import Highcharts from 'highcharts';
+// require('highcharts/highcharts-more')(Highcharts);
+// import('highcharts/highcharts-more');
 var defaultOpts = {
   credits: { enabled: false },
   title: {
@@ -26,7 +26,8 @@ export default {
     return {
       msg: 1,
       chart: null,
-      resizeEvt: ''
+      resizeEvt: '',
+      Highcharts:null,
     }
   },
   methods: {
@@ -67,10 +68,19 @@ export default {
     callback(chart) {
       this.$emit('callback', chart);
     },
-    init(options) {
+    async init(options) {
+      if(this.Highcharts == null){
+        this.Highcharts = await import('highcharts'); 
+        let HighchartsMore = await import('highcharts/highcharts-more.js');
+        let SolidGauge = await import('highcharts/modules/solid-gauge.js');
+        let funnel = await import('highcharts/modules/funnel.js');
+        HighchartsMore(this.Highcharts)
+        SolidGauge(this.Highcharts)
+        funnel(this.Highcharts) 
+      }
       options = options || this.options;
       if (options) {
-        this.chart = new Highcharts.Chart(this.$el, this.formatOption(options), (c) => {
+        this.chart = this.Highcharts.chart(this.$el, this.formatOption(options), (c) => {
           this.callback(c);
         });
         if (this.autoResize) {

@@ -60,7 +60,16 @@ let  exportExcel = async function (...params) {
     // console.log(data);
     // console.log(wb);
     var obj = new Blob([this.s2ab(XLSX.write(wb, wopts))], { type: "application/octet-stream" });
-    
+     
+    var fileName = _fileName + '.' + (wopts.bookType == "biff2" ? "xls" : wopts.bookType);
+    var tmpa = document.createElement("a");
+    tmpa.download = fileName;
+    tmpa.href = URL.createObjectURL(obj); //绑定a标签 
+    tmpa.click();
+    //模拟点击实现下载 
+    setTimeout(function () { //延时释放 
+      URL.revokeObjectURL(obj); //用URL.revokeObjectURL()来释放这个object URL
+    }, 100);
     // var reader = new FileReader();
     // reader.onloadend = function() {
     //   var dataUrl = false ? reader.result : reader.result.replace(/^data:[^;]*;/, 'data:attachment/file;');
@@ -68,21 +77,17 @@ let  exportExcel = async function (...params) {
     // };
     // reader.readAsDataURL(obj);
 
-    var fileName = _fileName + '.' + (wopts.bookType == "biff2" ? "xls" : wopts.bookType);
-    var tmpa = document.createElement("a");
-    tmpa.download = fileName;
-    tmpa.href =reader;// URL.createObjectURL(obj); //绑定a标签 
-    var span  =document.createElement("span");//创建一个新的节点为a;
-    tmpa.appendChild(span)
-    span.click();
-
-
-
-
-    //模拟点击实现下载 
-    setTimeout(function () { //延时释放 
-      URL.revokeObjectURL(obj); //用URL.revokeObjectURL()来释放这个object URL
-    }, 100);
+    // var fileName = _fileName + '.' + (wopts.bookType == "biff2" ? "xls" : wopts.bookType);
+    // var tmpa = document.createElement("a");
+    // tmpa.download = fileName;
+    // tmpa.href =reader;// URL.createObjectURL(obj); //绑定a标签 
+    // var span  =document.createElement("span");//创建一个新的节点为a;
+    // tmpa.appendChild(span)
+    // span.click(); 
+    // //模拟点击实现下载 
+    // setTimeout(function () { //延时释放 
+    //   URL.revokeObjectURL(obj); //用URL.revokeObjectURL()来释放这个object URL
+    // }, 100);
   });
 }
 

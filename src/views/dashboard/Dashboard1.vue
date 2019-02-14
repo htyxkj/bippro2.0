@@ -2,21 +2,12 @@
   <md-layout md-gutter md-column>
     <md-layout md-gutter md-row>
       <md-layout md-flex-small="100" md-flex="66">
-        <md-card>
-          <!-- <md-card-media>
-            <md-chart class="myChart" ref="xsChart" :options="Figure[0]" :autoResize="true"></md-chart>
-          </md-card-media> -->
+        <md-card> 
           <md-card-media>
             <md-layout v-for="(item,index) in layoutFigure" :key="index" md-flex="100" md-flex-xsmall="100">
               <md-layout v-for="(item_a,index_a) in item" :key="index_a" :md-flex="item_a.width" md-flex-xsmall="100">
                 <md-chart ref="pieChart" :options="item_a.options" :autoResize="true"></md-chart>
-              </md-layout>
-              <!-- <md-layout md-flex="33" md-flex-xsmall="100"> 
-                <md-chart ref="pieChart" :options="pieChart" :autoResize="true"></md-chart>
-              </md-layout>
-              <md-layout md-flex="66" md-flex-xsmall="100"> 
-                <md-chart ref="groupRank" :options="Figure[0]" :autoResize="true"></md-chart>
-              </md-layout> -->
+              </md-layout> 
             </md-layout>
           </md-card-media>
         </md-card>
@@ -80,11 +71,12 @@
 <script>
 import axios from 'axios';
 import _ from 'lodash';
-import pieC from './pieC.js';
-import columnC from './columnC.js';
-import lineOneXC from './lineOneXC.js'
-import lineTwoXC from './lineTwoXC.js'
-import indexChart from './indexChart.js'
+import pieC from './chartJS/pieC.js';
+import columnC from './chartJS/columnC.js';
+import lineOneXC from './chartJS/lineOneXC.js'
+import lineTwoXC from './chartJS/lineTwoXC.js'
+import indexChart from './chartJS/indexChart.js'
+import funnelChart from './chartJS/funnelChart.js';
 import commUtil from '@/components/core/utils/common.js'
 
 export default {
@@ -99,6 +91,7 @@ export default {
       pieChart: pieC.bar,
       columnChart: columnC.chart,
       lineChart: lineTwoXC.chart,
+      funnelChart:funnelChart.chart,
       taskLayCel: {},
       taskValues: [],
       xsValues: [],

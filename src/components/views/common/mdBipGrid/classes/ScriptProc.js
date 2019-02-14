@@ -414,8 +414,8 @@ export default class ScriptProc {
       v0 = new Number(v0).toFixed(column.ccPoint);
     }
     // 不知道是什么???
-    // if(isNaN(v0)) v0='';
-    // v0+='';
+    if(isNaN(v0)) v0=0;
+    v0+='';
 
     this.data[column.field] = v0;
     // console.log(v0);

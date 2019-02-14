@@ -66,8 +66,10 @@
       },
       setHeadRowSelection() {
         if (this.hasSelection) {
-          this.parentTable.$children[0].checkbox = this.parentTable.numberOfSelected > 0
+          if(this.parentTable.$children[0]){
+            this.parentTable.$children[0].checkbox = this.parentTable.numberOfSelected > 0
             && this.parentTable.numberOfSelected === this.parentTable.numberOfRows;
+          }
         }
       },
       handleSingleSelection(value) {
@@ -148,6 +150,23 @@
       this.setHeadRowSelection();
     },
     mounted() {
+      
+      this.parentTable = getClosestVueParent(this.$parent, 'md-table');
+      this.multiple = this.parentTable.multiple && this.mdSelection;
+      if (this.$el.parentNode.tagName.toLowerCase() === 'thead') {
+        this.headRow = true;
+      } else {
+        // this.parentTable.numberOfRows++;
+        this.index = this.parentTable.numberOfRows;
+
+        if (this.mdSelection) {
+          this.parentTable.hasRowSelection = true;
+        }
+
+        if (this.mdItem) {
+          this.parentTable.data.push(this.mdItem);
+        }
+      }
       this.startTableRow();
     }
   };

@@ -9,9 +9,9 @@
 </template>
 <script>
 import _ from 'lodash';
-import pieC from './pieC.js';
-import columnC from './columnC.js';
-import lineC from './lineC.js'
+import pieC from './chartJS/pieC.js';
+import columnC from './chartJS/columnC.js';
+import lineC from './chartJS/lineC.js'
 import commUtil from '@/components/core/utils/common.js'
 
 export default {

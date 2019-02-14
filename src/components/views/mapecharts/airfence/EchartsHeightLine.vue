@@ -7,8 +7,7 @@
 </template>
 
 <script>
-import Highcharts from 'highcharts';
-// var Highcharts = import('highcharts/highstock');
+// import Highcharts from 'highcharts';
 // require('highcharts/highcharts-3d')(Highcharts);
 
 export default{
@@ -20,15 +19,15 @@ export default{
             data:[],
             showMsg:true,
             msg:'暂无数据', 
-            // Highcharts:null,
+            Highcharts:null,
         }
     },
     props:['lineseries'],
     methods:{
         async init(){
-            // if(this.Highcharts == null){
-            //     this.Highcharts = await import('highcharts/highstock');
-            // }
+            if(this.Highcharts == null){
+                this.Highcharts = await import('highcharts');
+            }
             if(this.linecharts !=null&&this.data.length>0){
                 this.updateOpt();
                 return;
@@ -100,6 +99,7 @@ export default{
                         }else{
                             positions=[0,5,10,15,20]
                         }
+                        console.log(positions)
                         return positions;
                     }
                 }, 
@@ -116,8 +116,8 @@ export default{
                 colors: ['#F3387C', '#434348', '#90ed7d', '#f7a35c', '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
             }
             // this.options.series[0].data=this.data;
-            this.linecharts = Highcharts.chart("linecharthb",this.options);
-
+            // this.linecharts = Highcharts.chart("linecharthb",this.options);
+            this.linecharts = this.Highcharts.chart("linecharthb",this.options);
             this.updateOpt();
         }, 
         updateOpt(){

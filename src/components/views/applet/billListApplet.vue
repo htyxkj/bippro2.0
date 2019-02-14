@@ -2,13 +2,13 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-button @click.native="create">{{$t('commBtn.B_ADD')}}</md-button>
+        <md-button v-if="menuP.INSERT" @click.native="create">{{$t('commBtn.B_ADD')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button @click.native="delList">{{$t('commBtn.B_DEL')}}</md-button>
+        <md-button v-if="menuP.DELETE" @click.native="delList">{{$t('commBtn.B_DEL')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button @click.native="exportFile" :disabled="canexp">{{$t('commBtn.B_EXP')}}</md-button>
+        <md-button v-if="menuP.FILE" @click.native="exportFile" :disabled="canexp">{{$t('commBtn.B_EXP')}}</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-pager @paging="paging" :options="pager"></md-part-toolbar-pager>
       <span class="flex"></span>
@@ -64,9 +64,12 @@
                     :md-item="row" 
                     :md-auto-select="mdAutoSelect" 
                     :md-selection="mdSelection" 
-                    @dblclick.native="dblclick(row,rowIndex)">
-                    <md-table-cell v-for="(column, columnIndex) in dsm.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
+                    ><!-- @dblclick.native="dblclick(row,rowIndex)" -->
+                    <!-- <md-table-cell v-for="(column, columnIndex) in dsm.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
                       <md-bip-ref  :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" :row="row"  @pkclick="dblclick(row,rowIndex)"></md-bip-ref>
+                    </md-table-cell> -->
+                    <md-table-cell v-for="(column, columnIndex) in dsm.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''" @dblclick.native="openrefs(row,rowIndex,columnIndex)">
+                      <md-bip-ref  :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" :row="row"  @pkclick="openrefs(row,rowIndex)"></md-bip-ref>
                     </md-table-cell>
                   </md-table-row>
                 </md-table-body>
@@ -100,12 +103,15 @@
         </md-layout>
       </md-content>
     </md-part-body>
+    <bill-link-applet ref="sbill"  ></bill-link-applet>
   </md-part>
 </template>
 <script>
 import BillState from '../classes/billState';
 import common from '../commonModal.js'; 
+import billLinkApplet from './billLinkApplet'
 export default { 
+  components:{billLinkApplet},
   data () {
     return {
       allColumnsLike:'',
@@ -127,11 +133,11 @@ export default {
       leftShow:false,
       treeOption:null,
       tree_code:'',
-      tree_value:'',
+      tree_value:'',  
     }
   },
   mixins:[common],
-  props: {dsm:Object,dsext:Array,dscont:Object,mdTitle:String,opera:Object,mparams:Object},
+  props: {dsm:Object,dsext:Array,dscont:Object,mdTitle:String,opera:Object,mparams:Object,menuP:Object},
   created(){
     if(this.dsm){
       this.fetchUIData();
@@ -140,7 +146,7 @@ export default {
   mounted(){
     this.doLayout_0();  
   },
-  methods:{
+  methods:{ 
     async exportFile(){
       if(this.dsm.cdata.length==0)
         return ;
@@ -173,6 +179,25 @@ export default {
     },
     pkclick(row){
       console.log(row);
+    },
+    async openrefs(row,index,columnIndex){
+      if(columnIndex>=0){
+        let cell = this.dsm.ccells.cels[columnIndex];
+        let slkid = row[cell.id];
+        if((cell.attr&0x80000)>0){
+          let slkbuidCell = this.dsm.ccells.cels[columnIndex+1];
+          let slkbuid = row[slkbuidCell.id];
+          if(slkid&&slkbuid){ 
+            console.log('调用我了');
+            this.$refs["sbill"].open(slkid,slkbuid);
+          }
+        }else{
+          console.log("dblclick")
+          this.dblclick(row,index);
+        }
+
+      }
+
     },
     create(){
       // console.log("新建")
@@ -225,6 +250,7 @@ export default {
       var res = await this.getDataByAPINewSync(data1);
       if(res.data.id==0){
         if(this.dsm.cdata.length>0){
+          console.log('清空DSM',this.dsm)
           this.dsm.clearData();
         }
         _.forEach(res.data.data.pages.celData,row=>{
@@ -260,6 +286,9 @@ export default {
         if(this.opera){
           var state = item[this.opera.statefld];
           var sid  = item[this.opera.pkfld];
+          console.log(state)
+          if(!state)
+            state ='0';
           if(state !== '0' && state !=='1'){
             this.$notify.warning({content: this.$t('commInfo.canNotDel')+sid+'!'});
           }else{
@@ -269,6 +298,11 @@ export default {
             this.saveData(options,this.delSuccess);
             // console.log(res);
           }
+        }else{
+            item.sys_stated = 4;
+            var str = JSON.stringify(item);
+            var options = { pcell: this.dsm.pcell, jsonstr: str };
+            this.saveData(options,this.delSuccess);
         }
         // console.log(item);
       });
@@ -336,7 +370,12 @@ export default {
         this.tree_code=this.dsm.ccells.cels[0].id; 
         this.tree_value=this.dsm.ccells.cels[1].id;  
       }
-    }
+    },
+    styles(column){
+      if((column.attr&0x80000)>0){
+        return "cursor:hand;";
+      }
+    },
     
   },
   watch:{ 
