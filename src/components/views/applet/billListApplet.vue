@@ -44,7 +44,7 @@
                 <md-table-body v-if="dsm">
                   <!-- <md-table-row v-if="dsm.cdata.length==0">
                     <md-layout md-align="center">
-                        <md-content>                      
+                        <md-content>
                           <md-button class="md-fab md-fab-center-center">
                           <md-icon>verified_user</md-icon>
                         </md-button>
@@ -64,7 +64,8 @@
                     :md-item="row" 
                     :md-auto-select="mdAutoSelect" 
                     :md-selection="mdSelection" 
-                    ><!-- @dblclick.native="dblclick(row,rowIndex)" -->
+                    >
+                    <!-- @dblclick.native="dblclick(row,rowIndex)" -->
                     <!-- <md-table-cell v-for="(column, columnIndex) in dsm.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
                       <md-bip-ref  :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" :row="row"  @pkclick="dblclick(row,rowIndex)"></md-bip-ref>
                     </md-table-cell> -->
@@ -145,6 +146,7 @@ export default {
   },
   mounted(){
     this.doLayout_0();  
+    this.doLayout();  
   },
   methods:{ 
     async exportFile(){
@@ -325,7 +327,7 @@ export default {
     // delError(res){
     //   this.$notify.danger({content: '出错了！'});
     // }
-    doLayout(){ 
+    doLayout(){  
       let playout = this.mparams.playout; 
       if(playout.indexOf("H:")!=-1){ 
         if(playout.indexOf("U:TREE")!=-1){
@@ -351,7 +353,7 @@ export default {
         this.leftShow=false;
       }
     },
-    async leftTree(){  
+    async leftTree(){   
       var data1 = {
         'dbid': global.DBID,
         'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,

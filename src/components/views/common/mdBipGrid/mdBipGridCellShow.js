@@ -3,6 +3,7 @@ export default {
   props: ['column', 'row'],
 
   render(createElement, context) {
+    // console.log("sdfsdfs")
     const data = context.data||{};
     const props = context.props;
     const type = 'div';
@@ -14,8 +15,10 @@ export default {
     if (context.children && context.children.length) {
       return createElement(type, data, context.children);
     }
-    if (props.column && props.column.formatter) {
-      const v = props.column.formatter(props.row.getValue(props.column.field), props.row.data,props.column);
+    if (props.column && props.column.formatter) { 
+      let val = props.row.getValue(props.column.field);
+      // val = props.row.getValue(props.column.field);
+      const v = props.column.formatter(val, props.row.data,props.column);
       return createElement(type, data, v);
     } else {
       const v = (props.row && props.row.getValue(props.column.field)) || '';

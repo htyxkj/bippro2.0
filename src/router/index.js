@@ -51,6 +51,9 @@ const BipMapWork = () => import('@/components/bipmap/airfence/BipMapWork')
 const skxjtHome =() => import('@/components/views/skxjtfile/skxjtHome')
 //end
 
+//CRM 
+const CRMWorkbench =() => import('@/components/views/crm/CRMWorkbench')
+
 // const Blank = () => import('@/components/Blank') 
 // const Ding = () => import('@/components/Ding')  
  
@@ -174,6 +177,12 @@ export default new Router({
       component:BipMapWork
     },
     //飞防 end
+    //crm
+    {
+      path:'/CRMWorkbench',
+      name:'工作台',
+      component:CRMWorkbench
+    },
   ]
 }) 
  

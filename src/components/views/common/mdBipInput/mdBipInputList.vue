@@ -50,7 +50,7 @@ export default {
     getCallBack(res) {
       // console.log(res.data);
       var data = res.data;
-      if (data.code == -1) {
+      if (data.code == -1 || ( data.id && data.id ==-1)) {
         this.$notify.danger({ content: data.message });
       } else {
         var len = data.labers.length;
@@ -70,7 +70,7 @@ export default {
 
     makeData(data) {
       // console.log(data);
-      if (data.code == -1) {
+      if (data.code == -1|| ( data.id && data.id ==-1)) {
         this.$notify.danger({ content: data.message });
       } else {
         var len = data.labers.length;

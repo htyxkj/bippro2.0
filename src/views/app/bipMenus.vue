@@ -56,6 +56,7 @@ export default {
   mounted() {
     this.getCMCName();
     this.menus = JSON.parse(window.sessionStorage.getItem('menulist')); 
+    // console.log(this.menus)
   },
   components: { 'bip-menu': BipMenuItem },
   methods: {

@@ -225,7 +225,6 @@ export default class BipScriptProc {
         return null;
       }
     }
-
   }
 
   invokemem (fps) {
@@ -371,6 +370,7 @@ export default class BipScriptProc {
   }
 
   bdstovec(s0) {
+    // console.log(s0)
     var t0 = s0 ? s0.length : 0;
     if (t0 < 1)
       return [];

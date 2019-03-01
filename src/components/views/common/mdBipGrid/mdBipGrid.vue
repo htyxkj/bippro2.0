@@ -109,8 +109,7 @@ export default {
     rows() {
       this.refreshDisplayRow();
     }
-  },
-
+  }, 
   computed: {
     usesLocalData() {
       return this._.isArray(this.datas);
@@ -436,7 +435,7 @@ export default {
     this.$nextTick(() => {
       this.canFireEvents = true;
       this.refreshStatus();
-    }); 
+    });
   },
 };
 </script>

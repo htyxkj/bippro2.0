@@ -33,29 +33,29 @@ export default {
       multiple:false
     }
   },
-//   props: {cell:Object,isSearch: {type:Boolean,default:false},modal:{},btj:{default:false,type:Boolean}},
-//   mounted () {
-//     this.oldValue = '';
-//     if(this.cell) {
-//       let notedit = this.cell.attr&this.NOTEDIT;
-//       this.disabled = notedit > 0 ? true:false;
-//       if(this.modal&&this.modal[this.cell.id]){
-//         this.oldValue = this.modal[this.cell.id];
-//       }
-//       let _multiple=this.cell.attr&this.MULTIPLE
-//       if(_multiple>0){   
-//         this.multiple =true;
-//         this.mdSelection=true; 
-//       }else{
-//         this.multiple =false;
-//         this.mdSelection=false;
-//       } 
-//     }
+  props: {cell:Object,isSearch: {type:Boolean,default:false},modal:{},btj:{default:false,type:Boolean}},
+  mounted () {
+    this.oldValue = '';
+    if(this.cell) {
+      let notedit = this.cell.attr&this.NOTEDIT;
+      this.disabled = notedit > 0 ? true:false;
+      if(this.modal&&this.modal[this.cell.id]){
+        this.oldValue = this.modal[this.cell.id];
+      }
+      let _multiple=this.cell.attr&this.MULTIPLE
+      if(_multiple>0){   
+        this.multiple =true;
+        this.mdSelection=true; 
+      }else{
+        this.multiple =false;
+        this.mdSelection=false;
+      } 
+    }
 
-//   },
-//   methods: {
-//     parentChange(){
-//       // console.log('111');
-//     }
-//   }    
+  },
+  methods: {
+    parentChange(){
+      // console.log('111');
+    }
+  }    
 }

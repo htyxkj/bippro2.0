@@ -22,8 +22,7 @@
               <md-menu-item v-for="fls in flowlist" :key="fls.buidfr" @selected="cliclItem(fls)">{{fls.buidfrName}}--></md-menu-item>
           </md-menu-content>
         </md-menu>
-      </md-part-toolbar-group>
-
+      </md-part-toolbar-group> 
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
         <md-part-toolbar-crumb>{{$t('commLabel.L_AddM')}}</md-part-toolbar-crumb>
@@ -32,16 +31,39 @@
     <md-part-body>
       <template v-if="dsm&&!dsm.haveChild">
         <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null">
-          <md-layout>
-            <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
-          </md-layout>
-        </md-content>
+          <!-- <template v-if="inp.length>0">
+            <md-layout style="height:auto;margin:0px;padding:0px" v-for="(item,index) in inp" :key="index" >  
+              <md-layout style="height:auto;margin:0px;padding:0px" v-for="(row,rowIn) in item" :key="rowIn" :md-flex="row[0].ccHorCell" :md-flex-offset="row[0].ccHorCell"> 
+                  <md-layout v-for="(one,index1) in row" :key="index1"  :md-flex="one.input.ccHorCell" :md-flex-offset="one.input.ccHorCell">                  
+                    <md-bip-input :dsm="dsm" :ref="one.input.id" :key="one.input.id" :cell="one.input" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+                  </md-layout>   
+              </md-layout> 
+            </md-layout> 
+          </template>
+          <template v-else> -->
+            <md-layout> 
+              <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+            </md-layout>
+          <!-- </template>  -->
+          </md-content>
       </template>
       <template v-else>
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
-          <md-layout>
-            <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
-          </md-layout> 
+          <!-- sass/components/mdInputContainer.scss .md-input-container { margin: .04rem .1rem .48rem 0;}-->
+          <!-- style="height:auto;margin:0px;padding:0px"  -->
+          <!-- <template v-if="inp.length > 0"> 
+              <div v-for="(item,index) in inp" :key="index"> 
+                <div v-for="(row,rowIn) in item" :key="rowIn" :style="getStyle(row[0].ccHorCell)" style="    margin: 0px;"> 
+                  <md-bip-input :dsm="dsm" v-for="cell in row" :ref="cell.input.id" :key="cell.input.id" :cell="cell.input" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>                  
+                </div> 
+              </div> 
+          </template>
+          <template v-else> -->
+            <md-layout>
+              <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+            </md-layout> 
+          <!-- </template> -->
+
           <md-tabs :md-dynamic-height=false class="flex" v-if="childrens&&childrens.length>=1&&istabs">
             <md-tab  style="padding:0px;display: -webkit-box; overflow:hidden;" v-for="(oneds,index) in childrens" :key="index" :id="oneds.id" :md-label="oneds.title">
               <md-layout class="flex" style="margin-top:2px;" >
@@ -81,6 +103,7 @@ export default {
       childrens:[],
       istabs:false,//是否是多子表
       flowlist:[], 
+      inp:[],
     };
   },
   props: { dsm: Object, dsext: Array, opera: Object ,mparams:Object,menuP:Object},
@@ -388,7 +411,7 @@ export default {
       };
       // console.log(data1, "findChild");
       var res = await this.getDataByAPINewSync(data1);
-      console.log(res);
+      // console.log(res);
       if(res.response)
         return;
         if (res.data.id === 0) {
@@ -406,7 +429,7 @@ export default {
       this.getDataByAPINew(data1, this.successBack);
     },
     successBack(res) {
-      console.log(res);
+      // console.log(res);
       let rtn = res.data;
       if (rtn.id == 0) {
         this.flowlist = rtn.data.flowlist;
@@ -506,6 +529,10 @@ export default {
     },
     //计算宽度 
     calculationWidth() { 
+      console.log("计算宽度")
+      if(this.dsm.ds_sub == null){
+        return;
+      }
       var width = document.body.clientWidth-83; 
       for(var j=0;j<this.dsm.ds_sub.length;j++){
         var _ds_sub = this.dsm.ds_sub[j];
@@ -589,6 +616,226 @@ export default {
       }
       this.dsm.cdata.push(currRecord)
       this.dsm.currRecord = currRecord; 
+    },
+    //计算多行
+    getMulti_line(){
+      let _dsm = this.dsm;
+      var columnNum = 4;
+      // let iput = [
+      //   {width:2,title:"111111",row:1},{width:1,title:"22222",row:2},{width:1,title:"333333",row:1},{width:1,title:"444444",row:1},{width:1,title:"555555",row:1},{width:1,title:"666666",row:1},
+      //   {width:1,title:"777777",row:2},{width:1,title:"888888",row:1},{width:1,title:"999999",row:1},{width:1,title:"101010",row:1},{width:1,title:"0000000",row:1},
+      // ]; 
+      //ccHorCell  宽度
+      //ccVerCell  行数
+      let iput = [];
+      iput = _dsm.ccells.cels;
+
+      let row=[];
+      let j=0;
+      let isRows = false;//上一个是否是多行
+      for(var i=0;i<iput.length;i++){
+
+        let one = iput[i]
+        if(one.isShow == false){
+          continue;
+        }
+        if(one.ccHorCell<=columnNum)
+          one.ccHorCell = parseInt(one.ccHorCell*100/columnNum);
+        j += one.ccHorCell;
+        if(j==100){
+          if(one.ccVerCell>1){
+            var o = [{rows:true,input:one,ccHorCell:one.ccHorCell}];
+            row.push(o);
+            isRows = true;
+          }else{
+            if(isRows){
+              var o = [{rows:false,input:one}];
+              row.push(o);
+            }else{
+              if(row == [] || row.length ==0){
+                var o = new Array(0)
+                var b ={rows:false,input:one}; 
+                o.push(b); 
+                row.push(o);
+              }else{
+                var o = {rows:false,input:one};
+                row[row.length-1].push(o);
+              }
+            }
+            isRows = false;
+          }
+          for(var r=0;r<row.length;r++){
+            if(row[r][0].rows ==false){
+              let _r = row[r];
+              let width=0;
+              for(var _j=0;_j<_r.length;_j++){
+                width += _r[_j].input.ccHorCell;
+              }
+              let _width=0;
+              if(width!=100){
+                while(width !=_width){
+                  i++;
+                  let _one =iput[i];
+                  if(_one){
+                    if(_one.ccHorCell<=columnNum)
+                      _one.ccHorCell = parseInt(_one.ccHorCell*100/columnNum);
+                    _width += _one.ccHorCell;
+                    if(_width<=width){
+                      let b = {rows:false,input:_one}; ;
+                      row[r].push(b)
+                    }else{
+                      _width = width;
+                      i--;
+                    }
+                  }else{
+                    _width = width;
+                  }
+                }
+              }else{
+                _width = width;
+              }
+              for(var _j=0;_j<_r.length;_j++){
+                row[r][_j].ccHorCell = _width;
+              }
+            }
+          }
+          // console.log(row)
+          for(var l=0;l<row.length;l++){
+            for(var p=0;p<row[l].length;p++){ 
+              row[l][p].input.ccHorCell=parseInt( (row[l][p].input.ccHorCell/row[l][0].ccHorCell)*100)
+            }
+          }
+
+          this.inp.push(row);
+          row =[];
+          j=0;
+          isRows = false;//上一个是否是多行
+        }else if(j<100){
+  
+          if(one.ccVerCell>1){
+            var o = [{rows:true,input:one,ccHorCell:one.ccHorCell}];
+            row.push(o);
+            isRows = true;
+          }else{
+            if(isRows){
+              var o = [{rows:false,input:one}];
+              row.push(o);
+            }else{ 
+              if(row == [] || row.length ==0){
+                var o = new Array(0)
+                var b ={rows:false,input:one}; 
+                o.push(b); 
+                row.push(o);
+              }else{
+                var o = {rows:false,input:one};
+                row[row.length-1].push(o);
+              }
+            }
+            isRows = false; 
+          }   
+
+          if(i == iput.length -1 ){
+            for(var r=0;r<row.length;r++){
+              if(row[r][0].rows ==false){
+                let _r = row[r];
+                let width=0;
+                for(var _j=0;_j<_r.length;_j++){
+                  width += _r[_j].input.ccHorCell;
+                }
+                let _width=0;
+                if(width!=100){
+                  while(width !=_width){
+                    i++;
+                    let _one =iput[i];
+                    if(_one){
+                      if(_one.ccHorCell<=columnNum)
+                        _one.ccHorCell = parseInt(_one.ccHorCell*100/columnNum);
+                      _width += _one.ccHorCell;
+                      if(_width<=width){
+                        let b = {rows:false,input:_one}; ;
+                        row[r].push(b)
+                      }else{
+                        _width = width;
+                        i--;
+                      }
+                    }else{
+                      _width = width;
+                    }
+                  }
+                }else{
+                  _width = width;
+                }
+                for(var _j=0;_j<_r.length;_j++){
+                  row[r][_j].ccHorCell = _width;
+                }
+              }
+            }
+            // console.log(row)
+            for(var l=0;l<row.length;l++){
+              for(var p=0;p<row[l].length;p++){ 
+                row[l][p].input.ccHorCell=parseInt( (row[l][p].input.ccHorCell/row[l][0].ccHorCell)*100)
+              }
+            }
+
+            this.inp.push(row);
+            row =[];
+            j=0;
+            isRows = false;//上一个是否是多行
+          }
+        }else if(j>100){
+          if(one.ccHorCell<=columnNum)
+            iput[i].ccHorCell = parseInt(one.ccHorCell/100*columnNum);
+          i--;
+          j=100; 
+          for(var r=0;r<row.length;r++){
+            if(row[r][0].rows ==false){
+              let _r = row[r];
+              let width=0;
+              for(var _j=0;_j<_r.length;_j++){
+                width += _r[_j].input.ccHorCell;
+              }
+              let _width=0;
+              while(width !=_width){
+                i++;
+                let _one =iput[i];
+                if(_one){
+                  if(_one.ccHorCell<=columnNum)
+                    _one.ccHorCell = parseInt( _one.ccHorCell*100/columnNum);
+                  _width += _one.ccHorCell;
+                  if(_width<=width){
+                    let b = {rows:false,input:_one}; ;
+                    row[r].push(b)
+                  }else{
+                    _width = width;
+                    i--;
+                  }
+                }else{
+                  _width = width;
+                }
+              }
+              for(var _j=0;_j<_r.length;_j++){
+                row[r][_j].ccHorCell = _width;
+              }
+            }
+          }
+          // console.log(row)
+          for(var l=0;l<row.length;l++){
+            for(var p=0;p<row[l].length;p++){ 
+              row[l][p].input.ccHorCell=(row[l][p].input.ccHorCell/row[l][0].ccHorCell)*100
+            }
+          }
+
+          this.inp.push(row);
+          row =[];
+          j=0;
+          isRows = false;//上一个是否是多行
+        }
+      }
+      console.log("循环完成")
+      // console.log(this.inp);
+    },
+    getStyle(ccHorCell){
+      return "float: left;width: "+ccHorCell+"%;"
     }
   },
   computed: {
@@ -697,6 +944,7 @@ export default {
   async mounted() {  
     if (this.dsm) {    
       // console.log("sdfasdfasdfasdf")
+      // this.getMulti_line();
       this.calculationWidth();
       this.constituteChildrens();
       const state = this.dsm.currRecord.sys_stated & 1;
@@ -708,14 +956,13 @@ export default {
       } else if (this.dsm.ds_sub.length > 0) {
         for(var i =0;i<this.dsm.ds_sub.length;i++){
           this.dsm.ds_sub[i].clearData();
-        }  
-      }   
+        }
+      }
       if(this.opera)
       if(this.opera.buid){
         this.getWorlFlow(this.opera.buid);
       }
-    } 
-
+    }
   },
   watch: {
     chkinfo() {
@@ -729,6 +976,7 @@ export default {
       this.calculationWidth();
       this.constituteChildrens(); 
       this.dsm.createRecord(); 
+      // this.getMulti_line();
     }
   }
 };

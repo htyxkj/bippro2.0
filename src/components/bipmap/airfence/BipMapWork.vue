@@ -2,7 +2,7 @@
     <md-layout style="padding-left: 8px;" md-flex-small="100" md-flex="100">
       <md-layout md-flex-small="100" :md-flex="leftcar"  > 
         <md-card v-if="leftshow">   
-            <div style="width:100%;">
+            <div id="selzyqtj" style="width:100%;">
                 <md-layout md-gutter style="margin-left:.1rem;margin-right:.1rem;">
                     <md-layout  md-flex="100"><md-bip-input-ref  :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-ref></md-layout>
                 </md-layout>
@@ -35,7 +35,7 @@
                 
 
             </div>
-            <div style="overflow:auto; width:100%;" >  
+            <div :style="zyqlistSt()" >  
                 <md-list class=" md-double-line">
                     <md-subheader>作业区</md-subheader>
                     <md-list-item v-for="(item, index) in operarea" :key="index" > 
@@ -54,7 +54,7 @@
         <md-card class="mapcard">  
           <div class="mybtnpc">
             <md-layout md-row>
-                <md-layout> 
+                <!-- <md-layout> 
                     <md-button class="md-primary md-raised md-icon-button" @click="jtclick">
                         <md-icon>{{jtIcon}}</md-icon>
                         <md-tooltip md-direction="right">{{jtText}}</md-tooltip>
@@ -83,13 +83,51 @@
                         <md-icon>save</md-icon>
                         <md-tooltip md-direction="right">保存修改的作业区</md-tooltip>
                     </md-button>   
-                </md-layout>
+                </md-layout> -->
                 <md-layout>
-                    <div style="    line-height: .42rem;margin-left:.4rem" id="cityList"></div> 
+                    <div style=" " id="cityList"></div> 
                 </md-layout>
             </md-layout> 
           </div>
           <div id="container"></div>
+          <div class="rightBtn"> 
+                <md-layout md-row>
+                    <md-layout style="margin-bottom: 8px;"> 
+                        <md-button class="md-primary md-raised md-icon-button" @click="jtclick">
+                            <md-icon>{{jtIcon}}</md-icon>
+                            <md-tooltip md-direction="left">{{jtText}}</md-tooltip>
+                        </md-button>   
+                    </md-layout>
+                    <md-layout style="margin-bottom: 8px;"> 
+                        <md-button class="md-primary md-raised md-icon-button" @click="clear">
+                            <md-icon>delete</md-icon>
+                            <md-tooltip md-direction="left">清除作业区数据</md-tooltip>
+                        </md-button>   
+                    </md-layout>
+                    <md-layout style="margin-bottom: 8px;"> 
+                        <md-button class="md-primary md-raised md-icon-button" @click="insert">
+                            <md-icon>add</md-icon>
+                            <md-tooltip md-direction="left">新增作业区</md-tooltip>
+                        </md-button>   
+                    </md-layout>
+                    <md-layout style="margin-bottom: 8px;"> 
+                        <md-button class="md-primary md-raised md-icon-button" @click="open_lock">
+                            <md-icon>{{lock}}</md-icon>
+                            <md-tooltip md-direction="left">开启/关闭绘制</md-tooltip>
+                        </md-button>   
+                    </md-layout>
+                    <md-layout style="margin-bottom: 8px;"> 
+                        <md-button class="md-primary md-raised md-icon-button" @click="updateZYQ">
+                            <md-icon>save</md-icon>
+                            <md-tooltip md-direction="left">保存修改的作业区</md-tooltip>
+                        </md-button>   
+                    </md-layout>
+                    <md-layout>
+                        <div style="    line-height: .42rem;margin-left:.4rem" id="cityList"></div> 
+                    </md-layout>
+                </md-layout> 
+            </div>
+          </div>
         </md-card>
       </md-layout>
       <md-loading :loading="loading"></md-loading>
@@ -515,7 +553,7 @@ export default {
                 // drawingMode:BMAP_DRAWING_POLYGON,//绘制模式  多边形
                 drawingToolOptions: {
                     anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
-                    offset: new BMap.Size(3 , 35), //偏离值
+                    offset: new BMap.Size(130, 3), //偏离值
                     drawingModes:[
                         // BMAP_DRAWING_MARKER,// 画点 
                         // BMAP_DRAWING_CIRCLE,// 画圆 
@@ -715,6 +753,10 @@ export default {
                 this.rightcar=75;//右侧地图宽度
                 this.leftshow=true;
             }
+        },
+        zyqlistSt(){
+            // var height=$("#selzyqtj").height(); //this.$refs['selzyqtj'].offsetHeight;
+            return "overflow: auto;position: absolute;top: 265px;bottom: 0px;width: 100%;"
         }
     },
     watch: {
@@ -786,4 +828,11 @@ svg{
     left: .52rem;
     z-index: 1;
 } 
+.rightBtn{
+    float: right; 
+    position: absolute;
+    right: 0;
+    top: 45px; 
+    width: 55px;
+}
 </style>

@@ -1,72 +1,85 @@
 <template>
     <md-input-container>
     <md-dialog md-open-from="#upfile" md-close-to="#upfile" ref="fDia">
-    <div :class="ISPC()?classA:classB">
-    <md-dialog-content class="contentC">
-        <md-input-container>
-        <md-file v-model="placeholder" :id="id" placeholder="选择文件" :accept="accept"  @selected="selectFile" ref="file" multiple></md-file>
-        </md-input-container>
-        <div v-if="selFile">已选择{{num}}个文件</div>
-        <div v-else>可以上传图片或者文件</div>
-        <!-- content -->
-        <md-layout :class="ISPC()?imgClassA:imgClassB">
-            <!-- row -->
-        <md-layout md-gutter="8" v-for="(file,index) in srcs" :key="index" class="itemClass">
-            <!-- 编号 -->
-            <md-layout md-column md-gutter class="colClass" md-flex="5" md-flex-xsmall="10" md-flex-small="10">
-                <md-layout>
-                    {{index+1}}.
-                </md-layout>
-            </md-layout>
-        <!-- 1 -->
-            <md-layout md-column md-gutter class="colClass" md-flex="10" md-hide-small md-hide-xsmall >
-              <md-layout><md-image  :md-src="file.src"></md-image></md-layout>
-            </md-layout>
-            <!-- 2 -->
-            <md-layout md-column md-gutter md-flex="50" md-flex-xsmall="45" md-flex-small="45" md-flex-medium="50">
-                <md-layout md-flex="25">
-                     <md-layout md-column md-gutter md-flex="60" md-flex-xsmall="100" md-flex-small="100">
-                      <span class="md-subheading">{{file.name}}</span>
-                      <md-tooltip v-if="selFiles">{{selFiles[index].name}}</md-tooltip>
-                    </md-layout>
-                    <md-layout md-column md-gutter md-flex="20" md-flex-offset="20" md-hide-small md-hide-xsmall>
-                        <span class="md-subheading">{{file.size}}</span>
+      <!-- <div :class="ISPC()?classA:classB"> -->
+      <md-dialog-content :class="ISPC()?classA:classB">
+          <md-input-container>
+          <md-file v-model="placeholder" :id="id" placeholder="选择文件" :accept="accept"  @selected="selectFile" ref="file" multiple></md-file>
+          </md-input-container>
+          <div v-if="selFile">已选择{{num}}个文件</div>
+          <div v-else>可以上传图片或者文件</div>
+          <!-- content -->  
+          <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" md-flex-medium="100">
+            
+          </md-layout>
+          <md-layout :class="ISPC()?imgClassA:imgClassB">
+              <!-- row -->
+            <md-layout md-gutter="8" v-for="(file,index) in srcs" :key="index" class="itemClass">
+                <!-- 编号 -->
+                <md-layout md-column md-gutter class="colClass" md-flex="5" md-flex-xsmall="10" md-flex-small="10">
+                    <md-layout>
+                        {{index+1}}.
                     </md-layout>
                 </md-layout>
-                <md-layout>
-                    <md-layout md-flex="80" md-column md-gutter md-flex-xsmall="100" md-flex-small="100">
-                      <md-progress :md-progress="progress[index]"></md-progress>
+                <!-- 1 -->
+                <md-layout md-column md-gutter class="colClass" md-flex="10" md-hide-small md-hide-xsmall >
+                  <md-layout><md-image  :md-src="file.src"></md-image></md-layout>
+                </md-layout>
+                <!-- 2 -->
+                <md-layout md-column md-gutter md-flex="50" md-flex-xsmall="45" md-flex-small="45" md-flex-medium="50">
+                    <md-layout md-flex="25">
+                        <md-layout md-column md-gutter md-flex="60" md-flex-xsmall="100" md-flex-small="100">
+                          <span class="md-subheading">{{file.name}}</span>
+                          <md-tooltip v-if="selFiles">{{selFiles[index].name}}</md-tooltip>
+                        </md-layout>
+                        <md-layout md-column md-gutter md-flex="20" md-flex-offset="20" md-hide-small md-hide-xsmall>
+                            <span class="md-subheading">{{file.size}}</span>
+                        </md-layout>
                     </md-layout>
-                    <md-layout md-column md-gutter md-flex="20" md-flex-offset="20" md-hide-small md-hide-xsmall>
-                      <md-button v-if="!(progress[index]==100)" class="md-accent md-icon-button md-dense cancelClass" @click="delImg(index)">
-                        <md-icon>cancel</md-icon>
-                      </md-button>
-                      <md-icon v-else class="iconClass">check_circle</md-icon>
+                    <md-layout>
+                        <md-layout md-flex="80" md-column md-gutter md-flex-xsmall="100" md-flex-small="100">
+                          <md-progress :md-progress="progress[index]"></md-progress>
+                        </md-layout>
+                        <md-layout md-column md-gutter md-flex="20" md-flex-offset="20" md-hide-small md-hide-xsmall>
+                          <md-button v-if="!(progress[index]==100)" class="md-accent md-icon-button md-dense cancelClass" @click="delImg(index)">
+                            <md-icon>cancel</md-icon>
+                          </md-button>
+                          <md-icon v-else class="iconClass">check_circle</md-icon>
+                        </md-layout>
+                    </md-layout>
+                </md-layout>
+                <!-- 3 -->
+                <md-layout md-column md-gutter md-flex="10" md-flex-xsmall="15" md-flex-small="15">
+                    <md-layout>
+                        <md-button class="md-accent md-raised mybtn" @click="delFile(index)" :disabled="!(progress[index]==100)">删除</md-button>
+                    </md-layout> 
+                </md-layout>
+                <!-- 4 -->
+                <md-layout md-column md-gutter md-flex="10"  md-flex-xsmall="15" md-flex-small="15">
+                    <md-layout>
+                        <md-button class="md-primary md-raised mybtn" @click="download(index)" :disabled="!(progress[index]==100)">下载</md-button>
+                    </md-layout>
+                </md-layout>
+                <!-- 5 --> 
+                <md-layout v-if="file.img ==true" md-column md-gutter md-flex="10" md-flex-xsmall="15" md-flex-small="15">
+                  <md-layout>
+                        <md-button class="md-primary md-raised mybtn" @click="openImg(file.src,file.qname)" :disabled="!(progress[index]==100)">打开</md-button>
                     </md-layout>
                 </md-layout>
             </md-layout>
-            <!-- 3 -->
-            <md-layout md-column md-gutter md-flex="10" md-flex-xsmall="20" md-flex-small="20">
-              <md-layout>
-                    <md-button class="md-accent md-raised mybtn" @click="delFile(index)" :disabled="!(progress[index]==100)">删除</md-button>
-                </md-layout>
-            </md-layout>
-            <!-- 4 -->
-            <md-layout md-column md-gutter md-flex="10">
-              <md-layout>
-                    <md-button class="md-primary md-raised mybtn" @click="download(index)" :disabled="!(progress[index]==100)">下载</md-button>
-                </md-layout>
-            </md-layout>
-        </md-layout>
-        </md-layout>
-    </md-dialog-content>
-    <md-dialog-actions class="actionC">
-      <md-button class="md-primary md-raised" @click="ok()">确定</md-button>
-      <md-button class="md-primary md-raised" @click="save" :disabled="btndis">上传文件</md-button>
-      <md-button class="md-accent md-raised" @click="clear()" :disabled="btndis">清空列表</md-button>
-      <md-button class="md-raised" @click="closeDialog('fDia')">取消</md-button>
-    </md-dialog-actions>
-    </div>
+          </md-layout>
+      </md-dialog-content>
+      <md-dialog-actions class="actionC">
+        <md-button class="md-primary md-raised" @click="ok()">确定</md-button>
+        <md-button class="md-primary md-raised" @click="save" :disabled="btndis">上传文件</md-button>
+        <md-button class="md-accent md-raised" @click="clear()" :disabled="btndis">清空列表</md-button>
+        <md-button class="md-raised" @click="closeDialog('fDia')">取消</md-button>
+      </md-dialog-actions>
+      <!-- </div> -->
+    </md-dialog>
+    <md-dialog ref="dlgImg">  
+      <md-dialog-title> {{ dlgImgNAME }}</md-dialog-title> 
+      <md-dialog-content><md-image  :md-src="dlgImgURL"></md-image></md-dialog-content> 
     </md-dialog>
       <md-input :placeholder="cell.labelString" readonly v-model="modal[cell.id]"></md-input>
       <md-button class="md-icon-button md-clear-input" id="upfile" @click="openDialog()"><md-icon>insert_drive_file</md-icon></md-button>
@@ -96,7 +109,10 @@ export default {
       btndis:true,
       bfjRoot:false,
       upLoadFils:[],
-      upLoadDid:''
+      upLoadDid:'',
+      dlgImgURL:'',
+      dlgImgNAME:'',
+      isSave:false,//是否上传过
     };
   },
   mixins:[comm],
@@ -119,7 +135,7 @@ export default {
       var updid =  global.APIID_FILEDOWN;
      window.location.href = global.BIPAPIURL+global.API_UPD+'?snkey='+snkey+'&fjroot='+fjroot+'&updid='+updid+'&fjname='+name;
     },
-    //预览文件
+    //删除
     async delFile(index){
       var name = this.selFiles[index].name;
       var params = {
@@ -145,8 +161,17 @@ export default {
       this.myFiles.splice(index, 1);
       this.upLoadFils.splice(index, 1);
     },
+    //图片预览
+    openImg(fileUrl,fileName){ 
+      this.dlgImgNAME = fileName;
+      this.dlgImgURL = fileUrl;
+      this.$refs.dlgImg.open();
+    },
     //确定完成输入
     ok(){
+      // if(this.isSave == false && this.selFiles.length >0){
+      //   this.save()
+      // }
       // console.log('ok');
       var fjroot = this.upLoadDid;//附件地址
       var fjname = "";
@@ -171,6 +196,7 @@ export default {
       // console.log(sta,'state');
       this.$set(this.modal,'sys_stated',sta);
       this.$refs.fDia.close();
+      this.isSave = false;
     },
     //清空列表
     clear() {
@@ -243,8 +269,9 @@ export default {
         // console.log(arg,i);
 				this.upLoadSliceF(arg,i);
       }
+      this.isSave=true;
 		},
-		upLoadSliceF(arg,_idx){
+		upLoadSliceF(arg,_idx){ 
       let dfconfig = {
         headers: {
         'Content-Type': 'multipart/form-data'
@@ -302,7 +329,7 @@ export default {
       this.$refs.fDia.close();
     },
     async initFile(){
-      this.clear();
+      // this.clear();
       this.upLoadDid = this.bfjRoot?this.modal.fj_root:'';
       var vls = this.modal[this.cell.id];
       if(!vls)
@@ -321,20 +348,28 @@ export default {
       _.forEach(fis,(name,index)=>{
         var _srcs = this.getFileIcon(name);  
         _srcs.size = this.getSize(this.selFiles[index].size);  
+
+        _srcs.img = false;
+        var kzm = name.substring(name.lastIndexOf('.')+1);
+        if(kzm == 'jpg' || kzm == 'png' || kzm == 'gif' || kzm == 'jpeg'  ){
+          var snkey = JSON.parse(window.sessionStorage.getItem('snkey'));
+          var fjroot = this.bfjRoot?this.modal.fj_root:'';
+          var updid =  global.APIID_FILEDOWN;
+          _srcs.src = global.BIPAPIURL+global.API_UPD+'?snkey='+snkey+'&fjroot='+fjroot+'&updid='+updid+'&fjname='+name;
+          _srcs.img = true;
+        }
         this.srcs.push(_srcs);
         this.upLoadFils.push(name);
         this.progress[index]=100;
       });
     }
   },
-  mounted(){
-    console.log(this.modal)
+  mounted(){ 
     if(this.cell){
       if(this.cell.c_par){
         var ii = _.findIndex(this.cell.c_par.cels,item=>{
           return item.id === 'fj_root';
-        })
-        console.log(ii)
+        }) 
         if(ii>=0){
           this.bfjRoot = true;
         }else{
@@ -353,36 +388,36 @@ export default {
 .md-input-container input{font-weight: 700;}
 .classA{min-height:5rem;max-width:6rem;max-height: 5rem;min-width:6rem;}
 
-.actionC{position: absolute;bottom:.1rem;right: .1rem}
+/* .actionC{position: absolute;bottom:.1rem;right: .1rem} */
 .contentC{margin-bottom: .7rem;padding-bottom: 0;}
 .myimg{position: relative;width:10% !important;height: 10% !important;}
 .imgClassA{overflow-y: auto;max-height: 3rem;overflow-x:hidden; }
 @media screen and (min-width:300px) and (max-width:321px){
-    .classB{min-height:5rem;max-height: 5rem;}
+    .classB{min-height:1rem;max-height: 5rem;}
     .imgClassB{
         overflow-y: auto;max-height: 2.3rem;overflow-x: hidden;
     }
 }
 @media screen and (min-width:321px) and (max-width:361px){
-    .classB{min-height:5rem;max-height: 5rem;}
+    .classB{min-height:1rem;max-height: 5rem;}
     .imgClassB{
         overflow-y: auto;max-height: 2.8rem;overflow-x: hidden;
     }
 }
 @media screen and (min-width:362px) and (max-width:380px){
-    .classB{min-height:5rem;max-height: 5rem;}
+    .classB{min-height:1rem;max-height: 5rem;}
     .imgClassB{
         overflow-y: auto;max-height: 3.3rem;overflow-x: hidden;
     }
 }
 @media screen and (min-width:381px) and (max-width:412px){
-    .classB{min-height:6rem;max-height: 6rem;}
+    .classB{min-height:1rem;max-height: 6rem;}
     .imgClassB{
         overflow-y: auto;max-height: 3.8rem;overflow-x: hidden;
     }
 }
 @media screen and (min-width:413px){
-    .classB{min-height:6rem;max-height: 6rem;}
+    .classB{min-height:1rem;max-height: 6rem;}
     .imgClassB{
         overflow-y: auto;max-height: 4rem;overflow-x: hidden;
     }
@@ -391,7 +426,7 @@ export default {
 .itemClass{max-height: .6rem;position: relative;width: 100%;}
 .iconClass{padding-bottom: .2rem;color:#22bf22; }
 /* .cancelClass{margin:0;padding: 0;min-width: .24rem;min-height: .24rem;} */
-.mybtn{min-width: .4rem;min-height: .3rem;font-size: .12rem;line-height: .3rem;padding: 0;}
+.mybtn{min-width: .4rem;min-height: .3rem;font-size: .12rem;line-height: .3rem;padding: 0; margin: 0px}
 .md-gutter-8 .md-column > .md-layout{padding-bottom: 0;}
 .cancelClass{position: absolute;bottom: .15rem;margin-left: .18rem;}
 .checkClass{position: absolute;bottom: .15rem;margin-left: .18rem;color:#22bf22;}

@@ -53,6 +53,13 @@ export default {
   },
   methods: {
     async loginRemote() {
+      var isPc = this.ISPC();
+      let  ioutsys = 1; 
+      if(isPc){ 
+        ioutsys =1;
+      }else{
+        ioutsys =2;
+      }
       if(this.loading>0){
         return;
       }
@@ -63,7 +70,8 @@ export default {
         dbid: global.DBID,
         usercode: this.usercode,
         pwd: this.base64Encode(psss),
-        lang:this.lang
+        lang:this.lang,
+        ioutsys:ioutsys,
       }
       try{
         var res = await this.getDataByAPINew(logindata);

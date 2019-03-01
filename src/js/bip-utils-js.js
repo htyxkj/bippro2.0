@@ -292,28 +292,29 @@ export default {
       return add1;
     }
 
-    Vue.prototype.getFileIcon  = function(name){
+    Vue.prototype.getFileIcon  = function(qname){ 
+      let name = qname;
       if(name.substring(0,name.lastIndexOf('.')).length>4){
         name = name.substring(0,3)+'...'+name.substring(name.lastIndexOf('.')+1)
       }
       var kzm = name.substring(name.lastIndexOf('.')+1);
       var _srcs = {};
       if(kzm=='doc' || kzm =='docx'){
-          _srcs = {'src':require('@/components/../img/uploadImg/word.png'),'name':name};
+          _srcs = {'src':require('@/components/../img/uploadImg/word.png'),'name':name,'qname':qname};
       }else if(kzm=='xls' || kzm=='xlsx'){
-          _srcs = {'src':require('@/components/../img/uploadImg/excel.png'),'name':name};
+          _srcs = {'src':require('@/components/../img/uploadImg/excel.png'),'name':name,'qname':qname};
       }else if(kzm == 'pdf'){
-          _srcs = {'src':require('@/components/../img/uploadImg/pdf.png'),'name':name};
+          _srcs = {'src':require('@/components/../img/uploadImg/pdf.png'),'name':name,'qname':qname};
       }else if(kzm == 'txt'){
-          _srcs = {'src':require('@/components/../img/uploadImg/txt.png'),'name':name};
+          _srcs = {'src':require('@/components/../img/uploadImg/txt.png'),'name':name,'qname':qname};
       }else if(kzm == 'zip' || kzm =='rar'){
-          _srcs = {'src':require('@/components/../img/uploadImg/zip.png'),'name':name};
+          _srcs = {'src':require('@/components/../img/uploadImg/zip.png'),'name':name,'qname':qname};
       }else if(kzm =='html'){
-          _srcs = {'src':require('@/components/../img/uploadImg/html.png'),'name':name};
+          _srcs = {'src':require('@/components/../img/uploadImg/html.png'),'name':name,'qname':qname};
       }else if(kzm == 'ppt' || kzm=='pptx'){
-          _srcs = {'src':require('@/components/../img/uploadImg/ppt.png'),'name':name};
+          _srcs = {'src':require('@/components/../img/uploadImg/ppt.png'),'name':name,'qname':qname};
       }else{
-          _srcs = {'src':require('@/components/../img/uploadImg/noFound.png'),'name':name};
+          _srcs = {'src':require('@/components/../img/uploadImg/noFound.png'),'name':name,'qname':qname};
       } 
       return _srcs;
     }

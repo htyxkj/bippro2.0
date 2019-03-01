@@ -1,5 +1,9 @@
 <template>
-  <div class="ueditor" :id=id ></div>
+  <div class="ueditor">
+    <div class="title" v-if="!cell.unNull">{{cell.labelString}}</div>
+    <div v-else class="title2">{{cell.labelString}}*</div>
+    <div class="ueditor" :id=id ></div>
+  </div>
 </template>
 <script> 
 //插件 API https://github.com/wangfupeng1988/wangEditor
@@ -84,6 +88,16 @@ import comm from './modal.js';
 .ueditor{
     z-index:1;
     width:100%
+}
+.title{
+  font-weight: 700;
+  font-size: .16rem;
+  color: #777777;
+}
+.title2{
+  font-weight: 700;
+  font-size: .16rem;
+  color: rgba(179, 1, 19, 0.81);
 }
 </style>
 

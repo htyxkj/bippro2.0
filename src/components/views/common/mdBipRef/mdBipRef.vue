@@ -52,6 +52,7 @@ export default {
       }
     },
     async makeRefValue(){
+      // console.log("makeRefValue")
       var s0 = this.bipRefId.refValue;
       if(s0 == '{&DATETIME}' || s0=='{&DATE}'){
         return ;
@@ -105,7 +106,7 @@ export default {
                 cldata = {'allCols':cc.data.allCols,'value':cc.data.values[j]}; 
                 // var id = this.scriptReference()
                 var id =1;
-                valName=cldata.value[cldata.allCols[id]]+fh
+                valName+=cldata.value[cldata.allCols[id]]+fh
                 this.refData.name = valName;
                 console.log("要Set了！") 
                 if(!window.sessionStorage.getItem(this.bipRefId.refValue+"."+cldata.value[cldata.allCols[0]])){
@@ -113,7 +114,7 @@ export default {
                 }
               }
             }
-        }
+          }
         }
       }
     },

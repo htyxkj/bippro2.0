@@ -48,7 +48,7 @@ export default {
         this.parentContainer.counterLength = this.maxlength;
       }
     },
-    setParentValue(value) {
+    setParentValue(value) { 
       if(this.mdContainer&&this.parentContainer){
         var elValue=this.getElementValue();
         // console.log(elValue,value);
@@ -87,6 +87,7 @@ export default {
       this.$emit('focus');
     },
     onBlur() { 
+      console.log("onBlur")
       if(this.parentContainer){
         this.parentContainer.isFocused = false;
       }

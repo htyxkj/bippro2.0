@@ -34,7 +34,7 @@
         </md-input-container>
       </template>
     </md-bip-grid-cell-edit>
-    <md-bip-grid-cell-show v-else class="md-bip-grid-cell-container" :column="column" :row="row">
+    <md-bip-grid-cell-show v-else class="md-bip-grid-cell-container" :column="column" :row="row" >
       <slot></slot>
     </md-bip-grid-cell-show>
   </td>

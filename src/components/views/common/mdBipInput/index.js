@@ -38,11 +38,14 @@ export default function install(Vue) {
   Vue.component('md-bip-dia', () => import("./mdBipDia"));
   Vue.component('md-bip-input-ref', () => import("./mdBipInputRef"));
   Vue.component('md-bip-input', () => import("./mdBipInput")); 
+  
   Vue.component('md-bip-input-file-tmp', () => import("./mdBipInputFileTmp"));
   Vue.component('md-bip-button-file-tmp', () => import("./mdBipButtonFileTmp"));
+  Vue.component('md-bip-input-fileUp',() => import("./mdBipInputFileUp"));
+
+
   Vue.component('md-bip-input-editor',() => import("./mdBipInputEditor"));
   Vue.component('md-bip-input-check',() => import("./mdBipInputCheck"));
   Vue.component('md-bip-input-radio',() => import("./mdBipInputRadio"));
   Vue.component('md-bip-input-autograph',() => import("./mdBipInputAutograph"));
-  
 }

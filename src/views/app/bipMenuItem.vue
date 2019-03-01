@@ -1,12 +1,12 @@
 <template>
   <div>
-    <md-list-item v-if="menuItem.haveChild === false " class="md-dense md-list-item-expand">
-      <router-link exact :to="commond">
+    <md-list-item v-if="menuItem.haveChild === false && menuItem.menuattr !=4" class="md-dense md-list-item-expand">
+      <router-link exact :to="commond" > 
         <md-icon v-colors="iconcc">{{menuIcon}}</md-icon>
         <span>{{menuName}}</span>
       </router-link>
     </md-list-item>
-    <md-list-item v-else>
+    <md-list-item v-else-if="menuItem.haveChild === true && menuItem.menuattr !=4">
         <md-icon v-colors="iconcc">{{menuIcon}}</md-icon>
         <span>{{menuName}}</span>
          <md-list-expand v-if="menuItem.haveChild">

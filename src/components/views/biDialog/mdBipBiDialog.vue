@@ -1,4 +1,5 @@
 <template>
+<div>
   <md-dialog ref="dialog" :md-click-outside-to-close="false" :md-esc-to-close="false">
       <!-- title -->
       <md-dialog-title> <div class="dia-title">{{btnInfo.name}}</div></md-dialog-title>
@@ -15,7 +16,24 @@
         <md-button class="md-primary md-raised" @click="ok">确定</md-button>
         <md-button class="md-raised" @click="closeDialog">取消</md-button>
       </md-dialog-actions>
+  </md-dialog> 
+
+  <md-dialog ref="dialogMsg" :md-click-outside-to-close="false" :md-esc-to-close="false">
+    <!-- title -->
+    <md-dialog-title> <div class="dia-title">{{btnInfo.name}}</div></md-dialog-title>
+    <!-- content -->
+    <md-dialog-content class="contentC"> 
+      <br/>
+     　　　　 {{btnInfo.cellID}} 　　　　
+      <br/>
+    </md-dialog-content> 
+    <md-dialog-actions class="actionC">
+      <md-button class="md-primary md-raised" @click="oksql">确定</md-button>
+      <md-button class="md-raised" @click="closeDialog">取消</md-button>
+    </md-dialog-actions>
   </md-dialog>
+
+</div>
 </template>
 
 <script>
@@ -37,10 +55,10 @@ export default {
     }, 
     btnInfo:null,  //{name:b[0],cellID:b[1],key:b[2]};
     selectData:null,  
+    cdsm:null,
   },
   methods: {
-    ok() { 
-      console.log(this.ds_m);
+    ok() {  
       let pcell = this.btnInfo.cellID
       var jsonstr={};
       jsonstr = this.ds_m.currRecord;
@@ -72,9 +90,38 @@ export default {
           _this.loading=0;
       })  
     }, 
+    oksql(){
+      var jsonstr={};
+      jsonstr = this.cdsm.currRecord; 
+      var data1 = {
+        "dbid": `${global.DBID}`,
+        "usercode": JSON.parse(window.sessionStorage.getItem('user')).userCode,
+        "apiId": "dlga", //cellparam pbuid=21243&pmenuid=22403 
+        "jsonstr":JSON.stringify(jsonstr), 
+        "btnInfo":JSON.stringify(this.btnInfo),
+      };
+      this.loading=1;
+      let _this =this;
+      var state=0;
+      axios.post(`${global.BIPAPIURL}`+`${global.API_COM}`,qs.stringify(data1)) .then(res=>{  
+          if(res.data.id==0){
+            _this.$notify.success({content:'操作成功！'})
+            _this.getOpt(1)
+            _this.closeDialog()
+          }else{
+            _this.$notify.danger({content:'操作失败！'})
+          }  
+          _this.loading=0;
+      }) .catch(err=>{
+          console.log(err)
+          _this.$notify.danger({content:'系统故障！'})
+          _this.loading=0;
+      })
+    },
     closeDialog() {
       this.getOpt(0)
       this.$refs.dialog.close()
+      this.$refs.dialogMsg.close()
     }, 
     async getCell() {
       var pcell = this.btnInfo.cellID; 
@@ -146,12 +193,15 @@ export default {
   },
   async mounted() { 
     this.ds_m = null;
-    await this.getCell();
-    await this.initCellData();
-    this.$refs.dialog.open()
-    
+    if(this.btnInfo.type =='B'){
+      await this.getCell();
+      await this.initCellData();
+      this.$refs.dialog.open();
+    }else if(this.btnInfo.type =='A'){
+      this.$refs.dialogMsg.open()
+    }
   },
-  watch:{ 
+  watch:{
   }
 }
 </script>

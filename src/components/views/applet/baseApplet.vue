@@ -25,7 +25,7 @@ export default {
       blist:global.BLIST,
       opera:null,
       isPC:this.ISPC(),
-      menuP:{},//顶部按钮权限
+      menuP:{},//顶部按钮权限 
     }
   },
    props: {mdTitle:{type:String,default:''},mparams:Object},
@@ -61,11 +61,11 @@ export default {
           var cells0 = cells[0];
           cells0 = await this.makeCellCL(cells0);
           this.ds_m = new CDataSet(cells0);
-          this.ds_m.setPcell(pcell); 
+          this.ds_m.setPcell(pcell);  
         }else{
           var cells0 = await this.makeCellCL(cells[0]);
           this.ds_m = new CDataSet(cells0);
-          this.ds_m.setPcell(pcell);
+          this.ds_m.setPcell(pcell); 
           for(var i=0;i<celL-2;i++){
             var cellsi = await this.makeCellCL(cells[i+1]);
             var ds = new CDataSet(cellsi);
@@ -115,7 +115,7 @@ export default {
       if((this.mparams.pattr & menuPattr.COUNT)>0){
         this.menuP.COUNT=true;
       }  
-    }
+    }, 
    },
    watch:{
      mparams(){

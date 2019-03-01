@@ -9,7 +9,8 @@
               <md-icon>close</md-icon>       
           </div>
         </div> 
-        <template v-if="isPC">
+        <template>
+          <!-- <template v-if="isPC"> -->
           <!-- <md-bip-bill-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" :mparams="mparams" @list="list"></md-bip-bill-applet> -->
           <md-bip-bill-applet v-if="ds_m && ds_m.currRecord && ds_m.currRecord[this.opera.pkfld]" :dsm="ds_m" :opera="opera" :mparams="mparams" :menuP="menuP"></md-bip-bill-applet>
         </template>
@@ -39,10 +40,16 @@ export default {
       blink:false,
       loading:0,
       menuP:{},//顶部按钮权限
+      sbuid:null,
     };
   },
   methods: {
     async open(sid, sbuid) {  
+      if(this.sbuid != sbuid){ 
+        this.ds_m=null;
+        this.mparams=null;
+        this.sbuid = sbuid;
+      }
       this.loading++; 
       let bok = await this.checkOpear(sbuid); 
       console.log(bok)
@@ -214,6 +221,7 @@ export default {
     close(){  
       this.blink=false;
       this.opera= null;
+
       this.ds_m.clearData();
       this.ds_m.currRecord=null;
       this.sidv='';

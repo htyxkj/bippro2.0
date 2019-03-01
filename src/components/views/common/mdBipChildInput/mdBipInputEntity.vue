@@ -28,7 +28,10 @@
       <md-button class="md-icon-button md-ref-filter" @click.native="openRef()">
         <md-icon>search</md-icon>
       </md-button>
-      <md-bip-dia :assType="column.assType" ref="ref" :options="refOptions" :multiple="!!multiple" :md-ref-id="mdRefId" @open="onRefOpen" @close="onRefClose"></md-bip-dia>
+      <!-- <md-bip-dia :assType="column.assType" ref="ref" :options="refOptions" :multiple="multiple" :mdSelection="true" :disabled="disabled" :md-ref-id="mdRefId" @open="onRefOpen" @close="onRefClose"></md-bip-dia> -->
+
+      <md-bip-dia :assType="column.assType" ref="ref" :mdRefId="column.editName" :multiple="multiple" :mdSelection="mdSelection" @close="onRefClose" :disabled="disabled"></md-bip-dia> 
+
   </div>
 </template>
 
@@ -39,11 +42,7 @@ import commonInput from "../../../commonUI/mdInputContainer/common";
 export default {
   props: {
     id: String,
-    name: String,
-    multiple: {
-      type: Boolean,
-      default: false
-    },
+    name: String, 
     mdRefId: String,
     mdKeyField: String,
     mdNameField: String,
@@ -67,6 +66,8 @@ export default {
       refIsOpened: false,
       refOptions: { wheres: {}, orders: {} },
       cols: [], 
+      mdSelection:false,
+      multiple:false,
     };
   },
   watch: {
@@ -89,6 +90,7 @@ export default {
     setValue(value) {
       // console.log("select values", this.selectedValues);
       this.setParentValue(value);
+      this.getColumnValueIndex(value)
     },
     async openRef() {
       //进行公式解析 
@@ -101,7 +103,7 @@ export default {
     },
     async onRefOpen(type) { 
     },
-    onRefClose(resdata) {
+    onRefClose(resdata) { 
       if (resdata) {
         this.refInfo = resdata;
       }else if(this.value){
@@ -127,11 +129,35 @@ export default {
         this.$parent.$parent.column.refValues.multiple = this.refInfo.multiple;
         this.$parent.$parent.column.refValues.values = [];
       }
-      if (!this.multiple) this.selectedValues = [];
+      // if (!this.multiple)
+      this.selectedValues = [];
+      let  d={};
       data &&
         data.forEach((row, index) => {
           this.addValue(row);
-        });
+        }); 
+      // for(var i=0;i<data.length;i++){ 
+      //   for(var j=0;j<this.cols.length;j++){
+      //     if(i == 0){
+      //       d[this.cols[j]] = data[i][this.cols[j]];
+      //     }else {
+      //       if( i ==1){
+      //         if(i == data.length-1){
+      //           d[this.cols[j]] += ";"+data[i][this.cols[j]];
+      //         }else{
+      //           d[this.cols[j]] += ";"+data[i][this.cols[j]]+";";
+      //         }
+      //       }else{
+      //         if(i == data.length-1){
+      //           d[this.cols[j]] += data[i][this.cols[j]];
+      //         }else{
+      //           d[this.cols[j]] += data[i][this.cols[j]] +";";
+      //         } 
+      //       }
+      //     }
+      //   }
+      // }
+      // this.addValue(d);
     },
     applyInputFocus() {
       this.$nextTick(() => {
@@ -142,11 +168,7 @@ export default {
       if (!value || !value[this.cols[0]]) {
         return;
       }
-      if (
-        this.multiple &&
-        this.maxlength > 1 &&
-        this.selectedValues.length >= this.maxlength
-      ) {
+      if (this.multiple && this.maxlength > 1 && this.selectedValues.length >= this.maxlength ) {
         return;
       }
       if (!this.multiple && this.selectedValues.length > 1) {
@@ -237,8 +259,19 @@ export default {
         } else {
           return "";
         }
+      }else{
+        let id ="";
+        for(var i=0;i<this.selectedValues.length;i++){
+          if(i == this.selectedValues.length-1){
+            id += this.selectedValues[i][this.cols[0]];
+          }else{
+            id += this.selectedValues[i][this.cols[0]]+";"
+          }
+        }
+        // this.currentInputValue = id;
+        return id;
       }
-      return this.selectedValues;
+      // return this.selectedValues;
     },
     // getCallBack(res) {
     //   console.log(res);
@@ -271,8 +304,8 @@ export default {
         }
       }
     },
-  },
-  mounted() {
+  }, 
+  mounted() { 
     this.$nextTick(() => {
       this.parentContainer = getClosestVueParent(
         this.$parent,
@@ -283,6 +316,18 @@ export default {
       this.setParentRequired();
     });
     this.$refs["ref"].cancel();
+  },
+  created(){   
+    //MULTIPLE:0x200000,//多项
+    let _multiple=this.column.attr&0x200000;
+    // console.log(_multiple)
+    if(_multiple>0){   
+      this.multiple =true;
+      this.mdSelection=true; 
+    }else{
+      this.multiple =false;
+      this.mdSelection=false;
+    } 
   }
 };
 </script>

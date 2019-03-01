@@ -459,8 +459,11 @@ export default {
             var btnOne = data[i];
             var b = btnOne.split(";");
             var btn = {name:b[0],cellID:b[1],key:b[2]};
+            btn.menuid= menuid;
+            btn.type = btn.name.substring(0,1)
+            btn.name = btn.name.substring(2,btn.name.length); 
             this.dlgBtn.push(btn);
-          } 
+          }
           window.sessionStorage.setItem(menuid, JSON.stringify(this.dlgBtn)); 
         }
       }else{ 
@@ -468,16 +471,16 @@ export default {
       }
     },
     //点击弹出框按钮
-    async dlgBtnClick(btn){ 
+    async dlgBtnClick(btn){  
       if(this.selectData){
         this.btnDisabled=true;
         let _this = this;
-        this.$biDialog.open({ btnInfo: btn,selectData:this.selectData, getOpt(state) { 
-              _this.btnDisabled=false; 
-              if(state ==1){ 
-                _this.initCell()
-              }
-            } 
+        this.$biDialog.open({ btnInfo: btn,selectData:this.selectData,cdsm:this.ds_m, getOpt(state) { 
+            _this.btnDisabled=false; 
+            if(state ==1){ 
+              _this.initCell()
+            }
+          }
         })
       }
     },
