@@ -2,7 +2,7 @@
     <md-layout style="padding-left: 8px;" md-flex-small="100" md-flex="100">
       <md-layout md-flex-small="100" :md-flex="leftcar"  > 
         <md-card v-if="leftshow">   
-            <div id="selzyqtj" style="width:100%;">
+            <div style="width:100%;height:275px;">
                 <md-layout md-gutter style="margin-left:.1rem;margin-right:.1rem;">
                     <md-layout  md-flex="100"><md-bip-input-ref  :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-ref></md-layout>
                 </md-layout>
@@ -126,8 +126,7 @@
                         <div style="    line-height: .42rem;margin-left:.4rem" id="cityList"></div> 
                     </md-layout>
                 </md-layout> 
-            </div>
-          </div>
+            </div> 
         </md-card>
       </md-layout>
       <md-loading :loading="loading"></md-loading>
@@ -756,7 +755,7 @@ export default {
         },
         zyqlistSt(){
             // var height=$("#selzyqtj").height(); //this.$refs['selzyqtj'].offsetHeight;
-            return "overflow: auto;position: absolute;top: 265px;bottom: 0px;width: 100%;"
+            return "overflow: auto;position: absolute;top: 275px;bottom: 0px;width: 100%;"
         }
     },
     watch: {

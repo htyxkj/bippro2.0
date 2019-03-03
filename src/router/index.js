@@ -71,12 +71,12 @@ export default new Router({
     {
       path: '/',
       name: 'Index',
-      component: Dashboard
+      component: BipMapCurrent
     },
     {
       path: '/index',
       name: 'Dashbord',
-      component: Dashboard
+      component: BipMapCurrent
     },
     {
       path: '/task',
