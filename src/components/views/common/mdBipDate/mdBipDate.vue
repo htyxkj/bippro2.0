@@ -45,7 +45,20 @@ export default {
       range: false
     };
   },
-  watch: {},
+  watch: {
+    value(){
+      this.formtDate();
+      if (this.isReport) {
+        this.range = "~";
+        if (this.value.indexOf("~") == -1) {
+          this.checkVal = this.formattedValue("");
+        }
+      } else {
+        this.checkVal = this.formattedValue(this.value);
+      }
+      this.oldValue = this.value;
+    }
+  },
   methods: {
     _dateID() {
       var reg = new RegExp("\\.", "g");
@@ -161,7 +174,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted() { 
     this.formtDate();
     if (this.isReport) {
       this.range = "~";

@@ -1,5 +1,5 @@
 <template>
-    <div style="background-color:#ececec"> 
+    <div style="background-color:#f6f6f6"> 
         <div>
             <div v-if="ddApp.length>0" class="blank1"> 
                 <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" class="title"> 
@@ -60,6 +60,9 @@ export default {
             ddApp:[],
             code:'',
             corpId:'',
+            appkey:'',
+            appId:'',
+            agentId:'',
         }
     },
     async mounted(){
@@ -77,10 +80,12 @@ export default {
                 if(dapp)
                 this.ddApp = JSON.parse(dapp);
             }
-        }else{
-            this.loginRemote('111')
-            this.loading=1;
-            this.corpId =this.$route.query.corpId 
+        }else{ 
+            this.loading=1; 
+            this.corpId =this.$route.query.corpId   //企业唯一码 
+            this.appkey = this.$route.query.appkey  //应用唯一码
+            this.appId = this.$route.query.appId;   //默认00
+            this.agentId = this.$route.query.agentId;//应用id
             let _this =this;
             await dd.ready(function() {
         	    dd.runtime.permission.requestAuthCode({
@@ -133,12 +138,14 @@ export default {
                 this.$notify.danger({content: res.data.message})
             }
         },
-        async loginRemote(code) {
+        async loginRemote(code) { 
             var logindata = {
                 apiId: global.APIID_OUTLOGIN,
                 dbid: global.DBID,
                 code: code,
                 corpId:this.corpId,
+                appkey:this.appkey,
+                appId:this.appId,
                 ding:1, 
                 ioutsys:3,
             }

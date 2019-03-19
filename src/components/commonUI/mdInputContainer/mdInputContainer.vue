@@ -2,7 +2,7 @@
   <div class="md-input-container" :class="[themeClass, classes]">
     <slot></slot>
 
-    <span class="md-count" v-if="enableCounter">{{ inputLength }} / {{ counterLength }}</span>
+    <span class="md-count" v-if="enableCounter && ISPC()">{{ inputLength }} / {{ counterLength }}</span>
 
     <md-button class="md-icon-button md-toggle-password" @click.native="togglePasswordType" v-if="mdHasPassword">
       <md-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</md-icon>
@@ -37,7 +37,7 @@
       };
     },
     computed: {
-      hasValue() {
+      hasValue() { 
         if (isArray(this.value)) {
           return this.value.length > 0;
         }
@@ -75,7 +75,7 @@
           this.input.focus();
         }
       },
-      setValue(value) {
+      setValue(value) { 
         this.value = value;
       }
     },

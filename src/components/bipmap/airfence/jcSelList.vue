@@ -224,10 +224,12 @@ export default {
       let taskno = this.taskno
       this.param.assistid="GETTASKTIME";
       this.param.cont="~sid ='"+taskno+"'";
+      let _this = this;
       axios.post(global.BIPAPIURL+global.API_COM, qs.stringify(this.param)).then(res => {
-        this.startTime = res.data.values[0].bgtime;
-        this.endTime = res.data.values[0].edtime;
+        _this.startTime = res.data.values[0].bgtime;
+        _this.endTime = res.data.values[0].edtime; 
       });
+      
     },
     //查询任务对应的 附件信息
     getTaskFJ(){
@@ -250,7 +252,7 @@ export default {
         _this.$notify.danger({content:'请选择查询任务！'})
         return;
       }
-     
+
       _this.loading = 1 
       let taskno = _this.taskno
       let startTime = _this.startTime;

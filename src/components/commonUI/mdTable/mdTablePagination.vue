@@ -3,7 +3,10 @@
     <template v-if="mdPageOptions !== false">
       <span class="md-table-pagination-label">{{ mdLabel }}:</span>
 
-      <md-select v-model="currentSize" md-menu-class="md-pagination-select" @change="changeSize">
+      <!-- <md-select v-model="currentSize" md-menu-class="md-pagination-select" @change="changeSize">
+        <md-option v-for="amount in mdPageOptions" :key="amount" value="amount">{{ amount }}</md-option>
+      </md-select> -->
+      <md-select v-model="currentSize" md-container="" md-menu-class="md-pagination-select" @change="changeSize" v-if="mdPageOptions">
         <md-option v-for="amount in mdPageOptions" :key="amount" :value="amount">{{ amount }}</md-option>
       </md-select>
     </template>
@@ -110,7 +113,7 @@
         }
       }
     },
-    mounted() {
+    mounted() { 
       this.$nextTick(() => {
         this.totalItems = isNaN(this.mdTotal) ? Number.MAX_SAFE_INTEGER : parseInt(this.mdTotal, 10);
         if (this.mdPageOptions) {

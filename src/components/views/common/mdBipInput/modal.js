@@ -11,7 +11,8 @@
 // const INPUT_REF = 8;//参照
 // const INPUT_DATE = 9;//日期
 // const INPUT_TEXTAFC = 10;//富文本编辑 
-// const INPUT_AUTOGRAPH =12;//电子签名
+// const INPUT_AUTOGRAPH =13;//电子签名
+// const INPUT_DDGPS = 12;//钉钉GPS信息
 export default {
   data () {
     return { 
@@ -29,7 +30,8 @@ export default {
       INPUT_REF: 8,
       INPUT_DATE: 9,
       INPUT_TEXTAFC:10, 
-      INPUT_AUTOGRAPH:12,
+      INPUT_AUTOGRAPH:13,
+      INPUT_DDGPS:12,
       disabled: false,
       oldValue:"",
       mdSelection:false, 

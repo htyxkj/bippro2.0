@@ -129,7 +129,7 @@ export default {
       // this.$emit('input',value); 
     }
   },
-  mounted() { 
+  mounted() {  
     if (this.column) {  
       // let notedit = this.column.attr & this.NOTEDIT;
       // this.disabled = notedit > 0 ? true : false; 

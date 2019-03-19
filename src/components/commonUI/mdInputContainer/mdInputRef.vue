@@ -184,7 +184,7 @@
         return this.selectedValues;
       },
     },
-    mounted() {
+    mounted() { 
       this.setValue(this.value);
       this.$nextTick(() => {
         this.parentContainer = getClosestVueParent(this.$parent, 'md-input-container');

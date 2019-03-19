@@ -1,10 +1,10 @@
 <template>
   <div>
     <!-- <md-bip-bill v-if="mparams.beBill" :mdTitle="menuTitle" :mparams="mparams"></md-bip-bill> -->
-    <template  v-if="mparams.beBill">
+    <template  v-if="mparams.beBill == true">
       <md-bip-applet :mdTitle="menuTitle" :mparams="mparams"></md-bip-applet>
     </template>
-    <template v-else>
+    <template v-else-if="mparams.beBill == false">
       <!-- <md-bip-report :mdTitle="menuTitle" :mparams="mparams"></md-bip-report> -->
        <md-bip-bi :mdTitle="menuTitle" :mparams="mparams"></md-bip-bi>
     </template>

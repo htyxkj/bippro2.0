@@ -50,8 +50,7 @@ export default {
     },
     setParentValue(value) {
       if(this.mdContainer&&this.parentContainer){
-        var elValue=this.getElementValue();
-        // console.log(elValue,value);
+        var elValue=this.getElementValue(); 
         this.parentContainer.setValue(value || elValue);
       }
     },

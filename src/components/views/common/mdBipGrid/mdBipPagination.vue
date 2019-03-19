@@ -87,7 +87,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted() { 
     if (!this.currentSize && this.pager) this.currentSize = this.pager.size;
     if (!this.currentSize && this.options) this.currentSize = parseInt(this.options[0]);
     this.$nextTick(() => {

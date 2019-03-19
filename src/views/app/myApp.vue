@@ -53,12 +53,22 @@ export default {
         this.mdTitle = this.$route.query.title
         var isPc = this.ISPC();
         if (!isPc) {
+          let cc = "";
           var arr = this.mdTitle.split("");
+          for(var i=0;i<arr.length;i++){
+            let a = arr[i];
+            if(a != "" && a !=" "){
+              cc+=a;
+            }
+          }
+          arr = cc.split("");
           if(arr.length>4){
             this.mdTitle = arr[0]+arr[1]+arr[2]+arr[3]+'...'
+          }else{
+            this.mdTitle = cc;
           }
         }
-        
+        // console.log(this.mdTitle)  
       }else{
         if(this.$route.path == '/' || this.$route.path == '/index'){
           this.mdTitle = '首页';

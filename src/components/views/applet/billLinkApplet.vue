@@ -138,7 +138,7 @@ export default {
         console.log("远程调用getOpear");
         await this.getOpear(sbuid);
       }
-      if (!this.opera.pmenuid) {
+      if (this.opera&&!this.opera.pmenuid) {
         this.$notify.warning({ content: "业务" + sbuid + "没有绑定菜单!" });
         return false;
       }

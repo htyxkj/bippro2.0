@@ -48,4 +48,5 @@ export default function install(Vue) {
   Vue.component('md-bip-input-check',() => import("./mdBipInputCheck"));
   Vue.component('md-bip-input-radio',() => import("./mdBipInputRadio"));
   Vue.component('md-bip-input-autograph',() => import("./mdBipInputAutograph"));
+  Vue.component('md-bip-input-ddGPS',()=> import("./mdBipInputDDGPS"));
 }

@@ -1,5 +1,6 @@
-import Vue from 'vue'
-import Router from 'vue-router' 
+ /* jshint esversion: 6 */ 
+import Vue from 'vue';
+import Router from 'vue-router';
 // import CommLayUI from '@/views/common/commonLayUI' 
 // import Task from '@/views/base/bipTask'
 // import Message from '@/views/base/bipMsg'
@@ -10,49 +11,49 @@ import Router from 'vue-router'
 // import Test1 from '@/components/Test1'
 // import Dashboard from '@/views/dashboard/Dashboard1'
 //单点登录
-import Blank from '@/components/Blank'
+import Blank from '@/components/Blank';
 //钉钉
-import Ding from '@/components/Ding'
+import Ding from '@/components/Ding';
 
 //系统基础路由
-const Test1 = () => import('@/components/Test1') 
-const Dashboard = () => import('@/views/dashboard/Dashboard1')//首页
-const CommLayUI = () => import('@/views/common/commonLayUI') 
-const Task = () => import('@/views/base/bipTask') 
-const Message = () => import('@/views/base/bipMsg') 
+const Test1 = () => import('@/components/Test1');
+const Dashboard = () => import('@/views/dashboard/Dashboard1');//首页
+const CommLayUI = () => import('@/views/common/commonLayUI');
+const Task = () => import('@/views/base/bipTask');
+const Message = () => import('@/views/base/bipMsg');
 //end
 
 
 //KTZ
-const BipKTZ = () => import('@/components/views/ktzapp/BipKTZ') 
+const BipKTZ = () => import('@/components/views/ktzapp/BipKTZ');
 //end
 
 //车辆管理
-const CarRealMap = () => import('@/components/bipmap/vehicle/CarRealMap') 
-const CarLocus = () => import('@/components/bipmap/vehicle/CarLocus') 
-const Adjust = () => import('@/components/bipmap/vehicle/AdjustMap') 
-const Fence = () => import('@/components/bipmap/vehicle/AlectricFence') 
+const CarRealMap = () => import('@/components/bipmap/vehicle/CarRealMap');
+const CarLocus = () => import('@/components/bipmap/vehicle/CarLocus');
+const Adjust = () => import('@/components/bipmap/vehicle/AdjustMap');
+const Fence = () => import('@/components/bipmap/vehicle/AlectricFence');
 
 //end
  
 //飞防管控
-const BipMap = () => import('@/components/bipmap/airfence/BipMap')
-const BipMapHJ = () => import('@/components/bipmap/airfence/BipMapHJ')
-const JCList = () => import('@/components/bipmap/airfence/JCList')
-const jcSelList = () => import('@/components/bipmap/airfence/jcSelList')
-const JCMap = () => import('@/components/bipmap/airfence/JCMap')
-const BipMapCurrent = () => import('@/components/bipmap/airfence/BipMapCurrent')
-const ExportData = () => import('@/components/bipmap/airfence/Exportdata')
-const Synchronize = () => import('@/components/bipmap/airfence/Synchronize')
-const BipMapWork = () => import('@/components/bipmap/airfence/BipMapWork')
+const BipMap = () => import('@/components/bipmap/airfence/BipMap');
+const BipMapHJ = () => import('@/components/bipmap/airfence/BipMapHJ');
+const JCList = () => import('@/components/bipmap/airfence/JCList');
+const jcSelList = () => import('@/components/bipmap/airfence/jcSelList');
+const JCMap = () => import('@/components/bipmap/airfence/JCMap');
+const BipMapCurrent = () => import('@/components/bipmap/airfence/BipMapCurrent');
+const ExportData = () => import('@/components/bipmap/airfence/Exportdata');
+const Synchronize = () => import('@/components/bipmap/airfence/Synchronize');
+const BipMapWork = () => import('@/components/bipmap/airfence/BipMapWork');
 //end
 
 //水科学院
-const skxjtHome =() => import('@/components/views/skxjtfile/skxjtHome')
+const skxjtHome =() => import('@/components/views/skxjtfile/skxjtHome');
 //end
 
 //CRM 
-const CRMWorkbench =() => import('@/components/views/crm/CRMWorkbench')
+const CRMWorkbench =() => import('@/components/views/crm/CRMWorkbench');
 
 // const Blank = () => import('@/components/Blank') 
 // const Ding = () => import('@/components/Ding')  
@@ -71,12 +72,12 @@ export default new Router({
     {
       path: '/',
       name: 'Index',
-      component: BipMapCurrent
+      component: Dashboard
     },
     {
       path: '/index',
       name: 'Dashbord',
-      component: BipMapCurrent
+      component: Dashboard
     },
     {
       path: '/task',

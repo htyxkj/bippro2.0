@@ -28,7 +28,7 @@ export default {
           oldValue:this.oldValue,
           multiple:false
       };
-      console.log(refBackData)
+      // console.log(refBackData)
       if(value !== this.oldValue&&value!==this.upData){
         this.upData = value;
         this.$emit('change',refBackData);
@@ -48,7 +48,7 @@ export default {
     },
   },
   mounted(){
-    console.log("mdInputDate_mounted")
+    // console.log("mdInputDate_mounted")
     if(this.modal&&this.modal[this.cell.id]!=undefined){
       this.oldValue = this.modal[this.cell.id]; 
     }

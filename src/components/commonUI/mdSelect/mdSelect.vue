@@ -136,7 +136,7 @@
 
         this.selectedValue = output.value;
         this.selectedText = output.text;
-        if (this.mdContainer&&this.parentContainer) {
+        if (this.mdContainer&&this.parentContainer) { 
           this.parentContainer.setValue(this.selectedText);
         }
       },
@@ -178,7 +178,7 @@
       },
     },
     mounted() {
-      this.parentContainer = getClosestVueParent(this.$parent, 'md-input-container');
+      this.parentContainer = getClosestVueParent(this.$parent, 'md-input-container'); 
       if (this.mdContainer&&this.parentContainer) {
         this.setParentDisabled();
         this.setParentRequired();

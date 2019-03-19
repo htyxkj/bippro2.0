@@ -39,7 +39,7 @@
                 <md-list class=" md-double-line">
                     <md-subheader>作业区</md-subheader>
                     <md-list-item v-for="(item, index) in operarea" :key="index" > 
-                        <md-checkbox :id='item.id' :name="item.id" v-model="checkbox" :md-value="index+'|'+item.id+'|'+item.scm+'|'+item.boundary+'|'+item.boundary1" class="md-primary"></md-checkbox>
+                        <md-checkbox :id='item.id' :name="item.id" v-model="checkbox" :md-value="index+'|'+item.id+'|'+item.scm+'|'+item.boundary+'|'+item.boundary1+'|'+item.kid" class="md-primary"></md-checkbox>
                         <div class="md-list-text-container">
                             <span>{{item.name}}-{{item.township}}</span> 
                             <p>{{item.address}}</p>
@@ -249,7 +249,7 @@ export default {
             if(this.operarea!=null)
             for(var i=0;i<this.operarea.length;i++){
                 var item =this.operarea[i];
-                var val=i+'|'+item.id+'|'+item.scm+'|'+item.boundary+'|'+item.boundary1;
+                var val=i+'|'+item.id+'|'+item.scm+'|'+item.boundary+'|'+item.boundary1+'|'+item.kid;
                 array.push(val);
             }
             this.checkbox=array;
@@ -289,6 +289,7 @@ export default {
             }
             this.map.clearOverlays(); 
             var ponit =[];
+            // =i+'|'+item.id+'|'+item.scm+'|'+item.boundary+'|'+item.boundary1+'|'+item.kid;
             for(var i=0;i<this.checkbox.length;i++){
                 let item = this.checkbox[i];
                 if(item == null)
@@ -358,7 +359,7 @@ export default {
                         listQY.push(e);
                     }
                 }
-                ponit = this.checkenmap(val[0],listQY,ponit,val[1]+'|'+val[2]);
+                ponit = this.checkenmap(val[0],listQY,ponit,val[5]+'|'+val[2]);
             }
         },
         checkenmap(index,data,ponit1,id){
@@ -462,6 +463,7 @@ export default {
                 }
                 var change = key1 == p.key;
                 if(!change){
+                    // =i+'|'+item.id+'|'+item.scm+'|'+item.boundary+'|'+item.boundary1+'|'+item.kid;
                     var kid = p.id.split('|'); 
                     var pointArr=[];
                     var boundary1="";
@@ -483,7 +485,7 @@ export default {
                     var area = this.calculateArea(pointArr);
 
                     var jsonstr={};
-                    jsonstr["id"]=kid[0];//架区编号
+                    jsonstr["kid"]=kid[0];//架区编号
                     jsonstr["area"] = (area/666.66).toFixed(2);//作业区面积
                     jsonstr["boundary1"]=boundary1;//边界坐标
                     jsonstr["boundary"]=boundary;//边界坐标

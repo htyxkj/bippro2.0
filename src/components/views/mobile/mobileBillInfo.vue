@@ -22,9 +22,23 @@
     <md-part-body>
       <template v-if="dsm&&dsm.ds_sub.length==0">
         <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null">
-          <md-layout>
+          <!-- <md-layout>
             <md-bip-input  :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
-          </md-layout>
+          </md-layout> -->
+          <template v-if="mainTabs.length<=0">
+            <md-layout> 
+              <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+            </md-layout>
+          </template>
+          <template v-else>
+            <md-tabs class="md-transparent"  md-fixed>  
+              <md-tab v-for="(item,index) in mainTabs" :md-label="item.name" :key="index">
+                <md-layout> 
+                  <md-bip-input :dsm="dsm" v-for="(cell,index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" v-if="item.start <= index && item.end >= index"></md-bip-input>
+                </md-layout>
+              </md-tab>
+            </md-tabs>
+          </template>
         </md-content>
       </template>
       <template v-if="dsm&&dsm.ds_sub.length>0">
@@ -87,10 +101,11 @@ export default {
   data() {
     return {
       curr_dsm: null,
-      chkinfo: null
+      chkinfo: null,
+      mainTabs:[],
     };
   },
-  props: { dsm: Object, dsext: Array, opera: Object },
+  props: { dsm: Object, dsext: Array, opera: Object, mparams:Object },
   methods: {
     dataChange(res) {
       // console.log(res);
@@ -372,7 +387,58 @@ export default {
         subdsm.cdata = ccdata;
         this.curr_dsm = subdsm;
       }
+    },
+    //主表多页签
+    creBookmark(){  
+      this.mainTabs = [];
+      let playout = this.mparams.playout; 
+      if(playout.indexOf("T:") !=-1){
+        let one = playout.indexOf("(");
+        let two = playout.lastIndexOf(")");
+        playout = playout.substring(one+1,two);
+        let tabs = playout.split(";");  
+        for(var i =0;i<tabs.length;i++){
+          let name = "";
+          let start = 0;
+          let end = 10000;
+          let cellID = "";
+
+          let tab = tabs[i].split("//");
+          name = tab[1];
+          let cell = tab[0];
+          if(cell.indexOf("[") !=-1){
+            let onezkh = cell.indexOf("[");
+            let twozkh = cell.lastIndexOf("]");
+            let khcont = cell.substring(onezkh+1,twozkh);
+            cell = cell.substring(0,onezkh);
+            let kh = khcont.split("~"); 
+            if(kh[0].length>1){
+              for(var j=0;j<this.dsm.ccells.cels.length;j++){
+                if(kh[0] == this.dsm.ccells.cels[j].id){
+                  start = j;
+                }
+              }
+            }
+            if(kh[1].length>1){
+              for(var j=0;j<this.dsm.ccells.cels.length;j++){
+                if(kh[1] == this.dsm.ccells.cels[j].id){
+                  end = j;
+                }
+              }
+            }
+          } 
+          if(cell.indexOf("#")!=-1){
+            let aa = cell.split("#")[0];
+            cellID = aa.substring(1,aa.length);
+          }else{
+            cellID = cell.substring(1,aa.length);
+          }
+          let t ={name:name,start:start,end:end,cellID:cellID}
+          this.mainTabs.push(t);
+        }
+      }
     }
+
   },
   computed: {
     canEditChild(){
@@ -485,6 +551,7 @@ export default {
   },
   async mounted() {
     if (this.dsm) {
+      this.creBookmark();
       const state = this.dsm.currRecord.sys_stated & billS.INSERT;
       if (this.dsm.ds_sub && state === 0) {
         this.getChildData(this.dsm.ds_sub[0]);
@@ -501,6 +568,12 @@ export default {
           this.dsm.canEdit = false;
         }
       }
+    },
+    dsm(){
+      if(this.dsm){
+        this.dsm.createRecord(); 
+      }
+      this.creBookmark();
     }
   }
 };

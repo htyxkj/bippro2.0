@@ -29,7 +29,7 @@
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
-      <template v-if="dsm&&!dsm.haveChild">
+      <template v-if="dsm&&!dsm.haveChild()"> 
         <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null">
           <!-- <template v-if="inp.length>0">
             <md-layout style="height:auto;margin:0px;padding:0px" v-for="(item,index) in inp" :key="index" >  
@@ -40,11 +40,22 @@
               </md-layout> 
             </md-layout> 
           </template>
-          <template v-else> -->
+          <template v-else> --> 
+          <template v-if="mainTabs.length<=0">
             <md-layout> 
               <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
             </md-layout>
-          <!-- </template>  -->
+          </template>
+          <template v-else>
+            <md-tabs class="md-transparent">  
+              <md-tab v-for="(item,index) in mainTabs" :md-label="item.name" :key="index"  style="padding:0px;">
+                <md-layout> 
+                  <md-bip-input :dsm="dsm" v-for="(cell,index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" v-if="item.start <= index && item.end >= index"></md-bip-input>
+                </md-layout>
+              </md-tab>
+            </md-tabs>
+          </template>
+
           </md-content>
       </template>
       <template v-else>
@@ -59,6 +70,7 @@
               </div> 
           </template>
           <template v-else> -->
+          <!-- </template> -->
             <md-layout>
               <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
             </md-layout> 
@@ -104,6 +116,7 @@ export default {
       istabs:false,//是否是多子表
       flowlist:[], 
       inp:[],
+      mainTabs:[],
     };
   },
   props: { dsm: Object, dsext: Array, opera: Object ,mparams:Object,menuP:Object},
@@ -136,7 +149,6 @@ export default {
       }
     },
     list() {
-      console.log(this.dsm.currRecord);
       var crd = this.dsm.currRecord;
       if ((crd.sys_stated & billS.INSERT) > 0) {
         // var _self = this;
@@ -187,7 +199,7 @@ export default {
         });
     },
     async save() {
-      console.log("asdfasdfasdfsadfasdf");
+      // console.log("asdfasdfasdfsadfasdf");
       if(this.dsm.ccells.subLayCells)
       for(var i = 0; i<this.dsm.ccells.subLayCells.length; i++){
         var aa = this.dsm.ccells.subLayCells[i];
@@ -198,6 +210,7 @@ export default {
         }
       } 
       var str = JSON.stringify(this.dsm.currRecord);  
+      
       if((this.dsm.currRecord&billS.DELETE)==0){
         var isnull = this.checkNotNull(this.dsm);
           if(!isnull)
@@ -298,7 +311,7 @@ export default {
         return;
       }
       var crd = this.dsm.currRecord;
-      console.log('makeCheckParams',this.opera);
+      // console.log('makeCheckParams',this.opera);
       var params = {
         sid: crd[this.opera.pkfld],
         sbuid: crd[this.opera.buidfld],
@@ -529,7 +542,7 @@ export default {
     },
     //计算宽度 
     calculationWidth() { 
-      console.log("计算宽度")
+      // console.log("计算宽度")
       if(this.dsm.ds_sub == null){
         return;
       }
@@ -588,7 +601,7 @@ export default {
     },
     //复制拷贝当前单据
     copy(){
-      console.log("复制当前单据！")
+      // console.log("复制当前单据！")
       var currRecord = this.dsm.currRecord;
       if(currRecord.sys_stated ==3){
         this.$notify.warning({content: '请先保存当前数据！'});
@@ -836,6 +849,56 @@ export default {
     },
     getStyle(ccHorCell){
       return "float: left;width: "+ccHorCell+"%;"
+    },
+    //主表多页签
+    creBookmark(){ 
+      this.mainTabs = [];
+      let playout = this.mparams.playout; 
+      if(playout.indexOf("T:") !=-1){
+        let one = playout.indexOf("(");
+        let two = playout.lastIndexOf(")");
+        playout = playout.substring(one+1,two);
+        let tabs = playout.split(";");  
+        for(var i =0;i<tabs.length;i++){
+          let name = "";
+          let start = 0;
+          let end = 10000;
+          let cellID = "";
+
+          let tab = tabs[i].split("//");
+          name = tab[1];
+          let cell = tab[0];
+          if(cell.indexOf("[") !=-1){
+            let onezkh = cell.indexOf("[");
+            let twozkh = cell.lastIndexOf("]");
+            let khcont = cell.substring(onezkh+1,twozkh);
+            cell = cell.substring(0,onezkh);
+            let kh = khcont.split("~"); 
+            if(kh[0].length>1){
+              for(var j=0;j<this.dsm.ccells.cels.length;j++){
+                if(kh[0] == this.dsm.ccells.cels[j].id){
+                  start = j;
+                }
+              }
+            }
+            if(kh[1].length>1){
+              for(var j=0;j<this.dsm.ccells.cels.length;j++){
+                if(kh[1] == this.dsm.ccells.cels[j].id){
+                  end = j;
+                }
+              }
+            }
+          } 
+          if(cell.indexOf("#")!=-1){
+            let aa = cell.split("#")[0];
+            cellID = aa.substring(1,aa.length);
+          }else{
+            cellID = cell.substring(1,cell.length);
+          }
+          let t ={name:name,start:start,end:end,cellID:cellID}
+          this.mainTabs.push(t);
+        }
+      }
     }
   },
   computed: {
@@ -941,12 +1004,12 @@ export default {
       return true;
     }, 
   }, 
-  async mounted() {  
-    if (this.dsm) {    
-      // console.log("sdfasdfasdfasdf")
+  async mounted() {   
+    if (this.dsm) {
       // this.getMulti_line();
       this.calculationWidth();
       this.constituteChildrens();
+      this.creBookmark();
       const state = this.dsm.currRecord.sys_stated & 1;
       if (this.dsm.ds_sub && state === 0) {
         for(var i =0;i<this.dsm.ds_sub.length;i++){
@@ -973,9 +1036,12 @@ export default {
       }
     },
     dsm(){
-      this.calculationWidth();
       this.constituteChildrens(); 
-      this.dsm.createRecord(); 
+      if(this.dsm){
+        this.dsm.createRecord();   
+        this.calculationWidth();
+      }
+      this.creBookmark();//主表多页签
       // this.getMulti_line();
     }
   }

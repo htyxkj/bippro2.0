@@ -28,6 +28,7 @@
       }
     },
     mounted() {
+      // alert("") 
       this.$nextTick(() => {
         this.parentContainer = getClosestVueParent(this.$parent, 'md-input-container'); 
         if (!this.parentContainer) {

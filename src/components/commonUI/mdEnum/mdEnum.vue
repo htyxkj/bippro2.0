@@ -66,7 +66,7 @@
     created(){
       this.loadData(this.mdEnumId);
     },
-    mounted() {
+    mounted() { 
       this.value&&this.setTextAndValue(this.value);
     },
     beforeDestroy() {

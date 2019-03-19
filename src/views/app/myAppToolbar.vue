@@ -9,9 +9,9 @@
         <md-input class="md-header-search-input" placeholder="搜索"></md-input>
       </md-input-container> --> 
     </div>
-    <div style="font-size:20px">
+    <div style="font-size:20px" v-if="ISPC()">
       <!-- 顶部栏显示名称 -->
-        {{cmcName}}
+        {{cmcName}} 
     </div>
     <md-button class="md-icon-button" md-menu-trigger  @click="isQP"> 
         <md-tooltip md-direction="left">{{qpText}}</md-tooltip>
@@ -229,7 +229,7 @@ export default {
       }
     },
     //获取公司名称
-    getCMCName(){
+    getCMCName(){ 
       let user = JSON.parse(window.sessionStorage.getItem('user')); 
       if(user == null){
         setTimeout(() => {
@@ -246,11 +246,11 @@ export default {
       }; 
       let _this = this;
       axios.post(global.BIPAPIURL+global.API_COM, qs.stringify(param)).then(res => {
-        console.log(res)
         if(res.data.id &&res.data.id !=-1){
 
         }else if(res.data.code && res.data.code ==1){
           _this.cmcName=res.data.values[0][res.data.allCols[0]];
+          
         }
       }); 
     }

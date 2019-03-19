@@ -1,7 +1,6 @@
 <template>
   <md-layout md-flex-xsmall="100" :md-flex-small="callsmall" :md-flex-medium="callmedium" :md-flex-large="calllarge" v-if="cell.isShow">
     <slot name="editor"></slot>
-    
     <template v-if="inputType == INPUT_COMMON" >
       <md-bip-input-comm :cell="cell" :modal="modal"  :ref="cell.id" @change="dataChange"></md-bip-input-comm>
     </template>
@@ -15,13 +14,10 @@
       <md-bip-input-list :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-list>
     </template>
     <template v-if="inputType == INPUT_FILE">
-      <!-- <md-bip-input-file-tmp :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-file-tmp> -->
       <md-bip-input-fileUp :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-fileUp>
     </template>
-      <!-- <md-bip-input-ueditor :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-ueditor> -->
     <template v-if="inputType == INPUT_TEXTAFC"> 
       <md-bip-input-editor  :cell="cell" :modal="modal" :id="cell.id" :ref="cell.id"  @change="dataChange"></md-bip-input-editor >
-      <!-- <md-bip-input-autograph :dsm='dsm' :cell="cell" :modal="modal" @change="dataChange" :ref="cell.id"></md-bip-input-autograph> -->
     </template>
     <template v-if="inputType == INPUT_CHECK">
       <md-bip-input-check :cell="cell"  :modal="modal"  :ref="cell.id" @change="dataChange"></md-bip-input-check>
@@ -31,6 +27,10 @@
     </template>
     <template v-if="inputType == INPUT_AUTOGRAPH">
       <md-bip-input-autograph :dsm='dsm' :cell="cell" :modal="modal" @change="dataChange" :ref="cell.id"></md-bip-input-autograph>
+    </template>
+    <template v-if="inputType == INPUT_DDGPS">
+      <!-- <md-bip-input-autograph :dsm='dsm' :cell="cell" :modal="modal" @change="dataChange" :ref="cell.id"></md-bip-input-autograph> -->
+      <md-bip-input-ddGPS :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-ddGPS>
     </template>
   </md-layout>
 </template>
@@ -121,6 +121,9 @@ export default {
           return;
         }if(this.cell.editType==this.INPUT_AUTOGRAPH){
           this.inputType = this.INPUT_AUTOGRAPH;  
+          return;
+        }if(this.cell.editType==this.INPUT_DDGPS){
+          this.inputType = this.INPUT_DDGPS;  
           return;
         }
         //判断字段是辅助，并且是否是特殊辅助

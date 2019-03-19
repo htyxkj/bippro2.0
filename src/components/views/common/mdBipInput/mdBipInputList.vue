@@ -105,7 +105,7 @@ export default {
       if (value !== this.oldValue) this.$emit("change", refBackData);
     }
   },
-  mounted() {
+  mounted() { 
     if (this.cell) {
       let notedit = this.cell.attr & this.NOTEDIT;
       this.disabled = notedit > 0 ? true : false;

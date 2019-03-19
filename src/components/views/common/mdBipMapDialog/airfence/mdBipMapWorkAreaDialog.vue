@@ -103,7 +103,7 @@
                   <label for="plane">边界坐标</label> 
                   <md-input :required="false" v-model="boundary_1"></md-input>
                 </md-input-container> 
-                 </md-layout>  
+              </md-layout>  
             </md-layout>
           </div>
         </div>
@@ -169,6 +169,7 @@ export default {
       state:'0',//状态*
       boundary1_1:'',//边界坐标
       area_1:0,//作业区面积
+      // oid:"1903%"//主键
     }
   },
   props: {
@@ -245,6 +246,7 @@ export default {
       jsonstr["mkdate"]=moment(new Date()).format("YYYY-MM-DD HH:mm:ss");//制单日期
       jsonstr["state"]=this.state;//状态*
       jsonstr["boundary1"]=this.boundary1_1;//边界坐标
+      // jsonstr["oid"]=this.oid;
 
       var data1 = {
         "dbid": `${global.DBID}`,

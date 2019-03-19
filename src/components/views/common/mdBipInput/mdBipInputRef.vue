@@ -2,11 +2,11 @@
   <md-input-container>
     <div class="md-input-ref layout layout-row">
       <label>{{cell.labelString}}</label>
-        <md-input v-model="refValue" @focus="onFocus" @blur="onBlur" :required="cell.isReq" :disabled="disabled"></md-input>
-        <md-button class="md-icon-button md-ref-filter" @click="openRef()" :disabled="disabled">
-          <md-icon>search</md-icon>
-        </md-button>
-        <md-bip-dia :assType="cell.assType" ref="ref" :mdRefId="cell.editName" :multiple="multiple" :mdSelection="mdSelection" @close="onRefClose" :disabled="disabled"></md-bip-dia>
+      <md-input v-model="refValue" @focus="onFocus" @blur="onBlur" :required="cell.isReq" :disabled="disabled"></md-input>
+      <md-button class="md-icon-button md-ref-filter" @click="openRef()" :disabled="disabled">
+        <md-icon>search</md-icon>
+      </md-button>
+      <md-bip-dia :assType="cell.assType" ref="ref" :mdRefId="cell.editName" :multiple="multiple" :mdSelection="mdSelection" @close="onRefClose" :disabled="disabled"></md-bip-dia>
     </div>
   </md-input-container>
 </template>
@@ -19,12 +19,12 @@ export default {
     return{
       refValue:'',
       refData:{},
-      
+
       // mdSelection:false, 
       // multiple:false
     }
   },
-  mounted(){ 
+  mounted(){  
     if(this.modal){ 
       var bb = this.modal[this.cell.id];
       if(bb){
@@ -36,15 +36,14 @@ export default {
     this.initVV();
   },
   methods:{
-    async initVV(){
-
-      console.log('initVV')
+    async initVV(){ 
+      // console.log('initVV')
       var defv = this.modal[this.cell.id];
       if(defv){
         this.refValue = defv;
         this.onBlur();
       }else{
-        this.refValue='';
+        this.refValue=''; 
         this.refData = {};
         // console.log(this.refData);
       }

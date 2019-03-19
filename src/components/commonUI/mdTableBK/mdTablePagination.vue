@@ -133,7 +133,7 @@
         }
       },
     },
-    mounted() {
+    mounted() { 
       this.mdPageOptions = this.mdPageOptions || [5,10, 25, 50];
       if (this.mdSize > 0){
         this.currentSize = this.mdSize;
