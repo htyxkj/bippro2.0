@@ -92,10 +92,10 @@
           <md-layout v-else-if="biLay == 'card'">  
           <md-layout style="padding:10px;">
             <template v-if="ds_m && ds_m.cdata">
-            <md-card v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 2px 4px 1px;">
+            <md-card v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
               <md-card-expand> 
                 <md-card-header style="    padding-bottom: 0px;padding-top: 10px;">
-                    <md-layout v-for="(item, index) in ds_m.ccells.cels" v-show="(item.attr&0x200)>0" :key="index"  md-gutter  md-flex ="100" :md-gutter="16"> 
+                    <md-layout v-for="(item, index) in ds_m.ccells.cels" v-show="(item.attr&0x200)>0" v-if="item.isShow":key="index"  md-gutter  md-flex ="100" :md-gutter="16"> 
                         <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                         <md-layout md-flex ="65" class="content">
                           <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" ></md-bip-ref>
@@ -104,7 +104,7 @@
                 </md-card-header> 
    
                 <md-card-content> 
-                    <md-layout v-for="(item, index) in ds_m.ccells.cels" :key="index" md-gutter  md-flex ="100" :md-gutter="16"> 
+                    <md-layout v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow" :key="index" md-gutter  md-flex ="100" :md-gutter="16"> 
                       <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                       <md-layout md-flex ="65" class="content">
                         <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" ></md-bip-ref>

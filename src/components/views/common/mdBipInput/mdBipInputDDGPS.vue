@@ -82,7 +82,9 @@
       <md-dialog-content><md-image  :md-src="dlgImgURL"></md-image></md-dialog-content> 
     </md-dialog>
       <md-input :placeholder="cell.labelString" readonly v-model="modal[cell.id]"></md-input>
-      <md-button class="md-icon-button md-clear-input" id="upfile" @click="openDDMap()"><md-icon>pin_drop</md-icon></md-button>
+      <md-button class="md-icon-button md-clear-input" style="margin-right:0px;"  id="upfile" @click="openDDMap()">
+        <md-icon style="margin-right:0px;" >pin_drop</md-icon>
+      </md-button>
     </md-input-container>
 </template>
 

@@ -82,7 +82,7 @@
       <md-dialog-content><md-image  :md-src="dlgImgURL"></md-image></md-dialog-content> 
     </md-dialog>
       <md-input :placeholder="cell.labelString" readonly v-model="modal[cell.id]"></md-input>
-      <md-button class="md-icon-button md-clear-input" id="upfile" @click="openDialog()"><md-icon>insert_drive_file</md-icon></md-button>
+      <md-button class="md-icon-button md-clear-input" style="margin-right:0px;"  id="upfile" @click="openDialog()"><md-icon style="margin-right:0px;" >insert_drive_file</md-icon></md-button>
     </md-input-container>
 </template>
 
