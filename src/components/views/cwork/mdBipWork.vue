@@ -199,7 +199,9 @@ export default {
           }
         }
       }
-      this.$refs["dialog"].open();
+      setTimeout(() => {
+        this.$refs["dialog"].open();  
+      }, 200);
     },
     cancel() {
       // console.log("cccc");
@@ -366,5 +368,13 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+.md-dialog-actions .md-button {
+  min-width: .55rem;
+  margin: 0; 
+  margin-right: .05rem;
+}
+
+</style>
 
 

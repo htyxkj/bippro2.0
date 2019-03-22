@@ -67,7 +67,7 @@
                     <!-- @dblclick.native="dblclick(row)" -->
                     <md-table-cell v-for="(column, columnIndex) in ds_m.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''"  @dblclick.native="openrefs(row,rowIndex,columnIndex)">
                       <md-bip-ref v-if="column.editName!='UPDOWN'" :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,columnIndex)"></md-bip-ref>
-                      <md-bip-button-file-tmp  v-else :cell="fileCell(row)" :modal="fileModal(row)" ref="fj_name"></md-bip-button-file-tmp>
+                      <md-bip-bi-file-up  v-else :cell="fileCell(row)" :modal="fileModal(row)" ref="fj_name"></md-bip-bi-file-up>
                     </md-table-cell>
                   </md-table-row>
                 </md-table-body>

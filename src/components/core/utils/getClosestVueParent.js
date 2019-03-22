@@ -7,6 +7,7 @@ let getClosestVueParent = ($parent, cssClass) => {
     return false;
   }
 
+  if($parent.$el.classList)
   if ($parent.$el.classList.contains(cssClass)) {
     return $parent;
   }

@@ -16,10 +16,10 @@
       @keydown.down="onInput"
       v-on:input="updateValue($event.target.value)"
     >
-    <div md-menu-trigger v-on:click="dateIconClick">
+    <div md-menu-trigger v-on:click="dateIconClick" style="min-width: 0.1rem;max-width: 0.4rem;">
       <slot>
-        <md-button class="md-icon-button" style="margin-right:0px;" :disabled="disabled" v-if="!disabled">
-          <md-icon style="margin-right:0px;" >date_range</md-icon>
+        <md-button class="md-icon-button" :disabled="disabled" v-if="!disabled">
+          <md-icon>date_range</md-icon>
         </md-button>
       </slot>
     </div>

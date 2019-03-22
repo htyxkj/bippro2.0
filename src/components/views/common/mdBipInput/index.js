@@ -40,7 +40,7 @@ export default function install(Vue) {
   Vue.component('md-bip-input', () => import("./mdBipInput")); 
   
   Vue.component('md-bip-input-file-tmp', () => import("./mdBipInputFileTmp"));
-  Vue.component('md-bip-button-file-tmp', () => import("./mdBipButtonFileTmp"));
+  Vue.component('md-bip-bi-file-up', () => import("./mdBipBiFileUp"));
   Vue.component('md-bip-input-fileUp',() => import("./mdBipInputFileUp"));
 
 

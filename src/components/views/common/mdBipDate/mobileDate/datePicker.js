@@ -1,3 +1,4 @@
+ /* jshint esversion: 6 */ 
 export default {
     mounted() { 
 
@@ -59,7 +60,7 @@ export default {
             this.gearDate = document.createElement("div");
             this.gearDate.className = "gearDate";
             this.gearDate.innerHTML = 
-                '<div class="date_ctrl slideInUp">' +
+                '<div class="date_ctrl slideInUp" style="-webkit-overflow-scrolling：auto">' +
                     '<div class="date_btn_box">' +
                         '<div class="date_btn lcalendar_cancel">取消</div>' +
                         '<div class="date_btn lcalendar_finish">确定</div>' +
@@ -109,7 +110,7 @@ export default {
                         '</div>' +
                     '</div>' +
                 '</div>'+
-                '<div class="date_bg" style="width:100%;height:100%;"></div>';
+                '<div class="date_bg" style="width:100%;height:100%;-webkit-overflow-scrolling：auto"></div>';
             document.body.appendChild(this.gearDate);
             this.dateCtrlInit();
             this.timeCtrlInit();
@@ -399,7 +400,7 @@ export default {
                 if (!target.classList.contains("gear")) {
                     target = target.parentElement;
                 } else {
-                    break
+                    break;
                 }
             }
             clearInterval(target["int_" + target.id]);
@@ -418,13 +419,17 @@ export default {
             if (!this.isTouched) return;
             this.isMoved = true;
             e.stopPropagation();
-            if(this.pree) var target = this.pree.target; else
-            var target = e.target;
+            var target;
+            if(this.pree) {
+                target = this.pree.target; 
+            }else{
+                target = e.target;
+            }
             while (true) {
                 if (!target.classList.contains("gear")) {
                     target = target.parentElement;
                 } else {
-                    break
+                    break;
                 }
             }
             target["new_" + target.id] = e.targetTouches ? e.targetTouches[0].screenY : e.pageY;
@@ -442,9 +447,15 @@ export default {
                 return;
             }
             this.isTouched = this.isMoved = false;
-            e.stopPropagation();
-            if(this.pree) var target = this.pree.target; else
-            var target = e.target;
+            e.stopPropagation(); 
+
+            var target;
+            if(this.pree) {
+                target = this.pree.target; 
+            }else{
+                target = e.target;
+            }
+
             while (true) {
                 if (!target.classList.contains("gear")) {
                     target = target.parentElement;

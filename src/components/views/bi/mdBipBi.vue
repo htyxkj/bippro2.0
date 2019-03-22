@@ -17,7 +17,7 @@ export default {
     }
   },
   created(){  
-    this.pc = this.ISPC();
+    this.pc = this.ISPC(); 
   }
 }
 </script>

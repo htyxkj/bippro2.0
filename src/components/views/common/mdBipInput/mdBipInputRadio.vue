@@ -2,7 +2,7 @@
 <template> 
   <md-layout class="md-radio-container md-theme-default md-style" >
     <label :class="mdStyleLable" :for="cell.id">{{cell.labelString}}{{xing}}</label>
-    <md-radio v-model="modal[cell.id]" :md-value="item[header[0]]+''" :id="item[header[0]]" :name="item[header[0]]" v-for="(item,index) in values" :key="index" class="md-primary">
+    <md-radio v-model="modal[cell.id]" :md-value="item[header[0]]+''" :id="item[header[0]]" :name="item[header[0]]" v-for="(item,index) in values" :key="index" class="md-primary" @change="dataCC">
       {{item[header[1]]}}
     </md-radio>
   </md-layout>

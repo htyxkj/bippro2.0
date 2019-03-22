@@ -139,7 +139,7 @@ export default {
       }
       this.$emit("list");
     },
-    async submit() {
+    async submit() { 
       var crd = this.dsm.currRecord;
       if (this.opera) {
         var state = crd[this.opera.statefld];

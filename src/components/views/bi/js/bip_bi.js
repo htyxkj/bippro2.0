@@ -328,6 +328,7 @@ export default {
     },
     //点击弹出框按钮
     dlgBtnClick(btn) { 
+      console.log("DLG按钮")
       if (this.selectData) {
         this.btnDisabled = true;
         let _this = this;
@@ -341,7 +342,7 @@ export default {
               _this.initCell()
             }
           }
-        })
+        });
       }
     },
     onTableSelect(item) {
@@ -350,8 +351,8 @@ export default {
     },
   },
   async mounted(){
-    this.initCell();
-    this.getDlg();
+    await this.initCell();
+    await this.getDlg();
   }, 
   watch:{
     showCont(){

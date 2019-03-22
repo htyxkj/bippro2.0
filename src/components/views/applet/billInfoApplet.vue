@@ -1,6 +1,6 @@
 <template>
   <md-part>
-    <md-part-toolbar>
+    <md-part-toolbar v-if="menuP">
       <md-part-toolbar-group>
         <md-button v-if="menuP.INSERT" :disabled="canCreate" @click.native="create">{{$t('commBtn.B_ADD')}}</md-button> <!--     -->
         <md-button v-if="menuP.DELETE" class="md-accent" :disabled="canDelete" @click.native="delData">{{$t('commBtn.B_DEL')}}</md-button>
@@ -245,6 +245,9 @@ export default {
             await this.makeCheckParams();
         }
         return true;
+      }else{
+        console.log(res.data)
+        this.$notify.danger({content:"保存失败："+res.data.message})
       }
       this.loading = 0;
       // }
@@ -310,8 +313,7 @@ export default {
       if(this.dsm.ccells.cels[this.dsm.ccells.pkindex[this.dsm.ccells.pkindex.length-1]+1].id != this.opera.buidfld) {
         return;
       }
-      var crd = this.dsm.currRecord;
-      // console.log('makeCheckParams',this.opera);
+      var crd = this.dsm.currRecord; 
       var params = {
         sid: crd[this.opera.pkfld],
         sbuid: crd[this.opera.buidfld],
@@ -954,7 +956,7 @@ export default {
         return true;
       }
     },
-    canSubmit() { 
+    canSubmit() {  
       if (this.dsm && this.dsm.currRecord != null && this.chkinfo ) {  
         if (
           (this.dsm.currRecord.sys_stated & billS.INSERT) > 0 ||
@@ -1009,13 +1011,13 @@ export default {
       // this.getMulti_line();
       this.calculationWidth();
       this.constituteChildrens();
-      this.creBookmark();
-      const state = this.dsm.currRecord.sys_stated & 1;
+      this.creBookmark(); 
+      const state = this.dsm.currRecord.sys_stated &  billS.INSERT;
       if (this.dsm.ds_sub && state === 0) {
         for(var i =0;i<this.dsm.ds_sub.length;i++){
           this.getChildData(this.dsm.ds_sub[i]);
-          await this.makeCheckParams();
         }
+        await this.makeCheckParams();
       } else if (this.dsm.ds_sub.length > 0) {
         for(var i =0;i<this.dsm.ds_sub.length;i++){
           this.dsm.ds_sub[i].clearData();

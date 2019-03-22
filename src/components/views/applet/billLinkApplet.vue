@@ -56,8 +56,7 @@ export default {
       if (bok) { 
         this.getMenuP();
         if(this.sidv !== sid ){
-          this.sidv = sid;
-          console.log('获取数据',sid);
+          this.sidv = sid; 
           await this.loadData();
         } 
           this.blink=true;
@@ -123,7 +122,6 @@ export default {
         buid: sbuid
       }; 
       var bb = await this.getDataByAPINewSync(data1);
-      console.log(bb)
       if (bb.data.id == 0) { 
         this.opera = new Operation(bb.data.data.opt);
         return true;

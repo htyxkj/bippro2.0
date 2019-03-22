@@ -37,11 +37,13 @@
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
-      <md-content class="flex layout-column">
+      <md-content>
         <template v-if="showCont">
-          <md-layout md-gutter="4" v-if="ds_cont">
+          <md-layout  md-gutter="4" v-if="ds_cont">
             <template v-if="showAllCont">
-              <md-bip-input :isReport="true" v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
+              <md-layout>
+                <md-bip-input :isReport="true" v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
+              </md-layout>
             </template>
             <template v-else>
               <md-bip-input :isReport="true" v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"></md-bip-input>
@@ -55,7 +57,7 @@
         </template>
         <template v-if="!groupTJ"> 
           <!-- 表格布局 -->
-          <md-layout v-if="biLay =='table' " class="flex">
+          <template v-if="biLay =='table' " class="flex">
             <md-table-card>
               <md-table  @select="onTableSelect" class="flex" v-if="ds_m">
                 <md-table-header v-if="ds_m">
@@ -87,44 +89,43 @@
                 </md-table-pagination>
               </md-table-tool>
             </md-table-card>
-          </md-layout>
+          </template>
           <!-- 卡片布局 -->
-          <md-layout v-else-if="biLay == 'card'">  
-          <md-layout style="padding:10px;">
-            <template v-if="ds_m && ds_m.cdata">
-            <md-card v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
-              <md-card-expand> 
-                <md-card-header style="    padding-bottom: 0px;padding-top: 10px;">
-                    <md-layout v-for="(item, index) in ds_m.ccells.cels" v-show="(item.attr&0x200)>0" v-if="item.isShow":key="index"  md-gutter  md-flex ="100" :md-gutter="16"> 
-                        <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
-                        <md-layout md-flex ="65" class="content">
-                          <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" ></md-bip-ref>
-                        </md-layout>
-                    </md-layout>
-                </md-card-header> 
-   
-                <md-card-content> 
-                    <md-layout v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow" :key="index" md-gutter  md-flex ="100" :md-gutter="16"> 
-                      <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
-                      <md-layout md-flex ="65" class="content">
-                        <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" ></md-bip-ref>
-                      </md-layout>
-                    </md-layout>     
-                </md-card-content>
-                <md-card-actions>  
-                  <md-button :disabled="btnDisabled" v-for="(itembtn,index) in dlgBtn" :key="index" @click.native="moblieButton(itembtn,row)">{{itembtn.name}}</md-button>
-                  <md-button class="md-icon-button" md-expand-trigger>
-                    <md-icon>keyboard_arrow_down</md-icon>
-                  </md-button>
-                </md-card-actions> 
-              </md-card-expand>
-            </md-card>
-            </template>
-            <template v-else> 
-            </template>
-            
-            </md-layout>
-          </md-layout>
+          <template v-else-if="biLay == 'card'">  
+              <template v-if="ds_m && ds_m.cdata"> 
+                <md-layout style="padding:10px;">
+                  <md-card v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
+                    <md-card-expand> 
+                      <md-card-header style="    padding-bottom: 0px;padding-top: 10px;">
+                          <md-layout v-for="(item, index) in ds_m.ccells.cels" v-show="(item.attr&0x200)>0" v-if="item.isShow":key="index"  md-gutter  md-flex ="100" :md-gutter="16"> 
+                              <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
+                              <md-layout md-flex ="65" class="content">
+                                <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" ></md-bip-ref>
+                              </md-layout>
+                          </md-layout>
+                      </md-card-header> 
+        
+                      <md-card-content> 
+                          <md-layout v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow" v-show="(item.attr&0x200)<=0" :key="index" md-gutter  md-flex ="100" :md-gutter="16"> 
+                            <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
+                            <md-layout md-flex ="65" class="content">
+                              <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" ></md-bip-ref>
+                            </md-layout>
+                          </md-layout>     
+                      </md-card-content>
+                      <md-card-actions>  
+                        <md-button :disabled="btnDisabled" v-for="(itembtn,index) in dlgBtn" :key="index" @click.native="moblieButton(itembtn,row)">{{itembtn.name}}</md-button>
+                        <md-button class="md-icon-button" md-expand-trigger>
+                          <md-icon>keyboard_arrow_down</md-icon>
+                        </md-button>
+                      </md-card-actions> 
+                    </md-card-expand>
+                  </md-card> 
+                </md-layout>
+              </template>
+              <template v-else> 
+              </template> 
+          </template>
         </template>
         <template v-else>
           <md-layout class="flex" >
@@ -213,8 +214,9 @@ export default {
         this.biLay = lay.substring(lay.indexOf("\"")+1,lay.lastIndexOf("\""));
       }
     },
-    moblieButton(btn,item){
-      this.selectData = item;
+    moblieButton(btn,item){ 
+      this.selectData = item; 
+      this.ds_m.currRecord = item;
       this.dlgBtnClick(btn);
     }
   },  

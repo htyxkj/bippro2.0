@@ -19,7 +19,7 @@
       :multiple="multiple"
       :accept="accept"
       @change="onFileSelected"
-      ref="fileInput">
+      ref="fileInput"> 
   </div>
 </template>
 
@@ -45,25 +45,27 @@
     watch: {
       value() {
         this.filename = this.value;
+        if(this.value==null){
+          var file = document.getElementById(this.id);
+          file.value = '';
+        }
       }
     },
     methods: {
-      getMultipleName(files) {
-        let names = [];
-
+      getMultipleName(files) { 
+        let names = []; 
         [...files].forEach((file) => {
           names.push(file.name);
-        });
-
+        }); 
         return names.join(', ');
       },
-      openPicker() {
+      openPicker() {  
         if (!this.disabled) {
           this.$refs.fileInput.click();
           this.$refs.textInput.$el.focus();
         }
       },
-      onFileSelected($event) {
+      onFileSelected($event) {  
         const files = $event.target.files || $event.dataTransfer.files;
         // console.log(files)
         if (files) {
@@ -82,13 +84,10 @@
         this.$emit('input', this.filename);
       }
     },
-    mounted() {
-      this.parentContainer = getClosestVueParent(this.$parent, 'md-input-container');
-
-
+    mounted() { 
+      this.parentContainer = getClosestVueParent(this.$parent, 'md-input-container'); 
       if (!this.parentContainer) {
-        this.$destroy();
-
+        this.$destroy(); 
         throw new Error('You should wrap the md-file in a md-input-container');
       }
 

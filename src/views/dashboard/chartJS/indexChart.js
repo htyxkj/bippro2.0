@@ -22,13 +22,13 @@ export default {
     data() {
         return { 
             layoutFigure:[],
-            usercode: JSON.parse(window.sessionStorage.getItem('user')).userCode, //用户编码
+            usercode: '', //用户编码
             constant:'',//常量值
             Figure:[],//图信息
             param:{
                 apiId: "assisto",
                 dbid: `${global.DBID}`,
-                usercode: JSON.parse(window.sessionStorage.getItem('user')).userCode, 
+                usercode: '', 
                 page:1,
                 pagesize:999999,
                 assistid: null,
@@ -37,29 +37,30 @@ export default {
         }
     },
     methods:{
-        async getDateStr(){ 
-            this.constant = window.sessionStorage.getItem('INDEXCONSTANT');
+        async getDateStr(){     
+            this.usercode = JSON.parse(window.sessionStorage.getItem('user')).userCode; //用户编码  
+            this.param.usercode = this.usercode;
+            this.constant = window.sessionStorage.getItem('INDEXCONSTANT'); 
             var data0 = {
                 'dbid': `${global.DBID}`,//数据库连接id 
                 "usercode": this.usercode, //用户编码
                 "apiId": "constant",		    //获取cellID标识 
                 'assistid': "INDEX", 		//辅助,变量标识 如 {&SOPR},{$D.SOPR}    	'cont': "BXQ0000517060001"  //查询条件
-            }; 
+            };   
             if(this.constant==null||this.constant==''){
                 let _this = this;
-                let  str = await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(data0)) .then(res=>{ 
+                await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(data0)) .then(res=>{ 
                     _this.constant=res.data.data.value;
-                    window.sessionStorage.setItem('INDEXCONSTANT',_this.constant); 
-                    // console.log(this.constant)
+                    window.sessionStorage.setItem('INDEXCONSTANT',_this.constant);  
                 }) .catch(err=>{
                     console.log(err)
                 })
-            }
+            } 
             if(this.constant==null||this.constant=='')
                 return;
             //开始拆分 常量信息
-            //XCAR|id,XSORG|orgcode,fcy,YSOFCY|id|sorg,bar,12
-            let arr = this.constant.split(";"); 
+            //XCAR|id,XSORG|orgcode,fcy,YSOFCY|id|sorg,bar,12 
+            let arr = this.constant.split(";");  
             for(var i=0;i<arr.length;i++){ 
                 var arrOne = arr[i];
                 var _arr = arrOne.split(","); 
@@ -71,6 +72,7 @@ export default {
                 for(var j=0;j<_arr.length-4;j++){
                     x.push(_arr[j]);
                 }   
+                
                 //柱状图
                 if(type=='bar'||type=='line'||type =='column'){
                     if(x.length==2)
@@ -118,15 +120,19 @@ export default {
             var value = [];//返回结果 数据
             var _varr = val.split("|");
             //查询数据结果集
-            let params = this.param; 
+            var params = this.param; 
             params.assistid=_varr[0];
             params.pagesize=100000;
             await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(params)) .then(res=>{
-                value = res.data.values;
-                fanhu = res.data;
+                if(res.data.id){
+
+                }else{
+                    value = res.data.values;
+                    fanhu = res.data; 
+                }
             }) .catch(err=>{
-                console.log(err)
-            }) 
+                console.log(err);
+            }) ;
             
             //初始化图表OptiOnsObject.assign({}, lineC.chart);
             var lineChart = JSON.parse(JSON.stringify(lineTwoXC.chart));
@@ -137,17 +143,21 @@ export default {
             //查询X1数据
             var x1 = x[0];
             var x1arr = x1.split("|");
-            let paramsX1 = this.param; 
+            var paramsX1 = this.param; 
             paramsX1.assistid=x1arr[0];
             paramsX1.pagesize=100000; 
             await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(paramsX1)) .then(res=>{
-                X1Val=res.data;
-                console.log(X1Val)
+                if(res.data.id){
+
+                }else{
+                    X1Val=res.data;
+                }
+                console.log(X1Val);
             }) .catch(err=>{
-                console.log(err)
-            }) 
+                console.log(err);
+            });
             if(X1Val.values==null)
-                return
+                return;
             //设置X轴显示图例 
             for(var i=0;i<X1Val.values.length;i++){
                 xtwoData.push(0);
@@ -156,11 +166,11 @@ export default {
             }
             lineChart.xAxis.categories=categories; 
             //筛选数据  
-            let series=[];
+            var series=[];
             //查询X2数据
             var x2 = x[1]; 
             var x2arr = x2.split("|");
-            let paramsX2 = this.param; 
+            var paramsX2 = this.param; 
             paramsX2.assistid=x2arr[0];
             paramsX2.pagesize=100000; 
             await axios.post(`${global.BIPAPIURL}`+`${global.API_COM }`,qs.stringify(paramsX2)) .then(res=>{

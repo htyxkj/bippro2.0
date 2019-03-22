@@ -1,6 +1,19 @@
 <template>
     <div style="background-color:#f6f6f6"> 
         <div>
+
+            <md-layout md-flex-small="100" md-flex="66">
+                <md-card> 
+                <md-card-media>
+                    <md-layout v-for="(item,index) in layoutFigure" :key="index" md-flex="100" md-flex-xsmall="100">
+                    <md-layout v-for="(item_a,index_a) in item" :key="index_a" :md-flex="item_a.width" md-flex-xsmall="100">
+                        <md-chart ref="pieChart" :options="item_a.options" :autoResize="true"></md-chart>
+                    </md-layout> 
+                    </md-layout>
+                </md-card-media>
+                </md-card>
+            </md-layout>
+
             <div v-if="ddApp.length>0" class="blank1"> 
                 <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" class="title"> 
                     应用
@@ -44,6 +57,7 @@
     </div>
 </template>
 <script>
+import indexChart from '@/views/dashboard/chartJS/indexChart.js'
 import qs from 'qs'
 import axios from 'axios'
 import Login from '../views/Login';
@@ -52,6 +66,7 @@ const ICONS = ['menu', 'dashboard', 'verified_user', 'videogame_asset','assessme
 const ICONCOLOR=[{color:'red-700-0.8'},{color:'green'},{color:'indigo'},{color:'blue-700-0.8'},{color:'lime'},{color:'teal'},,{color:'green-600-0.5'}]
 
 export default { 
+    mixins:[indexChart],
     components:{'app-login':Login},
     data() {
         return {
@@ -59,10 +74,10 @@ export default {
             menuList:[],
             ddApp:[],
             code:'',
-            corpId:'',
-            appkey:'',
+            corpId:'', 
             appId:'',
             agentId:'',
+            ddCfg:{}, 
         }
     },
     async mounted(){
@@ -70,32 +85,36 @@ export default {
     },
     async created(){ 
         var lid = window.sessionStorage.getItem('isLogin');
-        if(lid){
-            console.log("已登录") 
+        if(lid){  
             if(this.menuList.length<=0){
                 this.menuList = JSON.parse(window.sessionStorage.getItem('menulist'));
-            }
+            } 
             if(this.ddApp.length<=0){
                 let dapp = window.sessionStorage.getItem('ddApp');
                 if(dapp)
                 this.ddApp = JSON.parse(dapp);
-            }
-        }else{ 
+            }  
+            this.getDDJSTicket(); 
+            this.getDateStr();  
+        }else{  
             this.loading=1; 
-            this.corpId =this.$route.query.corpId   //企业唯一码 
-            this.appkey = this.$route.query.appkey  //应用唯一码
+            this.corpId =this.$route.query.corpId   //企业唯一码  
             this.appId = this.$route.query.appId;   //默认00
             this.agentId = this.$route.query.agentId;//应用id
+ 
+            let ddConfig = {corpId:this.corpId,agentId:this.agentId,bipAppid:this.appId};
+            window.sessionStorage.setItem('ddConfig', JSON.stringify(ddConfig)); 
             let _this =this;
             await dd.ready(function() {
         	    dd.runtime.permission.requestAuthCode({
         	        corpId: _this.corpId,
         	        onSuccess: function(info) {  
                         _this.loginRemote(info.code)
+                        _this.getDDJSTicket();
                     },
         	        onFail : function(err) { }
         	    });
-            }); 
+            });
         }
     },
     methods: {
@@ -110,7 +129,6 @@ export default {
         async loginSuccess(res) {
             this.loading=0;
             if (res.data.id === 0) {
-                console.log("钉钉登录成功！") 
                 var userI = res.data.data.user;
                 var mlist = res.data.data.menulist;
                 var snkey = res.data.data.snkey; 
@@ -132,7 +150,8 @@ export default {
                 window.sessionStorage.setItem('menulist', JSON.stringify(this.menuList));
                 window.sessionStorage.setItem('snkey', JSON.stringify(snkey));
                 window.sessionStorage.setItem('isLogin', true); 
-                await this.getDApp();
+                await this.getDApp();  
+                this.getDateStr();   
             } else {
                 // await this.$router.push(`/`)
                 this.$notify.danger({content: res.data.message})
@@ -143,9 +162,9 @@ export default {
                 apiId: global.APIID_OUTLOGIN,
                 dbid: global.DBID,
                 code: code,
-                corpId:this.corpId,
-                appkey:this.appkey,
+                corpId:this.corpId, 
                 appId:this.appId,
+                agentId:this.agentId,
                 ding:1, 
                 ioutsys:3,
             }
@@ -184,7 +203,56 @@ export default {
                 console.log(err)
             })
             window.sessionStorage.setItem('ddApp', JSON.stringify(this.ddApp));
-        }
+        },
+        async getDDJSTicket(){ 
+            let ddConfig = JSON.parse(window.sessionStorage.getItem('ddConfig'));  
+            if(!ddConfig)
+                return;
+            let url =encodeURIComponent(window.location.href); 
+            
+            this.corpId = ddConfig["corpId"];
+            this.agentId = ddConfig["agentId"]; 
+            let bipAppid = ddConfig["bipAppid"]; 
+            var data = {
+                apiId: global.APIID_DDJSAPI_TICKET,
+                dbid: global.DBID, 
+                url:url, 
+                agentId:this.agentId, 
+                corpId:this.corpId,
+                bipAppid:bipAppid,
+            }  
+            var res = await this.getDataByAPINew(data);   
+            if(res.data.id != undefined){ 
+                if(res.data.id == 0){
+                this.ddCfg = JSON.parse(res.data.message);  
+                let _this= this;  
+                dd.ready(function() { 
+                    dd.runtime.permission.requestAuthCode({
+                        corpId: _this.corpId,
+                        onSuccess: function(info) { 
+                            dd.config({
+                                agentId: _this.agentId, // 必填，微应用ID
+                                corpId: _this.corpId,//必填，企业ID
+                                timeStamp:_this.ddCfg.timeStamp, // 必填，生成签名的时间戳
+                                nonceStr: _this.ddCfg.nonceStr, // 必填，生成签名的随机串
+                                signature: _this.ddCfg.DDJSTICKET, // 必填，签名
+                                type:0,   //选填。0表示微应用的jsapi,1表示服务窗的jsapi；不填默认为0。该参数从dingtalk.js的0.8.3版本开始支持
+                                jsApiList : [
+                                    'biz.map.locate'
+                                ] // 必填，需要使用的jsapi列表，注意：不要带dd。
+                            }); 
+                        },
+                        onFail : function(err) {
+                            alert('dd error: ' +JSON.stringify(error));
+                        }
+                    });
+                }); 
+                dd.error(function(error){ 
+                    alert('dd error: ' +JSON.stringify(error));
+                });
+                } 
+            } 
+        } 
     },
     watch: { 
 

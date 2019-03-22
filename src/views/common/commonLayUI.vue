@@ -1,11 +1,12 @@
 <template>
-  <div>
+  <div v-if="mparams">
+
     <!-- <md-bip-bill v-if="mparams.beBill" :mdTitle="menuTitle" :mparams="mparams"></md-bip-bill> -->
-    <template  v-if="mparams.beBill == true">
+    <template  v-if="mparams.beBill">
       <md-bip-applet :mdTitle="menuTitle" :mparams="mparams"></md-bip-applet>
     </template>
-    <template v-else-if="mparams.beBill == false">
-      <!-- <md-bip-report :mdTitle="menuTitle" :mparams="mparams"></md-bip-report> -->
+    <template v-else>
+      <!-- <md-bip-report :mdTitle="menuTitle" :mparams="mparams"></md-bip-report> --> 
        <md-bip-bi :mdTitle="menuTitle" :mparams="mparams"></md-bip-bi>
     </template>
     <!-- <md-bip-applet v-if="mparams.beBill" :mdTitle="menuTitle" :mparams="mparams"></md-bip-applet>
@@ -20,7 +21,7 @@ export default {
       pbuid: '',
       pmenuid: '',
       menuTitle: '',
-      mparams: {}
+      mparams: null,
     }
   },
   methods: {

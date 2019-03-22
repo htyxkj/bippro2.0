@@ -482,8 +482,8 @@ export default {
                         point.push(Number(path[z].lng), Number(path[z].lat));
                         pointArr.push(point);
                     }  
-                    var area = this.calculateArea(pointArr);
-
+                    // var area = this.calculateArea(pointArr);
+                    var area = this.getArea(boundary1);
                     var jsonstr={};
                     jsonstr["kid"]=kid[0];//架区编号
                     jsonstr["area"] = (area/666.66).toFixed(2);//作业区面积
@@ -599,7 +599,8 @@ export default {
                 point.push(Number(path[i].lng), Number(path[i].lat));
                 pointArr.push(point);
             }  
-            var area = this.calculateArea(pointArr);
+            // var area = this.calculateArea(pointArr);
+            var area = this.getArea(this.boundary1);
             // console.log(aa)
             // console.log(e.calculate)
             this.area = (area/666.66).toFixed(2);
@@ -673,6 +674,27 @@ export default {
                 _this.map.setViewport(pointArray);    //调整视野                 
             });
         },
+
+        //计算面积
+        getArea(data){
+            var s= 0 ;
+            var arr = data.split(';')
+            var arr_len = arr.length;
+            if (arr_len < 3)
+                return 0.0;
+            let temp = []
+            for(var i=0;i<arr_len;i++){
+                temp.push(arr[i].split(','))
+            }
+            s = temp[0][1] * (temp[arr_len -1][0]-temp[1][0])
+            
+            for(var i=1;i<arr_len;i++){ 
+            s += temp[i][1] * (temp[i-1][0] - temp[(i+1)%arr_len][0]) 
+            } 
+            return (Math.abs(s/2)*9101160000.085981);
+	    },
+ 
+        //计算面积第一版 已弃用  原因：计算出的部分是负数
         calculateArea(points) {
             var areaMeters2 = 0;
             if (points.length > 2) { 
@@ -683,6 +705,8 @@ export default {
             }
             return areaMeters2;
         } ,
+
+
         /*平面多边形面积*/
         PlanarPolygonAreaMeters2(points) {
     
@@ -739,6 +763,7 @@ export default {
             angle = angle * this.degreesPerRadian;
             return angle;
         },
+        /**计算面积第一版结束 */
 
         jtclick(){
             if(this.jtIcon =='fast_rewind'){
