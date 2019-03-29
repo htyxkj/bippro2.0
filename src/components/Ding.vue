@@ -2,17 +2,7 @@
     <div style="background-color:#f6f6f6"> 
         <div>
 
-            <md-layout md-flex-small="100" md-flex="66">
-                <md-card> 
-                <md-card-media>
-                    <md-layout v-for="(item,index) in layoutFigure" :key="index" md-flex="100" md-flex-xsmall="100">
-                    <md-layout v-for="(item_a,index_a) in item" :key="index_a" :md-flex="item_a.width" md-flex-xsmall="100">
-                        <md-chart ref="pieChart" :options="item_a.options" :autoResize="true"></md-chart>
-                    </md-layout> 
-                    </md-layout>
-                </md-card-media>
-                </md-card>
-            </md-layout>
+
 
             <div v-if="ddApp.length>0" class="blank1"> 
                 <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" class="title"> 
@@ -40,7 +30,7 @@
                     {{mu.menuName}}
                 </md-layout> 
                 <md-layout md-gutter >
-                    <md-layout  v-for="(item,index) in mu.childMenu" :key="index" md-flex-small="25" md-flex-medium="25" class="title2" >
+                    <md-layout  v-for="(item,index) in mu.childMenu" :key="index" md-flex-small="25" md-flex-medium="25" class="title2" v-if="item.menuattr !=4" >
                         <div v-on:click="url('/layoutui?'+item.command+'&title='+item.menuName)" style="margin:0px;padding:0px;width:100%">
                             <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100">   
                                 <md-icon  v-colors="item.iconcc">{{item.menuIcon}}</md-icon> 
@@ -48,10 +38,38 @@
                             <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" class="title3" md-align="center"> 
                                 <span>{{item.menuName}}</span>
                             </md-layout>
+                            <!-- <md-layout md-gutter>
+                                <md-layout md-column md-gutter>
+                                    <md-layout md-flex="50">
+                                        <md-icon  v-colors="item.iconcc">{{item.menuIcon}}</md-icon>
+                                    </md-layout>
+                                    <md-layout md-flex="50">
+                                        <span>{{item.menuName}}</span>
+                                    </md-layout>
+                                </md-layout>
+
+                                <md-layout md-column md-gutter>
+                                    <md-layout md-flex="100">{{taskNum}}</md-layout> 
+                                </md-layout>
+                            </md-layout> -->
                         </div>
                     </md-layout> 
                 </md-layout> 
             </div>
+
+            <md-layout md-flex-small="100" md-flex="66" style="margin-top:0px">
+                <md-card style="box-shadow: 0px 0px 0px;"> 
+                    <md-card-media>
+                        <md-layout v-for="(item,index) in layoutFigure" :key="index" md-flex="100" md-flex-xsmall="100">
+                        <md-layout v-for="(item_a,index_a) in item" :key="index_a" :md-flex="item_a.width" md-flex-xsmall="100">
+                            <md-chart style="max-height:350px;min-height:250px;" ref="pieChart" :options="item_a.options" :autoResize="true"></md-chart>
+                        </md-layout> 
+                        </md-layout>
+                    </md-card-media>
+                </md-card>
+            </md-layout>
+
+
         </div>
         <md-loading :loading="loading"></md-loading>
     </div>
@@ -78,6 +96,7 @@ export default {
             appId:'',
             agentId:'',
             ddCfg:{}, 
+            taskNum:0,
         }
     },
     async mounted(){
@@ -238,7 +257,8 @@ export default {
                                 signature: _this.ddCfg.DDJSTICKET, // 必填，签名
                                 type:0,   //选填。0表示微应用的jsapi,1表示服务窗的jsapi；不填默认为0。该参数从dingtalk.js的0.8.3版本开始支持
                                 jsApiList : [
-                                    'biz.map.locate'
+                                    'biz.map.locate',
+                                    'biz.map.view',
                                 ] // 必填，需要使用的jsapi列表，注意：不要带dd。
                             }); 
                         },
@@ -252,7 +272,24 @@ export default {
                 });
                 } 
             } 
-        } 
+        },
+        async fetchTaskData() { 
+            var data1 = {
+                'dbid': global.DBID,
+                'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
+                'apiId': global.APIID_CELLPARAM,
+                'pcell': 'SYRW',
+                'pdata': '{brd:0,}',
+                'bebill': 1,
+                'currentPage': 1,
+                'pageSize': 20,
+                'cellid': ''
+            }
+            var res = await this.getDataByAPINew(data1);
+            if(res.data.id==0){
+                this.taskNum = res.data.data.pages.totalItem;
+            }
+        },
     },
     watch: { 
 

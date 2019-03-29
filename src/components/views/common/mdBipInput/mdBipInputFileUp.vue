@@ -71,9 +71,22 @@
       <!-- </div> -->
     </md-dialog>
     <md-dialog ref="dlgImg">  
-      <md-dialog-title> {{ dlgImgNAME }}</md-dialog-title> 
-      <md-dialog-content><md-image  :md-src="dlgImgURL"></md-image></md-dialog-content> 
-    </md-dialog> 
+      <md-dialog-title style="padding-top:.1rem;padding-right:.06rem">
+        <md-layout  md-align="end" style="margin:0px">
+          <md-button class="md-icon-button md-clear-input" @click="closeImgDialog('fDia')">
+            <md-icon>close</md-icon>
+          </md-button> 
+        </md-layout>
+        <md-layout style="margin:0px;word-break: break-word;">
+          {{ dlgImgNAME }}
+        </md-layout>
+      </md-dialog-title> 
+      <md-dialog-content>
+        <viewer :images="imgs">
+            <img v-for="src in imgs"  :src="src.url" :key="src.title">
+        </viewer> 
+      </md-dialog-content>  
+    </md-dialog>  
     <div class="md-input-ref layout layout-row">
       <label>{{cell.labelString}}</label>
       <md-input readonly v-model="modal[cell.id]"></md-input> 
@@ -108,8 +121,7 @@ export default {
       btndis:true,
       bfjRoot:false,
       upLoadFils:[],
-      upLoadDid:'',
-      dlgImgURL:'',
+      upLoadDid:'', 
       dlgImgNAME:'',
       isSave:false,//是否上传过
     };
@@ -161,10 +173,15 @@ export default {
       this.upLoadFils.splice(index, 1);
     },
     //图片预览
-    openImg(fileUrl,fileName){ 
-      this.dlgImgNAME = fileName;
-      this.dlgImgURL = fileUrl;
+    openImg(fileUrl,fileName){  
+      this.dlgImgNAME=fileName;
+      this.imgs=[];
+      let img = {url:fileUrl,title:fileName}
+      this.imgs.push(img);  
       this.$refs.dlgImg.open();
+    },
+    closeImgDialog(){
+      this.$refs.dlgImg.close();
     },
     //确定完成输入
     ok(){

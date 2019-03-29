@@ -153,6 +153,7 @@ export default {
 .md-bip-ref{
   width: 100%;
   height: 100%;
+  word-break: break-word;
   a{
     color: rgba(10, 61, 83, 0.76);
     // text-decoration-line: underline;

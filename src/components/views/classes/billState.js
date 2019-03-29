@@ -9,6 +9,7 @@ const HISTORY = 0x80;//历史数据(仅做为显示用)
 const COPY = 0x100;//从其它记录拷贝过来
 const DICT = 0x200;//记录经过动态字典处理后,置上该标记。
 const POSTED =  0x400; ////记录已提交过
+const LSUPDATE = 0x4000;//临时改
 
 const billState = {
   INSERT,
@@ -21,7 +22,8 @@ const billState = {
   HISTORY,
   COPY,
   DICT,
-  POSTED
+  POSTED,
+  LSUPDATE
 }
 
 export default billState;

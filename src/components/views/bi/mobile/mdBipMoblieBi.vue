@@ -24,6 +24,7 @@
       <!-- 隐藏显示条件按钮  顶部 -->
       <md-part-toolbar-group>
           <md-button @click.native="showSearchInfo">{{showContLabel}}</md-button>
+          <md-button @click.native="lineToColumnRun">{{lineToColumn}}</md-button>
       </md-part-toolbar-group>
       <!-- 常量定义的按钮 -->
       <md-part-toolbar-group v-if="biLay != 'card'">
@@ -69,8 +70,9 @@
                   <md-table-row :class="setRowColor(rowIndex)?'md-tr-color':''" v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" :md-item="row" :md-auto-select="mdAutoSelect"  :md-selection="mdSelection" >
                     <!-- @dblclick.native="dblclick(row)" -->
                     <md-table-cell v-for="(column, columnIndex) in ds_m.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''"  @dblclick.native="openrefs(row,rowIndex,columnIndex)">
-                      <md-bip-ref v-if="column.editName!='UPDOWN'" :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,columnIndex)"></md-bip-ref>
-                      <md-bip-button-file-tmp  v-else :cell="fileCell(row)" :modal="fileModal(row)" ref="fj_name"></md-bip-button-file-tmp>
+                      <md-bip-bi-file-up  v-if="column.editName =='UPDOWN'" :cell="fileFJCell(row)" :modal="fileFJModal(row)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>
+                      <md-bip-input-ddGPS v-else-if="column.editType == 12" :cell="fileMPCell(row)" :modal="fileMPModal(row)" gpsType="showGPS"></md-bip-input-ddGPS>
+                      <md-bip-ref v-else :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref> 
                     </md-table-cell>
                   </md-table-row>
                 </md-table-body>
@@ -91,25 +93,33 @@
             </md-table-card>
           </template>
           <!-- 卡片布局 -->
-          <template v-else-if="biLay == 'card'">  
+          <template v-if="biLay == 'card'">  
               <template v-if="ds_m && ds_m.cdata"> 
                 <md-layout style="padding:10px;">
                   <md-card v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
                     <md-card-expand> 
                       <md-card-header style="    padding-bottom: 0px;padding-top: 10px;">
-                          <md-layout v-for="(item, index) in ds_m.ccells.cels" v-show="(item.attr&0x200)>0" v-if="item.isShow":key="index"  md-gutter  md-flex ="100" :md-gutter="16"> 
+                          <md-layout v-for="(item, index) in ds_m.ccells.cels"  v-if="item.isShow && (item.attr&0x200)>0":key="index"  md-gutter  md-flex ="100" :md-gutter="16"> 
                               <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                               <md-layout md-flex ="65" class="content">
-                                <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" ></md-bip-ref>
+                                <!-- <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref>
+                                <md-bip-bi-file-up  v-else :cell="fileCell(row)" :modal="fileModal(row)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"  ></md-bip-bi-file-up> -->
+                                <md-bip-bi-file-up  v-if="item.editName =='UPDOWN'" :cell="fileFJCell(row)" :modal="fileFJModal(row)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>
+                                <md-bip-input-ddGPS v-else-if="item.editType == 12" :cell="fileMPCell(row)" :modal="fileMPModal(row)" gpsType="showGPS"></md-bip-input-ddGPS>
+                                <md-bip-ref v-else :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref>                              
                               </md-layout>
                           </md-layout>
                       </md-card-header> 
         
                       <md-card-content> 
-                          <md-layout v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow" v-show="(item.attr&0x200)<=0" :key="index" md-gutter  md-flex ="100" :md-gutter="16"> 
+                          <md-layout v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow && (item.attr&0x200)<=0"  :key="index" md-gutter  md-flex ="100" :md-gutter="16"> 
                             <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                             <md-layout md-flex ="65" class="content">
-                              <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" ></md-bip-ref>
+
+                              <md-bip-bi-file-up  v-if="item.editName == 'UPDOWN'" :cell="fileFJCell(row)" :modal="fileFJModal(row)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>
+                              <md-bip-input-ddGPS v-else-if="item.editType == 12" :cell="fileMPCell(row)" :modal="fileMPModal(row)" gpsType="showGPS"></md-bip-input-ddGPS>
+                              <md-bip-ref v-else :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref>                              
+
                             </md-layout>
                           </md-layout>     
                       </md-card-content>
@@ -121,6 +131,18 @@
                       </md-card-actions> 
                     </md-card-expand>
                   </md-card> 
+                </md-layout>
+                <md-layout v-show="pageToolShow">
+                  <md-layout md-flex="50" md-align="center">
+                    <md-button :disabled="pageOn" class="md-dense" @click="getpageOn">
+                      <md-icon>keyboard_arrow_left</md-icon>
+                    </md-button> 
+                  </md-layout>
+                  <md-layout md-flex="50">
+                    <md-button  :disabled="pageNext" class="md-dense" md-align="center" @click="getPageNext">
+                      <md-icon>keyboard_arrow_right</md-icon>
+                    </md-button> 
+                  </md-layout>
                 </md-layout>
               </template>
               <template v-else> 
@@ -187,6 +209,7 @@
       </md-dialog>
     </md-part-body>
     <bill-link-applet ref="sbill"  ></bill-link-applet>
+    <md-bip-bi-dialog ref="biDialog"  ></md-bip-bi-dialog>
   </md-part>
 </template>
 <script> 
@@ -194,11 +217,14 @@ import bipBi from '../js/bip_bi.js'
 import billS from '../../classes/billState';
 import common from '../../commonModal.js'; 
 import billLinkApplet from '../../applet/billLinkApplet'
+import mdBipBiDialog from '../../biDialog/mdBipBiDialog'
 export default { 
-  components:{billLinkApplet},
+  components:{billLinkApplet,mdBipBiDialog},
   data(){
-    return {
-      biLay:"table",  
+    return { 
+      pageOn:true,
+      pageNext:true,
+      pageToolShow:false,
     }
   },
   mixins:[common,bipBi],
@@ -212,19 +238,60 @@ export default {
         pbds = pbds.substring(pbds.indexOf("layout"),pbds.length);
         let lay = pbds.split("&")[0];
         this.biLay = lay.substring(lay.indexOf("\"")+1,lay.lastIndexOf("\""));
+        if(this.biLay =='card'){
+          this.lineToColumn = "列转行";          
+        }
       }
     },
     moblieButton(btn,item){ 
       this.selectData = item; 
       this.ds_m.currRecord = item;
       this.dlgBtnClick(btn);
+    },
+    page(){
+      if(this.pageInfo.page<=1){
+        this.pageOn = true;
+      }else{
+        this.pageOn = false;
+      }
+      if(this.pageInfo.total<=this.pageInfo.size){
+        this.pageToolShow=false;
+      }else{
+        this.pageToolShow=true;
+      }
+      if((this.pageInfo.page*this.pageInfo.size)>this.pageInfo.total){
+        this.pageNext = true;
+      }else{
+        this.pageNext = false;
+      }
+    },
+    getPageNext(){
+      let page={};
+      page.page = this.pageInfo.page+1;
+      page.size=20;
+      this.onTablePagination(page);
+    },
+    getpageOn(){
+      let page={};
+      page.page = this.pageInfo.page-1;
+      page.size=20;
+      this.onTablePagination(page);
     }
+
   },  
   created(){ 
     this.getLayout();
   },
-  mounted(){
-  }, 
+  mounted(){ 
+  },
+  watch:{ 
+    pageInfo:{
+      handler: function () { 
+        this.page();
+      },
+      deep: true
+    }
+  } 
 }
 </script>
 
@@ -254,6 +321,6 @@ export default {
   color: #828282
 }
 .content{
-  border-bottom: 1px solid #8282824a
+  border-bottom: 1px solid #8282824a; 
 }
 </style>

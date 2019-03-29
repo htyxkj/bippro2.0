@@ -2,13 +2,22 @@
 <!-- <transition name="fade"> -->
   <div v-show="blink" >
     <md-sidenav class="md-right md-bill-i" ref="sbill" v-if="opera" @close="close" >  
-        <div style="background-color: rgb(33, 150, 243);color: rgb(255, 255, 255);min-height: .6rem;padding: 0px;margin: 0px;text-align: center;line-height: .6rem;font-size: 0.18rem;">
+        <!-- <div style="background-color: rgb(33, 150, 243);color: rgb(255, 255, 255);min-height: .6rem;padding: 0px;margin: 0px;text-align: center;line-height: .6rem;font-size: 0.18rem;">
           <div style="width:90%; display:inline">{{opera.pname}}</div>
           <div style="width:5%; display:inline;float: right;min-height: .6rem;line-height: .6rem"  @click="blink_close">
               <md-tooltip md-direction="left">关闭</md-tooltip>
               <md-icon>close</md-icon>       
           </div>
-        </div> 
+        </div>  -->
+
+        <md-layout style="background-color: rgb(33, 150, 243);color: rgb(255, 255, 255);min-height: .55rem;padding: 0px;margin: 0px;line-height: .55rem;font-size: 0.18rem;">
+          <md-layout md-flex="90" md-align="center" style="padding: 0px;margin: 0px;">{{opera.pname}}</md-layout>
+          <md-layout md-flex="10" md-align="center" > 
+            <md-button class="md-icon-button" @click="blink_close"  >
+              <md-icon>close</md-icon>
+            </md-button>  
+          </md-layout>
+        </md-layout> 
         <template>
           <!-- <template v-if="isPC"> -->
           <!-- <md-bip-bill-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" :mparams="mparams" @list="list"></md-bip-bill-applet> -->
@@ -164,8 +173,7 @@ export default {
     },
     async loadData(){
       if(this.ds_m == null)
-        return;
-      console.log(this.opera.purl);
+        return; 
       //pdata={sid}
       let bb = {};
       let n = this.opera.purl.split('{');
@@ -188,13 +196,13 @@ export default {
       }
       var res = await this.getDataByAPINewSync(data1);
       // console.log(res,'21321321');
-      if(res.data.id==0){
+      if(res.data.id==0 ){
           let row = res.data.data.pages.celData[0];
-          row.sys_stated = BillState.HISTORY;
-          console.log(res.data.data.pages.celData);
-          this.ds_m.currRecord = row;
-          this.ds_m.addRow(row);
-          console.log(this.ds_m); 
+          if(row){
+            row.sys_stated = BillState.HISTORY;
+            this.ds_m.currRecord = row;
+            this.ds_m.addRow(row);
+          }
       }
     },
     getMenu(menus){
@@ -226,29 +234,10 @@ export default {
     },
     //顶部按钮权限！
     getMenuP(){
-      // console.log("顶部按钮权限！")
-      this.menuP.INSERT=false;
-      // console.log(menuPattr)
-      // console.log(this.mparams.pattr & menuPattr.INSERT)
-      if((this.mparams.pattr & menuPattr.INSERT)>0){
-        this.menuP.INSERT=true;
-      }
-      this.menuP.DELETE=false;      
-      if((this.mparams.pattr & menuPattr.DELETE)>0){
-        this.menuP.DELETE=true;
-      }
-      this.menuP.SAVE=false;      
-      if((this.mparams.pattr & menuPattr.SAVE)>0){
-        this.menuP.SAVE=true;
-      }  
-      this.menuP.FILE=false;      
-      if((this.mparams.pattr & menuPattr.FILE)>0){
-        this.menuP.FILE=true;
-      }  
-      this.menuP.COUNT=false; 
-      if((this.mparams.pattr & menuPattr.COUNT)>0){
-        this.menuP.COUNT=true;
-      }  
+      // console.log("顶部按钮权限！").
+      this.menuP = this.getMenuPermission(this.mparams); 
+      this.menuP.LIST = false;
+      this.menuP.COPY = false; 
     }
   }, 
 };

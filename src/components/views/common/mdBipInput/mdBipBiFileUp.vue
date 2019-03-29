@@ -1,73 +1,78 @@
 <template>
-    <md-input-container>
+  <div>
     <md-dialog md-open-from="#upfile" md-close-to="#upfile" ref="fDia">  
-      <md-dialog-title></md-dialog-title>
+      <md-dialog-title style="padding:0px;    margin: 0px;">
+        <md-layout  md-align="end">
+          <md-button class="md-icon-button md-clear-input" @click="closeDialog('fDia')">
+            <md-icon>close</md-icon>
+            <md-tooltip md-direction="left">关闭</md-tooltip>
+          </md-button> 
+        </md-layout>
+      </md-dialog-title>
       <md-dialog-content :class="ISPC()?classA:classB">  
-        <md-layout md-gutter="8" v-for="(file,index) in srcs" :key="index" class="itemClass">
-            <!-- 编号 -->
-            <md-layout md-column md-gutter class="colClass" md-flex="5" md-flex-xsmall="5" md-flex-small="5">
-              {{index+1}}.
+        <md-layout md-gutter="8" v-for="(file,index) in srcs" :key="index" style=" padding: 0 10px;" >
+          <md-layout md-row md-gutter md-flex="10" class="md-vertical-align-center" style="    padding-top: 3px;">
+            {{index+1}}.
+          </md-layout>
+          <md-layout md-row md-gutter md-flex="15" class="md-vertical-align-center">
+            <md-image style="height:25px;width:25px;" :md-src="file.src" ></md-image>
+          </md-layout>
+          <md-layout md-row md-gutter md-flex="35" class="md-vertical-align-center" style="color:#999;padding-top: 3px;">
+            {{file.name}}
+            <md-tooltip v-if="selFiles"> {{selFiles[index].name}} </md-tooltip> 
+          </md-layout>
+          <!-- 3 --> 
+          <md-layout  md-row md-gutter md-flex="40" class="md-vertical-align-center">
+            <md-layout md-flex="60" class="md-align-end md-vertical-align-center" style="margin:0px;padding:0px;"> 
+              <a @click="download(index)">
+                <img style="width:30px;height:30px" :src="require('@/components/../img/uploadImg/download.png')"/>
+              </a> 
             </md-layout>
-            <!-- 1 -->
-            <md-layout md-column md-gutter class="colClass" md-flex="10" md-hide-small md-hide-xsmall >
-              <md-layout><md-image style="height:100%" :md-src="file.src"></md-image></md-layout>
+            <md-layout md-flex="40" class="md-align-end md-vertical-align-center" style="margin:0px;padding:0px;">  
+              <a @click="openImg(file.opensrc,file.qname)" v-if="file.img">
+                <img style="width:30px;height:30px" :src="require('@/components/../img/uploadImg/open.png')"/>
+              </a>
             </md-layout>
-            <!-- 2 -->
-            <md-layout md-column md-gutter md-flex="50" md-flex-xsmall="40" md-flex-small="45" md-flex-medium="50">
-                <md-layout md-flex="25">
-                    <md-layout md-column md-gutter md-flex="60" md-flex-xsmall="100" md-flex-small="100">
-                      <span class="md-subheading">{{file.name}}</span>
-                      <md-tooltip v-if="selFiles"> {{selFiles[index].name}} </md-tooltip>
-                    </md-layout>
-                    <md-layout md-column md-gutter md-flex="20" md-flex-offset="20" md-hide-small md-hide-xsmall>
-                        <span class="md-subheading">{{file.size}}</span>
-                    </md-layout>
-                </md-layout>
-                <md-layout>
-                    <md-layout md-flex="80" md-column md-gutter md-flex-xsmall="100" md-flex-small="100">
-                      <md-progress :md-progress="progress[index]"></md-progress>
-                    </md-layout>
-                    <md-layout md-column md-gutter md-flex="20" md-flex-offset="20" md-hide-small md-hide-xsmall>
-                      <md-button v-if="!(progress[index]==100)" class="md-accent md-icon-button md-dense cancelClass" @click="delImg(index)">
-                        <md-icon>cancel</md-icon>
-                      </md-button>
-                      <md-icon v-else class="iconClass">check_circle</md-icon>
-                    </md-layout>
-                </md-layout>
-            </md-layout>
-            <!-- 3 --> 
-            <md-layout md-column md-gutter md-flex="15"  md-flex-xsmall="15" md-flex-small="15">
-              <md-button class="md-primary md-raised mybtn" style="margin-top:.15rem;" @click="download(index)" :disabled="!(progress[index]==100)">下载</md-button>
-            </md-layout>
-            <!-- 4 --> 
-            <md-layout md-column md-gutter md-flex="15" md-flex-xsmall="15" md-flex-small="15"  v-if="file.img ==true">
-              <md-button class="md-primary md-raised mybtn" style="margin-top:.15rem;" @click="openImg(file.src,file.qname)" :disabled="!(progress[index]==100)">打开</md-button>
-            </md-layout>
+          </md-layout> 
         </md-layout> 
-      </md-dialog-content>
-      <md-dialog-actions class="actionC"> 
-        <md-button class="md-raised" @click="closeDialog('fDia')">取消</md-button>
-      </md-dialog-actions> 
+      </md-dialog-content> 
     </md-dialog>
     <md-dialog ref="dlgImg">  
-      <md-dialog-title> {{ dlgImgNAME }}</md-dialog-title> 
-      <md-dialog-content><md-image  :md-src="dlgImgURL"></md-image></md-dialog-content> 
-    </md-dialog> 
-    <div class="md-input-ref layout layout-row">
-      <md-input :placeholder="cell.labelString" readonly v-model="modal[cell.id]"></md-input>
-      <md-button class="md-icon-button md-clear-input" id="upfile" @click="openDialog()">
-        <md-icon>cloud_download</md-icon>
-        <md-tooltip md-direction="left">附件下载</md-tooltip>
-      </md-button>
-    </div>
-    
-
-    </md-input-container>
+      <md-dialog-title style="padding-top:.1rem;padding-right:.06rem">
+        <md-layout  md-align="end" style="margin:0px">
+          <md-button class="md-icon-button md-clear-input" @click="closeImgDialog('fDia')">
+            <md-icon>close</md-icon>
+          </md-button> 
+        </md-layout>
+        <md-layout style="margin:0px;word-break: break-word;">
+          {{ dlgImgNAME }}
+        </md-layout>
+      </md-dialog-title> 
+      <md-dialog-content>
+        <viewer :images="imgs">
+            <img v-for="src in imgs"  :src="src.url" :key="src.title">
+        </viewer> 
+      </md-dialog-content>  
+    </md-dialog>  
+    <div class="md-input-ref layout layout-row"> 
+      <md-layout md-flex="95" class="margin0" style="min-height:24px">
+        {{modal[cell.id]}}
+      </md-layout>
+      <md-layout md-flex="5" md-align-end class="margin0" style="min-height:24px">
+        <md-button class="md-icon-button md-ref-filter " @click="openDialog()" style="margin:0px">
+          <md-icon  style="margin:0px;;height:24px">cloud_download</md-icon>
+          <md-tooltip md-direction="left">附件下载</md-tooltip>
+        </md-button>
+      </md-layout>
+    </div>   
+  </div>  
 </template>
 
 <script>
 import axios from "axios";
 import comm from './modal.js';
+
+
 export default {
   data() {
     return {
@@ -88,7 +93,7 @@ export default {
       bfjRoot:false,
       upLoadFils:[],
       upLoadDid:'',
-      dlgImgURL:'',
+      imgs:[],
       dlgImgNAME:'',
       isSave:false,//是否上传过
     };
@@ -112,69 +117,17 @@ export default {
       var fjroot = this.bfjRoot?this.modal.fj_root:'';
       var updid =  global.APIID_FILEDOWN;
      window.location.href = global.BIPAPIURL+global.API_UPD+'?snkey='+snkey+'&fjroot='+fjroot+'&updid='+updid+'&fjname='+name;
-    },
-    //删除
-    async delFile(index){
-      var name = this.selFiles[index].name;
-      var params = {
-        snkey: JSON.parse(window.sessionStorage.getItem('snkey')),
-        fjroot: this.bfjRoot?this.modal.fj_root:'',
-        fjname: name,
-        updid: global.APIID_FILEDEL
-      };
-      var fl = this.selFiles[index];
-      if(fl.size>0){
-        var res = await this.getFileByAPINewSync(params);
-        if(res.data.id==0){
-          this.removeIndex(index);
-        }
-      }else{
-        this.removeIndex(index);
-      }
-    },
-    removeIndex(index){
-      this.srcs.splice(index, 1);
-      this.selFiles.splice(index, 1);
-      this.progress.splice(index, 1);
-      this.myFiles.splice(index, 1);
-      this.upLoadFils.splice(index, 1);
-    },
+    }, 
     //图片预览
     openImg(fileUrl,fileName){ 
-      this.dlgImgNAME = fileName;
-      this.dlgImgURL = fileUrl;
+      this.dlgImgNAME=fileName;
+      this.imgs=[];
+      let img = {url:fileUrl,title:fileName}
+      this.imgs.push(img);  
       this.$refs.dlgImg.open();
-    },
-    //确定完成输入
-    ok(){
-      // if(this.isSave == false && this.selFiles.length >0){
-      //   this.save()
-      // }
-      // console.log('ok');
-      var fjroot = this.upLoadDid;//附件地址
-      var fjname = "";
-      if(this.upLoadFils.length>0){
-        _.forEach(this.upLoadFils,flv=>{
-          if(this.bfjRoot){
-            fjname+=flv+';';
-          }else{
-            fjname+=fjroot+'/'+flv+';'
-          }
-        });
-        fjname = fjname.substring(0,fjname.length-1);
-        // console.log(fjname);
-        this.$set(this.modal,this.cell.id,fjname);
-        this.$set(this.modal,'fj_root',fjroot);
-      }else{
-        this.$set(this.modal,this.cell.id,'');
-        this.$set(this.modal,'fj_root','');
-      }
-      var sta = this.modal.sys_stated;
-      sta = sta | 2;
-      // console.log(sta,'state');
-      this.$set(this.modal,'sys_stated',sta);
-      this.$refs.fDia.close();
-      this.isSave = false;
+    }, 
+    closeImgDialog(){
+      this.$refs.dlgImg.close();
     },
     //清空列表
     clear() {  
@@ -185,19 +138,7 @@ export default {
 			this.srcs = [];
       this.progress = [];
       this.upLoadFils = []; 
-    },
-    delImg(index) {
-      console.log(this.selFiles);
-      this.srcs.splice(index, 1);
-			this.selFiles.splice(index, 1);
-			this.progress.splice(index, 1);
-      this.num = this.selFiles.length;
-      if (this.selFiles.length == 0) {
-        this.clear();
-      } else {
-        this.placeholder = this.selFiles[this.selFiles.length - 1][0].name;
-      }
-    },
+    }, 
     selectFile(e){ 
       for (var i = 0; i < e.target.files.length; i++) {
         var file = e.target.files.item(i);  
@@ -229,73 +170,7 @@ export default {
             that.srcs.push(_srcs)
         };
       }
-    },
-    save() {
-      if (this.selFiles.length < 1) {
-        this.$notify.danger({ content: "请选择要上传的文件！" });
-        this.clear();
-        return;
-      }
-      // var files = null;
-      for (let i = 0; i < this.selFiles.length; i++) {
-        if(this.progress[i]===100)
-          continue;
-        var file = this.selFiles[i];
-        var arg = {
-          data: {'file':file}
-        };
-        // console.log(arg,i);
-				this.upLoadSliceF(arg,i);
-      }
-      this.isSave=true;
-		},
-		upLoadSliceF(arg,_idx){ 
-      let dfconfig = {
-        headers: {
-        'Content-Type': 'multipart/form-data'
-        },
-        params:{
-					snkey:JSON.parse(window.sessionStorage.getItem('snkey')),
-        }
-      };
-      var file = arg.data.file,name = file.name,size = file.size;
-      var succeed = 0;
-      var shardSize = 2 * 1024 * 1024,    //以2MB为一个分片
-      shardCount = Math.ceil(size / shardSize);  //总片数
-      var fkey = this.makePath();
-      const url = global.BIPAPIURL+global.API_UPD;
-      for(var i = 0;i < shardCount;i++){
-        var start = i * shardSize,end = Math.min(size, start + shardSize);
-        var form = new FormData();
-        var config  = dfconfig;
-        config.params.name = name;
-        config.params.total = shardCount;//总片数
-        config.params.fkey = fkey;//当前是第几片
-        config.params.fid = _idx;//当前是第几片
-        config.params.fjkey = this.cell.c_par.obj_id;
-        config.params.updid = global.APIID_FILEUP;
-        form.append("index", i);
-        form.append("total",shardCount);
-        form.append("fjroot",this.upLoadDid);
-				form.append("data", file.slice(start,end));  //slice方法用于切出文件的一部分
-        axios.post(url,form,config).then((res)=>{
-          // console.log(res);
-          if(res.data.id==-1){
-            this.$notify.danger({ content: "上传失败！", placement: "mid-center" });
-          }else{
-            succeed++;
-            var pro = res.data.data.pros;
-            var id = res.data.data.fid;
-            this.setProgress(id,pro);
-            if(res.data.id==0){
-              this.$notify.success({ content: "上传完成！", placement: "mid-center" });
-              this.upLoadFils[id] = res.data.data.fname;
-              this.upLoadDid = res.data.data.fj_root;
-            }
-          }
-        });
-      }
-		},
+    },  
 		setProgress(index,data){
 			this.$set(this.progress,index,data);
 		},
@@ -333,7 +208,7 @@ export default {
           var snkey = JSON.parse(window.sessionStorage.getItem('snkey'));
           var fjroot = this.bfjRoot?this.modal.fj_root:'';
           var updid =  global.APIID_FILEDOWN;
-          _srcs.src = global.BIPAPIURL+global.API_UPD+'?snkey='+snkey+'&fjroot='+fjroot+'&updid='+updid+'&fjname='+name;
+          _srcs.opensrc = global.BIPAPIURL+global.API_UPD+'?snkey='+snkey+'&fjroot='+fjroot+'&updid='+updid+'&fjname='+name;
           _srcs.img = true;
         }
         this.srcs.push(_srcs);
@@ -382,27 +257,28 @@ export default {
 .myimg{position: relative;width:10% !important;height: 10% !important;}
 .imgClassA{overflow-y: auto;max-height: 4rem;overflow-x:hidden; }
 @media screen and (min-width:300px) and (max-width:321px){
-    .classB{min-height:2rem;max-height: 5rem;    min-width: 1rem;}
+    .classB{max-height: 5rem;    min-width: 1rem;}
 }
 @media screen and (min-width:321px) and (max-width:361px){
-    .classB{min-height:2rem;max-height: 5rem;     min-width: 1rem;}
+    .classB{max-height: 5rem;     min-width: 1rem;}
 }
 @media screen and (min-width:362px) and (max-width:380px){
-    .classB{min-height:2rem;max-height: 5rem;     min-width: 1rem;}
+    .classB{max-height: 5rem;     min-width: 1rem;}
 }
 @media screen and (min-width:381px) and (max-width:412px){
-    .classB{min-height:2rem;max-height: 6rem;     min-width: 1rem;}
+    .classB{max-height: 6rem;     min-width: 1rem;}
 }
 @media screen and (min-width:413px){
-    .classB{min-height:2rem;max-height: 6rem;    min-width: 1rem;}
-} 
-.itemClass{max-height: .6rem;position: relative;width: 100%;padding-left: .1rem;}
+    .classB{max-height: 6rem;    min-width: 1rem;}
+}  
 .iconClass{padding-bottom: .2rem;color:#22bf22; } 
 .mybtn{min-width: .4rem;min-height: .3rem;font-size: .12rem;line-height: .3rem;padding: 0; margin: 0px}
 .md-gutter-8 .md-column > .md-layout{padding-bottom: 0;}
 .cancelClass{position: absolute;bottom: .15rem;margin-left: .18rem;} 
-.colClass{max-height: .6rem;line-height: .5rem;} 
- 
+.colClass{max-height: .6rem;line-height: .5rem;font-size: 14px;} 
+.margin0{
+  margin: 0px;
+}
 </style>
 
 

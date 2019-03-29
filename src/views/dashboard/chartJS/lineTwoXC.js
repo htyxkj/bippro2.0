@@ -34,6 +34,17 @@ module.exports = {
         borderWidth: 0
       }
     },
-    series: []
+    series: [],
+    exporting: {
+			enabled: true
+    },
+    lang:{ 
+      printChart: '打印图表',
+      downloadPNG: '下载JPEG 图片',        
+      downloadJPEG: '下载JPEG文档',
+      downloadPDF: '下载PDF 图片',
+      downloadSVG: '下载SVG 矢量图',        
+      contextButtonTitle: '下载图片'
+  }
   }
 }

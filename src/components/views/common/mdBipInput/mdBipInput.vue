@@ -1,5 +1,5 @@
 <template>
-  <md-layout md-flex-xsmall="100" :md-flex-small="callsmall" :md-flex-medium="callmedium" :md-flex-large="calllarge" v-if="cell.isShow">
+  <md-layout  md-flex-xsmall="100" :md-flex-small="callsmall" :md-flex-medium="callmedium" :md-flex-large="calllarge" v-if="cell.isShow">
     <slot name="editor"></slot>
     <template v-if="inputType == INPUT_COMMON" >
       <md-bip-input-comm :cell="cell" :modal="modal"  :ref="cell.id" @change="dataChange"></md-bip-input-comm>
@@ -29,16 +29,19 @@
       <md-bip-input-autograph :dsm='dsm' :cell="cell" :modal="modal" @change="dataChange" :ref="cell.id"></md-bip-input-autograph>
     </template>
     <template v-if="inputType == INPUT_DDGPS">
-      <!-- <md-bip-input-autograph :dsm='dsm' :cell="cell" :modal="modal" @change="dataChange" :ref="cell.id"></md-bip-input-autograph> -->
-      <md-bip-input-ddGPS :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-ddGPS>
+      <md-bip-input-ddGPS :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange" gpsType="getGPS"></md-bip-input-ddGPS>
     </template>
+    <template v-if="inputType == INPUT_SWITCH">
+      <md-bip-input-switch  :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-switch>
+    </template>
+
   </md-layout>
 </template>
 <script>
 import comm from './modal.js';
 export default {
   mixins:[comm],
-  props: {isReport:{default:null},dsm:{default:null,type:Object}},
+  props: {isReport:{default:null},dsm:{default:null,type:Object},showsth:{default:null}},
   data () {
     return {
       inputType: 0,
@@ -47,8 +50,8 @@ export default {
     }
   },
   created () {   
-    this.is_Report= this.isReport==undefined?false:true;  
-    this.initType(); 
+    this.is_Report= this.isReport==undefined?false:true;   
+    this.initType();  
   },
   watch:{
     'cell': function(){
@@ -98,7 +101,12 @@ export default {
     }
   },
   methods: {
-    dataChange (data) {  
+    dataChange (data) {
+      if(this.showsth){
+        if(this.showsth.field == data.cellId){
+          this.$emit('changeShowSth',data.cellId)
+        }
+      }
       this.$emit('change',data);
     },
     initType(){ 
@@ -124,6 +132,9 @@ export default {
           return;
         }if(this.cell.editType==this.INPUT_DDGPS){
           this.inputType = this.INPUT_DDGPS;  
+          return;
+        }if(this.cell.editType == this.INPUT_SWITCH){
+          this.inputType = this.INPUT_SWITCH;
           return;
         }
         //判断字段是辅助，并且是否是特殊辅助
@@ -165,4 +176,11 @@ export default {
   }
 }
 </script>
+<style>
+.md-bip-ref{
+    width: 100%;
+    height: 100%;
+    word-break: break-word;
+}
+</style>
 

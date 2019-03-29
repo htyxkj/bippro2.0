@@ -74,9 +74,11 @@ export default {
         let HighchartsMore = await import('highcharts/highcharts-more.js');
         let SolidGauge = await import('highcharts/modules/solid-gauge.js');
         let funnel = await import('highcharts/modules/funnel.js');
+        // let exporting = await import('highcharts/modules/exporting.js');
         HighchartsMore(this.Highcharts)
         SolidGauge(this.Highcharts)
         funnel(this.Highcharts) 
+        // exporting(this.Highcharts) 
       }
       options = options || this.options;
       if (options) {

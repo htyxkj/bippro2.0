@@ -1,5 +1,5 @@
 <template>
-<div>
+<div v-if="show">
   <md-dialog ref="dialog" :md-click-outside-to-close="false" :md-esc-to-close="false">
       <!-- title -->
       <md-dialog-title> <div class="dia-title">{{btnInfo.name}}</div></md-dialog-title>
@@ -20,7 +20,7 @@
     <!-- title -->
     <md-dialog-title> <div class="dia-title">{{btnInfo.name}}</div></md-dialog-title>
     <!-- content -->
-    <md-dialog-content class="contentC"> 
+    <md-dialog-content class="contentCMsg"> 
       <br/>
      　　　　 {{btnInfo.cellID}} 　　　　
       <br/>
@@ -31,23 +31,32 @@
     </md-dialog-actions>
   </md-dialog> 
 
-  <md-dialog ref="dialogMenu" :md-click-outside-to-close="false" :md-esc-to-close="false">
-      <!-- title -->
+  <!-- <md-dialog ref="dialogMenu" :md-click-outside-to-close="false" :md-esc-to-close="false">
       <md-dialog-title> <div class="dia-title">{{btnInfo.name}}</div></md-dialog-title>
-      <!-- content -->
-      <md-dialog-content class="contentC"> 
-          <!-- <md-layout v-if="ds_m !=null && ds_m.ccells !=null" >
-            <md-bip-input :dsm="ds_m" v-for="cell in ds_m.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="ds_m.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
-          </md-layout>  -->
-          <md-bip-bill-applet v-if="ds_m && ds_m.currRecord" :dsm="ds_m" :opera="opera" :mparams="mparams"></md-bip-bill-applet>
-      </md-dialog-content>
-      <!-- action -->
+      <md-dialog-content :class="ISPC()?contentCMenu:''" >  
+      </md-dialog-content> 
       <md-dialog-actions class="actionC">
         <md-button class="md-raised btn " @click="closeDialog">取消</md-button>
         <md-button class="md-primary md-raised btn" @click="okmenuid" >确定</md-button>
       </md-dialog-actions>
-  </md-dialog>
+  </md-dialog> -->
 
+  <div v-if="showMenu">
+    <md-sidenav class="md-right md-bill-i" ref="sbillSidenav" @close="dialogClose" >  
+      <md-layout style="background-color: rgb(33, 150, 243);color: rgb(255, 255, 255);min-height: .55rem;padding: 0px;margin: 0px;line-height: .55rem;font-size: 0.18rem;">
+        <md-layout md-flex="90" md-align="center" style="padding: 0px;margin: 0px;">{{btnInfo.name}}</md-layout>
+        <md-layout md-flex="10" md-align="center"> 
+          <md-button class="md-icon-button" @click="dialogClose1">
+            <md-icon>close</md-icon>
+          </md-button>  
+        </md-layout>
+      </md-layout> 
+      <template>
+        <md-bip-bill-applet  v-if="ds_m && ds_m.currRecord" :dsm="ds_m" :opera="opera" :mparams="mparams" :menuP="menuP"></md-bip-bill-applet>
+      </template>
+      <md-loading :loading="loading"></md-loading>
+    </md-sidenav>
+  </div>
 </div>
 </template>
 
@@ -55,7 +64,10 @@
 import axios from 'axios'
 import moment from 'moment'
 import qs from 'qs'
-import CDataSet from "../classes/CDataSet"; 
+import menuPattr from "../classes/menuPattr";
+import CDataSet from "../classes/CDataSet";  
+import Operation from "../operation/operation"; 
+import BillState from '../classes/billState';
 export default {
   data() {
     return {
@@ -63,48 +75,44 @@ export default {
       cells:null, 
       ds_m:null,
       mparams:null,
+      opera:null,
+      contentCMenu:'contentCMenu',
+      contentCMenuNoPC:'contentCMenuNoPC',
+      menuP:{},//顶部按钮权限
+      btnInfo:null,
+      selectData:null,
+      cdsm:null,
+      getOpt:null,
+      loading:0,
+      showMenu:false,
+      show:false,
     }
   },
-  props: {
-    getOpt:{
-      type:Function,
-    }, 
-    btnInfo:null,  //{name:b[0],cellID:b[1],key:b[2]};
-    selectData:null,  
-    cdsm:null,
-  },
+  // props: {
+  //   getOpt:{
+  //     type:Function,
+  //   }, 
+  //   btnInfo:null,  //{name:b[0],cellID:b[1],key:b[2]};
+  //   selectData:null,  
+  //   cdsm:null,
+  // },
   methods: {
-    ok() {  
-      let pcell = this.btnInfo.cellID
+    async ok() {   
+      this.loading=1; 
+      let pcell = this.ds_m.pcell;
       var jsonstr={};
       jsonstr = this.ds_m.currRecord;
-      jsonstr["sys_stated"]=2;//单据状态 
-      var data1 = {
-        "dbid": `${global.DBID}`,
-        "usercode": JSON.parse(window.sessionStorage.getItem('user')).userCode,
-        "apiId": "savedata", //cellparam pbuid=21243&pmenuid=22403
-        "pcell": pcell,
-        "jsonstr":JSON.stringify(jsonstr),
-        "datatype":1
-      };
-      this.loading=1;
-      let _this =this;
-      var state=0;
-      axios.post(`${global.BIPAPIURL}`+`${global.API_COM}`,qs.stringify(data1)) .then(res=>{ 
-        console.log(res.data)
-          if(res.data.id==0){
-            _this.$notify.success({content:'保存成功'})
-            _this.getOpt(1)
-            _this.closeDialog()
-          }else{
-            _this.$notify.danger({content:'保存失败'})
-          }  
-          _this.loading=0;
-      }) .catch(err=>{
-          console.log(err)
-          _this.$notify.danger({content:'系统故障！'})
-          _this.loading=0;
-      })  
+      jsonstr["sys_stated"]=2;//单据状态  
+      var options = { pcell: pcell, jsonstr: JSON.stringify(jsonstr) };
+      var res = await this.saveData(options);
+      if(res.data.id==0){
+        this.$notify.success({content:'保存成功'})
+        this.getOpt(1)
+        this.closeDialog()
+      }else{
+        this.$notify.danger({content:'保存失败'})
+      }  
+      this.loading=0; 
     }, 
     oksql(){
       var jsonstr={};
@@ -125,7 +133,9 @@ export default {
             _this.getOpt(1)
             _this.closeDialog()
           }else{
-            _this.$notify.danger({content:'操作失败！'})
+            _this.$notify.danger({content:res.data.message})
+            _this.getOpt(1)
+            _this.closeDialog()
           }  
           _this.loading=0;
       }) .catch(err=>{
@@ -134,14 +144,35 @@ export default {
           _this.loading=0;
       })
     },
-    okmenuid(){
-
+    async okmenuid(){
+      this.loading=1; 
+      let pcell = this.ds_m.pcell;
+      var jsonstr={};
+      jsonstr = this.ds_m.currRecord;
+      var options = { pcell: pcell, jsonstr: JSON.stringify(jsonstr) };
+      var res = await this.saveData(options);
+      if(res.data.id==0){
+        this.$notify.success({content:'保存成功'})
+        this.getOpt(1)
+        this.closeDialog()
+      }else{
+        this.$notify.danger({content:'保存失败'})
+      }  
+      this.loading=0; 
+    },
+    dialogClose(){
+      this.getOpt(1);
+      this.showMenu=false;
+    },
+    dialogClose1(){
+      this.getOpt(1);
+      this.$refs.sbillSidenav.close();
+      this.showMenu=false;
     },
     closeDialog() {
-      this.getOpt(0)
-      this.$refs.dialog.close()
-      this.$refs.dialogMsg.close() 
-      this.$refs.dialogMenu.close()
+      this.getOpt(0);
+      this.$refs.dialog.close();
+      this.$refs.dialogMsg.close();
     }, 
     async getCell(pcell) {
       if(pcell == null){
@@ -237,8 +268,11 @@ export default {
         menu = JSON.parse(window.sessionStorage.getItem('menulist')); 
       for(var i=0;i<menu.length;i++){
         let one = menu[i];
-        if(one.hhaveChild){
-          return this.getPbuid(menuid,one.childMenu);
+        if(one.haveChild){
+          let pbuid0 =  this.getPbuid(menuid,one.childMenu);
+          if(pbuid0){
+            return pbuid0;
+          }
         }else{
           if(one.menuId == menuid){
             var command = one.command;//pbuid=800312&pmenuid=800312
@@ -246,7 +280,7 @@ export default {
             for(var j =0;j<cc.length;j++){
               let aa = cc[j];
               if(aa.indexOf("pbuid")!=-1){
-                return aa.split("=")[1];
+                return aa.split("=")[1]; 
               }
             }
           }
@@ -271,37 +305,80 @@ export default {
         return false;
       }
     },
+    //顶部按钮权限！
+    getMenuP(){
+      // console.log("顶部按钮权限！")
+      this.menuP = this.getMenuPermission(this.mparams); 
+      this.menuP.LIST = false;
+      this.menuP.COPY = false;    
+    },
+    async openREF(btn,selectData,ds_m,getOpt){
+
+      this.cdsm = ds_m;
+      this.getOpt = getOpt;
+      this.btnInfo=btn;
+      this.selectData = selectData;
+      this.ds_m = null;
+      this.show=true;
+      if(this.btnInfo.type =='B'){//根据对象
+        await this.getCell(null);
+        await this.initCellData();
+        if(!this.$refs.dialog){
+          setTimeout(() => {
+            this.$refs.dialog.open();  
+          }, 100);
+        }else{
+          this.$refs.dialog.open();  
+        }
+      }else if(this.btnInfo.type =='A'){//执行SQL 
+        if(!this.$refs.dialogMsg){
+          setTimeout(() => {
+            this.$refs.dialogMsg.open();  
+          }, 100);
+        }else{
+          this.$refs.dialogMsg.open();  
+        }
+      }else if(this.btnInfo.type == 'C'){//根据菜单号
+        this.loading++;
+        if(await this.getParams(this.btnInfo.cellID) == false){
+          this.$notify.warning({ content: "没有菜单权限！" + this.btnInfo.cellID + "!" });
+          this.closeDialog();
+        }else{
+          this.showMenu = true;
+          await  this.getCell(this.mparams.pcell);
+          this.ds_m.createRecord();
+          this.getMenuP();
+          let dz = this.btnInfo.key.split(",");
+          if(dz.length>1){ 
+            for(var i=1;i<dz.length;i++){
+              let vv = dz[i].split("=");
+              this.ds_m.currRecord[vv[1]] = this.selectData[vv[0]];
+            }
+          }
+          if(!this.$refs.sbillSidenav){
+            setTimeout(() => {
+              this.$refs.sbillSidenav.open();  
+            }, 100);
+          }else{
+            this.$refs.sbillSidenav.open();  
+          } 
+          this.loading--;
+        }
+      }
+    }
   },
   created(){  
     
   },
-  async mounted() { 
-    console.log(this.btnInfo)
-    this.ds_m = null;
-    if(this.btnInfo.type =='B'){//根据对象
-      await this.getCell(null);
-      await this.initCellData();
-      this.$refs.dialog.open();
-    }else if(this.btnInfo.type =='A'){//执行SQL
-      this.$refs.dialogMsg.open()
-    }else if(this.btnInfo.type == 'C'){//根据菜单号
-      if(await this.getParams(this.btnInfo.cellID) == false){
-        this.$notify.warning({ content: "没有菜单权限！" + sbuid + "!" });
-      }else{
-        this.getCell(this.mparams.pcell)
-        
-        this.$refs.dialogMenu.open()
-      }
-
-
-    }
+  async mounted() {  
+    
   },
   watch:{
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .md-dialog{
   max-height: 100%;
 }
@@ -311,11 +388,7 @@ export default {
   max-height: 9.5rem;
   min-width: 6.5rem;
 }
-.actionC {
-  /* position: absolute; */
-  /* bottom: 0.2rem; 
-  width: 100%; 
-  margin: 0 auto; */
+.actionC { 
   padding: 0.24rem 0.24rem;
 }
 .dia-title {
@@ -331,17 +404,29 @@ export default {
   width: 100%;
   vertical-align: bottom;
 }   
-.contentC {
-  /* margin-bottom: 0.9rem; */
+.contentCMsg{
   width: 100%;
   text-align: center;
   color: #919191;
-  /* overflow: hidden; */
+}
+.contentCMenu{
+  min-width: 10rem;
+}
+.contentCMenuNoPC{
+  min-width: 100%;
+  min-height: 100%;
+}
+.contentC {
+  width: 100%;
 }
 .btn{
   width: 1rem;
   margin: 0 auto;
 }
+.mydialog{
+  width: 100%;
+} 
+
 </style>
 
 

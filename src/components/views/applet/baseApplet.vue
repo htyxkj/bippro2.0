@@ -14,8 +14,7 @@
 <script>
 import CDataSet from '../classes/CDataSet';
 import billS from '../classes/billState';
-import Operation from '../operation/operation';
-import menuPattr from "../classes/menuPattr";
+import Operation from '../operation/operation'; 
 export default {
   data(){
     return {
@@ -92,29 +91,7 @@ export default {
     },
     //顶部按钮权限！
     getMenuP(){
-      // console.log("顶部按钮权限！")
-      this.menuP.INSERT=false;
-      // console.log(menuPattr)
-      // console.log(this.mparams.pattr & menuPattr.INSERT)
-      if((this.mparams.pattr & menuPattr.INSERT)>0){
-        this.menuP.INSERT=true;
-      }
-      this.menuP.DELETE=false;      
-      if((this.mparams.pattr & menuPattr.DELETE)>0){
-        this.menuP.DELETE=true;
-      }
-      this.menuP.SAVE=false;      
-      if((this.mparams.pattr & menuPattr.SAVE)>0){
-        this.menuP.SAVE=true;
-      }  
-      this.menuP.FILE=false;      
-      if((this.mparams.pattr & menuPattr.FILE)>0){
-        this.menuP.FILE=true;
-      }  
-      this.menuP.COUNT=false; 
-      if((this.mparams.pattr & menuPattr.COUNT)>0){
-        this.menuP.COUNT=true;
-      }  
+      this.menuP = this.getMenuPermission(this.mparams);
     }, 
    },
    watch:{

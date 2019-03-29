@@ -62,6 +62,17 @@ module.exports = {
         name: '深圳销售部',
         data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
       }
-    ]
+    ],    
+    exporting: {
+			enabled: true
+    },
+    lang:{ 
+      printChart: '打印图表',
+      downloadPNG: '下载JPEG 图片',        
+      downloadJPEG: '下载JPEG文档',
+      downloadPDF: '下载PDF 图片',
+      downloadSVG: '下载SVG 矢量图',        
+      contextButtonTitle: '下载图片'
+  }
   }
 }

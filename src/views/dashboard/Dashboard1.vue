@@ -118,15 +118,14 @@ export default {
       this.fetchTaskData();
       await this.fetchXSData();
     },
-    getCallBack(res) {
-      console.log(res);
+    getCallBack(res) { 
       if (res.data.code == 1)
         this.model.news = res.data.values;
     },
     getCallError(res) {
       this.loading--
     },
-    async fetchTaskData() {
+    async fetchTaskData() { 
       var data1 = {
         'dbid': global.DBID,
         'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
@@ -139,6 +138,7 @@ export default {
         'cellid': ''
       }
       var res = await this.getDataByAPINew(data1);
+      console.log(res)
       if(res.data.id==0){
         this.taskLayCel = await this.makeCellCL(res.data.data.layCels);
         this.taskValues = res.data.data.pages.celData;

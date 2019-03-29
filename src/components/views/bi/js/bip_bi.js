@@ -44,6 +44,9 @@ export default {
       dlgBtn: [], //弹出框按钮
       selectData: null, //表格选中行
       btnDisabled: false,
+      menuP:null,
+      lineToColumn:"行转列",
+      biLay:'table',
     }
   },
   methods: {
@@ -172,8 +175,7 @@ export default {
     initCell() {
       this.initInf();
       this.mparamsArr = this.mparams;
-      // this.mparamsArr.push(this.mparams);
-
+      // this.mparamsArr.push(this.mparams); 
       if (Array.isArray(this.mparamsArr)) {
         this._mparams = this.mparamsArr[0]
       } else {
@@ -267,7 +269,7 @@ export default {
       this.showAllCont = !this.showAllCont;
     },
     // async get
-    fileCell(row) {
+    fileFJCell(row) {
       let rwcell = {
         c_par: {
           obj_id: row.sbuid,
@@ -281,10 +283,33 @@ export default {
       };
       return rwcell;
     },
-    fileModal(row) {
+    fileMPCell(row) {
+      let rwcell = {
+        c_par: {
+          obj_id: row.sbuid,
+          cels: [{
+            id: "map_root"
+          }]
+        },
+        id: "map_name",
+        isShow: true,
+        labelString: "位置名称",
+      };
+      return rwcell;
+    },
+    fileFJModal(row) {
       let rwmodal = {
         fj_name: row.fj_name,
         fj_root: row.fj_root,
+        sbm: row.sbm,
+        sbuid: row.sbuid,
+      };
+      return rwmodal;
+    },
+    fileMPModal(row) {
+      let rwmodal = {
+        map_name: row.map_name,
+        map_root: row.map_root,
         sbm: row.sbm,
         sbuid: row.sbuid,
       };
@@ -304,7 +329,7 @@ export default {
         };
         var res = await this.getDataByAPINewSync(data1);
         // console.log(res);
-        //创建客户;100305;cbm
+        //创建客户;100305;cbm 
         if (res.data.id != -1) {
           var data = res.data.data.btn;
           for (var i = 0; i < data.length; i++) {
@@ -317,7 +342,11 @@ export default {
             };
             btn.menuid = menuid;
             btn.type = btn.name.substring(0, 1)
-            btn.name = btn.name.substring(2, btn.name.length);
+            if(btn.name.indexOf(",") ==-1){
+              btn.name = btn.name.substring(2);
+            }else{
+              btn.name = btn.name.substring(2, btn.name.indexOf(","));
+            }
             this.dlgBtn.push(btn);
           }
           window.sessionStorage.setItem(menuid, JSON.stringify(this.dlgBtn));
@@ -327,27 +356,31 @@ export default {
       }
     },
     //点击弹出框按钮
-    dlgBtnClick(btn) { 
-      console.log("DLG按钮")
+    dlgBtnClick(btn) {  
       if (this.selectData) {
-        this.btnDisabled = true;
-        let _this = this;
-        this.$biDialog.open({
-          btnInfo: btn,
-          selectData: this.selectData,
-          cdsm: this.ds_m,
-          getOpt(state) {
-            _this.btnDisabled = false;
-            if (state == 1) {
-              _this.initCell()
-            }
-          }
-        });
+          this.btnDisabled = true;
+          this.$refs["biDialog"].openREF(btn,  this.selectData,this.ds_m,this.getOpt); 
+      }
+    },
+    getOpt(state) {
+      this.btnDisabled = false;
+      if (state == 1) {
+        this.initCell()
       }
     },
     onTableSelect(item) {
       this.selectData = Object.values(item)[0];
       this.ds_m.currRecord = this.selectData;
+    },
+    //行列转换 
+    lineToColumnRun(){ 
+      if(this.biLay == 'table'){
+        this.lineToColumn = "列转行";
+        this.biLay = 'card';
+      }else if(this.biLay =='card'){
+        this.lineToColumn = "行转列";
+        this.biLay = 'table';
+      }
     },
   },
   async mounted(){

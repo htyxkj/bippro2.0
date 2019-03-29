@@ -1,5 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
+import menuPattr from "@/components/views/classes/menuPattr";
 // import $ from 'jquery'
 export default {
   install (Vue, options) {
@@ -313,8 +314,10 @@ export default {
           _srcs = {'src':require('@/components/../img/uploadImg/html.png'),'name':name,'qname':qname};
       }else if(kzm == 'ppt' || kzm=='pptx'){
           _srcs = {'src':require('@/components/../img/uploadImg/ppt.png'),'name':name,'qname':qname};
+      }else if(kzm == 'jpg' || kzm == 'png' || kzm == 'gif' || kzm == 'jpeg'){ 
+        _srcs = {'src':require('@/components/../img/uploadImg/img.png'),'name':name,'qname':qname};
       }else{
-          _srcs = {'src':require('@/components/../img/uploadImg/noFound.png'),'name':name,'qname':qname};
+        _srcs = {'src':require('@/components/../img/uploadImg/noFound.png'),'name':name,'qname':qname};
       } 
       return _srcs;
     }
@@ -330,6 +333,35 @@ export default {
       s[8] = s[13] = s[18] = s[23] = '-'
       var uuid = s.join('')
       return uuid
+    }
+
+    Vue.prototype.getMenuPermission = function (mparams){
+      let menuP = {};
+        // console.log("顶部按钮权限！")
+        menuP.LIST = true;
+        menuP.COPY = true;
+
+        menuP.INSERT=false; 
+        if((mparams.pattr & menuPattr.INSERT)>0){
+          menuP.INSERT=true;
+        }
+        menuP.DELETE=false;      
+        if((mparams.pattr & menuPattr.DELETE)>0){
+          menuP.DELETE=true;
+        }
+        menuP.SAVE=false;      
+        if((mparams.pattr & menuPattr.SAVE)>0){
+          menuP.SAVE=true;
+        }  
+        menuP.FILE=false;      
+        if((mparams.pattr & menuPattr.FILE)>0){
+          menuP.FILE=true;
+        }  
+        menuP.COUNT=false; 
+        if((mparams.pattr & menuPattr.COUNT)>0){
+          menuP.COUNT=true;
+        }  
+      return  menuP;
     }
   }
 }

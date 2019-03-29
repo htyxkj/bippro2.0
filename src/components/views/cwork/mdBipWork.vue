@@ -26,7 +26,6 @@
         <md-subheader>{{$t('cwork.approver')}}</md-subheader>
         <!-- <md-radio v-model="userId" v-for="(item,index) in users" :key="item.userCode" :id="item.userCode" name="group1" :md-value="item.userCode">{{item.userName}}</md-radio> -->
         <md-checkbox  v-for="item in users" :key="item.userCode" :id="item.userCode" :name="item.userCode" v-model="userIds" :md-value="item.userCode">{{item.userName}}</md-checkbox>
-
         <md-input-container md-theme="red">
           <label>{{$t('cwork.reasons')}}</label>
           <md-input v-model="content"></md-input>
@@ -207,7 +206,7 @@ export default {
       // console.log("cccc");
       this.$refs["dialog"].close();
     },
-    makeUsers() {
+    makeUsers() { 
       if (this.chkinfo) {
         _.forEach(this.chkinfo.list, item => {
           if (item.stateId === this.stateId) {
@@ -218,7 +217,9 @@ export default {
           }
         });
         if (this.users.length > 0) {
-          this.userIds[0] = this.users[0].userCode;
+          for(var i=0;i<this.users.length;i++){
+            this.userIds[i] = this.users[i].userCode;
+          }
         } else {
           this.userIds = [];
         }
@@ -374,7 +375,9 @@ export default {
   margin: 0; 
   margin-right: .05rem;
 }
-
+.md-dialog-actions .md-button+.md-button {
+    margin-left: 0rem;
+}
 </style>
 
 

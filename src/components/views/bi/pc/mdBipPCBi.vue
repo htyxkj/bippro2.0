@@ -148,6 +148,7 @@
       </md-dialog>
     </md-part-body>
     <bill-link-applet ref="sbill"  ></bill-link-applet>
+    <md-bip-bi-dialog ref="biDialog"  ></md-bip-bi-dialog>    
   </md-part>
 </template>
 <script>
@@ -155,8 +156,9 @@ import bipBi from '../js/bip_bi.js'
 import billS from '../../classes/billState';
 import common from '../../commonModal.js'; 
 import billLinkApplet from '../../applet/billLinkApplet' 
+import mdBipBiDialog from '../../biDialog/mdBipBiDialog'
 export default { 
-  components:{billLinkApplet},
+  components:{billLinkApplet,mdBipBiDialog},
   data(){
     return {
       

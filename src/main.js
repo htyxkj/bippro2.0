@@ -23,7 +23,7 @@ Vue.use(Components)
 
 Vue.use(VuejsDialog);
 import VueI18n from 'vue-i18n'
-Vue.use(VueI18n);
+Vue.use(VueI18n); 
 const i18n = new VueI18n({
   locale: getCookie('PLAY_LANG','zh'),    // 语言标识
   messages: {
@@ -32,6 +32,14 @@ const i18n = new VueI18n({
   }
 })
 
+//图片缩放
+import Viewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
+
+Vue.use(Viewer);
+Viewer.setDefaults({
+  Options: { "inline": true, "button": true, "navbar": true, "title": true, "toolbar": true, "tooltip": true, "movable": true, "zoomable": true, "rotatable": true, "scalable": true, "transition": true, "fullscreen": true, "keyboard": true, "url": "data-source" }
+});
 new Vue({
   el: '#app',
   router,

@@ -19,10 +19,7 @@ module.exports = {
                     softConnector: true
                 },
                 neckWidth: '30%',
-                neckHeight: '25%'
-                //-- Other available options
-                // height: pixels or percent
-                // width: pixels or percent
+                neckHeight: '25%' 
             }
         },
         legend: {
@@ -37,6 +34,17 @@ module.exports = {
                 ['发送合同',    5],
                 ['成交',    1]
             ]
-        }]  
+        }] ,
+        exporting: {
+			enabled: true
+        },
+        lang:{ 
+            printChart: '打印图表',
+            downloadPNG: '下载JPEG 图片',        
+            downloadJPEG: '下载JPEG文档',
+            downloadPDF: '下载PDF 图片',
+            downloadSVG: '下载SVG 矢量图',        
+            contextButtonTitle: '下载图片'
+        }
     }
 }

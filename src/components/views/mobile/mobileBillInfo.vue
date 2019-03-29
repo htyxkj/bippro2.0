@@ -21,20 +21,20 @@
     </md-part-toolbar>
     <md-part-body>
       <template v-if="dsm&&dsm.ds_sub.length==0">
-        <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null">
+        <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null && isSelsth">
           <!-- <md-layout>
             <md-bip-input  :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
           </md-layout> -->
           <template v-if="mainTabs.length<=0">
             <md-layout> 
-              <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+              <md-bip-input :showsth="sth[cell.id]"  :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" @changeShowSth="settingShowField"></md-bip-input>
             </md-layout>
           </template>
           <template v-else>
             <md-tabs class="md-transparent"  md-fixed>  
               <md-tab v-for="(item,index) in mainTabs" :md-label="item.name" :key="index">
                 <md-layout> 
-                  <md-bip-input :dsm="dsm" v-for="(cell,index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" v-if="item.start <= index && item.end >= index"></md-bip-input>
+                  <md-bip-input :showsth="sth[cell.id]"  :dsm="dsm" v-for="(cell,index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" v-if="item.start <= index && item.end >= index" @changeShowSth="settingShowField"></md-bip-input>
                 </md-layout>
               </md-tab>
             </md-tabs>
@@ -103,11 +103,13 @@ export default {
       curr_dsm: null,
       chkinfo: null,
       mainTabs:[],
+      sth:{},
+      isSelsth:false,
     };
   },
   props: { dsm: Object, dsext: Array, opera: Object, mparams:Object },
   methods: {
-    dataChange(res) {
+    dataChange(res) { 
       // console.log(res);
       // console.log(res, "dataChange");
       this.dsm.checkEdit(res);
@@ -216,18 +218,37 @@ export default {
       // }
     },
     checkNotNull(cds) {
+
+      let field = [];
+      for(var item in this.sth){
+        let vv = cds.currRecord[item]
+        let cc = this.sth[item].showField;
+        for(var i=0;i<cc.length;i++){
+          let dd = cc[i].split(":");
+          if(vv != dd[0]){
+            let ff = dd[1].split(",");
+            for(var it in ff){
+              field.push(ff[it])
+            }
+          }
+        }
+      } 
+
       for (let i = 0; i < cds.ccells.cels.length; i++) {
         var item = cds.ccells.cels[i];
         // console.log(item);
-        if (item.unNull) {
-          var vl = cds.currRecord[item.id];
-          // console.log(vl,this.dsm.currRecord);
-          if (!vl) {
-            this.$notify.warning({
-              content: "【" + item.labelString + "】"+this.$t('commInfo.notNull')+"！",
-              placement: "mid-center"
-            });
-            return false;
+        if(this.isInArray(field,item.id)){
+        }else{        
+          if (item.unNull) {
+            var vl = cds.currRecord[item.id];
+            // console.log(vl,this.dsm.currRecord);
+            if (!vl) {
+              this.$notify.warning({
+                content: "【" + item.labelString + "】"+this.$t('commInfo.notNull')+"！",
+                placement: "mid-center"
+              });
+              return false;
+            }
           }
         }
       }
@@ -437,6 +458,78 @@ export default {
           this.mainTabs.push(t);
         }
       }
+    },
+    //获取SWITCH开关 字段显示 隐藏信息
+    async getSwitch() {
+      this.sth={};
+      var menuid = 'STH.' + this.dsm.ccells.obj_id;
+      let me = window.sessionStorage.getItem(menuid);
+      if (me == null) {
+        var data1 = {
+          dbid: global.DBID,
+          usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+          apiId: global.APIID_DLG,
+          menuid: menuid,
+        };
+        var res = await this.getDataByAPINewSync(data1);
+        // console.log(res);
+        //创建客户;100305;cbm 
+        if (res.data.id != -1) {
+          //A:sfxs;0:;1:dxlx,smzl,number,xzqy,dhqy,cjwh,dlname,zrdw,lxfs,xjnd,sftd,remark
+          let d = res.data.data.btn;
+          let sth00 = {};
+          for(var i=0;i<d.length;d++){
+            let v = d[i];
+            let key = v.substring(0,1);
+            v = v.substring(2).split(";");
+            let showField = [];
+            for(var j=1;j<v.length;j++){
+              showField.push(v[j]);
+            } 
+            sth00 = { key:key,field:v[0],showField:showField}
+          }
+          this.sth[sth00.field] = sth00; 
+          this.settingShowField(sth00.field);
+        }
+        window.sessionStorage.setItem(menuid, JSON.stringify(this.sth));
+        this.isSelsth=true;
+      } else {
+        this.isSelsth=true; 
+        this.sth = JSON.parse(me);
+        for(var item in this.sth){
+          this.settingShowField(item);
+        } 
+      } 
+    },
+    //设置显示隐藏字段
+    settingShowField(key){
+      let showsth = this.sth[key];
+      let field = showsth.field;
+      let value = this.dsm.cdata[this.dsm.cdata.length-1][field];
+      for(var i=0;i<showsth.showField.length;i++){
+        let fv =  showsth.showField[i].split(":"); 
+        let ff = fv[1];
+        if(ff){
+          let ff0 = ff.split(",");
+          for(var dd = 0;dd<this.dsm.ccells.cels.length;dd++){
+            if(this.isInArray(ff0,this.dsm.ccells.cels[dd].id)){ 
+              if(fv[0] == value){
+                this.dsm.ccells.cels[dd].isShow=true;
+              }else{
+                this.dsm.ccells.cels[dd].isShow=false;
+              }
+            }
+          }
+        }
+      }
+    },
+    isInArray(arr,value){
+      for(var i = 0; i < arr.length; i++){
+        if(value === arr[i]){
+          return true;
+        }
+      }
+      return false;
     }
 
   },
@@ -551,6 +644,7 @@ export default {
   },
   async mounted() {
     if (this.dsm) {
+      this.getSwitch();
       this.creBookmark();
       const state = this.dsm.currRecord.sys_stated & billS.INSERT;
       if (this.dsm.ds_sub && state === 0) {
@@ -572,6 +666,7 @@ export default {
     dsm(){
       if(this.dsm){
         this.dsm.createRecord(); 
+        this.getSwitch();
       }
       this.creBookmark();
     }

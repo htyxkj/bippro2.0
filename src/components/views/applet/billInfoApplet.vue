@@ -5,12 +5,12 @@
         <md-button v-if="menuP.INSERT" :disabled="canCreate" @click.native="create">{{$t('commBtn.B_ADD')}}</md-button> <!--     -->
         <md-button v-if="menuP.DELETE" class="md-accent" :disabled="canDelete" @click.native="delData">{{$t('commBtn.B_DEL')}}</md-button>
         <md-button v-if="menuP.SAVE" @click.native="save" :disabled="canSave">{{$t('commBtn.B_SAVE')}}</md-button>
-      </md-part-toolbar-group>
-      <md-part-toolbar-group>
-        <md-button @click.native="list">{{$t('commBtn.B_LIST')}}</md-button>
-      </md-part-toolbar-group>
-      <md-part-toolbar-group>
-        <md-button @click="copy">{{$t('commBtn.B_COPY')}}</md-button>
+      <!-- </md-part-toolbar-group>
+      <md-part-toolbar-group> -->
+        <md-button v-if="menuP.LIST" @click.native="list">{{$t('commBtn.B_LIST')}}</md-button>
+      <!-- </md-part-toolbar-group>
+      <md-part-toolbar-group> -->
+        <md-button v-if="menuP.COPY" @click="copy">{{$t('commBtn.B_COPY')}}</md-button>
         <!-- <md-button>审核 Auditing</md-button> -->
         <md-button  @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
       </md-part-toolbar-group>
@@ -29,8 +29,8 @@
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
-      <template v-if="dsm&&!dsm.haveChild()"> 
-        <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null">
+      <!-- <template v-if="dsm&&!dsm.haveChild()"> 
+        <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null"> -->
           <!-- <template v-if="inp.length>0">
             <md-layout style="height:auto;margin:0px;padding:0px" v-for="(item,index) in inp" :key="index" >  
               <md-layout style="height:auto;margin:0px;padding:0px" v-for="(row,rowIn) in item" :key="rowIn" :md-flex="row[0].ccHorCell" :md-flex-offset="row[0].ccHorCell"> 
@@ -41,24 +41,9 @@
             </md-layout> 
           </template>
           <template v-else> --> 
-          <template v-if="mainTabs.length<=0">
-            <md-layout> 
-              <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
-            </md-layout>
-          </template>
-          <template v-else>
-            <md-tabs class="md-transparent">  
-              <md-tab v-for="(item,index) in mainTabs" :md-label="item.name" :key="index"  style="padding:0px;">
-                <md-layout> 
-                  <md-bip-input :dsm="dsm" v-for="(cell,index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" v-if="item.start <= index && item.end >= index"></md-bip-input>
-                </md-layout>
-              </md-tab>
-            </md-tabs>
-          </template>
-
-          </md-content>
-      </template>
-      <template v-else>
+          <!-- </md-content>
+      </template> -->
+      <template v-if="dsm">
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
           <!-- sass/components/mdInputContainer.scss .md-input-container { margin: .04rem .1rem .48rem 0;}-->
           <!-- style="height:auto;margin:0px;padding:0px"  -->
@@ -71,8 +56,21 @@
           </template>
           <template v-else> -->
           <!-- </template> -->
-            <md-layout>
-              <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+            <md-layout v-if="isSelsth"> 
+              <template v-if="mainTabs.length<=0">
+                <md-layout> 
+                  <md-bip-input :showsth="sth[cell.id]" :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" @changeShowSth="settingShowField"></md-bip-input>
+                </md-layout>
+              </template>
+              <template v-else>
+                <md-tabs class="md-transparent">  
+                  <md-tab v-for="(item,index) in mainTabs" :md-label="item.name" :key="index"  style="padding:0px;">
+                    <md-layout> 
+                      <md-bip-input :showsth="sth[cell.id]"  :dsm="dsm" v-for="(cell,index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" v-if="item.start <= index && item.end >= index" @changeShowSth="settingShowField"></md-bip-input>
+                    </md-layout>
+                  </md-tab>
+                </md-tabs>
+              </template> 
             </md-layout> 
           <!-- </template> -->
 
@@ -117,13 +115,13 @@ export default {
       flowlist:[], 
       inp:[],
       mainTabs:[],
+      sth:{},
+      isSelsth:false,
     };
   },
   props: { dsm: Object, dsext: Array, opera: Object ,mparams:Object,menuP:Object},
   methods: {
-    dataChange(res) {
-      // console.log(res);
-      // console.log(res, "dataChange");
+    dataChange(res) { 
       this.dsm.checkEdit(res);
     },
     create() { 
@@ -252,21 +250,37 @@ export default {
       this.loading = 0;
       // }
     },
-    checkNotNull(cds) {
-      for (let i = 0; i < cds.ccells.cels.length; i++) {
-        var item = cds.ccells.cels[i];
-        // console.log(item);
-        if (item.unNull) {
-          var vl = cds.currRecord[item.id];
-          // console.log(vl,this.dsm.currRecord);
-          if (!vl) {
-            this.$notify.warning({
-              content: "【" + item.labelString + "】"+this.$t('commInfo.notNull')+"!",
-              placement: "mid-center"
-            });
-            return false;
+    checkNotNull(cds) { 
+      let field = [];
+      for(var item in this.sth){
+        let vv = cds.currRecord[item]
+        let cc = this.sth[item].showField;
+        for(var i=0;i<cc.length;i++){
+          let dd = cc[i].split(":");
+          if(vv != dd[0]){
+            let ff = dd[1].split(",");
+            for(var it in ff){
+              field.push(ff[it])
+            }
           }
         }
+      }  
+      for (let i = 0; i < cds.ccells.cels.length; i++) {
+        var item = cds.ccells.cels[i]; 
+        if(this.isInArray(field,item.id)){
+        }else{
+          if (item.unNull) {
+            var vl = cds.currRecord[item.id];
+            // console.log(vl,this.dsm.currRecord);
+            if (!vl) {
+              this.$notify.warning({
+                content: "【" + item.labelString + "】"+this.$t('commInfo.notNull')+"!",
+                placement: "mid-center"
+              });
+              return false;
+            }
+          }
+        } 
       }
       if (cds.haveChild()) {
         return this.checkChildNotNull(cds);
@@ -901,6 +915,78 @@ export default {
           this.mainTabs.push(t);
         }
       }
+    },
+    //获取SWITCH开关 字段显示 隐藏信息
+    async getSwitch() {
+      this.sth={};
+      var menuid = 'STH.' + this.dsm.ccells.obj_id;
+      let me = window.sessionStorage.getItem(menuid);
+      if (me == null) {
+        var data1 = {
+          dbid: global.DBID,
+          usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+          apiId: global.APIID_DLG,
+          menuid: menuid,
+        };
+        var res = await this.getDataByAPINewSync(data1);
+        // console.log(res);
+        //创建客户;100305;cbm 
+        if (res.data.id != -1) {
+          //A:sfxs;0:;1:dxlx,smzl,number,xzqy,dhqy,cjwh,dlname,zrdw,lxfs,xjnd,sftd,remark
+          let d = res.data.data.btn;
+          let sth00 = {};
+          for(var i=0;i<d.length;d++){
+            let v = d[i];
+            let key = v.substring(0,1);
+            v = v.substring(2).split(";");
+            let showField = [];
+            for(var j=1;j<v.length;j++){
+              showField.push(v[j]);
+            } 
+            sth00 = { key:key,field:v[0],showField:showField}
+          }
+          this.sth[sth00.field] = sth00; 
+          this.settingShowField(sth00.field);
+        }
+        window.sessionStorage.setItem(menuid, JSON.stringify(this.sth));
+        this.isSelsth=true;
+      } else {
+        this.isSelsth=true;
+        this.sth = JSON.parse(me);
+        for(var item in this.sth){
+          this.settingShowField(item);
+        } 
+      } 
+    },
+    //设置显示隐藏字段
+    settingShowField(key){
+      let showsth = this.sth[key];
+      let field = showsth.field;
+      let value = this.dsm.cdata[this.dsm.cdata.length-1][field];
+      for(var i=0;i<showsth.showField.length;i++){
+        let fv =  showsth.showField[i].split(":"); 
+        let ff = fv[1];
+        if(ff){
+          let ff0 = ff.split(",");
+          for(var dd = 0;dd<this.dsm.ccells.cels.length;dd++){
+            if(this.isInArray(ff0,this.dsm.ccells.cels[dd].id)){ 
+              if(fv[0] == value){
+                this.dsm.ccells.cels[dd].isShow=true;
+              }else{
+                this.dsm.ccells.cels[dd].isShow=false;
+              }
+            }
+          }
+        }
+      }
+    },
+    isInArray(arr,value){
+      for(var i = 0; i < arr.length; i++){
+        if(value === arr[i]){
+          return true;
+        }
+      }
+      return false;
     }
   },
   computed: {
@@ -920,15 +1006,12 @@ export default {
     },
     canSave() {
       if (this.dsm && this.dsm.currRecord != null) {
-        if (
-          (this.dsm.currRecord.sys_stated & billS.INSERT) > 0 ||
-          (this.dsm.currRecord.sys_stated & billS.EDITED) > 0
-        ) {
+        if ((this.dsm.currRecord.sys_stated & billS.INSERT) > 0 ||(this.dsm.currRecord.sys_stated & billS.EDITED) > 0) {
           return false;
         }
         if ((this.dsm.currRecord.sys_stated & billS.POSTED) > 0) {
           return true;
-        }
+        } 
         return true;
       } else {
         return true;
@@ -1007,7 +1090,8 @@ export default {
     }, 
   }, 
   async mounted() {   
-    if (this.dsm) {
+    if (this.dsm) { 
+      this.getSwitch();
       // this.getMulti_line();
       this.calculationWidth();
       this.constituteChildrens();
@@ -1033,15 +1117,20 @@ export default {
     chkinfo() {
       if (this.chkinfo) {
         if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
-          this.dsm.canEdit = false;
+          this.dsm.canEdit = false; 
+          if ((this.dsm.ccells.attr & billS.LSUPDATE) > 0) {//临时改 
+            this.dsm.canEdit = true;
+          }
         }
       }
     },
     dsm(){
+      
       this.constituteChildrens(); 
       if(this.dsm){
         this.dsm.createRecord();   
         this.calculationWidth();
+        this.getSwitch();
       }
       this.creBookmark();//主表多页签
       // this.getMulti_line();
