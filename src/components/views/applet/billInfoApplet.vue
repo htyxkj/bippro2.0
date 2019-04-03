@@ -63,7 +63,7 @@
                 </md-layout>
               </template>
               <template v-else>
-                <md-tabs class="md-transparent">  
+                <md-tabs class="md-transparent" style="min-height:max-content;">  
                   <md-tab v-for="(item,index) in mainTabs" :md-label="item.name" :key="index"  style="padding:0px;">
                     <md-layout> 
                       <md-bip-input :showsth="sth[cell.id]"  :dsm="dsm" v-for="(cell,index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" v-if="item.start <= index && item.end >= index" @changeShowSth="settingShowField"></md-bip-input>
@@ -170,12 +170,9 @@ export default {
           tousr: ""
         };
         var ceaParams = new CeaPars(params);
-        var billuser = crd[this.opera.smakefld];
-        // console.log(billuser);
-        this.$refs["cc"].open(ceaParams, billuser);
-      }
-      // var res = await this.getDataByAPINew(checkParasm);
-      // console.log(res);
+        var billuser = crd[this.opera.smakefld]; 
+        this.$refs["cc"].open(ceaParams, billuser); 
+      } 
     },
     async dataCheckUp(state) {
       this.dsm.currRecord[this.opera.statefld] = state;
@@ -962,7 +959,7 @@ export default {
     settingShowField(key){
       let showsth = this.sth[key];
       let field = showsth.field;
-      let value = this.dsm.cdata[this.dsm.cdata.length-1][field];
+      let value = this.dsm.currRecord[field];
       for(var i=0;i<showsth.showField.length;i++){
         let fv =  showsth.showField[i].split(":"); 
         let ff = fv[1];

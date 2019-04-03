@@ -1,9 +1,6 @@
 <template>
     <div style="background-color:#f6f6f6"> 
         <div>
-
-
-
             <div v-if="ddApp.length>0" class="blank1"> 
                 <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" class="title"> 
                     应用
@@ -14,7 +11,7 @@
                             <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100">   
                                 <md-icon  v-colors="item.iconcc">{{item.menuIcon}}</md-icon> 
                             </md-layout>
-                            <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" class="title3" md-align="center"> 
+                            <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" md-align="center"> 
                                 <span v-if="item.wapno =='01'">审批中心</span>
                                 <span v-else-if="item.wapno =='03'">消息中心</span>
                                 <span v-else-if="item.wapno =='04'">公告通知</span>
@@ -23,8 +20,6 @@
                     </md-layout> 
                 </md-layout> 
             </div>
-
-
             <div v-for="mu in menuList" :key="mu.menuId" class="blank"> 
                 <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" class="title"> 
                     {{mu.menuName}}
@@ -32,31 +27,18 @@
                 <md-layout md-gutter >
                     <md-layout  v-for="(item,index) in mu.childMenu" :key="index" md-flex-small="25" md-flex-medium="25" class="title2" v-if="item.menuattr !=4" >
                         <div v-on:click="url('/layoutui?'+item.command+'&title='+item.menuName)" style="margin:0px;padding:0px;width:100%">
-                            <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100">   
-                                <md-icon  v-colors="item.iconcc">{{item.menuIcon}}</md-icon> 
+                            <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" style="position: relative;">   
+                                <!-- <md-icon  v-colors="item.iconcc">{{item.menuIcon}}</md-icon>  -->
+                                <img :src="dingMenuImg+'img/ding/'+item.menuid+'.png'" style="margin:auto;width: 30px;height: 30px;"/>
+                                <div class="textNum" v-if="item.bgnum >0">{{item.bgnum}}</div>
                             </md-layout>
-                            <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" class="title3" md-align="center"> 
+                            <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" md-align="center"> 
                                 <span>{{item.menuName}}</span>
-                            </md-layout>
-                            <!-- <md-layout md-gutter>
-                                <md-layout md-column md-gutter>
-                                    <md-layout md-flex="50">
-                                        <md-icon  v-colors="item.iconcc">{{item.menuIcon}}</md-icon>
-                                    </md-layout>
-                                    <md-layout md-flex="50">
-                                        <span>{{item.menuName}}</span>
-                                    </md-layout>
-                                </md-layout>
-
-                                <md-layout md-column md-gutter>
-                                    <md-layout md-flex="100">{{taskNum}}</md-layout> 
-                                </md-layout>
-                            </md-layout> -->
+                            </md-layout> 
                         </div>
                     </md-layout> 
                 </md-layout> 
             </div>
-
             <md-layout md-flex-small="100" md-flex="66" style="margin-top:0px">
                 <md-card style="box-shadow: 0px 0px 0px;"> 
                     <md-card-media>
@@ -68,8 +50,6 @@
                     </md-card-media>
                 </md-card>
             </md-layout>
-
-
         </div>
         <md-loading :loading="loading"></md-loading>
     </div>
@@ -95,12 +75,11 @@ export default {
             corpId:'', 
             appId:'',
             agentId:'',
-            ddCfg:{}, 
-            taskNum:0,
+            ddCfg:{},  
+            dingMenuImg :`${global.BIPAPIURL}`,
         }
     },
-    async mounted(){
-        
+    async mounted(){ 
     },
     async created(){ 
         var lid = window.sessionStorage.getItem('isLogin');
@@ -108,13 +87,15 @@ export default {
             if(this.menuList.length<=0){
                 this.menuList = JSON.parse(window.sessionStorage.getItem('menulist'));
             } 
+
             if(this.ddApp.length<=0){
                 let dapp = window.sessionStorage.getItem('ddApp');
                 if(dapp)
                 this.ddApp = JSON.parse(dapp);
             }  
             this.getDDJSTicket(); 
-            this.getDateStr();  
+            this.getDateStr();   
+            this.getNumberofBadges(); 
         }else{  
             this.loading=1; 
             this.corpId =this.$route.query.corpId   //企业唯一码  
@@ -129,7 +110,7 @@ export default {
         	        corpId: _this.corpId,
         	        onSuccess: function(info) {  
                         _this.loginRemote(info.code)
-                        _this.getDDJSTicket();
+                        _this.getDDJSTicket(); 
                     },
         	        onFail : function(err) { }
         	    });
@@ -151,26 +132,46 @@ export default {
                 var userI = res.data.data.user;
                 var mlist = res.data.data.menulist;
                 var snkey = res.data.data.snkey; 
-                this.menuList = JSON.parse(JSON.stringify(mlist));
-                let aa=[];
-                if(this.menuList)
-                for(var i =0;i<this.menuList.length;i++){
-                    if(this.menuList[i].haveChild == true){
-                        for(var j =0;j<this.menuList[i].childMenu.length;j++){
-                            var bb = Math.ceil(Math.random() * (ICONS.length-1));
-                            this.menuList[i].childMenu[j].iconcc= ICONCOLOR[bb]
-                            this.menuList[i].childMenu[j].menuIcon=ICONS[bb] 
+                let ml = JSON.parse(JSON.stringify(mlist)); 
+                if(ml)
+                    for(var i =0;i<ml.length;i++){
+                        if(ml[i].haveChild == true){
+                            for(var j =0;j<ml[i].childMenu.length;j++){
+                                let pbuid1 = ml[i].childMenu[j].pbuid;
+                                if(!pbuid1){
+                                    let command = ml[i].childMenu[j].command;
+                                    if(command){
+                                        let pbuid0 = command.split("&");//pbuid=100301&pmenuid=800303
+                                        pbuid1 = pbuid0[0].split("=")[1]; 
+                                        let menuid =  pbuid0[1].split("=")[1] 
+                                        ml[i].childMenu[j].pbuid = pbuid1;
+                                        ml[i].childMenu[j].menuid = menuid;
+                                    }
+                                } 
+                            }
                         }
-                        aa.push(this.menuList[i]);
                     }
-                }
-                this.menuList = aa;
+                this.menuList = ml;
+                // let aa=[];
+                // if(this.menuList)
+                // for(var i =0;i<this.menuList.length;i++){
+                //     if(this.menuList[i].haveChild == true){
+                //         for(var j =0;j<this.menuList[i].childMenu.length;j++){
+                //             var bb = Math.ceil(Math.random() * (ICONS.length-1));
+                //             this.menuList[i].childMenu[j].iconcc= ICONCOLOR[bb]
+                //             this.menuList[i].childMenu[j].menuIcon=ICONS[bb] 
+                //         }
+                //         aa.push(this.menuList[i]);
+                //     }
+                // }
+                // this.menuList = aa;
                 window.sessionStorage.setItem('user', JSON.stringify(userI));
                 window.sessionStorage.setItem('menulist', JSON.stringify(this.menuList));
                 window.sessionStorage.setItem('snkey', JSON.stringify(snkey));
                 window.sessionStorage.setItem('isLogin', true); 
                 await this.getDApp();  
-                this.getDateStr();   
+                this.getDateStr();  
+                this.getNumberofBadges(); 
             } else {
                 // await this.$router.push(`/`)
                 this.$notify.danger({content: res.data.message})
@@ -272,24 +273,55 @@ export default {
                 });
                 } 
             } 
+        }, 
+        //菜单徽章  用来显示单据数量
+        async getNumberofBadges(menuid){   
+            if(this.menuList)
+            for(var i =0;i<this.menuList.length;i++){
+                if(this.menuList[i].haveChild == true){
+                    for(var j =0;j<this.menuList[i].childMenu.length;j++){
+                        let pbuid1 = this.menuList[i].childMenu[j].pbuid;
+                        if(!pbuid1){
+                            let command = this.menuList[i].childMenu[j].command;
+                            if(command){
+                                let pbuid0 = command.split("&");//pbuid=100301&pmenuid=800303
+                                pbuid1 = pbuid0[0].split("=")[1]; 
+                                let menuid =  pbuid0[1].split("=")[1] 
+                                this.menuList[i].childMenu[j].pbuid = pbuid1;
+                            }
+                        }
+                        if(pbuid1)
+                            this.getNum(pbuid1,i,j); 
+                    }
+                }
+            }
         },
-        async fetchTaskData() { 
+        getNum(menuid,i,j){
+            let _this = this;
             var data1 = {
-                'dbid': global.DBID,
-                'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
-                'apiId': global.APIID_CELLPARAM,
-                'pcell': 'SYRW',
-                'pdata': '{brd:0,}',
-                'bebill': 1,
-                'currentPage': 1,
-                'pageSize': 20,
-                'cellid': ''
-            }
-            var res = await this.getDataByAPINew(data1);
-            if(res.data.id==0){
-                this.taskNum = res.data.data.pages.totalItem;
-            }
-        },
+            dbid: global.DBID,
+            usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+            apiId: global.APIID_DLG,
+            menuid: "BG."+menuid,
+            };
+            this.getDataByAPINewSync(data1).then((res)=>{
+                if(res.data.id !=-1){
+                    let name = res.data.data.btn[0];
+                    let data2 = {  
+                        dbid: global.DBID,
+                        usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+                        apiId: global.APIID_AIDO, 
+                        page:1,
+                        assistid: name, 
+                    };
+                    this.getDataByAPINewSync(data2).then((res)=>{
+                        if(res.data) 
+                        _this.menuList[i].childMenu[j].bgnum = res.data.total;
+                    });
+                }
+            });
+
+        }
     },
     watch: { 
 
@@ -298,8 +330,20 @@ export default {
 </script> 
 <style lang="scss" scoped>
   .title{font-size: 0.18rem;font-weight: 30}
-  .title2{font-size: 0.13rem;margin-top: 0.15rem}
-//   .title3{}
+  .title2{font-size: 0.13rem;margin-top: 0.15rem} 
   .blank{background-color: white;margin-top: 10px;padding-left: 15px;padding-top:10px;padding-right: 15px;}
   .blank1{background-color: white;padding-left: 10px;padding-top:10px;padding-right: 15px;}
+  .textNum{
+    background-color: #ea362b;
+    border-radius: 100px;
+    width: 14px;
+    height: 14px;
+    text-align: center;
+    line-height: 15px;
+    font-size: 8px; 
+    right: .2rem;
+    top: -.04rem;
+    color: white;
+    position: absolute;
+  }
 </style>

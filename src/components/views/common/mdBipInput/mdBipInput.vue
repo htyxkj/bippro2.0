@@ -32,7 +32,7 @@
       <md-bip-input-ddGPS :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange" gpsType="getGPS"></md-bip-input-ddGPS>
     </template>
     <template v-if="inputType == INPUT_SWITCH">
-      <md-bip-input-switch  :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-switch>
+      <md-bip-input-switch  :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange" @switchUP = "switchUP"></md-bip-input-switch>
     </template>
 
   </md-layout>
@@ -101,12 +101,14 @@ export default {
     }
   },
   methods: {
-    dataChange (data) {
+    switchUP(data){
       if(this.showsth){
         if(this.showsth.field == data.cellId){
           this.$emit('changeShowSth',data.cellId)
         }
       }
+    },
+    dataChange (data) { 
       this.$emit('change',data);
     },
     initType(){ 

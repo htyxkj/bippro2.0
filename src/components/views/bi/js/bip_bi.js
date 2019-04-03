@@ -47,6 +47,7 @@ export default {
       menuP:null,
       lineToColumn:"行转列",
       biLay:'table',
+      timedown:null,//单据倒计时显示
     }
   },
   methods: {
@@ -316,7 +317,7 @@ export default {
       return rwmodal;
     },
     //获取弹出框按钮
-    async getDlg() {
+    async getDlg() { 
       this.dlgBtn = [];
       var menuid = 'DLG.' + this.mparams.pbuid;
       let me = window.sessionStorage.getItem(menuid);

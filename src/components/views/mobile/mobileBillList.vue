@@ -42,8 +42,11 @@
                   :md-auto-select="mdAutoSelect" 
                   :md-selection="mdSelection" 
                   @dblclick.native="dblclick(row,rowIndex)">
-                  <md-table-cell v-for="(column, columnIndex) in dsm.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
+                  <!-- <md-table-cell v-for="(column, columnIndex) in dsm.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
                     <md-bip-ref :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row"  @pkclick="dblclick(row,rowIndex)"></md-bip-ref>
+                  </md-table-cell> -->
+                  <md-table-cell v-for="(column, columnIndex) in dsm.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''" @dblclick.native="openrefs(row,rowIndex,columnIndex)">
+                    <md-bip-ref  :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" :row="row"  @pkclick="openrefs(row,rowIndex)"></md-bip-ref>
                   </md-table-cell>
                 </md-table-row>
               </md-table-body>
@@ -66,11 +69,14 @@
          </md-layout>
       </md-content>
     </md-part-body>
+    <bill-link-applet ref="sbill"  ></bill-link-applet>
   </md-part>
 </template>
 <script>
 import BillState from '../classes/billState';
-export default {
+import billLinkApplet from '../applet/billLinkApplet'
+export default { 
+  components:{billLinkApplet},
   data () {
     return {
       mdAutoSelect: true,
@@ -170,7 +176,24 @@ export default {
       this.dsm.index = index;
       this.$emit('addBill');
     },
-
+    async openrefs(row,index,columnIndex){
+      console.log("click")
+      if(columnIndex>=0){
+        let cell = this.dsm.ccells.cels[columnIndex];
+        let slkid = row[cell.id];
+        if((cell.attr&0x80000)>0){
+          let slkbuidCell = this.dsm.ccells.cels[columnIndex+1];
+          let slkbuid = row[slkbuidCell.id];
+          if(slkid&&slkbuid){ 
+            console.log('调用我了');
+            this.$refs["sbill"].open(slkid,slkbuid);
+          }
+        }else{
+          console.log("dblclick")
+          this.dblclick(row,index);
+        } 
+      } 
+    },
     //删除数据
     delList(){
       console.log(this.selectData);

@@ -124,6 +124,7 @@ export default {
       upLoadDid:'', 
       dlgImgNAME:'',
       isSave:false,//是否上传过
+      imgs:[],
     };
   },
   mixins:[comm],
@@ -185,10 +186,6 @@ export default {
     },
     //确定完成输入
     ok(){
-      // if(this.isSave == false && this.selFiles.length >0){
-      //   this.save()
-      // }
-      // console.log('ok');
       var fjroot = this.upLoadDid;//附件地址
       var fjname = "";
       if(this.upLoadFils.length>0){

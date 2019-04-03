@@ -505,7 +505,7 @@ export default {
     settingShowField(key){
       let showsth = this.sth[key];
       let field = showsth.field;
-      let value = this.dsm.cdata[this.dsm.cdata.length-1][field];
+      let value = this.dsm.currRecord[field];
       for(var i=0;i<showsth.showField.length;i++){
         let fv =  showsth.showField[i].split(":"); 
         let ff = fv[1];

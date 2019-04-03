@@ -38,7 +38,7 @@
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
     <md-part-body>
-      <md-content>
+      <md-content style=" background-color: #F9F9F9;">
         <template v-if="showCont">
           <md-layout  md-gutter="4" v-if="ds_cont">
             <template v-if="showAllCont">
@@ -72,7 +72,7 @@
                     <md-table-cell v-for="(column, columnIndex) in ds_m.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''"  @dblclick.native="openrefs(row,rowIndex,columnIndex)">
                       <md-bip-bi-file-up  v-if="column.editName =='UPDOWN'" :cell="fileFJCell(row)" :modal="fileFJModal(row)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>
                       <md-bip-input-ddGPS v-else-if="column.editType == 12" :cell="fileMPCell(row)" :modal="fileMPModal(row)" gpsType="showGPS"></md-bip-input-ddGPS>
-                      <md-bip-ref v-else :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref> 
+                      <md-bip-ref v-else :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,columnIndex)"></md-bip-ref> 
                     </md-table-cell>
                   </md-table-row>
                 </md-table-body>
@@ -94,21 +94,24 @@
           </template>
           <!-- 卡片布局 -->
           <template v-if="biLay == 'card'">  
-              <template v-if="ds_m && ds_m.cdata"> 
+              <template v-if="ds_m && ds_m.cdata && ds_m.cdata.length>0"> 
                 <md-layout style="padding:10px;">
-                  <md-card v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
+                  <md-card class="d_jump" v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
                     <md-card-expand> 
                       <md-card-header style="    padding-bottom: 0px;padding-top: 10px;">
-                          <md-layout v-for="(item, index) in ds_m.ccells.cels"  v-if="item.isShow && (item.attr&0x200)>0":key="index"  md-gutter  md-flex ="100" :md-gutter="16"> 
-                              <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
-                              <md-layout md-flex ="65" class="content">
-                                <!-- <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref>
-                                <md-bip-bi-file-up  v-else :cell="fileCell(row)" :modal="fileModal(row)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"  ></md-bip-bi-file-up> -->
-                                <md-bip-bi-file-up  v-if="item.editName =='UPDOWN'" :cell="fileFJCell(row)" :modal="fileFJModal(row)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>
-                                <md-bip-input-ddGPS v-else-if="item.editType == 12" :cell="fileMPCell(row)" :modal="fileMPModal(row)" gpsType="showGPS"></md-bip-input-ddGPS>
-                                <md-bip-ref v-else :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref>                              
-                              </md-layout>
-                          </md-layout>
+                        <md-layout v-if="timedown" md-flex ="100"  md-align="center" >
+                          <md-bip-time-down :endTime="row[timedown]" :callback="callback" endText="已经结束了" :id="timedown+''+rowIndex"></md-bip-time-down>
+                        </md-layout>
+                        <md-layout v-for="(item, index) in ds_m.ccells.cels"  v-if="item.isShow && (item.attr&0x200)>0":key="index"  md-gutter  md-flex ="100" :md-gutter="16"> 
+                            <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
+                            <md-layout md-flex ="65" class="content">
+                              <!-- <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref>
+                              <md-bip-bi-file-up  v-else :cell="fileCell(row)" :modal="fileModal(row)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"  ></md-bip-bi-file-up> -->
+                              <md-bip-bi-file-up  v-if="item.editName =='UPDOWN'" :cell="fileFJCell(row)" :modal="fileFJModal(row)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>
+                              <md-bip-input-ddGPS v-else-if="item.editType == 12" :cell="fileMPCell(row)" :modal="fileMPModal(row)" gpsType="showGPS"></md-bip-input-ddGPS>
+                              <md-bip-ref v-else :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref>                              
+                            </md-layout>
+                        </md-layout>
                       </md-card-header> 
         
                       <md-card-content> 
@@ -125,7 +128,7 @@
                       </md-card-content>
                       <md-card-actions>  
                         <md-button :disabled="btnDisabled" v-for="(itembtn,index) in dlgBtn" :key="index" @click.native="moblieButton(itembtn,row)">{{itembtn.name}}</md-button>
-                        <md-button class="md-icon-button" md-expand-trigger>
+                        <md-button class="md-icon-button" md-expand-trigger @click="ExpandShrink(rowIndex)">
                           <md-icon>keyboard_arrow_down</md-icon>
                         </md-button>
                       </md-card-actions> 
@@ -146,6 +149,9 @@
                 </md-layout>
               </template>
               <template v-else> 
+                <md-layout md-flex="100" class="nodata">
+                  <img src="../../../../img/bi/noData.png"/>
+                </md-layout> 
               </template> 
           </template>
         </template>
@@ -234,12 +240,19 @@ export default {
   methods:{
     getLayout(){
       let pbds = this.mparams.pbds;
-      if(pbds.indexOf("layout") !=-1){
-        pbds = pbds.substring(pbds.indexOf("layout"),pbds.length);
-        let lay = pbds.split("&")[0];
-        this.biLay = lay.substring(lay.indexOf("\"")+1,lay.lastIndexOf("\""));
-        if(this.biLay =='card'){
-          this.lineToColumn = "列转行";          
+      if(pbds){
+        if(pbds.indexOf("layout") !=-1){
+          let pbds0 = pbds.substring(pbds.indexOf("layout"),pbds.length);
+          let lay = pbds0.split("&")[0];
+          this.biLay = lay.substring(lay.indexOf("\"")+1,lay.lastIndexOf("\""));
+          if(this.biLay =='card'){
+            this.lineToColumn = "列转行";          
+          }
+        }
+        if(pbds.indexOf("timedown") !=-1){
+          let pbds0 = pbds.substring(pbds.indexOf("timedown"),pbds.length);
+          let lay = pbds0.split("&")[0];
+          this.timedown = lay.substring(lay.indexOf("\"")+1,lay.lastIndexOf("\"")); 
         }
       }
     },
@@ -276,8 +289,25 @@ export default {
       page.page = this.pageInfo.page-1;
       page.size=20;
       this.onTablePagination(page);
-    }
+    },
+    callback(){
 
+    },
+    ExpandShrink(index){ 
+      console.log(index)
+      setTimeout(() => {
+        // event.scrollIntoView();
+        let jump = document.querySelectorAll('.d_jump')
+        // 获取需要滚动的距离
+        let total = jump[index].offsetTop
+        // Chrome
+        document.body.scrollTop = total
+        // Firefox
+        document.documentElement.scrollTop = total
+        // Safari
+        window.pageYOffset = 1        
+      }, 200);
+    }
   },  
   created(){ 
     this.getLayout();
@@ -322,5 +352,17 @@ export default {
 }
 .content{
   border-bottom: 1px solid #8282824a; 
+}
+.nodata{
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+  img{
+    width: 150px;
+    height: 150px;
+  }
 }
 </style>

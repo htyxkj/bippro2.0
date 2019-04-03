@@ -37,17 +37,20 @@ export default {
         oldValue:this.oldValue,
         multiple: false,
       };
-      // if (value != this.oldValue) 
+      if (value != this.oldValue) 
         this.$emit("change", refBackData);
+      setTimeout(() => {
+        this.$emit("switchUP",refBackData)  
+      }, 100);
     }
   },
   mounted() {
-    if (this.cell) { 
+    if (this.cell) {  
       let notedit = this.cell.attr & this.NOTEDIT;
       this.disabled = notedit > 0 ? true : false;
       var modalValue = this.modal[this.cell.id];
       this.oldValue = modalValue?modalValue:''; 
-      this.myswitch = this.oldValue==0?false:true;
+      this.myswitch = this.oldValue=="0"?false:true;
     }
   },
   watch:{

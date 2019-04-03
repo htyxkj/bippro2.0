@@ -34,7 +34,7 @@ export default {
    },
    methods:{
     addBill(){
-       console.log(this.ds_m)
+      //  console.log(this.ds_m)
        this.blist = false;  
        if(this.ds_m.index<0)
         this.ds_m.createRecord(); 
