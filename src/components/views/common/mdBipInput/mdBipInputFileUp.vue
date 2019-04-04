@@ -299,6 +299,9 @@ export default {
         // console.log(arg,i);
 				this.upLoadSliceF(arg,i);
       }
+      if(this.selFiles.length ==0){
+        this.btndis = false;
+      }
       this.isSave=true;
 		},
 		upLoadSliceF(arg,_idx){ 
