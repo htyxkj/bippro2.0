@@ -55,7 +55,7 @@
       </md-dialog-content>  
     </md-dialog>  
     <div class="md-input-ref layout layout-row"> 
-      <md-layout md-flex="95" class="margin0" style="min-height:24px">
+      <md-layout md-flex="95" class="margin0" style="min-height:24px;  word-break: break-word;">
         {{modal[cell.id]}}
       </md-layout>
       <md-layout md-flex="5" md-align-end class="margin0" style="min-height:24px">

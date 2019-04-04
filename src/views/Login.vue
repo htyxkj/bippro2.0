@@ -58,7 +58,7 @@ export default {
       if(isPc){ 
         ioutsys =1;
       }else{
-        ioutsys =3;
+        ioutsys =2;
       }
       if(this.loading>0){
         return;

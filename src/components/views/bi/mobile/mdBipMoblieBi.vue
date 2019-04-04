@@ -96,9 +96,9 @@
           <template v-if="biLay == 'card'">  
               <template v-if="ds_m && ds_m.cdata && ds_m.cdata.length>0"> 
                 <md-layout style="padding:10px;">
-                  <md-card class="d_jump" v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
+                  <md-card v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
                     <md-card-expand> 
-                      <md-card-header style="    padding-bottom: 0px;padding-top: 10px;">
+                      <md-card-header  class="d_jump" style="padding-bottom: 0px;padding-top: 10px;">
                         <md-layout v-if="timedown" md-flex ="100"  md-align="center" >
                           <md-bip-time-down :endTime="row[timedown]" :callback="callback" endText="已经结束了" :id="timedown+''+rowIndex"></md-bip-time-down>
                         </md-layout>
@@ -290,23 +290,13 @@ export default {
       page.size=20;
       this.onTablePagination(page);
     },
+    //倒计时结束
     callback(){
 
     },
     ExpandShrink(index){ 
-      console.log(index)
-      setTimeout(() => {
-        // event.scrollIntoView();
-        let jump = document.querySelectorAll('.d_jump')
-        // 获取需要滚动的距离
-        let total = jump[index].offsetTop
-        // Chrome
-        document.body.scrollTop = total
-        // Firefox
-        document.documentElement.scrollTop = total
-        // Safari
-        window.pageYOffset = 1        
-      }, 200);
+      let jump = document.querySelectorAll('.d_jump')
+      jump[index].scrollIntoView()
     }
   },  
   created(){ 

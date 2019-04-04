@@ -86,18 +86,19 @@ import down from './js/process.js'
                     self.nowT += 1000;
                 }else{
                     let nowTime = new Date();
-                    timelong = nowTime.getTime(); 
+                    timelong = nowTime.getTime();
                 }
                 var arr = timestamp.split(/[- : \/]/);
-                let endTime = new Date(arr[0], arr[1]-1, arr[2], arr[3], arr[4], arr[5]); 
+                let endTime = new Date(arr[0], arr[1]-1, arr[2], arr[3], arr[4], arr[5]);
                 let t = endTime.getTime() -  timelong;
                 if(t<0){
-                    // self.con = "已超时:";
+                    self.con = "已超时:";
                     self.timeout=true;
                     self.timeClass ='timeClassB';
                 }else{
+                    self.con = "倒计时:";
+                    self.timeout=false;
                     self.timeClass ='timeClassA';
-                    self.con = "";
                 }
                 // alert(t);
                 t = Math.abs(t);

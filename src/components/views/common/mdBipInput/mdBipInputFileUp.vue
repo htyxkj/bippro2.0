@@ -125,6 +125,7 @@ export default {
       dlgImgNAME:'',
       isSave:false,//是否上传过
       imgs:[],
+      saveList:[],//上传过的文件下标
     };
   },
   mixins:[comm],
@@ -150,9 +151,20 @@ export default {
     //删除
     async delFile(index){
       var name = this.selFiles[index].name;
+      let fjroot = '';
+      if(this.bfjRoot){
+        if(this.modal.fj_root){
+          fjroot = this.modal.fj_root;
+        }else{
+          fjroot = this.upLoadDid;
+        }
+      }else{
+        fjroot='';
+      } 
+
       var params = {
         snkey: JSON.parse(window.sessionStorage.getItem('snkey')),
-        fjroot: this.bfjRoot?this.modal.fj_root:'',
+        fjroot: fjroot,
         fjname: name,
         updid: global.APIID_FILEDEL
       };
@@ -265,12 +277,17 @@ export default {
         };
       }
     },
-    save() {
+    save() { 
       if (this.selFiles.length < 1) {
         this.$notify.danger({ content: "请选择要上传的文件！" });
         this.clear();
         return;
       }
+      //设置上传路径
+      var fjroot = this.upLoadDid;//附件地址 
+      this.$set(this.modal,'fj_root',fjroot);
+      this.btndis = true;
+      this.saveList = [];
       // var files = null;
       for (let i = 0; i < this.selFiles.length; i++) {
         if(this.progress[i]===100)
@@ -316,13 +333,19 @@ export default {
         axios.post(url,form,config).then((res)=>{
           // console.log(res);
           if(res.data.id==-1){
+            this.saveList.push(_idx);
             this.$notify.danger({ content: "上传失败！", placement: "mid-center" });
+            this.btndis = false;
           }else{
             succeed++;
             var pro = res.data.data.pros;
             var id = res.data.data.fid;
             this.setProgress(id,pro);
-            if(res.data.id==0){
+            if(res.data.id==0){ 
+              this.saveList.push(_idx); 
+              if(this.saveList.length == this.selFiles.length){
+                this.btndis = false;
+              }
               this.$notify.success({ content: "上传完成！", placement: "mid-center" });
               this.upLoadFils[id] = res.data.data.fname;
               this.upLoadDid = res.data.data.fj_root;
