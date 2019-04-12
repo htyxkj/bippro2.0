@@ -35,6 +35,7 @@ export default function install(Vue) {
   Vue.component('md-bip-input-time', () => import("./mdBipInputTime"));
   Vue.component('md-bip-input-file', () => import("./mdBipInputFile"));
   Vue.component('md-bip-input-list', () => import("./mdBipInputList"));
+  Vue.component('md-bip-input-edit-list', () => import("./mdBipInputEditList"));
   Vue.component('md-bip-dia', () => import("./mdBipDia"));
   Vue.component('md-bip-input-ref', () => import("./mdBipInputRef"));
   Vue.component('md-bip-input', () => import("./mdBipInput")); 

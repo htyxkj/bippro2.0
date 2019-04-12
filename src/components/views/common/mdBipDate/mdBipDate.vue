@@ -35,7 +35,8 @@ export default {
   mixins: [common, mobildDate],
   props: {
     cell: null,
-    isReport: null
+    isReport: null,
+    modal:null,
   },
   data() {
     return {
@@ -66,6 +67,21 @@ export default {
       return this.cell.id.replace(/_/g, "").replace(reg, "");
     },
     dateIconClick() {
+      let minDate;
+      let maxDate;
+      if(this.cell.chkRule){
+        let chkRule = this.cell.chkRule;
+        let khh = chkRule.indexOf("]");
+        let khq = chkRule.indexOf("[");
+        let piaohao = chkRule.indexOf("~");
+
+        let id = chkRule.substring(khq+1,khh);
+        if(khq<piaohao){//[]~在某个日期后
+          minDate = this.modal[id]
+        }else{//~[]在某个日期前
+          maxDate = this.modal[id]
+        }
+      }
       var isPc = this.ISPC();
       if (isPc || this.range == "~") {
         jeDate("#" + this.dateID, {
@@ -74,6 +90,8 @@ export default {
           range: this.range,
           // isClear:false,
           theme: { bgcolor: "#2196F3", color: "#ffffff", pnColor: "#00CCFF" },
+          minDate: minDate, //设定最小日期为当前日期
+          maxDate: maxDate, //设定最大日期为当前日期
           donefun: obj => {
             this.checkVal = obj.val;
             this.updateValue(obj.val);

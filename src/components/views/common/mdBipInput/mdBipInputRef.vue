@@ -235,7 +235,7 @@ export default {
             }
           }
         }else{
-          newValue = this.refData.value[this.refData.cols[0]];
+          newValue += this.refData.value[this.refData.cols[0]];
         }
         this.refData.oldValue = this.oldValue;
         if(newValue !== this.oldValue){

@@ -344,17 +344,18 @@ export default {
           this.$notify.warning({ content: "没有菜单权限！" + this.btnInfo.cellID + "!" });
           this.closeDialog();
         }else{
-          this.showMenu = true;
-          await  this.getCell(this.mparams.pcell);
-          this.ds_m.createRecord();
+          this.getOpear(this.mparams.pflow); 
           this.getMenuP();
+          await  this.getCell(this.mparams.pcell);
+          this.ds_m.createRecord(); 
           let dz = this.btnInfo.key.split(",");
           if(dz.length>1){ 
             for(var i=1;i<dz.length;i++){
               let vv = dz[i].split("=");
               this.ds_m.currRecord[vv[1]] = this.selectData[vv[0]];
             }
-          }
+          } 
+          this.showMenu = true;
           if(!this.$refs.sbillSidenav){
             setTimeout(() => {
               this.$refs.sbillSidenav.open();  

@@ -89,7 +89,7 @@
     </md-dialog>  
     <div class="md-input-ref layout layout-row">
       <label>{{cell.labelString}}</label>
-      <md-input readonly v-model="modal[cell.id]"></md-input> 
+      <md-input readonly v-model="modal[cell.id]" :required="cell.isReq"></md-input> 
       <md-button class="md-icon-button md-ref-filter" id="upfile" @click="openDialog()">
         <md-icon>insert_drive_file</md-icon>
       </md-button>

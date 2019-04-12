@@ -5,7 +5,7 @@
       <label :class="mdStyleLable" :for="cell.id">{{cell.labelString}}{{xing}}</label>
     </md-layout>  
     <md-layout md-flex="60" class="md-align-end">
-      <md-switch class="md-primary switch" v-model="myswitch" :id="cell.id" :name="cell.id" ></md-switch>
+      <md-switch class="md-primary switch" v-model="myswitch" :id="cell.id" :name="cell.id" :disabled="disabled"></md-switch>
     </md-layout>
   </md-layout>
 </template>
@@ -22,6 +22,7 @@ export default {
       mdStyleLable:'md-style-lable',
       xing:'*',
       myswitch:false,
+      modalValue:this.modal[this.cell.id],
     };
   },
   methods: {  
@@ -45,11 +46,12 @@ export default {
     }
   },
   mounted() {
-    if (this.cell) {  
+    if (this.cell) {   
       let notedit = this.cell.attr & this.NOTEDIT;
-      this.disabled = notedit > 0 ? true : false;
-      var modalValue = this.modal[this.cell.id];
-      this.oldValue = modalValue?modalValue:''; 
+      this.disabled = notedit > 0 ? true : false; 
+      this.oldValue = this.modalValue?this.modalValue:''; 
+      if(this.oldValue =="")
+        this.oldValue = "0"
       this.myswitch = this.oldValue=="0"?false:true;
     }
   },

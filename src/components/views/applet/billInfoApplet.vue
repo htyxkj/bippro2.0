@@ -12,7 +12,7 @@
       <md-part-toolbar-group> -->
         <md-button v-if="menuP.COPY" @click="copy">{{$t('commBtn.B_COPY')}}</md-button>
         <!-- <md-button>审核 Auditing</md-button> -->
-        <md-button  @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
+        <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
       </md-part-toolbar-group>
 
       <md-part-toolbar-group v-if="flowlist.length>0">
@@ -478,7 +478,7 @@ export default {
           _self.$set(_self.dsm.currRecord,v,key);
         }
       })
-      console.log("Set 子表")
+      // console.log("Set 子表")
       //单子表
       if(!this.istabs){
         let oneChild = res[1]; 
@@ -519,7 +519,7 @@ export default {
       } 
     },
     //构成多子表标签数据
-    constituteChildrens(){ 
+    constituteChildrens(){  
       if(this.mparams.playout){
         var playout = this.mparams.playout;
         var indexT = playout.indexOf("T:");
@@ -1042,7 +1042,6 @@ export default {
           (this.dsm.currRecord.sys_stated & billS.INSERT) > 0 ||
           (this.dsm.currRecord.sys_stated & billS.EDITED) > 0
         ) {
-          
           return true;
         }
         if (this.chkinfo) {
@@ -1115,14 +1114,13 @@ export default {
       if (this.chkinfo) {
         if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
           this.dsm.canEdit = false; 
-          if ((this.dsm.ccells.attr & billS.LSUPDATE) > 0) {//临时改 
+          if ((this.dsm.ccells.attr & billS.LSUPDATE) > 0) {//临时改  
             this.dsm.canEdit = true;
           }
         }
       }
     },
     dsm(){
-      
       this.constituteChildrens(); 
       if(this.dsm){
         this.dsm.createRecord();   

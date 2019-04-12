@@ -7,13 +7,15 @@
 // global.BIPAPIURL = 'http://115.28.191.203:8080/safema/'//安全工具
 // global.BIPAPIURL = 'http://jtdrp.juminfuwu.cn/' //集团管理
 // global.BIPAPIURL = 'http://211.144.37.205/vehicle-sched/'; //一风车辆
-// global.BIPAPIURL = 'http://211.144.37.205/airfencea/'; //一风飞防
+global.BIPAPIURL = 'http://211.144.37.205/airfencea/'; //一风飞防
 // global.BIPAPIURL = 'http://115.28.191.203:89/skxjtfile/';//京通档案
 // global.BIPAPIURL = 'http://192.168.100.13:8080/skxjtfile/';//京通档案（水科学院）
 // global.BIPAPIURL = 'http://www.bip-soft.com:89/clubreserv/';//会所预定
-global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/';//修树管控
+// global.BIPAPIURL = 'http://www.juminfuwu.cn:88/jxgl/';//绩效管理
+// global.BIPAPIURL = 'http://www.juminfuwu.cn:88/xsgk/';//安全隐患监控平台正式    
+// global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/';//安全隐患监控平台测试
 // global.BIPAPIURL = 'http://192.168.0.200:8088/airfencea/';//本机测试环境
-// global.BIPAPIURL = 'http://192.168.1.3:9999/jd/';
+// global.BIPAPIURL = 'http://192.168.1.18:9999/jd/';
 // global.DBID = 'ZT1';
 // global.DBID = 'J1';
 global.DBID = '01';
@@ -32,6 +34,7 @@ global.DBID = '01';
 // global.DBID = '122';//115飞防管控
 // global.DBID = '124';//CRM 
 // global.DBID = '125';//安全隐患监控平台
+// global.DBID = '126';//本机绩效
 global.API_COM = 'api';//web端入口
 global.API_UPD = 'upd';//附件操作接口
 //队列消息配置

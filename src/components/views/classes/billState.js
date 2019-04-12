@@ -10,6 +10,7 @@ const COPY = 0x100;//从其它记录拷贝过来
 const DICT = 0x200;//记录经过动态字典处理后,置上该标记。
 const POSTED =  0x400; ////记录已提交过
 const LSUPDATE = 0x4000;//临时改
+const ORDERBY = 0x400000;//排序
 
 const billState = {
   INSERT,
@@ -23,7 +24,8 @@ const billState = {
   COPY,
   DICT,
   POSTED,
-  LSUPDATE
+  LSUPDATE,
+  ORDERBY
 }
 
 export default billState;

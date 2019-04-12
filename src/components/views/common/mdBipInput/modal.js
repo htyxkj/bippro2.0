@@ -34,6 +34,7 @@ export default {
       INPUT_DDGPS:12,
       INPUT_AUTOGRAPH:13,
       INPUT_SWITCH:14,
+      INPUT_EDITLIST:15,
       disabled: false,
       oldValue:"",
       mdSelection:false, 

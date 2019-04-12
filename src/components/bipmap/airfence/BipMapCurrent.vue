@@ -390,9 +390,9 @@ export default {
                     var _zb=listQY[j];
                     area.push(new BMap.Point(parseFloat(_zb[0]),parseFloat(_zb[1])))
                 }
-                var polygon = new BMap.Polygon(area, { strokeColor: AREA_COLOR, strokeWeight: AREA_WEIGHT, strokeOpacity: AREA_OPACITY,fillColor:AREA_FILLCOLOR,fillOpacity:AREA_FILLOPACITY })
+                var polygon = new BMap.Polygon(area, { strokeColor: "red", strokeWeight: AREA_WEIGHT, strokeOpacity: AREA_OPACITY,fillColor:AREA_FILLCOLOR,fillOpacity:AREA_FILLOPACITY })
                 this.map.addOverlay(polygon)
- 
+
                 let br = []
                 //避让点
                 var listBR = data[i].listBR;

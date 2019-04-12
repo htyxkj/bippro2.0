@@ -171,9 +171,13 @@ export default{
         updateOpt(){
             if(this.gaugeseries.length>0){  
                 var speed = this.containerSpeed.series[0].points[0];
+                if(this.gaugeseries[0])
+                    this.gaugeseries[0] = parseFloat(this.gaugeseries[0]);
                 var sp = parseFloat(this.gaugeseries[0].toFixed(2))
                 speed.update(sp);
                 var kpa = this.containerK.series[0].points[0];
+                if(this.gaugeseries[1])
+                    this.gaugeseries[1] = parseFloat(this.gaugeseries[1]);
                 var kp = parseFloat(this.gaugeseries[1].toFixed(2))
                 kpa.update(kp);
             }

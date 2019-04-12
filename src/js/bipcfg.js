@@ -12,6 +12,7 @@ global.APIID_VAR = 'variable';
 global.APIID_FINDDATA = 'finddata';
 global.APIID_EXPDATA = 'expdata';
 global.APIID_FINDCELLDATA = 'findcelldata';
+global.APIID_SQLORRPT='apiSQLORRptData';
 global.APIID_DLG = 'dlg';
 global.APIID_SAVEDATA = 'savedata';
 global.APIID_CHKUP = 'chkup';

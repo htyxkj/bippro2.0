@@ -133,7 +133,7 @@ export default {
         });
       }
     },
-    async fetchUIData() {
+    async fetchUIData(orderBY) {
       this.loading++;
       var pdata = JSON.stringify(this.ds_cont.currRecord);
       var data1 = {
@@ -145,8 +145,12 @@ export default {
         bebill: 0,
         currentPage: this.pageInfo.page,
         pageSize: this.pageInfo.size,
-        cellid: this.ds_m.ccells.obj_id
+        cellid: this.ds_m.ccells.obj_id,
+        orderBy :orderBY, 
       };
+      if((this.mparams.pattr & 0x10000) >0){ //外部SQL
+        data1.apiId = global.APIID_SQLORRPT;
+      }
       var res = await this.getDataByAPINewSync(data1);
       if (res.data.id == 0) {
         var pages = res.data.data.pages;

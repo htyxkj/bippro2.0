@@ -245,10 +245,13 @@ export default class CDataSet {
   createRecord() {
     var modal = this.initModal(true); 
     // console.log(modal);
-    modal.sys_stated = modal | BillState.INSERT | BillState.EDITED; 
-    this.addRow(modal);
-    this.currRecord = modal;
+    if(modal){
+      modal.sys_stated = modal | BillState.INSERT | BillState.EDITED; 
+      this.addRow(modal);
+      this.currRecord = modal;
+    }
     this.canEdit = true; 
+
     return this.currRecord; 
   }
   initModal(isNew) {

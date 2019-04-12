@@ -194,7 +194,6 @@ export default {
             this.$refs["sbill"].open(slkid,slkbuid);
           }
         }else{
-          console.log("dblclick")
           this.dblclick(row,index);
         }
 
@@ -252,7 +251,7 @@ export default {
       var res = await this.getDataByAPINewSync(data1);
       if(res.data.id==0){
         if(this.dsm.cdata.length>0){
-          console.log('清空DSM',this.dsm)
+          // console.log('清空DSM',this.dsm)
           this.dsm.clearData();
         }
         _.forEach(res.data.data.pages.celData,row=>{

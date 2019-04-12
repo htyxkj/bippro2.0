@@ -74,8 +74,7 @@ import down from './js/process.js'
         
     },
     methods: {
-        countdowm(timestamp){
-            console.log(timestamp)
+        countdowm(timestamp){ 
             if(!timestamp)
                 return;
             let self = this;
@@ -89,6 +88,12 @@ import down from './js/process.js'
                     timelong = nowTime.getTime();
                 }
                 var arr = timestamp.split(/[- : \/]/);
+                if(!arr[3])
+                    arr[3] = "00"
+                if(!arr[4])
+                    arr[4] = "00"
+                if(!arr[5])
+                    arr[5] = "00"
                 let endTime = new Date(arr[0], arr[1]-1, arr[2], arr[3], arr[4], arr[5]);
                 let t = endTime.getTime() -  timelong;
                 if(t<0){

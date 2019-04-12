@@ -102,7 +102,7 @@ export default{
                         }else{
                             positions=[0,5,10,15,20]
                         }
-                        console.log(positions);
+                        // console.log(positions);
                         return positions;
                     }
                 }, 

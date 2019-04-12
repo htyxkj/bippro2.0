@@ -61,7 +61,7 @@ export default {
       }
       this.loading++; 
       let bok = await this.checkOpear(sbuid); 
-      console.log(bok)
+      // console.log(bok)
       if (bok) { 
         this.getMenuP();
         if(this.sidv !== sid ){
@@ -142,7 +142,7 @@ export default {
     },
     async checkOpear(sbuid) {
       if (!this.opera || this.opera.buid !== sbuid) {
-        console.log("远程调用getOpear");
+        // console.log("远程调用getOpear");
         await this.getOpear(sbuid);
       }
       if (this.opera&&!this.opera.pmenuid) {
@@ -150,7 +150,7 @@ export default {
         return false;
       }
       let mm =this.getMenu(this.menus);
-      console.log(mm)
+      // console.log(mm)
       if (!mm) {
         this.$notify.info({
           content: "没有" + this.opera.pmenuid + "菜单权限!"
@@ -159,10 +159,10 @@ export default {
       } else {
         this.currMenu = mm; 
         if (!this.mparams) {
-          console.log("远程调用mparams");
+          // console.log("远程调用mparams");
           let bok = await this.getParams(sbuid, mm.menuId);
           if (bok) {
-            console.log("远程调用getCell");
+            // console.log("远程调用getCell");
             return await this.getCell();
           } else {
             return bok;

@@ -59,11 +59,14 @@
         <template v-if="!groupTJ"> 
           <!-- 表格布局 -->
           <template v-if="biLay =='table' " class="flex">
-            <md-table-card>
-              <md-table  @select="onTableSelect" class="flex" v-if="ds_m">
+            <md-table-card style="height: -webkit-fill-available;">
+              <md-table  @select="onTableSelect" class="flex" v-if="ds_m" @sort="onSort">
                 <md-table-header v-if="ds_m">
                   <md-table-row>
-                    <md-table-head v-for="(item, index) in ds_m.ccells.cels" :key="index" v-if="item.isShow" :md-numeric="item.type<12">{{item.labelString}}</md-table-head>
+                    <template v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow">
+                      <md-table-head v-if="(item.attr & bills1.ORDERBY)>0 " :md-numeric="item.type<12" :md-sort-by="item.id">&nbsp;&nbsp;&nbsp;{{item.labelString}}&nbsp;&nbsp;&nbsp;</md-table-head>
+                      <md-table-head v-else :md-numeric="item.type<12">{{item.labelString}}</md-table-head>
+                    </template>
                   </md-table-row>
                 </md-table-header>  
                 <md-table-body>
@@ -102,7 +105,7 @@
                         <md-layout v-if="timedown" md-flex ="100"  md-align="center" >
                           <md-bip-time-down :endTime="row[timedown]" :callback="callback" endText="已经结束了" :id="timedown+''+rowIndex"></md-bip-time-down>
                         </md-layout>
-                        <md-layout v-for="(item, index) in ds_m.ccells.cels"  v-if="item.isShow && (item.attr&0x200)>0":key="index"  md-gutter  md-flex ="100" :md-gutter="16"> 
+                        <md-layout v-for="(item, index) in ds_m.ccells.cels"  v-if="item.isShow && (item.attr&bills1.DICT)>0":key="index"  md-gutter  md-flex ="100" :md-gutter="16"> 
                             <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                             <md-layout md-flex ="65" class="content">
                               <!-- <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref>
@@ -115,7 +118,7 @@
                       </md-card-header> 
         
                       <md-card-content> 
-                          <md-layout v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow && (item.attr&0x200)<=0"  :key="index" md-gutter  md-flex ="100" :md-gutter="16"> 
+                          <md-layout v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow && (item.attr& bills1.DICT)<=0"  :key="index" md-gutter  md-flex ="100" :md-gutter="16"> 
                             <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                             <md-layout md-flex ="65" class="content">
 
@@ -231,6 +234,7 @@ export default {
       pageOn:true,
       pageNext:true,
       pageToolShow:false,
+      bills1 : billS,
     }
   },
   mixins:[common,bipBi],
@@ -294,9 +298,18 @@ export default {
     callback(){
 
     },
+    //定位到当前选项卡
     ExpandShrink(index){ 
       let jump = document.querySelectorAll('.d_jump')
       jump[index].scrollIntoView()
+    },
+    //排序
+    onSort(sortBy){
+      let name = sortBy.name;
+      let type = sortBy.type;
+      let order = name +"  " + type;
+      // this.ds_m.pcell.orderby = name +"  " + type;
+      this.fetchUIData(order);
     }
   },  
   created(){ 

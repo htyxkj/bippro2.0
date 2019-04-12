@@ -56,6 +56,9 @@ export default {
       var s0 = this.bipRefId.refValue;
       if(s0 == '{&DATETIME}' || s0=='{&DATE}'){
         return ;
+      } 
+      if(this.bipRefId.editType == 15){ //编辑器类型是15的不做处理
+        return;
       }
       // if(s0&&s0.indexOf('$')>0){
       if(this.bipRefId.refCl){
@@ -74,7 +77,7 @@ export default {
         } else {
           codeArr = code.split(";");
         }
-        var valName="";
+        var valName=""; 
         for(var i=0;i<codeArr.length;i++){
           var fh=";"
           if(i== codeArr.length-1){
@@ -104,6 +107,8 @@ export default {
             if(cc.data.code==1){ 
               for(var j=0;j<cc.data.values.length;j++){
                 cldata = {'allCols':cc.data.allCols,'value':cc.data.values[j]}; 
+                if(cldata.value[cldata.allCols[0]] !== codeArr[i])
+                  continue;
                 // var id = this.scriptReference()
                 var id =1;
                 valName+=cldata.value[cldata.allCols[id]]+fh

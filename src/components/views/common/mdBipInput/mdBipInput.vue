@@ -1,5 +1,5 @@
 <template>
-  <md-layout  md-flex-xsmall="100" :md-flex-small="callsmall" :md-flex-medium="callmedium" :md-flex-large="calllarge" v-if="cell.isShow">
+  <md-layout  md-flex-xsmall="100" :md-flex-small="callsmall" :md-flex-medium="callmedium" :md-flex-large="calllarge" v-show="cell.isShow">
     <slot name="editor"></slot>
     <template v-if="inputType == INPUT_COMMON" >
       <md-bip-input-comm :cell="cell" :modal="modal"  :ref="cell.id" @change="dataChange"></md-bip-input-comm>
@@ -12,6 +12,9 @@
     </template>
     <template v-if="inputType == INPUT_LIST">
       <md-bip-input-list :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-list>
+    </template>
+    <template v-if="inputType == INPUT_EDITLIST">
+      <md-bip-input-edit-list :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-edit-list>
     </template>
     <template v-if="inputType == INPUT_FILE">
       <md-bip-input-fileUp :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-fileUp>
@@ -137,6 +140,9 @@ export default {
           return;
         }if(this.cell.editType == this.INPUT_SWITCH){
           this.inputType = this.INPUT_SWITCH;
+          return;
+        }if(this.cell.editType == this.INPUT_EDITLIST){
+          this.inputType = this.INPUT_EDITLIST;
           return;
         }
         //判断字段是辅助，并且是否是特殊辅助
