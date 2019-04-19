@@ -106,7 +106,9 @@ export default {
           "#" + this.dateID,
           this.dateFomt,
           this.success,
-          this.error
+          this.error,
+          maxDate,
+          minDate,
         );
       }
     },

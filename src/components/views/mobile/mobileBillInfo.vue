@@ -186,6 +186,44 @@ export default {
           if(!isnull)
             return;
       }
+      let _oldPk = this.dsm.currRecord.oldpk;
+      if(_oldPk){
+        let pk = [];
+        for(var i =0;i<this.dsm.ccells.pkindex.length;i++){
+          let _i = this.dsm.ccells.pkindex[i];
+          let cle = this.dsm.ccells.cels[_i];
+          if(_oldPk[cle.id]){
+            pk[i] =_oldPk[cle.id];
+          }else{
+            pk[i] = this.dsm.currRecord[cle.id];
+          }
+        } 
+        this.dsm.currRecord.oldpk = pk;
+      } 
+      if(this.dsm.currRecord.sys_stated !=4){
+        let check = await this.beforeSaveCheck(this.dsm);
+
+        let issavet = 'false';
+        if(check){
+          if(check[0] == 'Dialog'){
+            issavet =  await this.$dialog.confirm(check[1], {
+              okText: this.$t('commInfo.ok'),
+              cancelText: this.$t('commInfo.cancel')
+            })
+            .then(() => {
+              return 'true';
+            });
+          }else if(check[0] == 'Notification'){
+            this.$notify.danger({content:check[1]})
+            issavet = check[2];
+          }
+        }else{
+          issavet = 'true'
+        }
+        if(issavet == 'false'){
+          return;
+        }
+      }
       this.loading = 1;
       var options = { pcell: this.dsm.pcell, jsonstr: str };
       var res = await this.saveData(options);
@@ -410,9 +448,8 @@ export default {
       }
     },
     //主表多页签
-    creBookmark(){  
-      this.mainTabs = [];
-      let playout = this.mparams.playout; 
+    creBookmark(playout){  
+      this.mainTabs = []; 
       if(playout.indexOf("T:") !=-1){
         let one = playout.indexOf("(");
         let two = playout.lastIndexOf(")");
@@ -490,11 +527,15 @@ export default {
           }
           this.sth[sth00.field] = sth00; 
           this.settingShowField(sth00.field);
-        }
-        window.sessionStorage.setItem(menuid, JSON.stringify(this.sth));
+          window.sessionStorage.setItem(menuid, JSON.stringify(this.sth));
+        }else{
+          window.sessionStorage.setItem(menuid, 'noData');
+        } 
         this.isSelsth=true;
-      } else {
+      } else { 
         this.isSelsth=true; 
+        if(me == 'noData')
+          return;
         this.sth = JSON.parse(me);
         for(var item in this.sth){
           this.settingShowField(item);
@@ -530,6 +571,23 @@ export default {
         }
       }
       return false;
+    },
+    doMyLayout(){
+      this.mainTabs=[];
+      this.childrens=[];
+      let playout = this.mparams.playout;  
+      let index = playout.indexOf(':') 
+      if(index>0){ 
+        let str = playout.substring(index+1)
+        str = str.substring(1,str.length-1)
+        let cc = this.doLayout(str);
+        if(cc.length>=1){
+          this.creBookmark(cc[0])
+        }
+        // if(cc.length>=2){
+        //   this.constituteChildrens(cc[1])
+        // }
+      }
     }
 
   },
@@ -645,7 +703,7 @@ export default {
   async mounted() {
     if (this.dsm) {
       this.getSwitch();
-      this.creBookmark();
+      this.doMyLayout();
       const state = this.dsm.currRecord.sys_stated & billS.INSERT;
       if (this.dsm.ds_sub && state === 0) {
         this.getChildData(this.dsm.ds_sub[0]);
@@ -668,7 +726,7 @@ export default {
         this.dsm.createRecord(); 
         this.getSwitch();
       }
-      this.creBookmark();
+      this.doMyLayout();
     }
   }
 };

@@ -43,6 +43,10 @@ export default {
       setTimeout(() => {
         this.$emit("switchUP",refBackData)  
       }, 100);
+      // this.oldValue = this.modalValue?this.modalValue:''; 
+      // if(this.oldValue =="")
+      //   this.oldValue = "0"
+      // this.myswitch = this.oldValue=="0"?false:true;
     }
   },
   mounted() {

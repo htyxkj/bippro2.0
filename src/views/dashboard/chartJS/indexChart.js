@@ -39,22 +39,8 @@ export default {
     async getDateStr() {
       this.usercode = JSON.parse(window.sessionStorage.getItem('user')).userCode; //用户编码  
       this.param.usercode = this.usercode;
-      this.constant = window.sessionStorage.getItem('INDEXCONSTANT');
-      var data0 = {
-        'dbid': `${global.DBID}`, //数据库连接id 
-        "usercode": this.usercode, //用户编码
-        "apiId": "constant", //获取cellID标识 
-        'assistid': "INDEX", //辅助,变量标识 如 {&SOPR},{$D.SOPR}    	'cont': "BXQ0000517060001"  //查询条件
-      };
-      if (this.constant == null || this.constant == '') {
-        let _this = this;
-        await axios.post(`${global.BIPAPIURL}` + `${global.API_COM }`, qs.stringify(data0)).then(res => {
-          _this.constant = res.data.data.value;
-          window.sessionStorage.setItem('INDEXCONSTANT', _this.constant);
-        }).catch(err => {
-          console.log(err)
-        })
-      }
+      this.constant = await this.getConstant("INDEX");
+      console.log(this.constant)
       if (this.constant == null || this.constant == '')
         return;
       //开始拆分 常量信息

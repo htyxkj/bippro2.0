@@ -26,6 +26,7 @@ export default {
         // this.oldValue = this.modal[this.cell.id];
         // console.log('datachange');
         this.$emit('change',data);
+        this.oldValue = this.modal[this.cell.id];
       }
     },
   },

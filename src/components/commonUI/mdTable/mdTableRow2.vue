@@ -6,7 +6,7 @@
     @click.native="autoSelect">
     <md-table-cell
       v-if="hasSelection"
-      class="md-table-selection"> 
+      class="md-table-selection">  
       <md-checkbox
         v-model="checkbox"
         :disabled="isDisabled"
@@ -36,7 +36,7 @@
       return {
         parentTable: {},
         headRow: false,
-        checkbox: this.initCheckbox,
+        checkbox: false,
         index: 0,
         multiple:false,
         uuid: `mdrow_uuid_${uniqueId()}`
@@ -56,10 +56,12 @@
       }
     },
     watch: {
-      mdItem(newValue, oldValue) {
+      mdItem(newValue, oldValue) { 
         this.parentTable.data[this.index] = this.mdItem;
-        this.handleMultipleSelection(newValue === oldValue);
+        // this.handleMultipleSelection(newValue === oldValue);
+        this.checkbox = !this.initCheckbox;
         // this.select(this.initCheckbox);
+        this.autoSelect()
         // this.autoSelect();
       }
     },
@@ -71,7 +73,7 @@
         if (this.hasSelection) {
           if(this.parentTable.$children[0]){
             this.parentTable.$children[0].checkbox = this.parentTable.numberOfSelected > 0
-            && this.parentTable.numberOfSelected === this.parentTable.numberOfRows;
+            && this.parentTable.numberOfSelected === this.parentTable.numberOfRows; 
           }
         }
       },

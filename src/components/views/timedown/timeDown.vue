@@ -13,7 +13,7 @@
         </md-layout>
         <md-layout md-align="start" class="timeoutimg">
             <template v-if="timeout">
-                <img src="../../../img/timeDown/timeout.png">
+                <img :src="img">
             </template>   
         </md-layout> 
     </md-layout>
@@ -33,13 +33,19 @@ import down from './js/process.js'
         con:'',
         timeout:false,
         nowT:0,
+        img:this.imgURL+'inet/gimg/watermarks/timeout.png', 
+        imgURL :`${global.BIPAPIURL}`,
       }
     },
     props:{
-        endTime:{
-            type: String,
-            default :''
+        row:{
+            type:Object,
+            default:null,
         },
+        timedown:{
+            type:String,
+            default:''
+        }, 
         endText:{
             type : String,
             default:'已结束'
@@ -47,31 +53,10 @@ import down from './js/process.js'
         callback : {
             type : Function,
             default :''
-        },
-        id:{
-            type:String,
-            default:''
-        }
+        }, 
     },
-    mounted () {
-        // let nowTime = new Date();
-        // let endTime1 = new Date(this.endTime);
-        // let t = endTime1.getTime() - nowTime.getTime();
-        // let setting={   size: 130,            // 绘制圆形的最大尺寸，宽=高
-        //                 borderWidth: 4,       // 边框宽度
-        //                 borderColor:"#fff",   // 边框颜色
-        //                 outerColor:"#fff",    // 最外层底圆颜色
-        //                 scheduleColor:"#fff", // 进度条动画颜色
-        //                 fontColor: "#fff",    // 字体颜色
-        //                 ringColor: "#ffc720", // 进度条环形颜色
-        //                 innerColor: "#4e84e5",// 最内圆底色
-        //                 fontSize: 50,         //字体大小  
-        //                 time: t/1000,         //时间 秒  
-        //                 endTime:this.endTime, //结束时间
-        //         }
-        // this.init(setting);
-        this.getsysTime();
-        
+    mounted () { 
+        this.getsysTime(); 
     },
     methods: {
         countdowm(timestamp){ 
@@ -148,7 +133,19 @@ import down from './js/process.js'
             };
             let res = await this.getDataByAPINewSync(data1)
             if(res.data.id == 0)
-                this.nowT = res.data.data.data.time;
+                this.nowT = res.data.data.data.time; 
+            let cc = this.timedown.split(";")//hpdate;qxdx;1=watermark1,2=watermark2,3=watermark3
+            this.endTime = this.row[cc[0]];
+            if(cc.length>=3 ){
+                let dd =this.row[cc[1]];
+                let uu = cc[2].split(",");
+                for(var i=0;i<uu.length;i++){
+                    let ss = uu[i].split("=");
+                    if(ss[0] == dd){
+                        this.img = this.imgURL+'inet/gimg/watermarks/'+ss[1];
+                    }
+                }
+            }
             this.countdowm(this.endTime);
         }
     }

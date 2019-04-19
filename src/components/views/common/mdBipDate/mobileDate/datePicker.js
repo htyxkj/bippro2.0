@@ -27,8 +27,8 @@ export default {
         }
     },
     methods:{ 
-        pickerDate (trigger,format,success,error) {
-            console.log(trigger,format,success,error)
+        pickerDate (trigger,format,success,error,maxDate,minDate) {
+            this.maxMinDate(maxDate,minDate);
             this.success = success;
             this.error = error;
             this.format = format;
@@ -634,5 +634,31 @@ export default {
             
         },
         error(){},
+        maxMinDate(maxDate,minDate){ 
+            if(maxDate){
+                var arr = maxDate.split(/[- : \/]/);
+                if(!arr[3])
+                    arr[3] = "00"
+                if(!arr[4])
+                    arr[4] = "00"
+                if(!arr[5])
+                    arr[5] = "00" 
+                this.maxY = arr[0];
+                this.maxM = arr[1];
+                this.maxD = arr[2]; 
+            }
+            if(minDate){
+                var arr = minDate.split(/[- : \/]/);
+                if(!arr[3])
+                    arr[3] = "00"
+                if(!arr[4])
+                    arr[4] = "00"
+                if(!arr[5])
+                    arr[5] = "00" 
+                this.minY = arr[0];
+                this.minM = arr[1];
+                this.minD = arr[2]; 
+            }
+        },
     }
 }     

@@ -103,7 +103,7 @@
                     <md-card-expand> 
                       <md-card-header  class="d_jump" style="padding-bottom: 0px;padding-top: 10px;">
                         <md-layout v-if="timedown" md-flex ="100"  md-align="center" >
-                          <md-bip-time-down :endTime="row[timedown]" :callback="callback" endText="已经结束了" :id="timedown+''+rowIndex"></md-bip-time-down>
+                          <md-bip-time-down :row="row" :timedown="timedown" :callback="callback" endText="已经结束了"></md-bip-time-down>
                         </md-layout>
                         <md-layout v-for="(item, index) in ds_m.ccells.cels"  v-if="item.isShow && (item.attr&bills1.DICT)>0":key="index"  md-gutter  md-flex ="100" :md-gutter="16"> 
                             <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>

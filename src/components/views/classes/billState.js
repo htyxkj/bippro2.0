@@ -11,6 +11,7 @@ const DICT = 0x200;//记录经过动态字典处理后,置上该标记。
 const POSTED =  0x400; ////记录已提交过
 const LSUPDATE = 0x4000;//临时改
 const ORDERBY = 0x400000;//排序
+const INITIALDATA = 0x100000000
 
 const billState = {
   INSERT,
@@ -25,7 +26,8 @@ const billState = {
   DICT,
   POSTED,
   LSUPDATE,
-  ORDERBY
+  ORDERBY,
+  INITIALDATA
 }
 
 export default billState;

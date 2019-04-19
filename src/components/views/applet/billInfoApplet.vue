@@ -28,21 +28,7 @@
         <md-part-toolbar-crumb>{{$t('commLabel.L_AddM')}}</md-part-toolbar-crumb>
       </md-part-toolbar-crumbs>
     </md-part-toolbar>
-    <md-part-body>
-      <!-- <template v-if="dsm&&!dsm.haveChild()"> 
-        <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null"> -->
-          <!-- <template v-if="inp.length>0">
-            <md-layout style="height:auto;margin:0px;padding:0px" v-for="(item,index) in inp" :key="index" >  
-              <md-layout style="height:auto;margin:0px;padding:0px" v-for="(row,rowIn) in item" :key="rowIn" :md-flex="row[0].ccHorCell" :md-flex-offset="row[0].ccHorCell"> 
-                  <md-layout v-for="(one,index1) in row" :key="index1"  :md-flex="one.input.ccHorCell" :md-flex-offset="one.input.ccHorCell">                  
-                    <md-bip-input :dsm="dsm" :ref="one.input.id" :key="one.input.id" :cell="one.input" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
-                  </md-layout>   
-              </md-layout> 
-            </md-layout> 
-          </template>
-          <template v-else> --> 
-          <!-- </md-content>
-      </template> -->
+    <md-part-body> 
       <template v-if="dsm">
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
           <!-- sass/components/mdInputContainer.scss .md-input-container { margin: .04rem .1rem .48rem 0;}-->
@@ -56,16 +42,16 @@
           </template>
           <template v-else> -->
           <!-- </template> -->
-            <md-layout v-if="isSelsth"> 
+            <md-layout v-if="isSelsth" > 
               <template v-if="mainTabs.length<=0">
-                <md-layout> 
+                <md-layout class="flex"> 
                   <md-bip-input :showsth="sth[cell.id]" :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" @changeShowSth="settingShowField"></md-bip-input>
                 </md-layout>
               </template>
               <template v-else>
                 <md-tabs class="md-transparent" style="min-height:max-content;">  
                   <md-tab v-for="(item,index) in mainTabs" :md-label="item.name" :key="index"  style="padding:0px;">
-                    <md-layout> 
+                    <md-layout class="flex"> 
                       <md-bip-input :showsth="sth[cell.id]"  :dsm="dsm" v-for="(cell,index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" v-if="item.start <= index && item.end >= index" @changeShowSth="settingShowField"></md-bip-input>
                     </md-layout>
                   </md-tab>
@@ -116,7 +102,7 @@ export default {
       inp:[],
       mainTabs:[],
       sth:{},
-      isSelsth:false,
+      isSelsth:false,  
     };
   },
   props: { dsm: Object, dsext: Array, opera: Object ,mparams:Object,menuP:Object},
@@ -193,8 +179,9 @@ export default {
           this.save();
         });
     },
-    async save() {
-      // console.log("asdfasdfasdfsadfasdf");
+    
+
+    async save() { 
       if(this.dsm.ccells.subLayCells)
       for(var i = 0; i<this.dsm.ccells.subLayCells.length; i++){
         var aa = this.dsm.ccells.subLayCells[i];
@@ -203,19 +190,55 @@ export default {
         if(cc>0){  
           this.dsm.currRecord[aa.obj_id]=[]; 
         }
+      }
+      let _oldPk = this.dsm.currRecord.oldpk;
+      if(_oldPk){
+        let pk = [];
+        for(var i =0;i<this.dsm.ccells.pkindex.length;i++){
+          let _i = this.dsm.ccells.pkindex[i];
+          let cle = this.dsm.ccells.cels[_i];
+          if(_oldPk[cle.id]){
+            pk[i] =_oldPk[cle.id];
+          }else{
+            pk[i] = this.dsm.currRecord[cle.id];
+          }
+        } 
+        this.dsm.currRecord.oldpk = pk;
       } 
-      var str = JSON.stringify(this.dsm.currRecord);  
-      
+      var str = JSON.stringify(this.dsm.currRecord);   
       if((this.dsm.currRecord&billS.DELETE)==0){
         var isnull = this.checkNotNull(this.dsm);
           if(!isnull)
             return;
       }
-      this.loading = 1;
       var options = { pcell: this.dsm.pcell, jsonstr: str };
+      if(this.dsm.currRecord.sys_stated !=4){//保存前校验
+        let check = await this.beforeSaveCheck(this.dsm);
+        console.log(check)
+        let issavet = 'false';
+        if(check){
+          if(check[0] == 'Dialog'){
+            issavet =  await this.$dialog.confirm(check[1], {
+              okText: this.$t('commInfo.ok'),
+              cancelText: this.$t('commInfo.cancel')
+            })
+            .then(() => {
+              return true;
+            });
+          }else if(check[0] == 'Notification'){
+            this.$notify.danger({content:check[1]})
+            issavet = check[2];
+          }
+        }else{
+          issavet = 'true'
+        }
+        if(issavet == 'false'){
+          return;
+        } 
+      }
+      this.loading = 1;
       var res = await this.saveData(options);
       if (res.data.id == 0) {
-        // console.log(this.dsm.currRecord);
         if (this.dsm.currRecord.sys_stated === 4) {
           this.$notify.success({ content: this.$t('commInfo.deleteSucc'), placement: "mid-center" });
           this.dsm.deleteRow(-1);
@@ -519,11 +542,10 @@ export default {
       } 
     },
     //构成多子表标签数据
-    constituteChildrens(){  
-      if(this.mparams.playout){
-        var playout = this.mparams.playout;
+    constituteChildrens(playout){  
+      if(playout){
         var indexT = playout.indexOf("T:");
-        if(indexT>0){
+        if(indexT>=0){
           this.istabs=true;
           var _aa = playout.indexOf(")");
           playout = playout.substring(indexT,_aa)
@@ -864,9 +886,8 @@ export default {
       return "float: left;width: "+ccHorCell+"%;"
     },
     //主表多页签
-    creBookmark(){ 
+    creBookmark(playout){ 
       this.mainTabs = [];
-      let playout = this.mparams.playout; 
       if(playout.indexOf("T:") !=-1){
         let one = playout.indexOf("(");
         let two = playout.lastIndexOf(")");
@@ -944,11 +965,15 @@ export default {
           }
           this.sth[sth00.field] = sth00; 
           this.settingShowField(sth00.field);
+          window.sessionStorage.setItem(menuid, JSON.stringify(this.sth));  
+        }else{
+          window.sessionStorage.setItem(menuid, 'noData');  
         }
-        window.sessionStorage.setItem(menuid, JSON.stringify(this.sth));
         this.isSelsth=true;
-      } else {
+      } else { 
         this.isSelsth=true;
+        if(me == 'noData')
+          return;
         this.sth = JSON.parse(me);
         for(var item in this.sth){
           this.settingShowField(item);
@@ -984,6 +1009,28 @@ export default {
         }
       }
       return false;
+    },
+    doMyLayout(){
+      this.mainTabs=[];
+      this.childrens=[];
+      let playout = this.mparams.playout;  
+      let index = playout.indexOf(':') 
+      if(index>0){ 
+        let layType = playout.substring(0,index)
+        if(layType === 'T'){
+          this.creBookmark(playout)
+        }else if( layType === 'B'){
+          let str = playout.substring(index+1)
+          str = str.substring(1,str.length-1)
+          let cc = this.doLayout(str);
+          if(cc.length>=1){
+            this.creBookmark(cc[0])
+          }
+          if(cc.length>=2){
+            this.constituteChildrens(cc[1])
+          }
+        }
+      }
     }
   },
   computed: {
@@ -1089,9 +1136,8 @@ export default {
     if (this.dsm) { 
       this.getSwitch();
       // this.getMulti_line();
-      this.calculationWidth();
-      this.constituteChildrens();
-      this.creBookmark(); 
+      this.calculationWidth(); 
+      this.doMyLayout(); 
       const state = this.dsm.currRecord.sys_stated &  billS.INSERT;
       if (this.dsm.ds_sub && state === 0) {
         for(var i =0;i<this.dsm.ds_sub.length;i++){
@@ -1120,14 +1166,13 @@ export default {
         }
       }
     },
-    dsm(){
-      this.constituteChildrens(); 
+    dsm(){ 
       if(this.dsm){
         this.dsm.createRecord();   
         this.calculationWidth();
         this.getSwitch();
       }
-      this.creBookmark();//主表多页签
+      this.doMyLayout();//主表多页签
       // this.getMulti_line();
     }
   }

@@ -149,15 +149,17 @@ export default {
         orderBy :orderBY, 
       };
       if((this.mparams.pattr & 0x10000) >0){ //外部SQL
-        data1.apiId = global.APIID_SQLORRPT;
+        data1.type = "sql";
       }
       var res = await this.getDataByAPINewSync(data1);
       if (res.data.id == 0) {
         var pages = res.data.data.pages;
-        this.ds_m.cdata = pages.celData;
-        this.pageInfo.page = pages.currentPage;
-        this.pageInfo.size = pages.pageSize;
-        this.pageInfo.total = pages.totalItem;
+        if(pages){
+          this.ds_m.cdata = pages.celData;
+          this.pageInfo.page = pages.currentPage;
+          this.pageInfo.size = pages.pageSize;
+          this.pageInfo.total = pages.totalItem;
+        }
       }
       this.loading--;
     },
@@ -355,8 +357,12 @@ export default {
             this.dlgBtn.push(btn);
           }
           window.sessionStorage.setItem(menuid, JSON.stringify(this.dlgBtn));
+        }else{
+          window.sessionStorage.setItem(menuid, 'noData');
         }
       } else {
+        if(me == 'noData')
+          return;
         this.dlgBtn = JSON.parse(me);
       }
     },

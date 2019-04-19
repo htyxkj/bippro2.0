@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-import menuPattr from "@/components/views/classes/menuPattr";
+import menuPattr from "@/components/views/classes/menuPattr"; 
 // import $ from 'jquery'
 export default {
   install (Vue, options) {
@@ -362,6 +362,57 @@ export default {
           menuP.COUNT=true;
         }  
       return  menuP;
+    } 
+
+    Vue.prototype.getConstant = async function(assistid,success,error){
+      var  posParams = {
+        'dbid': global.DBID,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
+        "apiId": "constant", //获取cellID标识 
+        'assistid': assistid, //辅助,变量标识 如 {&SOPR},{$D.SOPR}    	'cont': "BXQ0000517060001"  //查询条件
+      }
+      const url = global.BIPAPIURL+global.API_COM;
+      let constant = window.sessionStorage.getItem(assistid); 
+      if(!constant){
+        return await axios.post(url, qs.stringify(posParams)).then(function(res){
+          let id = res.data.data.id;
+          constant = res.data.data.value; 
+          if(id ==0){
+              window.sessionStorage.setItem(assistid,constant);
+              return constant;
+          }else {
+              window.sessionStorage.setItem(assistid,"noData");
+              return null;
+          }
+        }).catch(function(err){
+          return null;
+        }); 
+      }else if(constant == 'noData' ){
+          return null;
+      }else{
+          return constant;
+      } 
+    }
+
+    Vue.prototype.doLayout = function(str){
+      let hv = new Array;
+      let cs0 = str.split('');
+      let cdv = 0;
+      let buf = ''
+      cs0.forEach(c0 => {
+        if(c0 === '(' || c0==='['){
+            cdv++
+        }else if(c0 === ')' || c0 === ']'){
+            cdv--;
+        }else if(cdv === 0 && (c0 === ';' || c0 === ',')){
+          hv.push(buf)
+          buf = ''
+          c0=''
+        }
+        buf+=c0 
+      });
+      hv.push(buf)
+      return hv;
     }
   }
 }

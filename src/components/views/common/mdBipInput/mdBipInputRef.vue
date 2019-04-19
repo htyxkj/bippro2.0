@@ -6,7 +6,7 @@
       <md-button class="md-icon-button md-ref-filter" @click="openRef()" :disabled="disabled">
         <md-icon>search</md-icon>
       </md-button>
-      <md-bip-dia :assType="cell.assType" ref="ref" :mdRefId="cell.editName" :multiple="multiple" :mdSelection="mdSelection" @close="onRefClose" :disabled="disabled"></md-bip-dia>
+      <md-bip-dia :value="modal[this.cell.id]" :assType="cell.assType" ref="ref" :mdRefId="cell.editName" :multiple="multiple" :mdSelection="mdSelection" @close="onRefClose" :disabled="disabled"></md-bip-dia>
     </div>
   </md-input-container>
 </template>
@@ -19,7 +19,7 @@ export default {
     return{
       refValue:'',
       refData:{},
-
+      groupCell:null,
       // mdSelection:false, 
       // multiple:false
     }
@@ -50,7 +50,14 @@ export default {
     },
     async openRef(){
       let script = await this.analysisScript()
-      // if(script)
+      if(this.cell.assType == 'C_GROUP'){
+        if(!script){
+          if(this.groupCell){
+            this.$notify.danger({content: '请先填写 : "'+this.groupCell.labelString +'"'});
+          }
+          return;
+        }
+      }
       this.$refs['ref'].open(script)
     },
     onRefClose(data){
@@ -264,8 +271,10 @@ export default {
         var sc = aa[aa.length-1];
         if(sc.indexOf("*") != -1){
           var arr = sc.split("*");
+          this.groupCell = this.getCell(arr[1]);
           return this.checkScript(this.dsm,arr[0],arr[1])
         }else{
+          this.groupCell = this.getCell(sc);
           return this.checkScript(this.dsm,this.cell.c_par.obj_id,sc)
         }
       }
@@ -300,6 +309,11 @@ export default {
         } 
       }
       return id;
+    },
+    getCell(id){
+      return _.find(this.dsm.ccells.cels,item=>{
+        return id === item.id
+      });
     }
   }, 
   watch:{

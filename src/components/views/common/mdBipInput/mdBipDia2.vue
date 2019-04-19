@@ -38,8 +38,8 @@
             <md-table-row v-for="(row, rowIndex) in refData" 
               :key="rowIndex" 
               :md-item="row"
-              :md-selection="mdSelection" md-auto-select>
-              <!-- :initCheckbox="isCheckd(row,showCols)" -->
+              :md-selection="mdSelection" md-auto-select
+              :initCheckbox="isCheckd(row,showCols)">
               <md-table-cell v-for="(column, columnIndex) in showCols" :key="columnIndex"  @dblclick.native="dblclick(row)">
                 {{row[allCols[column]]}}
               </md-table-cell>
@@ -126,14 +126,16 @@ export default {
       unit:null,
       script:null,
       allSelectRow:{},//多页选中行
+      refvalue:[],//
     } 
-  },
+  }, 
   mounted(){
-    // this.doQuery();
+    
   },
   methods:{
     async open(script){
-      this.allSelectRow={};
+      this.refvalue = this.value.split(";");
+      this.allSelectRow=[];
       this.script = script;
       // console.log(this.assType)
       if(this.assType == 'C_GDIC'){
@@ -146,8 +148,8 @@ export default {
     },
     onRefClose(){
     },
-    selectedRow(items){
-      this.allSelectRow={};
+    selectedRow(items){ 
+      this.allSelectRow=[];
       let sleRow =[];
       if(this.multiple){
         var i=0
@@ -160,7 +162,7 @@ export default {
           sleRow[0] = items[x]
         }
       }
-      this.allSelectRow[this.pageInfo.page] = sleRow;
+      this.selectedRows = sleRow;
 
     },
     doQuery(word){ 
@@ -176,7 +178,8 @@ export default {
         this.getAssistODataByAPI(option,this.getCallBack,this.getCallError);
       }
     },
-    getCallBack(res){ 
+    getCallBack(res){  
+      this.refData = [];
       var data = res.data;
       this.title = data.title;
       this.header = data.labers;
@@ -195,7 +198,6 @@ export default {
       // else if (data.code==0){
       //   // this.$notify.warning({content: data.message});
       else{
-        this.refData = [];
         this.pageInfo.total = 0;
         this.$notify.danger({content: data.message});
       }
@@ -209,13 +211,13 @@ export default {
       this.$emit('close',false);
     },
     close(){
-      this.selectedRows=[];
-        for(var key in this.allSelectRow){
-        let selRow = this.allSelectRow[key];
-        for(var x in selRow){
-          this.selectedRows.push(selRow[x]);
-        }
-      } 
+      // this.selectedRows=[];
+      //   for(var key in this.allSelectRow){
+      //   let selRow = this.allSelectRow[key];
+      //   for(var x in selRow){
+      //     this.selectedRows.push(selRow[x]);
+      //   }
+      // } 
       if(this.assType == 'C_GDIC'){
         for(var i=0;i<this.selectedRows.length;i++){
           var bb = this.selectedRows[i].cc+'';
@@ -285,23 +287,21 @@ export default {
             console.log(err)
         }) 
     },
-    isCheckd(row,showCols){
-      let vv = this.value.split(";")
+    isCheckd(row,showCols){  
       let cc = false;
-      for(var i=0;i<vv.length;i++){
-        cc = (vv[i] === row[this.allCols[showCols[0]]]);
-        if(cc == true){
+      for(var i=0;i<this.refvalue.length;i++){
+        cc = (this.refvalue[i] === row[this.allCols[showCols[0]]]);
+        if(cc == true){ 
           break;
         }
-      }
-      console.log(cc)
+      } 
       return cc;
     }
   },
   watch:{
     word(val){
       // this.doQuery(val)
-    },
+    }, 
   },
  
 };

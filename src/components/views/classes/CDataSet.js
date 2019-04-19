@@ -129,6 +129,11 @@ export default class CDataSet {
       cell.refValues = res;
       this.checkGS(cell);
       this.currRecord.sys_stated = this.currRecord.sys_stated | BillState.EDITED;
+      if((cell.attr & BillState.INSERT )>0){ //判断修改的是否是主键
+        if(!this.currRecord.oldpk)
+          this.currRecord.oldpk={};
+        this.currRecord.oldpk[cell.id]=res.oldValue
+      }
     }else{
       this.currRecord[res.cellId] = res.oldValue;
       // console.log(this.currRecord);

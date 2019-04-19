@@ -3,7 +3,7 @@
   <md-input-container v-if="gpsType=='getGPS'">
     <div class="md-input-ref layout layout-row" >
       <label>{{cell.labelString}}</label>
-      <md-input :placeholder="cell.labelString" readonly v-model="modal[cell.id]" :required="cell.isReq"></md-input> 
+      <md-input readonly v-model="modal[cell.id]" :required="cell.isReq"></md-input> 
       <md-button class="md-icon-button md-ref-filter" @click="openMAP()">
         <md-icon>pin_drop</md-icon>
       </md-button>

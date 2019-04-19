@@ -103,6 +103,8 @@ export default {
         multiple: false
       };
       if (value !== this.oldValue) this.$emit("change", refBackData);
+      var modalValue = this.modal[this.cell.id];
+      this.oldValue = modalValue?modalValue:'';
     }
   },
   mounted() { 

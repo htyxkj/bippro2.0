@@ -182,23 +182,23 @@ export default {
     pkclick(row){
       console.log(row);
     },
-    async openrefs(row,index,columnIndex){
+    async openrefs(row,index,columnIndex){ 
       if(columnIndex>=0){
         let cell = this.dsm.ccells.cels[columnIndex];
         let slkid = row[cell.id];
         if((cell.attr&0x80000)>0){
           let slkbuidCell = this.dsm.ccells.cels[columnIndex+1];
           let slkbuid = row[slkbuidCell.id];
-          if(slkid&&slkbuid){ 
-            console.log('调用我了');
+          if(slkid&&slkbuid){  
             this.$refs["sbill"].open(slkid,slkbuid);
           }
         }else{
           this.dblclick(row,index);
-        }
-
+        } 
       }
-
+      else{
+        this.dblclick(row,index);
+      }
     },
     create(){
       // console.log("新建")

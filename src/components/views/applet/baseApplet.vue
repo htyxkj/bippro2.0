@@ -33,8 +33,7 @@ export default {
      this.getMenuP();
    },
    methods:{
-    addBill(){
-      //  console.log(this.ds_m)
+    addBill(){ 
        this.blist = false;  
        if(this.ds_m.index<0)
         this.ds_m.createRecord(); 

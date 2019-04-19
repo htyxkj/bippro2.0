@@ -15,22 +15,19 @@
         <md-button class="md-primary md-raised btn" @click="ok" >确定</md-button>
       </md-dialog-actions>
   </md-dialog> 
-
-  <md-dialog ref="dialogMsg" :md-click-outside-to-close="false" :md-esc-to-close="false">
+ 
+  <md-dialog v-for="(pp,index) in prompt"  :key="index" :ref="'dialogMsg'+index" :md-click-outside-to-close="false" :md-esc-to-close="false">
     <!-- title -->
     <md-dialog-title> <div class="dia-title">{{btnInfo.name}}</div></md-dialog-title>
     <!-- content -->
     <md-dialog-content class="contentCMsg"> 
-      <br/>
-     　　　　 {{btnInfo.cellID}} 　　　　
-      <br/>
+      <br/>{{prompt[promptI]}}<br/>
     </md-dialog-content> 
     <md-dialog-actions class="actionC">
       <md-button class="md-raised btn " @click="closeDialog">取消</md-button>
       <md-button class="md-primary md-raised btn" @click="oksql">确定</md-button>
     </md-dialog-actions>
-  </md-dialog> 
-
+  </md-dialog>   
   <!-- <md-dialog ref="dialogMenu" :md-click-outside-to-close="false" :md-esc-to-close="false">
       <md-dialog-title> <div class="dia-title">{{btnInfo.name}}</div></md-dialog-title>
       <md-dialog-content :class="ISPC()?contentCMenu:''" >  
@@ -68,6 +65,7 @@ import menuPattr from "../classes/menuPattr";
 import CDataSet from "../classes/CDataSet";  
 import Operation from "../operation/operation"; 
 import BillState from '../classes/billState';
+import common from '../../core/utils/common.js';
 export default {
   data() {
     return {
@@ -86,6 +84,8 @@ export default {
       loading:0,
       showMenu:false,
       show:false,
+      prompt:[],//A:提示语
+      promptI:0,//当前提示语
     }
   },
   // props: {
@@ -115,34 +115,50 @@ export default {
       this.loading=0; 
     }, 
     oksql(){
-      var jsonstr={};
-      jsonstr = this.cdsm.currRecord; 
-      var data1 = {
-        "dbid": `${global.DBID}`,
-        "usercode": JSON.parse(window.sessionStorage.getItem('user')).userCode,
-        "apiId": "dlga", //cellparam pbuid=21243&pmenuid=22403 
-        "jsonstr":JSON.stringify(jsonstr), 
-        "btnInfo":JSON.stringify(this.btnInfo),
-      };
-      this.loading=1;
-      let _this =this;
-      var state=0;
-      axios.post(`${global.BIPAPIURL}`+`${global.API_COM}`,qs.stringify(data1)) .then(res=>{  
-          if(res.data.id==0){
-            _this.$notify.success({content:'操作成功！'})
-            _this.getOpt(1)
-            _this.closeDialog()
-          }else{
-            _this.$notify.danger({content:res.data.message})
-            _this.getOpt(1)
-            _this.closeDialog()
-          }  
-          _this.loading=0;
-      }) .catch(err=>{
-          console.log(err)
-          _this.$notify.danger({content:'系统故障！'})
-          _this.loading=0;
-      })
+      if(this.promptI != this.prompt.length-1){
+        // let cc = 'dialogMsg'+this.promptI; 
+        // if(this.$refs[cc] instanceof Array){
+        //   this.$refs[cc][0].close();
+        // }else{
+        //   this.$refs[cc].close();
+        // } 
+        this.promptI++; 
+        let dd = 'dialogMsg'+this.promptI;
+        if(this.$refs[dd] instanceof Array){
+          this.$refs[dd][0].open();
+        }else{
+          this.$refs[dd].open();
+        } 
+      }else{ 
+        var jsonstr={};
+        jsonstr = this.cdsm.currRecord; 
+        var data1 = {
+          "dbid": `${global.DBID}`,
+          "usercode": JSON.parse(window.sessionStorage.getItem('user')).userCode,
+          "apiId": "dlga", //cellparam pbuid=21243&pmenuid=22403 
+          "jsonstr":JSON.stringify(jsonstr), 
+          "btnInfo":JSON.stringify(this.btnInfo),
+        };
+        this.loading=1;
+        let _this =this;
+        var state=0;
+        axios.post(`${global.BIPAPIURL}`+`${global.API_COM}`,qs.stringify(data1)) .then(res=>{  
+            if(res.data.id==0){
+              _this.$notify.success({content:'操作成功！'})
+              _this.getOpt(1)
+              _this.closeDialog()
+            }else{
+              _this.$notify.danger({content:res.data.message})
+              _this.getOpt(1)
+              _this.closeDialog()
+            }  
+            _this.loading=0;
+        }) .catch(err=>{
+            console.log(err)
+            _this.$notify.danger({content:'系统故障！'})
+            _this.loading=0;
+        }) 
+      }
     },
     async okmenuid(){
       this.loading=1; 
@@ -171,8 +187,15 @@ export default {
     },
     closeDialog() {
       this.getOpt(0);
-      this.$refs.dialog.close();
-      this.$refs.dialogMsg.close();
+      this.$refs.dialog.close(); 
+      for(var i=0;i<this.prompt.length;i++){
+        let cc = 'dialogMsg'+i; 
+        if(this.$refs[cc] instanceof Array){
+          this.$refs[cc][0].close();
+        }else{
+          this.$refs[cc].close();
+        }
+      }
     }, 
     async getCell(pcell) {
       if(pcell == null){
@@ -313,16 +336,24 @@ export default {
       this.menuP.COPY = false;    
     },
     async openREF(btn,selectData,ds_m,getOpt){
-
+      this.show=true;
       this.cdsm = ds_m;
       this.getOpt = getOpt;
       this.btnInfo=btn;
       this.selectData = selectData;
       this.ds_m = null;
-      this.show=true;
+      console.log("DLG")
       if(this.btnInfo.type =='B'){//根据对象
         await this.getCell(null);
         await this.initCellData();
+        if(this.ds_m && this.ds_m.ccells &&this.ds_m.ccells.cels)
+        for(var i=0;i<this.ds_m.ccells.cels.length;i++){
+          let zz = this.ds_m.ccells.cels[i]; 
+          if(zz.attr >= BillState.INITIALDATA){
+            if(zz.initValue)
+            this.ds_m.currRecord[zz.id] = this.formatVars(zz.initValue);
+          }
+        }
         if(!this.$refs.dialog){
           setTimeout(() => {
             this.$refs.dialog.open();  
@@ -331,12 +362,23 @@ export default {
           this.$refs.dialog.open();  
         }
       }else if(this.btnInfo.type =='A'){//执行SQL 
-        if(!this.$refs.dialogMsg){
-          setTimeout(() => {
-            this.$refs.dialogMsg.open();  
+        this.prompt = this.btnInfo.cellID.split(","); 
+        this.promptI = 0;
+        let cc = 'dialogMsg'+this.promptI; 
+        if(!this.$refs[cc]){
+          setTimeout(() => { 
+            if(this.$refs[cc] instanceof Array){
+              this.$refs[cc][0].open();
+            }else{
+              this.$refs[cc].open();
+            }
           }, 100);
         }else{
-          this.$refs.dialogMsg.open();  
+          if(this.$refs[cc] instanceof Array){
+            this.$refs[cc][0].open();
+          }else{
+            this.$refs[cc].open();
+          }  
         }
       }else if(this.btnInfo.type == 'C'){//根据菜单号
         this.loading++;
@@ -366,6 +408,17 @@ export default {
           this.loading--;
         }
       }
+    },
+    formatVars(sinc) {
+      var user = JSON.parse(window.sessionStorage.getItem('user'));
+      var deptInfo = user.deptInfo;
+      sinc = sinc.replace(/\[!\]/g, deptInfo.deptCode);
+      sinc = sinc.replace(/\[#\]/g, deptInfo.cmcCode);
+      sinc = sinc.replace(/\[$\]/g, user.userCode);
+      sinc = sinc.replace(/\[Y2M\]/g, common.now('YYMM'));
+      sinc = sinc.replace(/\[YM\]/g, common.now('YYYYMM'));
+      sinc = sinc.replace(/\[YMD\]/g, common.now('YYYYMMDD'));
+      return sinc;
     }
   },
   created(){  

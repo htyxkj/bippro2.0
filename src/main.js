@@ -14,9 +14,11 @@ import './js/bip-common-js.js';
 import './js/bipcfg.js';
 import utils from './js/bip-utils-js';
 import bipDateUtil from './js/bip-date-js';
+import bipBeforeSaveCheck from "./js/bip-beforeSave-check-js";
 
 import {getCookie} from './js/cookie';
 Vue.use(utils)
+Vue.use(bipBeforeSaveCheck)
 Vue.use(bipDateUtil)
 Vue.config.productionTip = false;
 Vue.use(Components)
