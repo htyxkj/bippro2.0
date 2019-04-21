@@ -20,24 +20,14 @@
     <!-- title -->
     <md-dialog-title> <div class="dia-title">{{btnInfo.name}}</div></md-dialog-title>
     <!-- content -->
-    <md-dialog-content class="contentCMsg"> 
+    <md-dialog-content class="contentCMsg" :style="promptStyle[promptI]"> 
       <br/>{{prompt[promptI]}}<br/>
     </md-dialog-content> 
     <md-dialog-actions class="actionC">
       <md-button class="md-raised btn " @click="closeDialog">取消</md-button>
       <md-button class="md-primary md-raised btn" @click="oksql">确定</md-button>
     </md-dialog-actions>
-  </md-dialog>   
-  <!-- <md-dialog ref="dialogMenu" :md-click-outside-to-close="false" :md-esc-to-close="false">
-      <md-dialog-title> <div class="dia-title">{{btnInfo.name}}</div></md-dialog-title>
-      <md-dialog-content :class="ISPC()?contentCMenu:''" >  
-      </md-dialog-content> 
-      <md-dialog-actions class="actionC">
-        <md-button class="md-raised btn " @click="closeDialog">取消</md-button>
-        <md-button class="md-primary md-raised btn" @click="okmenuid" >确定</md-button>
-      </md-dialog-actions>
-  </md-dialog> -->
-
+  </md-dialog>    
   <div v-if="showMenu">
     <md-sidenav class="md-right md-bill-i" ref="sbillSidenav" @close="dialogClose" >  
       <md-layout style="background-color: rgb(33, 150, 243);color: rgb(255, 255, 255);min-height: .55rem;padding: 0px;margin: 0px;line-height: .55rem;font-size: 0.18rem;">
@@ -85,17 +75,10 @@ export default {
       showMenu:false,
       show:false,
       prompt:[],//A:提示语
-      promptI:0,//当前提示语
+      promptI:0,//当前提示语,
+      promptStyle:[]//当前提示语样式
     }
-  },
-  // props: {
-  //   getOpt:{
-  //     type:Function,
-  //   }, 
-  //   btnInfo:null,  //{name:b[0],cellID:b[1],key:b[2]};
-  //   selectData:null,  
-  //   cdsm:null,
-  // },
+  }, 
   methods: {
     async ok() {   
       this.loading=1; 
@@ -115,13 +98,7 @@ export default {
       this.loading=0; 
     }, 
     oksql(){
-      if(this.promptI != this.prompt.length-1){
-        // let cc = 'dialogMsg'+this.promptI; 
-        // if(this.$refs[cc] instanceof Array){
-        //   this.$refs[cc][0].close();
-        // }else{
-        //   this.$refs[cc].close();
-        // } 
+      if(this.promptI != this.prompt.length-1){ 
         this.promptI++; 
         let dd = 'dialogMsg'+this.promptI;
         if(this.$refs[dd] instanceof Array){
@@ -341,8 +318,7 @@ export default {
       this.getOpt = getOpt;
       this.btnInfo=btn;
       this.selectData = selectData;
-      this.ds_m = null;
-      console.log("DLG")
+      this.ds_m = null; 
       if(this.btnInfo.type =='B'){//根据对象
         await this.getCell(null);
         await this.initCellData();
@@ -362,9 +338,18 @@ export default {
           this.$refs.dialog.open();  
         }
       }else if(this.btnInfo.type =='A'){//执行SQL 
-        this.prompt = this.btnInfo.cellID.split(","); 
+        let pst = this.btnInfo.cellID.split(","); 
+        for(var i=0;i<pst.length;i++){
+          let onecont = pst[i].split("_style:");
+          this.prompt[i] = (onecont[0]);
+          if(onecont[1]){
+            let style = onecont[1].replace("|",";")
+            this.promptStyle[i] = style;
+          }
+        }
         this.promptI = 0;
         let cc = 'dialogMsg'+this.promptI; 
+        console.log(cc);
         if(!this.$refs[cc]){
           setTimeout(() => { 
             if(this.$refs[cc] instanceof Array){
@@ -381,6 +366,7 @@ export default {
           }  
         }
       }else if(this.btnInfo.type == 'C'){//根据菜单号
+      console.log(this.btnInfo)
         this.loading++;
         if(await this.getParams(this.btnInfo.cellID) == false){
           this.$notify.warning({ content: "没有菜单权限！" + this.btnInfo.cellID + "!" });
@@ -396,7 +382,7 @@ export default {
               let vv = dz[i].split("=");
               this.ds_m.currRecord[vv[1]] = this.selectData[vv[0]];
             }
-          } 
+          }
           this.showMenu = true;
           if(!this.$refs.sbillSidenav){
             setTimeout(() => {

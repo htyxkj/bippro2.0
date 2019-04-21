@@ -1,7 +1,5 @@
 import axios from 'axios'
-import qs from 'qs'
-import menuPattr from "@/components/views/classes/menuPattr"; 
-// import $ from 'jquery'
+import qs from 'qs' 
 export default {
     install (Vue, options) { 
         Vue.prototype.beforeSaveCheck = async function(dsm){

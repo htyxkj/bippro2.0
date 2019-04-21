@@ -8,8 +8,8 @@
             <!-- <span>{{content}}</span>   -->
         <!-- </md-layout> -->
         <!-- {{con}}&nbsp;&nbsp;&nbsp;{{hour}}<span>时</span>{{min}}<span>分</span>{{sec}}<span>秒</span> -->
-        <md-layout md-flex ="100"  md-align="center":class="timeClass">
-            {{content}}</span> 
+        <md-layout md-flex ="100"  md-align="center" :class="timeClass">
+            <span> {{content}} </span> 
         </md-layout>
         <md-layout md-align="start" class="timeoutimg">
             <template v-if="timeout">
@@ -33,7 +33,7 @@ import down from './js/process.js'
         con:'',
         timeout:false,
         nowT:0,
-        img:this.imgURL+'inet/gimg/watermarks/timeout.png', 
+        img:`${global.BIPAPIURL}`+'inet/gimg/watermarks/timeout.png', 
         imgURL :`${global.BIPAPIURL}`,
       }
     },
@@ -136,13 +136,16 @@ import down from './js/process.js'
                 this.nowT = res.data.data.data.time; 
             let cc = this.timedown.split(";")//hpdate;qxdx;1=watermark1,2=watermark2,3=watermark3
             this.endTime = this.row[cc[0]];
+            
+                console.log(this.img)
             if(cc.length>=3 ){
                 let dd =this.row[cc[1]];
-                let uu = cc[2].split(",");
+                let uu = cc[2].split(","); 
                 for(var i=0;i<uu.length;i++){
                     let ss = uu[i].split("=");
                     if(ss[0] == dd){
                         this.img = this.imgURL+'inet/gimg/watermarks/'+ss[1];
+                       
                     }
                 }
             }

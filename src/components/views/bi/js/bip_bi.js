@@ -336,7 +336,7 @@ export default {
         };
         var res = await this.getDataByAPINewSync(data1);
         // console.log(res);
-        //创建客户;100305;cbm 
+        //创建客户;100305;cbm
         if (res.data.id != -1) {
           var data = res.data.data.btn;
           for (var i = 0; i < data.length; i++) {
