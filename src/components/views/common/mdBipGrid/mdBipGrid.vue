@@ -227,7 +227,7 @@ export default {
       data.sys_updated = data.sys_updated || false;
       data.sys_created = data.sys_created || false;
       data.sys_stated = data.sys_stated || billState.DICT;
-      return new Row(data, this.columns);
+      return new Row(data, this.columns,this.dsm);
     },
 
     async mapDataToRows() {

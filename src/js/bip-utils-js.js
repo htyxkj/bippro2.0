@@ -372,13 +372,19 @@ export default {
         'assistid': assistid, //辅助,变量标识 如 {&SOPR},{$D.SOPR}    	'cont': "BXQ0000517060001"  //查询条件
       }
       const url = global.BIPAPIURL+global.API_COM;
+      
       let constant = window.sessionStorage.getItem(assistid); 
+      if(constant){
+        if(constant !=='noData'){
+          constant = JSON.parse(constant);
+        }
+      }
       if(!constant){
         return await axios.post(url, qs.stringify(posParams)).then(function(res){
           let id = res.data.data.id;
-          constant = res.data.data.value; 
+          constant = res.data.data.value;  
           if(id ==0){
-              window.sessionStorage.setItem(assistid,constant);
+              window.sessionStorage.setItem(assistid,JSON.stringify(constant));
               return constant;
           }else {
               window.sessionStorage.setItem(assistid,"noData");
@@ -413,6 +419,23 @@ export default {
       });
       hv.push(buf)
       return hv;
+    }
+    Vue.prototype.getObjId = function(str){
+      if (str.startsWith("@")) str = str.substring(1);
+      let index = str.indexOf("#");
+      if (index > 0) {
+        str = str.substring(0, index);
+        return str;
+      }
+      index = str.indexOf("[");
+      if (index > 0) {
+        str = str.substring(0, index);
+      }
+      index = str.indexOf("/");
+      if (index > 0) {
+        str = str.substring(0, index);
+      }
+      return str;
     }
   }
 }

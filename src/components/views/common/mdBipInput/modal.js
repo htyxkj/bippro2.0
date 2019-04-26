@@ -35,6 +35,7 @@ export default {
       INPUT_AUTOGRAPH:13,
       INPUT_SWITCH:14,
       INPUT_EDITLIST:15,
+      INPUT_DATEYMDHM:16,//时间格式 yyyy-mm-dd hh:mm
       disabled: false,
       oldValue:"",
       mdSelection:false, 

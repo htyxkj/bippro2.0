@@ -231,7 +231,7 @@ export default {
             }
           }
         });
-        if (this.users.length > 0) {
+        if (this.users.length == 1) {
           for(var i=0;i<this.users.length;i++){
             this.userIds[i] = this.users[i].userCode;
           }

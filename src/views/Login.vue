@@ -56,8 +56,10 @@ export default {
       var isPc = this.ISPC();
       let  ioutsys = 1; 
       if(isPc){ 
+        window.sessionStorage.setItem('isLoginType', 1); 
         ioutsys =1;
       }else{
+        window.sessionStorage.setItem('isLoginType', 2); 
         ioutsys =2;
       }
       if(this.loading>0){

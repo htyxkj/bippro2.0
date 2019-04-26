@@ -82,12 +82,12 @@ export default {
     async mounted(){ 
     },
     async created(){ 
+        window.sessionStorage.setItem('isLoginType', 3); 
         var lid = window.sessionStorage.getItem('isLogin');
         if(lid){  
             if(this.menuList.length<=0){
                 this.menuList = JSON.parse(window.sessionStorage.getItem('menulist'));
-            } 
-
+            }  
             if(this.ddApp.length<=0){
                 let dapp = window.sessionStorage.getItem('ddApp');
                 if(dapp)

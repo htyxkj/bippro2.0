@@ -7,13 +7,13 @@ import axios from 'axios';
 import qs from 'qs';
 import ScriptProc from './ScriptProc'
 export default class Row {
-  constructor(data, columns) {
+  constructor(data, columns,dsm) {
     this.data = data;
     this.columns = columns;
+    this.dsm = dsm;
     this.scriptProc = new ScriptProc(data,columns);
   }
-  getValue(columnName) { 
-    console.log(columnName)
+  getValue(columnName) {  
     const column = this.getColumn(columnName);
     if (column && column.dataType === 'entity') { 
 
@@ -60,7 +60,13 @@ export default class Row {
       }else{
         let bb = id.split(";");
         for(var i=0;i<bb.length;i++){
-        this.getAssistDataByAPICout(column.refId,bb[i],res=>{ 
+          // const script = this.getColumn(columnName);
+          let script ='';
+          if(column.assType == 'C_GROUP'){
+            script = this.analysisScript(column);
+            console.log(script)
+          }
+        this.getAssistDataByAPICout(column.refId,bb[i],script,column.assType,res=>{ 
           if(column.refValues){
             let values = res.data.values;
             if(!column.refValues.values){
@@ -107,13 +113,16 @@ export default class Row {
       return get(this.data, columnName);
     }
   }
-  async getAssistDataByAPICout (mdRefID,cont,success,error) {
+  async getAssistDataByAPICout (mdRefID,cont,script,assType,success,error) {
+    console.log("getAssistDataByAPICout")
     var  posParams = {
       'dbid': global.DBID,
       'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
       'apiId': global.APIID_AIDO,
       'assistid': mdRefID,
-      'cont':cont
+      'cont':cont,
+      'assType':assType,
+      'script':script,
     }
     const url = global.BIPAPIURL+global.API_COM;
     return await axios.post(url, qs.stringify(posParams))
@@ -139,7 +148,7 @@ export default class Row {
     return this.columns.find(column => column.field === columnName);
   }
 
-  getFilterableValue(columnName) {
+  getFilterableValue(columnName) { 
     const value = this.getValue(columnName);
     if (!value) {
       return '';
@@ -147,7 +156,7 @@ export default class Row {
     return value.toString().toLowerCase();
   }
 
-  getSortableValue(columnName) {
+  getSortableValue(columnName) { 
     const dataType = this.getColumn(columnName).dataType;
 
     let value = this.getValue(columnName);
@@ -181,5 +190,30 @@ export default class Row {
       .map(column => this.getFilterableValue(column.getFilterFieldName()))
       .filter(filterableValue => filterableValue.includes(filter.toLowerCase()))
       .length;
+  }
+
+  analysisScript(column){       
+    var aa = column.script.split(";");      
+    var sc = aa[aa.length-1];
+    if(sc.indexOf("*") != -1){
+      var arr = sc.split("*");
+      return this.checkScript(this.dsm,arr[0],arr[1])
+    }else{
+      return this.checkScript(this.dsm,this.column.objid,sc)
+    } 
+  }
+  //c_group 检查所有对像 中的字段
+  checkScript(cell,objid,valid){
+    if(cell.ccells.obj_id == objid){//先检查主对象
+      var len = parseInt(this.dsm.cdata.length)-1;  
+      // return this.dsm.cdata[len][valid];
+      return this.dsm.currRecord[valid];
+    }else{
+      if(cell.ccells.haveChild){
+        for(var i =0;i<cell.ds_sub.length;i++){
+          return this.checkScript(cell.ds_sub[i],objid,valid);
+        }
+      }
+    }
   }
 }

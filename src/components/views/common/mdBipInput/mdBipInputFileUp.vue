@@ -197,7 +197,7 @@ export default {
       this.$refs.dlgImg.close();
     },
     //确定完成输入
-    ok(){
+    ok(){ 
       var fjroot = this.upLoadDid;//附件地址
       var fjname = "";
       if(this.upLoadFils.length>0){
@@ -370,6 +370,8 @@ export default {
     async initFile(){
       this.clear();
       this.upLoadDid = this.bfjRoot?this.modal.fj_root:'';
+      if(!this.upLoadDid)
+        this.upLoadDid="";
       var vls = this.modal[this.cell.id];
       if(!vls)
         return ;

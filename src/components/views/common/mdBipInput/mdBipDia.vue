@@ -147,21 +147,34 @@ export default {
     onRefClose(){
     },
     selectedRow(items){
-      this.allSelectRow={};
-      let sleRow =[];
-      if(this.multiple){
+      // this.allSelectRow={};
+      // let sleRow =[];
+      // if(this.multiple){
+      //   var i=0
+      //   for(var x in items){
+      //     sleRow[i] = items[x]
+      //     i++;
+      //   }
+      // }else { 
+      //   for(var x in items){
+      //     sleRow[0] = items[x]
+      //   }
+      // }
+      // this.allSelectRow[this.pageInfo.page] = sleRow;
+      if (this.multiple){
+        this.selectedRows=[];
         var i=0
         for(var x in items){
-          sleRow[i] = items[x]
+          this.selectedRows[i] = items[x]
           i++;
         }
-      }else { 
+      }else{
+        this.selectedRows.splice();
         for(var x in items){
-          sleRow[0] = items[x]
+          this.selectedRows[0] = items[x]
         }
       }
-      this.allSelectRow[this.pageInfo.page] = sleRow;
-
+      items=[];
     },
     doQuery(word){ 
       var option={
@@ -209,13 +222,14 @@ export default {
       this.$emit('close',false);
     },
     close(){
-      this.selectedRows=[];
-        for(var key in this.allSelectRow){
-        let selRow = this.allSelectRow[key];
-        for(var x in selRow){
-          this.selectedRows.push(selRow[x]);
-        }
-      } 
+      // console.log("ss")
+      // this.selectedRows=[];
+      //   for(var key in this.allSelectRow){
+      //   let selRow = this.allSelectRow[key];
+      //   for(var x in selRow){
+      //     this.selectedRows.push(selRow[x]);
+      //   }
+      // } 
       if(this.assType == 'C_GDIC'){
         for(var i=0;i<this.selectedRows.length;i++){
           var bb = this.selectedRows[i].cc+'';

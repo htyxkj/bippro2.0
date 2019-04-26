@@ -318,6 +318,7 @@ export default {
     this.$refs["ref"].cancel();
   },
   created(){   
+    console.log("created") 
     //MULTIPLE:0x200000,//多项
     let _multiple=this.column.attr&0x200000;
     // console.log(_multiple)

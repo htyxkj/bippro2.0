@@ -27,7 +27,7 @@ export default {
         }
     },
     methods:{ 
-        pickerDate (trigger,format,success,error,maxDate,minDate) {
+        pickerDate (trigger,format,success,error,maxDate,minDate) { 
             this.maxMinDate(maxDate,minDate);
             this.success = success;
             this.error = error;
@@ -53,7 +53,9 @@ export default {
                 this.time_hh_display='display:none;';
                 this.time_mm_display='display:none;';
                 this.time_ss_display='display:none;';
-            }   
+            }   else if(this.format == 'YYYY-MM-DD hh:mm'){
+                this.time_ss_display='display:none;';
+            }
             this.popupDate();
         },
         popupDate(e) {

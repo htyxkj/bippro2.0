@@ -114,10 +114,7 @@ export default {
     dataChange (data) { 
       this.$emit('change',data);
     },
-    initType(){ 
-      // console.log(this.cell)
-      // console.log(this.modal)
-      //this.inputType = 0;   
+    initType(){  
       if(this.cell){ 
         //先判断编辑器是什么类型，对应走什么组件
         if(this.cell.editType==this.INPUT_LIST){
@@ -143,6 +140,10 @@ export default {
           return;
         }if(this.cell.editType == this.INPUT_EDITLIST){
           this.inputType = this.INPUT_EDITLIST;
+          return;
+        }if(this.cell.editType == this.INPUT_DATEYMDHM){ 
+          this.inputType = this.INPUT_DATE;
+          this.cell.editName ='Y_m'
           return;
         }
         //判断字段是辅助，并且是否是特殊辅助

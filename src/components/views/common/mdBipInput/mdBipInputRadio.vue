@@ -1,8 +1,8 @@
 
 <template> 
-  <md-layout class="md-radio-container md-theme-default md-style" >
+  <md-layout class="md-radio-container md-theme-default md-style" :class="disabled?disabledStyleA:disabledStyleB">
     <label :class="mdStyleLable" :for="cell.id">{{cell.labelString}}{{xing}}</label>
-    <md-radio v-model="modal[cell.id]" :md-value="item[header[0]]+''" :id="item[header[0]]" :name="item[header[0]]" v-for="(item,index) in values" :key="index" class="md-primary" @change="dataCC">
+    <md-radio v-model="modal[cell.id]" :md-value="item[header[0]]+''" :id="item[header[0]]" :name="item[header[0]]" v-for="(item,index) in values" :key="index" class="md-primary" @change="dataCC" :disabled="disabled">
       {{item[header[1]]}}
     </md-radio>
   </md-layout>
@@ -43,6 +43,15 @@
     font-size: .16rem;  
     margin-bottom:0px;
   }
+  .disabledStyleA{
+  color:#9E9E9E;
+} 
+.disabledStyleC{
+  color:#9E9E9E;
+  font-size: .16rem;  
+  margin-bottom:0px;
+}
+
 </style>
 <script>
 
@@ -56,6 +65,8 @@ export default {
       mdStyleLable:'md-style-lable',
       xing:'*',
       radio1:'',
+      disabledStyleA:'disabledStyleA',
+      disabledStyleB:'',
     };
   },
   methods: {
@@ -124,7 +135,11 @@ export default {
           if(!this.cell.isReq){
             // var item = { code: '', name: '' };
             // this.values.splice(0, 0, item);
-            this.mdStyleLable = 'lable' ;
+            if(!this.disabled){
+              this.mdStyleLable = 'lable' ;
+            }else{
+              this.mdStyleLable = 'disabledStyleC' ;
+            }
             this.xing = ''
           }
         }

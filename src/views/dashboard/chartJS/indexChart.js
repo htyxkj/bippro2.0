@@ -33,16 +33,21 @@ export default {
         assistid: null,
         cont: null,
       },
+      isLoginType:null,
     }
   },
   methods: {
     async getDateStr() {
+      let lt = window.sessionStorage.getItem('isLoginType');
+      if(lt)
+      this.isLoginType=parseInt(lt); 
+      console.log(this.isLoginType)
       this.usercode = JSON.parse(window.sessionStorage.getItem('user')).userCode; //用户编码  
       this.param.usercode = this.usercode;
-      this.constant = await this.getConstant("INDEX");
-      console.log(this.constant)
-      if (this.constant == null || this.constant == '')
+      let hvcc = await this.getConstant("INDEX"); 
+      if (hvcc == null || hvcc == '')
         return;
+      this.constant = hvcc[0];
       //开始拆分 常量信息
       //XCAR|id,XSORG|orgcode,fcy,YSOFCY|id|sorg,bar,12 
       let arr = this.constant.split(";");
@@ -202,6 +207,9 @@ export default {
             lineChart.yAxis.title.text = fanhu.labers[i]
           }
         }
+        if(this.isLoginType === 3){
+          lineChart.exporting.enabled = false
+        }
         var _chart = {
           options: lineChart,
           width: width
@@ -278,8 +286,10 @@ export default {
         if (fanhu.allCols[i] == Y) {
           lineChart.yAxis.title.text = fanhu.labers[i]
         }
+      } 
+      if(this.isLoginType === 3){
+        lineChart.exporting.enabled = false
       }
-      console.log(lineChart)
       var _chart = {
         options: lineChart,
         width: width
@@ -345,6 +355,9 @@ export default {
       pieChart.series[0].data = series_data;
       //图表标题
       pieChart.title.text = fanhu.title
+      if(this.isLoginType === 3){
+        pieChart.exporting.enabled = false
+      }
       var _chart = {
         options: pieChart,
         width: width
@@ -408,6 +421,9 @@ export default {
       funnelChart.series[0].data = series_data;
       //图表标题
       funnelChart.title.text = fanhu.title
+      if(this.isLoginType === 3){
+        funnelChart.exporting.enabled = false
+      }
       var _chart = {
         options: funnelChart,
         width: width

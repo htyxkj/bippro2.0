@@ -27,23 +27,17 @@
                  <md-bip-input-ref  :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-ref>
               </md-layout>  
               <md-layout md-flex="50" md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33">
-                  <!-- <label for="plane">结束时间</label> -->
-                  <md-bip-input-file-tmp :cell="rwcell" :modal="rwmodal" :ref="rwcell.id" @change="dataChange"></md-bip-input-file-tmp>
+                  <md-bip-input-fileUp :cell="rwcell" :modal="rwmodal" :ref="rwcell.id" @change="dataChange"></md-bip-input-fileUp>
               </md-layout> 
               <md-layout md-flex="50" md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33">
                 <md-input-container>
                   <label>开始时间</label> 
                   <md-bip-date v-model="startTime" :value="startTime" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
                 </md-input-container>
-                  <!-- <md-input-container>
-                    <label for="plane">起始时间</label>
-                    <md-date :btime="true" v-model="startTime"></md-date>
-                  </md-input-container> -->
               </md-layout>
               <md-layout md-flex="50" md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33">
                 <md-input-container>
                   <label for="plane">结束时间</label>
-                  <!-- <md-date :btime="true" v-model="endTime"></md-date> -->
                   <md-bip-date v-model="endTime" :value="endTime" :isReport="false" :cell="eTCell" :required="eTCell.isReq" :disabled="false" ></md-bip-date> 
                 </md-input-container>
               </md-layout>  
@@ -81,7 +75,7 @@
                       </md-button>
                   </md-table-cell>
                   <md-table-cell style="text-align:center;width:50px" md-numeric>
-                    <md-bip-input-file-tmp :cell="fjcell[index]" :modal="fjmodal[index]" :ref="fjcell.id" @change="dataChange"></md-bip-input-file-tmp>
+                    <md-bip-child-input-file :cell="fjcell[index]" :modal="fjmodal[index]" :ref="fjcell.id" @change="dataChange"></md-bip-child-input-file>
                   </md-table-cell>
                   <md-table-cell style="text-align:center" md-numeric>{{taskno}}</md-table-cell>
                   <md-table-cell style="text-align:center" md-numeric>{{ row.jcCid }}</md-table-cell>

@@ -55,7 +55,7 @@ import menuPattr from "../classes/menuPattr";
 import CDataSet from "../classes/CDataSet";  
 import Operation from "../operation/operation"; 
 import BillState from '../classes/billState';
-import common from '../../core/utils/common.js';
+import common from '../../core/utils/common.js'; 
 export default {
   data() {
     return {
@@ -87,6 +87,11 @@ export default {
       jsonstr = this.ds_m.currRecord;
       jsonstr["sys_stated"]=2;//单据状态  
       var options = { pcell: pcell, jsonstr: JSON.stringify(jsonstr) };
+      if((this.ds_m.currRecord&BillState.DELETE)==0){
+        var isnull = this.checkNotNull(this.ds_m);
+          if(!isnull)
+            return;
+      }
       var res = await this.saveData(options);
       if(res.data.id==0){
         this.$notify.success({content:'保存成功'})
@@ -208,7 +213,8 @@ export default {
       }
       return false;
     },
-    async initCellData(){
+    //获取数据
+    async initCellDataB(){
       let cellID = this.btnInfo.cellID;
       let key = this.btnInfo.key;
       let keyArr = key.split("\\|");
@@ -236,6 +242,57 @@ export default {
         console.log(err)
         _this.$notify.danger({content:'系统故障！'})
         _this.loading=0;
+      })
+    },
+    async initCellDataC(){
+      let cellID = this.btnInfo.cellID;
+      let key = this.btnInfo.selKey;
+      if(!key)
+        return;
+      let keyArr = key.split(",");
+      //pdata
+      let pdata = {};
+      for(var i=0;i<keyArr.length;i++){
+        let cc = keyArr[i].split("=")
+        pdata[cc[0]]=this.selectData[cc[1]];
+      } 
+      var data1 = {
+        "dbid": `${global.DBID}`,
+        "usercode": this.usrCode,
+        "apiId": "findcelldata", //cellparam pbuid=21243&pmenuid=22403
+        "pcell": this.btnInfo.key.split(",")[0].split("=")[1],
+        "pdata": JSON.stringify(pdata),
+      }; 
+      let _this =this; 
+      await axios.post(`${global.BIPAPIURL}`+`${global.API_COM}`,qs.stringify(data1)) .then(res=>{ 
+        if(res.data.id == 0){  
+          if(res.data.data.pages.celData[0]){
+            let cur = res.data.data.pages.celData[0];
+            for(var cc in cur){
+              _this.ds_m.currRecord[cc] = cur[cc];
+            }
+            _this.ds_m.currRecord.sys_stated = 512;
+          }else{
+            let dz = _this.btnInfo.key.split(",");
+            if(dz.length>1){ 
+              for(var i=1;i<dz.length;i++){
+                let vv = dz[i].split("=");
+                _this.ds_m.currRecord[vv[1]] = _this.selectData[vv[0]];
+              }
+            }
+          }
+        }else{
+          let dz = _this.btnInfo.key.split(",");
+          if(dz.length>1){ 
+            for(var i=1;i<dz.length;i++){
+              let vv = dz[i].split("=");
+              _this.ds_m.currRecord[vv[1]] = _this.selectData[vv[0]];
+            }
+          }
+        }
+      }) .catch(err=>{
+        console.log(err)
+        _this.$notify.danger({content:'系统故障！'})
       })
     },
     dataChange(pars) {
@@ -321,7 +378,7 @@ export default {
       this.ds_m = null; 
       if(this.btnInfo.type =='B'){//根据对象
         await this.getCell(null);
-        await this.initCellData();
+        await this.initCellDataB();
         if(this.ds_m && this.ds_m.ccells &&this.ds_m.ccells.cels)
         for(var i=0;i<this.ds_m.ccells.cels.length;i++){
           let zz = this.ds_m.ccells.cels[i]; 
@@ -366,7 +423,6 @@ export default {
           }  
         }
       }else if(this.btnInfo.type == 'C'){//根据菜单号
-      console.log(this.btnInfo)
         this.loading++;
         if(await this.getParams(this.btnInfo.cellID) == false){
           this.$notify.warning({ content: "没有菜单权限！" + this.btnInfo.cellID + "!" });
@@ -376,13 +432,7 @@ export default {
           this.getMenuP();
           await  this.getCell(this.mparams.pcell);
           this.ds_m.createRecord(); 
-          let dz = this.btnInfo.key.split(",");
-          if(dz.length>1){ 
-            for(var i=1;i<dz.length;i++){
-              let vv = dz[i].split("=");
-              this.ds_m.currRecord[vv[1]] = this.selectData[vv[0]];
-            }
-          }
+          let cc = await this.initCellDataC(); 
           this.showMenu = true;
           if(!this.$refs.sbillSidenav){
             setTimeout(() => {
@@ -396,16 +446,76 @@ export default {
       }
     },
     formatVars(sinc) {
+      sinc = sinc+'';
       var user = JSON.parse(window.sessionStorage.getItem('user'));
       var deptInfo = user.deptInfo;
-      sinc = sinc.replace(/\[!\]/g, deptInfo.deptCode);
-      sinc = sinc.replace(/\[#\]/g, deptInfo.cmcCode);
-      sinc = sinc.replace(/\[$\]/g, user.userCode);
-      sinc = sinc.replace(/\[Y2M\]/g, common.now('YYMM'));
-      sinc = sinc.replace(/\[YM\]/g, common.now('YYYYMM'));
-      sinc = sinc.replace(/\[YMD\]/g, common.now('YYYYMMDD'));
+
+      if(sinc == '[!]')
+        return  deptInfo.deptCode;
+      
+      if(sinc == '[#]')
+        return  deptInfo.cmcCode;
+      
+      if(sinc == '[$]')
+        return  user.userCode;
+      
+      if(sinc == '[Y2M]')
+        return  common.now('YYMM');
+      
+      if(sinc == '[YM]')
+        return  common.now('YYYYMM');
+      if(sinc == '[YMD]')
+        return  common.now('YYYYMMDD'); 
+      // sinc = sinc.replace(/\[!\]/g, deptInfo.deptCode);
+      // sinc = sinc.replace(/\[#\]/g, deptInfo.cmcCode);
+      // sinc = sinc.replace(/\[$\]/g, user.userCode);
+      // sinc = sinc.replace(/\[Y2M\]/g, common.now('YYMM'));
+      // sinc = sinc.replace(/\[YM\]/g, common.now('YYYYMM'));
+      // sinc = sinc.replace(/\[YMD\]/g, common.now('YYYYMMDD')); 
       return sinc;
-    }
+    },
+    checkNotNull(cds) { 
+      let field = [];
+      for(var item in this.sth){
+        let vv = cds.currRecord[item]
+        let cc = this.sth[item].showField;
+        for(var i=0;i<cc.length;i++){
+          let dd = cc[i].split(":");
+          if(vv != dd[0]){
+            let ff = dd[1].split(",");
+            for(var it in ff){
+              field.push(ff[it])
+            }
+          }
+        }
+      }  
+      for (let i = 0; i < cds.ccells.cels.length; i++) {
+        var item = cds.ccells.cels[i]; 
+        if(this.isInArray(field,item.id)){
+        }else{
+          if (item.unNull) {
+            var vl = cds.currRecord[item.id];
+            // console.log(vl,this.dsm.currRecord);
+            if (!vl) {
+              this.$notify.warning({
+                content: "【" + item.labelString + "】"+this.$t('commInfo.notNull')+"!",
+                placement: "mid-center"
+              });
+              return false;
+            }
+          }
+        } 
+      } 
+      return true;
+    },    
+    isInArray(arr,value){
+      for(var i = 0; i < arr.length; i++){
+        if(value === arr[i]){
+          return true;
+        }
+      }
+      return false;
+    },
   },
   created(){  
     

@@ -159,6 +159,8 @@ export default {
         this.dateFomt = "YYYYMM";
       } else if (this.cell.editName == "Y-M") {
         this.dateFomt = "YYYY-MM";
+      } else if (this.cell.editName == "Y_m") {
+        this.dateFomt = "YYYY-MM-DD hh:mm";
       }
     },
     updateValue(value) {

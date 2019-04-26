@@ -40,20 +40,24 @@
     <md-part-body>
       <md-content style=" background-color: #F9F9F9;">
         <template v-if="showCont">
-          <md-layout  md-gutter="4" v-if="ds_cont">
+          <md-layout  md-gutter="4" v-if="ds_cont" md-column>
             <template v-if="showAllCont">
               <md-layout>
                 <md-bip-input :isReport="true" v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
               </md-layout>
             </template>
             <template v-else>
+              <md-layout>
               <md-bip-input :isReport="true" v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"></md-bip-input>
+              </md-layout>
             </template>
-            <!-- 隐藏显示剩余条件 -->
-            <md-button class="bip-more md-icon-button" @click.native="showMore()">
-              <md-tooltip md-direction="right">{{tipLaber}}</md-tooltip>
-              <md-icon>list</md-icon>   
-            </md-button>
+            <md-layout>
+              <!-- 隐藏显示剩余条件 -->
+              <md-button class="bip-more md-icon-button" @click.native="showMore()">
+                <md-tooltip md-direction="right">{{tipLaber}}</md-tooltip>
+                <md-icon>list</md-icon>   
+              </md-button>
+            </md-layout>
           </md-layout> 
         </template>
         <template v-if="!groupTJ"> 
@@ -116,7 +120,7 @@
                             </md-layout>
                         </md-layout>
                       </md-card-header> 
-        
+
                       <md-card-content> 
                           <md-layout v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow && (item.attr& bills1.DICT)<=0"  :key="index" md-gutter  md-flex ="100" :md-gutter="16"> 
                             <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
@@ -131,6 +135,10 @@
                       </md-card-content>
                       <md-card-actions>  
                         <md-button :disabled="btnDisabled" v-for="(itembtn,index) in dlgBtn" :key="index" @click.native="moblieButton(itembtn,row)">{{itembtn.name}}</md-button>
+                        <md-button :disabled="btnDisabled" v-for="(itembtn,index) in sbuidBtn" :key="index" @click.native="openrefs(row,rowIndex,itembtn.columnIndex)">{{itembtn.name}}</md-button>
+                        
+
+
                         <md-button class="md-icon-button" md-expand-trigger @click="ExpandShrink(rowIndex)">
                           <md-icon>keyboard_arrow_down</md-icon>
                         </md-button>

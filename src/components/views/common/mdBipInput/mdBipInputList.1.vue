@@ -1,8 +1,8 @@
 <template>
   <md-input-container>
     <label :for="cell.id">{{cell.labelString}}</label>
-    <md-select :name="cell.id" :id="cell.id" v-model="modal[cell.id]" :required="cell.isReq" :disabled="disabled" @change="dataCC" :class="disabled?disabledStyleA:disabledStyleB">
-      <md-option :value="item[header[0]]+''" v-for="(item,index) in values" :key="index" @selected="optionSel(index)">{{item[header[1]]}}</md-option>
+    <md-select :name="cell.id" :id="cell.id" v-model="modal[cell.id]" :required="cell.isReq" :disabled="disabled" @change="dataCC">
+      <md-option :value="item[header[0]]+''" v-for="(item,index) in values" :key="index">{{item[header[1]]}}</md-option>
     </md-select>
   </md-input-container>
 </template>
@@ -13,9 +13,7 @@ export default {
   data() {
     return {
       header: [],
-      values: [],
-      disabledStyleA:'disabledStyleA',
-      disabledStyleB:'',
+      values: []
     };
   },
   methods: {
@@ -48,8 +46,7 @@ export default {
           }
         }
       }
-    }, 
-
+    },
     makeData(data) {
       // console.log(data);
       if (data.code == -1|| ( data.id && data.id ==-1)) {
@@ -57,7 +54,9 @@ export default {
       } else {
         var len = data.labers.length;
         if (len > 1) {
-          this.header = data.allCols;
+          for (let i = 0; i < 2; i++) {
+            this.header[i] = data.allCols[data.showCols[i]];
+          }
         } else {
           this.header[0] = data.labers[0];
           this.header[1] = data.labers[0];
@@ -74,19 +73,17 @@ export default {
     getCallError(res) {
       this.$notify.danger({ content: res.data.message });
     },
-    optionSel(vv){
+    dataCC(value) {
+      // console.log(value+'');
       var refBackData = {
         cellId: this.cell.id,
-        cols:this.header, 
-        value: this.values[vv],
+        value: value,
         oldValue:this.oldValue,
         multiple: false
       };
-      if (this.values[vv][this.header[0]] !== this.oldValue) this.$emit("change", refBackData);
+      if (value !== this.oldValue) this.$emit("change", refBackData);
       var modalValue = this.modal[this.cell.id];
       this.oldValue = modalValue?modalValue:'';
-    },
-    dataCC(value) { 
     }
   },
   mounted() { 
@@ -100,8 +97,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-.disabledStyleA{
-  color:#9E9E9E;
-} 
-</style>

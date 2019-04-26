@@ -13,7 +13,8 @@ import msgDia from './mdBipMsgDialog'
 import MapECharts from './mapecharts/airfence' 
 import ProgressBar from './progressBar' 
 import CWorkCopyFlow from './cworkcopyflow' 
-import bipTimeDown from './timedown'
+import bipTimeDown from './timedown' 
+import bipLayout from './applet/layout';
 
 export default function install(Vue) {
   if (install.installed) {
@@ -37,4 +38,5 @@ export default function install(Vue) {
   Vue.use(ProgressBar);   
   Vue.use(CWorkCopyFlow);
   Vue.use(bipTimeDown);
+  Vue.use(bipLayout);
 }

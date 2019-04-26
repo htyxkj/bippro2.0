@@ -425,6 +425,50 @@ export default class CDataSet {
     sinc = sinc.replace(/\[YM\]/g, common.now('YYYYMM'));
     sinc = sinc.replace(/\[YMD\]/g, common.now('YYYYMMDD'));
     return sinc;
-  }
- 
+  } 
+
+  //修改布局解析 新加方法
+
+  getDataSet(obid){
+    if(obid==='' || this.ccells.obj_id === obid){
+        return this
+    }
+    let cds = null
+    if(this.ds_sub){
+      for(let i = 0; i<this.ds_sub.length;i++){
+        let cds0 = this.ds_sub[i];
+        cds = this.getCDataSet(cds0,obid)
+        if(cds !=null)
+          return cds;
+      }
+    }
+    if(cds==null){
+        if(this.ds_ext){
+            for(let i = 0; i<this.ds_ext.length;i++){
+                let cds0 = this.ds_ext[i];
+                cds = this.getCDataSet(cds0,obid)
+                if(cds!=null){
+                    return cds
+                }
+            }
+        }
+    }
+    return cds
+}
+
+getCDataSet(cds,obid){
+    let cds1 = null
+    if(cds.ccells.obj_id === obid)
+        return cds
+    if(cds.ds_sub){
+        for(let i = 0; i<cds.ds_sub.length;i++){
+            let cds0 = cds.ds_sub[i];
+            cds1 = this.getCDataSet(cds0,obid)
+            if(cds1 != null){
+                return cds1
+            }
+        } 
+    }
+    return cds1
+}
 }

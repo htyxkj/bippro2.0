@@ -446,7 +446,7 @@ export default {
   float: right;
   position:relative; 
   top:5px;
-  right: 100px;
+  right: 140px;
   width:0px;
 }
 </style>

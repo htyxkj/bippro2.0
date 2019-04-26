@@ -74,14 +74,16 @@ export default {
         let HighchartsMore = await import('highcharts/highcharts-more.js');
         let SolidGauge = await import('highcharts/modules/solid-gauge.js');
         let funnel = await import('highcharts/modules/funnel.js');
-        // let exporting = await import('highcharts/modules/exporting.js');
+        let exporting = await import('highcharts/modules/exporting.js');
         HighchartsMore(this.Highcharts)
         SolidGauge(this.Highcharts)
         funnel(this.Highcharts) 
-        // exporting(this.Highcharts) 
+        exporting(this.Highcharts) 
       }
       options = options || this.options;
       if (options) {
+        let cc = {printChart: '打印图表',downloadPNG: '下载JPEG 图片',downloadJPEG: '下载JPEG文档',downloadPDF: '下载PDF 图片',downloadSVG: '下载SVG 矢量图',contextButtonTitle: '下载图片'}
+        options.lang =cc; 
         this.chart = this.Highcharts.chart(this.$el, this.formatOption(options), (c) => {
           this.callback(c);
         });

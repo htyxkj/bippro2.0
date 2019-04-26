@@ -225,7 +225,8 @@ export default {
         }
       }
       this.loading = 1;
-      var options = { pcell: this.dsm.pcell, jsonstr: str };
+      // var options = { pcell: this.dsm.pcell, jsonstr: str };
+      var options = { pcell: this.dsm.pcell, jsonstr: str, opera:JSON.stringify(this.opera) };
       var res = await this.saveData(options);
       if (res.data.id == 0) {
         if (this.dsm.currRecord.sys_stated === 4) {
@@ -251,6 +252,9 @@ export default {
           await this.makeCheckParams();
         }
         return true;
+      }else{
+        console.log(res.data)
+        this.$notify.danger({content:"保存失败："+res.data.message})
       }
       this.loading = 0;
       // }
@@ -718,6 +722,10 @@ export default {
       if (this.chkinfo) {
         if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
           this.dsm.canEdit = false;
+        }
+        if ((this.dsm.ccells.attr & billS.LSUPDATE) > 0 && this.chkinfo.state !== "6") {//临时改  
+          console.log("临时改")
+          this.dsm.canEdit = true;
         }
       }
     },

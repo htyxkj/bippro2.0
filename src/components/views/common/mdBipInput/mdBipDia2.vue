@@ -210,14 +210,7 @@ export default {
       this.$refs['dialog'].close();
       this.$emit('close',false);
     },
-    close(){
-      // this.selectedRows=[];
-      //   for(var key in this.allSelectRow){
-      //   let selRow = this.allSelectRow[key];
-      //   for(var x in selRow){
-      //     this.selectedRows.push(selRow[x]);
-      //   }
-      // } 
+    close(){ 
       if(this.assType == 'C_GDIC'){
         for(var i=0;i<this.selectedRows.length;i++){
           var bb = this.selectedRows[i].cc+'';
@@ -235,7 +228,6 @@ export default {
         refBackData.cols = this.allCols;
         if(!this.multiple){
           refBackData.value[0] = this.selectedRows[0];
-          // console.log(" this.selectedRows[0]", this.selectedRows[0]);
         }else{
           refBackData.multiple = true; 
           refBackData.value= this.selectedRows; 

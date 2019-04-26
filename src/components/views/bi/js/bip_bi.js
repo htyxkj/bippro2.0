@@ -48,6 +48,7 @@ export default {
       lineToColumn:"行转列",
       biLay:'table',
       timedown:null,//单据倒计时显示
+      sbuidBtn:[],//业务号弹出框按钮
     }
   },
   methods: {
@@ -219,8 +220,7 @@ export default {
         if ((cell.attr & 0x80000) > 0) {
           let slkbuidCell = this.ds_m.ccells.cels[columnIndex + 1];
           let slkbuid = row[slkbuidCell.id];
-          if (slkid && slkbuid) {
-            console.log('调用我了');
+          if (slkid && slkbuid) { 
             this.$refs["sbill"].open(slkid, slkbuid);
           }
         } else {
@@ -325,46 +325,37 @@ export default {
     //获取弹出框按钮
     async getDlg() { 
       this.dlgBtn = [];
-      var menuid = 'DLG.' + this.mparams.pbuid;
-      let me = window.sessionStorage.getItem(menuid);
-      if (me == null) {
-        var data1 = {
-          dbid: global.DBID,
-          usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
-          apiId: global.APIID_DLG,
-          menuid: menuid,
-        };
-        var res = await this.getDataByAPINewSync(data1);
-        // console.log(res);
-        //创建客户;100305;cbm
-        if (res.data.id != -1) {
-          var data = res.data.data.btn;
-          for (var i = 0; i < data.length; i++) {
-            var btnOne = data[i];
-            var b = btnOne.split(";");
-            var btn = {
-              name: b[0],
-              cellID: b[1],
-              key: b[2]
-            };
-            btn.menuid = menuid;
-            btn.type = btn.name.substring(0, 1)
-            if(btn.name.indexOf(",") ==-1){
-              btn.name = btn.name.substring(2);
-            }else{
-              btn.name = btn.name.substring(2, btn.name.indexOf(","));
-            }
+      let data = await this.getConstant('DLG.' + this.mparams.pbuid);
+      if(data){ 
+        let len =  data.length;
+        for (var i = 0; i <len ; i++) {
+          var btnOne = data[i];
+          var type = btnOne.substring(0,1);
+          var btn = {};
+          btn.name = btnOne.substring(btnOne.indexOf(":")+1,btnOne.indexOf(","));
+          btn.menuid = 'DLG.' + this.mparams.pbuid; 
+          btn.type = type;
+          var b = btnOne.split(";"); 
+          if(type == "A"){
+            btn.cellID = b[1];
+            btn.key = b[2];
+          }else if(type == "B"){
+            btn.cellID = b[1];
+            btn.key = b[2];
+          }else if(type == "C"){
+            btn.cellID = b[1];
+            btn.key = b[2];
+            if(b[3])
+            btn.selKey=b[3];
+          }
+          if(type =="D"){
+            btn.columnIndex= parseInt(b[1]);
+            this.sbuidBtn.push(btn);
+          }else{
             this.dlgBtn.push(btn);
           }
-          window.sessionStorage.setItem(menuid, JSON.stringify(this.dlgBtn));
-        }else{
-          window.sessionStorage.setItem(menuid, 'noData');
         }
-      } else {
-        if(me == 'noData')
-          return;
-        this.dlgBtn = JSON.parse(me);
-      }
+      }  
     },
     //点击弹出框按钮
     dlgBtnClick(btn) {  
