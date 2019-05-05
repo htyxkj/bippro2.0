@@ -65,11 +65,12 @@ export default {
               //获取常量
               var cc = JSON.parse(window.sessionStorage.getItem(cell.refValue));
               cell.refCl = true;
-              if(!cc){
-                // console.log('服务端获取');
+              if(!cc){ 
                 // console.log(cell.refValue)
                 cc = await this.getCLByAPI({'assistid':cell.refValue});
                 // console.log(cc);
+                // console.log('服务端获取');
+                // console.log(cc.data)
                 window.sessionStorage.setItem(cell.refValue,JSON.stringify(cc.data));
               }
             }else if(s0.charAt(0)=='&'){

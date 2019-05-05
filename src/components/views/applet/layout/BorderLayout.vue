@@ -77,7 +77,7 @@ export default {
   props: {laycfg:Array,dsm :Object},
   methods: { 
     initInfo(){
-        console.log("borderLayout")
+        // console.log("borderLayout")
         if(this.laycfg){
             this.len = this.laycfg.length
             this.wcenter = 24

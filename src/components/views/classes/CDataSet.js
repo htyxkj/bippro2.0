@@ -66,6 +66,7 @@ export default class CDataSet {
   }
 
   checkGS(cell) {
+    console.log("checkGS")
     if(cell){
       const attr = cell.attr;
       if ((attr & 0x100000) > 0) {

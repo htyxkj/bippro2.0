@@ -29,14 +29,14 @@ global.BIPAPIURL = 'http://192.168.1.200:9999/jd/';
 // global.DBID = '111';//会所预定
 // global.DBID = '101';
 // global.DBID = '110';//OA
-global.DBID = '114';//集团财务
+// global.DBID = '114';//集团财务
 // global.DBID = '104';//飞防管控
 // global.DBID = '105';//京通档案
 // global.DBID = '122';//115飞防管控
 // global.DBID = '124';//CRM 
 // global.DBID = '125';//安全隐患监控平台
 // global.DBID = '126';//本机绩效
-// global.DBID = '127';//物业管理
+global.DBID = '127';//物业管理
 global.API_COM = 'api';//web端入口
 global.API_UPD = 'upd';//附件操作接口
 //队列消息配置

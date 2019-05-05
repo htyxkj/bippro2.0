@@ -237,6 +237,6 @@ export default {
 .md-grid-table{
   tr{
     height: 60px;
-  } 
+  }
 }
 </style>

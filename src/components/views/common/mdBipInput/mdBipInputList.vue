@@ -27,7 +27,6 @@ export default {
           this.makeData(data);
         }else if (this.cell.refValue.indexOf("&") > 0) {
           var res = await this.getCLByAPI({'assistid':this.cell.refValue});
-
           if(res.data)
             this.makeData(res.data);
         } else {
@@ -48,7 +47,7 @@ export default {
           }
         }
       }
-    }, 
+    },
 
     makeData(data) {
       // console.log(data);

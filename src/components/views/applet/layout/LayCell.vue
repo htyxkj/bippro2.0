@@ -54,7 +54,7 @@ export default {
         }
         if(cell.isShow){ 
           if(cell.ccCharleng==0)
-            cell.ccCharleng = 10
+            cell.ccCharleng = 14
           if(cell.ccCharleng<0){
             negative+= Math.abs(cell.ccCharleng);
           }else{
@@ -66,14 +66,14 @@ export default {
         var cell = this.cells[i];
         if(cell.isShow){
           var aa = cell.ccCharleng+''; 
-          var fw=width-(positive*10)
+          var fw=width-(positive*14)
           if(fw<=100){ 
             if(aa.indexOf("px")==-1)
-              cell.ccCharleng = parseInt(Math.abs(cell.ccCharleng)* parseInt(10)) +''+'px'
+              cell.ccCharleng = parseInt(Math.abs(cell.ccCharleng)* parseInt(14)) +''+'px'
           }else{
             if(aa.indexOf("px")==-1){
               if( cell.ccCharleng >0){
-                cell.ccCharleng = parseInt(Math.abs(cell.ccCharleng)* parseInt(10)) +''+'px'
+                cell.ccCharleng = parseInt(Math.abs(cell.ccCharleng)* parseInt(14)) +''+'px'
               }else{
                 cell.ccCharleng = Math.abs(cell.ccCharleng)/negative*fw+''+'px';
               }

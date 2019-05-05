@@ -1,8 +1,7 @@
 import BipLayCells from './BipLayCells';
 import BipLayConf from './BipLayConf'; 
 export class BipLayout {
-    constructor(_laystr, _cells) {
-        console.log("BipLayout")
+    constructor(_laystr, _cells) { 
         this.layType = 'B';
         this.binit = false;
         this.ccells = [];
@@ -19,19 +18,20 @@ export class BipLayout {
                 this.layType = this.laystr.substring(0, index);
                 let str = this.laystr.substring(index + 1);
                 str = str.substring(1, str.length - 1); 
-                let comps = this.doLayout(str);
-                console.log(comps);
+                let comps = this.doLayout(str); 
                 comps.forEach(cmpstr => {
                     if (cmpstr.indexOf(':') > 0) {
                         let cp = new BipLayout(cmpstr, _cells);
-                        let cc = new BipLayConf(false, cp, '');
-                        this.compconfs.push(cc);
+                        let cc = new BipLayConf(false, cp, ''); 
+                        this.compconfs.push(cc)
                     } else if(cmpstr !==""){
                         let objid = this.getObjId(cmpstr);
-                        let cel = this.getCells(objid, true, this.ccells);
-                        let lay = new BipLayCells(cmpstr, cel);
-                        let cc = new BipLayConf(true, lay, lay.name);
-                        this.compconfs.push(cc);
+                        let cel = this.getCells(objid, true, this.ccells); 
+                        if(cel !=null){
+                            let lay = new BipLayCells(cmpstr, cel);
+                            let cc = new BipLayConf(true, lay, lay.name);
+                            this.compconfs.push(cc);
+                        }
                     }
                 });
             }

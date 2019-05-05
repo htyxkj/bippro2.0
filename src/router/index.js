@@ -77,7 +77,7 @@ export default new Router({
     {
       path: '/index',
       name: 'Dashbord',
-      component: Dashboard
+      component: Dashboard,  
     },
     {
       path: '/task',

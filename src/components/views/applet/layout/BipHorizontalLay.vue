@@ -44,6 +44,7 @@ export default {
                 if(cc<1)
                     this.cfgL.width = cc*100; 
             }
+            if(this.cfgR.comp.layId)
             if(this.cfgR.comp.layId.indexOf("*")>0){
                 let cc = this.cfgR.comp.layId.split("*")[0];
                 if(cc<1)
