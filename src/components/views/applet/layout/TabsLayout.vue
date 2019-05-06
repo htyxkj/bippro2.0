@@ -25,7 +25,7 @@ export default {
     computed: { 
     }, 
     async mounted() { 
-        console.log(this.laycfg) 
+        // console.log(this.laycfg) 
     },
     watch: { 
     }

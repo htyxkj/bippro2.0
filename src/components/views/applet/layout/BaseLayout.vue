@@ -1,19 +1,19 @@
 <template>
-<div style="width:100%;max-width:100%">
+<div class="all">
     <template v-if="layout&&layout.layType === 'B'">
-        <border-layout :laycfg="comps" :dsm="dsm"></border-layout>
+        <border-layout :laycfg="comps" :dsm="dsm" class="all"></border-layout>
     </template>
     <template v-else-if="layout&&layout.layType === 'T'">
-        <tabs-layout :laycfg="comps" :dsm="dsm"></tabs-layout>
+        <tabs-layout :laycfg="comps" :dsm="dsm" class="all"></tabs-layout>
     </template>
     <template v-else-if="layout&&layout.layType === 'H'">
-        <bip-horizontal-lay :laycfg="comps" :dsm="dsm"></bip-horizontal-lay>
+        <bip-horizontal-lay :laycfg="comps" :dsm="dsm" class="all"></bip-horizontal-lay>
     </template>
     <template v-else-if="layout&&layout.layType === 'V'">
-        <bip-vertical-lay :laycfg="comps" :dsm="dsm"></bip-vertical-lay>
+        <bip-vertical-lay :laycfg="comps" :dsm="dsm" class="all"></bip-vertical-lay>
     </template>
     <template v-else-if="layout&&layout.layType === 'U'">
-        <div>自定义布局</div>
+        <div class="all">自定义布局</div>
     </template>
 </div>
 </template>
@@ -40,3 +40,11 @@ export default {
     }
 };
 </script>
+<style scoped>
+    .all{
+        width:100%;
+        max-width:100%;
+        /* height:100%;
+        min-height:100% */
+    }
+</style>

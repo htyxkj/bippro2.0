@@ -24,7 +24,8 @@
       <md-background v-if="mdBackground"></md-background>
     </md-whiteframe>
 
-    <div class="md-tabs-content flex" ref="tabContent">
+    <!-- <div class="md-tabs-content flex" ref="tabContent"> -->
+      <div class="md-tabs-content" ref="tabContent">
       <div class="md-tabs-wrapper" :style="{transform: `translate3D(-${contentWidth}, 0, 0)` }">
         <slot></slot>
       </div>

@@ -1,14 +1,14 @@
 <template>
   <div v-if="laycell" class="bip-lay">
     <template v-if="laycell&&!laycell.btable">
-      <md-layout class="flex"> 
+      <md-layout> 
         <md-bip-input :showsth="sth[cell.id]" :dsm="dsm" v-for="cell in cells" :ref="cell.id" :key="cell.id" :cell="cell" :modal="cds.currRecord" :btj="false" class="bip-input" @change="dataChange" @changeShowSth="settingShowField"></md-bip-input>
       </md-layout>
     </template>
     <template v-else> 
-      <md-layout class="flex" style="height:100%"> 
+      <md-layout style="height:100%"> 
         <md-bip-grid style="min-height: 2rem;" :dsm="dsm" :datas="cds.cdata" ref="grid" :row-focused="true" :auto-load="true" @onAdd="onLineAdd(cds)" @onRemove="onRemove" :showAdd="canAddChild" :showRemove="canAddChild"  @rowChange="rowChange" @click="rowClick(cds)" :isEntry="isEntry(cds)">
-          <md-bip-grid-column v-for="(item,index) in cells" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName || item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :refValue="item.refValue" :width="item.ccCharleng" :isReq="item.isReq" :editName="item.editName" :editType="item.editType" :assist="item.assist" :dataType="getDataType(item)" :objid="cds.ccells.obj_id" :formatter="formatter"  :assType="item.assType">
+          <md-bip-grid-column v-for="(item) in cells" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName || item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :refValue="item.refValue" :width="item.ccCharleng" :isReq="item.isReq" :editName="item.editName" :editType="item.editType" :assist="item.assist" :dataType="getDataType(item)" :objid="cds.ccells.obj_id" :formatter="formatter"  :assType="item.assType">
           </md-bip-grid-column>
         </md-bip-grid> 
       </md-layout>
