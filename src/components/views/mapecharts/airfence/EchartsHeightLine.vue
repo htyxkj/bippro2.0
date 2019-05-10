@@ -26,6 +26,8 @@ export default{
     methods:{
         async init(){
             if(this.Highcharts == null){
+                
+                console.log("EchartsHeightLine")
                 this.Highcharts = await import('highcharts');
             }
             if(this.linecharts !=null&&this.data.length>0){
@@ -132,7 +134,7 @@ export default{
                 this.data.push({x:x,y:y});
 
                 var x =new Date(this.lineseries[0].time).getTime();
-                var y = this.lineseries[0].val; 
+                var y = parseFloat(this.lineseries[0].val); 
                 var flag = false
                 if(this.data.length>6){
                     flag = true;

@@ -30,8 +30,51 @@
     </md-part-toolbar>
     <md-part-body> 
       <template v-if="dsm">
-        <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null&&lay!=null">
-          <md-bip-base-layout :dsm="dsm" :layout="lay" :env="null"></md-bip-base-layout>
+        <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
+          <!-- sass/components/mdInputContainer.scss .md-input-container { margin: .04rem .1rem .48rem 0;}-->
+          <!-- style="height:auto;margin:0px;padding:0px"  -->
+          <!-- <template v-if="inp.length > 0"> 
+              <div v-for="(item,index) in inp" :key="index"> 
+                <div v-for="(row,rowIn) in item" :key="rowIn" :style="getStyle(row[0].ccHorCell)" style="    margin: 0px;"> 
+                  <md-bip-input :dsm="dsm" v-for="cell in row" :ref="cell.input.id" :key="cell.input.id" :cell="cell.input" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>                  
+                </div> 
+              </div> 
+          </template>
+          <template v-else> -->
+          <!-- </template> -->
+          <!-- </template> -->
+          <md-layout v-if="isSelsth" > 
+            <template v-if="mainTabs.length<=0">
+              <md-layout class="flex"> 
+                <md-bip-input :showsth="sth[cell.id]" :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" @changeShowSth="settingShowField"></md-bip-input>
+              </md-layout>
+            </template>
+            <template v-else>
+              <md-tabs class="md-transparent" style="min-height:max-content;">  
+                <md-tab v-for="(item,index) in mainTabs" :md-label="item.name" :key="index"  style="padding:0px;">
+                  <md-layout class="flex"> 
+                    <md-bip-input :showsth="sth[cell.id]"  :dsm="dsm" v-for="(cell,index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" v-if="item.start <= index && item.end >= index" @changeShowSth="settingShowField"></md-bip-input>
+                  </md-layout>
+                </md-tab>
+              </md-tabs>
+            </template> 
+          </md-layout> 
+          <md-tabs :md-dynamic-height=false class="flex" v-if="childrens&&childrens.length>=1&&istabs">
+            <md-tab  style="padding:0px;display: -webkit-box; overflow:hidden;" v-for="(oneds,index) in childrens" :key="index" :id="oneds.id" :md-label="oneds.title">
+              <md-layout class="flex" style="margin-top:2px;" >
+                <md-bip-grid :dsm="dsm" :datas="oneds.data.cdata" ref="grid" :row-focused="true" :auto-load="true" @onAdd="onLineAdd(oneds.data)" @onRemove="onRemove" :showAdd="canAddChild" :showRemove="canAddChild"  @rowChange="rowChange" @click="rowClick(oneds.data)" :isEntry="isEntry(oneds.data)">
+                  <md-bip-grid-column v-for="item in oneds.data.ccells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName || item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :refValue="item.refValue" :width="item.ccCharleng" :isReq="item.isReq" :editName="item.editName" :editType="item.editType" :assist="item.assist" :dataType="getDataType(item)" :objid="oneds.data.ccells.obj_id" :formatter="formatter"  :assType="item.assType">
+                  </md-bip-grid-column>
+                </md-bip-grid>
+              </md-layout>
+            </md-tab>
+          </md-tabs> 
+          <md-layout  v-else class="flex layout-column" v-for="(oneds,index) in dsm.ds_sub" :key="index" >
+              <md-bip-grid :dsm="dsm" :datas="oneds.cdata" :ref="index" :row-focused="true" :auto-load="true" @onAdd="onLineAdd(oneds)" @onRemove="onRemove" :showAdd="canAddChild" :showRemove="canAddChild" @rowChange="rowChange" @click="rowClick(oneds)" :isEntry="isEntry(oneds)">
+                <md-bip-grid-column v-for="item in oneds.ccells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.editName || item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :refValue="item.refValue" :width="item.ccCharleng" :isReq="item.isReq" :editName="item.editName" :editType="item.editType" :assist="item.assist" :dataType="getDataType(item)" :objid="oneds.ccells.obj_id" :formatter="formatter" :assType="item.assType">
+                </md-bip-grid-column>
+              </md-bip-grid>
+          </md-layout> 
         </md-content>
       </template>
       <template v-if="chkinfo">
@@ -47,8 +90,6 @@ import CDataSet from "../classes/CDataSet";
 import CeaPars from "../classes/CeaPars";
 import billS from "../classes/billState";
 import common from "../../core/utils/common.js";
-import { BipLayout } from './layout/js/BipLayout';
-
 export default {
   data() {
     return {
@@ -60,13 +101,14 @@ export default {
       inp:[],
       mainTabs:[],
       sth:{},
-      isSelsth:false, 
-      lay:null,
+      isSelsth:false,  
     };
   },
   props: { dsm: Object, dsext: Array, opera: Object ,mparams:Object,menuP:Object},
-  methods: { 
-     
+  methods: {
+    dataChange(res) { 
+      this.dsm.checkEdit(res);
+    },
     create() { 
       if (this.dsm) { 
         var crd = this.dsm.currRecord;
@@ -171,7 +213,6 @@ export default {
       var options = { pcell: this.dsm.pcell, jsonstr: str, opera:JSON.stringify(this.opera) };
       if(this.dsm.currRecord.sys_stated !=4){//保存前校验
         let check = await this.beforeSaveCheck(this.dsm);
-        console.log(check)
         let issavet = 'false';
         if(check){
           if(check[0] == 'Dialog'){
@@ -215,10 +256,21 @@ export default {
           // this.dsm.currRecord.sys_stated = billS.DICT;
           this.dsm.makeState(billS.DICT);
           this.$notify.success({ content: this.$t('commInfo.saveSucc'), placement: "mid-center" });
+
+          if(this.opera && this.dsm.currRecord.sys_stated !=4){
+            this.$dialog.confirm("是否提交此单据？", {
+              okText: this.$t('commInfo.ok'),
+              cancelText: this.$t('commInfo.cancel')
+            })
+            .then(() => { 
+              this.submit(); 
+            });
+          }
         }
         if (this.opera || this.opera !== null) {
             await this.makeCheckParams();
         }
+
         return true;
       }else{
         console.log(res.data)
@@ -322,7 +374,29 @@ export default {
       var state = crd[this.opera.statefld];
       if (state === "1" || state === "0") this.dsm.canEdit = true;
       // console.log(res, "fdfdsfds");
-    }, 
+    },
+    //判断字段类型
+    getDataType(item) {  
+      if (
+        item.type == 91 ||
+        item.type == 93 ||
+        item.chkRule == "{DATE}" ||
+        item.chkRule == "{DATETIME}"||
+        item.chkRule == "{H_S}"
+      ) {
+        return "date";
+      }
+      if (item.assist || item.editName) {
+        return "entity";
+      }
+      if (item.editType == 1) {
+        return "enum";
+      }
+      if (item.type < 12) {
+        return "numeric";
+      }
+      return "string";
+    },
     onLineAdd(subdsm) { 
       this.curr_dsm = subdsm;
       var subId = subdsm.ccells.obj_id;
@@ -333,7 +407,45 @@ export default {
         this.dsm.currRecord[subId] = [];
       }
       this.dsm.currRecord[subId] = subdsm.cdata;
-    },    
+    },
+    onRemove(rows) {
+      if (!this.dsm.canEdit) return;
+      if(!this.curr_dsm)
+        this.curr_dsm = this.dsm.ds_sub[0];
+      _.forEach(rows.data, row => {
+        this.curr_dsm.deleteRecord(row);
+      });
+      // console.log(rows);
+    },
+    rowClick(subdsm) {
+      this.curr_dsm = subdsm;
+      // console.log(this.curr_dsm);
+    },
+    rowChange(row) {
+      // console.log("row Change", row);
+      const state = this.dsm.currRecord.sys_stated;
+      if (this.chkinfo) {
+        if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
+          return;
+        }
+      }
+      this.dsm.currRecord.sys_stated = state | billS.EDITED;
+    },
+    formatter(value, data, column) {
+      if (column.dataType === "numeric") {
+        let pit = column.ccPoint;
+        // console.log(value,typeof(value));
+        const v = Number.parseFloat(value);
+        if(v !== 0)
+          value = common.formatDecimal(value, { precision: pit });
+        else{
+          value = '';
+        }
+        // data[column.field] = value;
+        return value;
+      }
+      return value;
+    },
     async getChildData(subdsm) {
       if (!subdsm) {
         return;
@@ -374,7 +486,8 @@ export default {
       };
       this.getDataByAPINew(data1, this.successBack);
     },
-    successBack(res) { 
+    successBack(res) {
+      // console.log(res);
       let rtn = res.data;
       if (rtn.id == 0) {
         this.flowlist = rtn.data.flowlist;
@@ -436,56 +549,100 @@ export default {
           });
         }
       } 
-    }, 
+    },
+    //构成多子表标签数据
+    constituteChildrens(playout){  
+      if(playout){
+        var indexT = playout.indexOf("T:");
+        if(indexT>=0){
+          this.istabs=true;
+          var _aa = playout.indexOf(")");
+          playout = playout.substring(indexT,_aa)
+          _aa = playout.indexOf("(");
+          playout = playout.substring(_aa+1,playout.length)
+          var children = playout.split(";"); 
+          for(var i=0;i<children.length;i++){
+            var _chil =  children[i];
+            var title = _chil.substring(_chil.indexOf("/")+2,_chil.length) 
+            var beau 
+            if(_chil.indexOf("#") !=-1){
+              beau = _chil.substring(0,_chil.indexOf("#")) 
+            }else {
+              beau = _chil.substring(0,_chil.indexOf("/")) 
+            } 
+            for(var j=0;j<this.dsm.ds_sub.length;j++){
+              var _ds_sub = this.dsm.ds_sub[j];
+              if(_ds_sub.ccells.obj_id == beau){
+                var id=title+''+i
+                var _val = {id:id,title:title,data:_ds_sub}
+                this.childrens.push(_val);
+                break;
+              }
+            } 
+          }  
+        }  
+      } 
+      // console.log(this.childrens)
+    },
     //计算宽度 
-    // calculationWidth() { 
-    //   // console.log("计算宽度")
-    //   if(this.dsm.ds_sub == null){
-    //     return;
-    //   }
-    //   var width = document.body.clientWidth-83; 
-    //   for(var j=0;j<this.dsm.ds_sub.length;j++){
-    //     var _ds_sub = this.dsm.ds_sub[j];
-    //     var sumLeng=0; 
-    //     var positive=0;//正
-    //     var negative=0;//负
-    //     for(var i =0 ;i<_ds_sub.ccells.cels.length;i++){ 
-    //       var cell = _ds_sub.ccells.cels[i];
-    //       var aa = cell.ccCharleng+'';
-    //       if(aa.indexOf("px")!=-1){
-    //         return;
-    //       }
-    //       if(cell.isShow){ 
-    //         if(cell.ccCharleng==0)
-    //           cell.ccCharleng = 10
-    //         if(cell.ccCharleng<0){
-    //           negative+= Math.abs(cell.ccCharleng);
-    //         }else{
-    //           positive+= Math.abs(cell.ccCharleng);
-    //         } 
-    //       }
-    //     }
-    //     for(var i =0 ;i<_ds_sub.ccells.cels.length;i++){
-    //       var cell = _ds_sub.ccells.cels[i];
-    //       if(cell.isShow){
-    //         var aa = cell.ccCharleng+''; 
-    //         var fw=width-(positive*15)
-    //         if(fw<=100){ 
-    //           if(aa.indexOf("px")==-1)
-    //             cell.ccCharleng = parseInt(Math.abs(cell.ccCharleng)* parseInt(15)) +''+'px'
-    //         }else{
-    //           if(aa.indexOf("px")==-1){
-    //             if( cell.ccCharleng >0){
-    //               cell.ccCharleng = parseInt(Math.abs(cell.ccCharleng)* parseInt(15)) +''+'px'
-    //             }else{
-    //               cell.ccCharleng = Math.abs(cell.ccCharleng)/negative*fw+''+'px';
-    //             }
-    //           }
-    //         } 
-    //       }
-    //     }
-    //   }      
-    // },   
+    calculationWidth() { 
+      // console.log("计算宽度")
+      if(this.dsm.ds_sub == null){
+        return;
+      }
+      var width = document.body.clientWidth-83; 
+      for(var j=0;j<this.dsm.ds_sub.length;j++){
+        var _ds_sub = this.dsm.ds_sub[j];
+        var sumLeng=0; 
+        var positive=0;//正
+        var negative=0;//负
+        for(var i =0 ;i<_ds_sub.ccells.cels.length;i++){ 
+          var cell = _ds_sub.ccells.cels[i];
+          var aa = cell.ccCharleng+'';
+          if(aa.indexOf("px")!=-1){
+            return;
+          }
+          if(cell.isShow){ 
+            if(cell.ccCharleng==0)
+              cell.ccCharleng = 10
+            if(cell.ccCharleng<0){
+              negative+= Math.abs(cell.ccCharleng);
+            }else{
+              positive+= Math.abs(cell.ccCharleng);
+            } 
+          }
+        }
+        for(var i =0 ;i<_ds_sub.ccells.cels.length;i++){
+          var cell = _ds_sub.ccells.cels[i];
+          if(cell.isShow){
+            var aa = cell.ccCharleng+''; 
+            var fw=width-(positive*15)
+            if(fw<=100){ 
+              if(aa.indexOf("px")==-1)
+                cell.ccCharleng = parseInt(Math.abs(cell.ccCharleng)* parseInt(15)) +''+'px'
+            }else{
+              if(aa.indexOf("px")==-1){
+                if( cell.ccCharleng >0){
+                  cell.ccCharleng = parseInt(Math.abs(cell.ccCharleng)* parseInt(15)) +''+'px'
+                }else{
+                  cell.ccCharleng = Math.abs(cell.ccCharleng)/negative*fw+''+'px';
+                }
+              }
+            } 
+          }
+        }
+      }      
+    },  
+    //判断表单是否是录入单据属性  输出 打勾 =false
+    isEntry(data){ 
+      var bb = 0x10000;
+      var cc = data.ccells.attr&bb;
+      if(cc>0){  
+        return false;
+      }else{
+        return true;
+      }
+    },
     //复制拷贝当前单据
     copy(){
       // console.log("复制当前单据！")
@@ -736,7 +893,124 @@ export default {
     },
     getStyle(ccHorCell){
       return "float: left;width: "+ccHorCell+"%;"
-    },  
+    },
+    //主表多页签
+    creBookmark(playout){ 
+      this.mainTabs = [];
+      if(playout.indexOf("T:") !=-1){
+        let one = playout.indexOf("(");
+        let two = playout.lastIndexOf(")");
+        playout = playout.substring(one+1,two);
+        let tabs = playout.split(";");  
+        for(var i =0;i<tabs.length;i++){
+          let name = "";
+          let start = 0;
+          let end = 10000;
+          let cellID = "";
+
+          let tab = tabs[i].split("//");
+          name = tab[1];
+          let cell = tab[0];
+          if(cell.indexOf("[") !=-1){
+            let onezkh = cell.indexOf("[");
+            let twozkh = cell.lastIndexOf("]");
+            let khcont = cell.substring(onezkh+1,twozkh);
+            cell = cell.substring(0,onezkh);
+            let kh = khcont.split("~"); 
+            if(kh[0].length>1){
+              for(var j=0;j<this.dsm.ccells.cels.length;j++){
+                if(kh[0] == this.dsm.ccells.cels[j].id){
+                  start = j;
+                }
+              }
+            }
+            if(kh[1].length>1){
+              for(var j=0;j<this.dsm.ccells.cels.length;j++){
+                if(kh[1] == this.dsm.ccells.cels[j].id){
+                  end = j;
+                }
+              }
+            }
+          } 
+          if(cell.indexOf("#")!=-1){
+            let aa = cell.split("#")[0];
+            cellID = aa.substring(1,aa.length);
+          }else{
+            cellID = cell.substring(1,cell.length);
+          }
+          let t ={name:name,start:start,end:end,cellID:cellID}
+          this.mainTabs.push(t);
+        }
+      }
+    },
+    //获取SWITCH开关 字段显示 隐藏信息
+    async getSwitch() {
+      this.sth={};
+      var menuid = 'STH.' + this.dsm.ccells.obj_id;
+      let me = window.sessionStorage.getItem(menuid);
+      if (me == null) {
+        var data1 = {
+          dbid: global.DBID,
+          usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+          apiId: global.APIID_DLG,
+          menuid: menuid,
+        };
+        var res = await this.getDataByAPINewSync(data1);
+        // console.log(res);
+        //创建客户;100305;cbm 
+        if (res.data.id != -1) {
+          //A:sfxs;0:;1:dxlx,smzl,number,xzqy,dhqy,cjwh,dlname,zrdw,lxfs,xjnd,sftd,remark
+          let d = res.data.data.btn;
+          let sth00 = {};
+          for(var i=0;i<d.length;d++){
+            let v = d[i];
+            let key = v.substring(0,1);
+            v = v.substring(2).split(";");
+            let showField = [];
+            for(var j=1;j<v.length;j++){
+              showField.push(v[j]);
+            } 
+            sth00 = { key:key,field:v[0],showField:showField}
+          }
+          this.sth[sth00.field] = sth00; 
+          this.settingShowField(sth00.field);
+          window.sessionStorage.setItem(menuid, JSON.stringify(this.sth));  
+        }else{
+          window.sessionStorage.setItem(menuid, 'noData');  
+        }
+        this.isSelsth=true;
+      } else { 
+        this.isSelsth=true;
+        if(me == 'noData')
+          return;
+        this.sth = JSON.parse(me);
+        for(var item in this.sth){
+          this.settingShowField(item);
+        } 
+      } 
+    },
+    //设置显示隐藏字段
+    settingShowField(key){
+      let showsth = this.sth[key];
+      let field = showsth.field;
+      let value = this.dsm.currRecord[field];
+      for(var i=0;i<showsth.showField.length;i++){
+        let fv =  showsth.showField[i].split(":"); 
+        let ff = fv[1];
+        if(ff){
+          let ff0 = ff.split(",");
+          for(var dd = 0;dd<this.dsm.ccells.cels.length;dd++){
+            if(this.isInArray(ff0,this.dsm.ccells.cels[dd].id)){ 
+              if(fv[0] == value){
+                this.dsm.ccells.cels[dd].isShow=true;
+              }else{
+                this.dsm.ccells.cels[dd].isShow=false;
+              }
+            }
+          }
+        }
+      }
+    },
     isInArray(arr,value){
       for(var i = 0; i < arr.length; i++){
         if(value === arr[i]){
@@ -744,13 +1018,29 @@ export default {
         }
       }
       return false;
-    }, 
-    doMyLayout(){ 
-      let cc = new Array;
-      cc.push(this.dsm.ccells);
-      this.lay= new BipLayout(this.mparams.playout,cc);
-      console.log(this.lay)
     },
+    doMyLayout(){
+      this.mainTabs=[];
+      this.childrens=[];
+      let playout = this.mparams.playout;  
+      let index = playout.indexOf(':') 
+      if(index>0){ 
+        let layType = playout.substring(0,index)
+        if(layType === 'T'){
+          this.creBookmark(playout)
+        }else if( layType === 'B'){
+          let str = playout.substring(index+1)
+          str = str.substring(1,str.length-1)
+          let cc = this.doLayout(str);
+          if(cc.length>=1){
+            this.creBookmark(cc[0])
+          }
+          if(cc.length>=2){
+            this.constituteChildrens(cc[1])
+          }
+        }
+      }
+    }, 
   },
   computed: {
     canCreate() {
@@ -810,7 +1100,12 @@ export default {
         ) {
           return true;
         }
-        if (this.chkinfo) { 
+        if (this.chkinfo) {
+          // if(this.chkinfo.state=='6'){
+          //   return true;
+          // }else{
+          //   return false;
+          // }
         }
         return false;
       }
@@ -847,7 +1142,10 @@ export default {
   }, 
   async mounted() {   
     if (this.dsm) { 
-      this.doMyLayout();  
+      this.getSwitch();
+      // this.getMulti_line();
+      this.calculationWidth(); 
+      this.doMyLayout(); 
       const state = this.dsm.currRecord.sys_stated &  billS.INSERT;
       if (this.dsm.ds_sub && state === 0) {
         for(var i =0;i<this.dsm.ds_sub.length;i++){
@@ -880,8 +1178,11 @@ export default {
     dsm(){ 
       if(this.dsm){
         this.dsm.createRecord();   
-        this.doMyLayout(); 
+        this.calculationWidth();
+        this.getSwitch();
       }
+      this.doMyLayout();//主表多页签
+      // this.getMulti_line();
     }
   }
 };

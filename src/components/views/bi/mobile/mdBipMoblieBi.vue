@@ -74,9 +74,9 @@
                   </md-table-row>
                 </md-table-header>  
                 <md-table-body>
-                  <md-table-row :class="setRowColor(rowIndex)?'md-tr-color':''" v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" :md-item="row" :md-auto-select="mdAutoSelect"  :md-selection="mdSelection" >
+                  <md-table-row :class="setRowColor(rowIndex)?'md-tr-color':''" v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" :md-item="row" :md-auto-select="mdAutoSelect"  :md-selection="mdSelection"  :style="getRowStyle(row,ds_m.ccells)" >
                     <!-- @dblclick.native="dblclick(row)" -->
-                    <md-table-cell v-for="(column, columnIndex) in ds_m.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''"  @dblclick.native="openrefs(row,rowIndex,columnIndex)">
+                    <md-table-cell v-for="(column, columnIndex) in ds_m.ccells.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''"  @dblclick.native="openrefs(row,rowIndex,columnIndex)" >
                       <md-bip-bi-file-up  v-if="column.editName =='UPDOWN'" :cell="fileFJCell(row)" :modal="fileFJModal(row)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>
                       <md-bip-input-ddGPS v-else-if="column.editType == 12" :cell="fileMPCell(row)" :modal="fileMPModal(row)" gpsType="showGPS"></md-bip-input-ddGPS>
                       <md-bip-ref v-else :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,columnIndex)"></md-bip-ref> 
@@ -100,10 +100,10 @@
             </md-table-card>
           </template>
           <!-- 卡片布局 -->
-          <template v-if="biLay == 'card'">  
+          <template v-else-if="biLay == 'card'">  
               <template v-if="ds_m && ds_m.cdata && ds_m.cdata.length>0"> 
                 <md-layout style="padding:10px;">
-                  <md-card v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
+                  <md-card v-for="(row, rowIndex) in ds_m.cdata" :key="rowIndex" style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;" :style="getRowStyle(row,ds_m.ccells)" >
                     <md-card-expand> 
                       <md-card-header  class="d_jump" style="padding-bottom: 0px;padding-top: 10px;">
                         <md-layout v-if="timedown" md-flex ="100"  md-align="center" >
@@ -375,5 +375,5 @@ export default {
     width: 150px;
     height: 150px;
   }
-}
+} 
 </style>

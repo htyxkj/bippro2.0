@@ -82,6 +82,7 @@ export default {
     async mounted(){ 
     },
     async created(){ 
+        dd.ui.webViewBounce.disable()
         window.sessionStorage.setItem('isLoginType', 3); 
         var lid = window.sessionStorage.getItem('isLogin');
         if(lid){  

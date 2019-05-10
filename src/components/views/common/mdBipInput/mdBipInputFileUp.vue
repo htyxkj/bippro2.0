@@ -1,9 +1,10 @@
 <template>
     <md-input-container>
+      
     <md-dialog md-open-from="#upfile" md-close-to="#upfile" ref="fDia"> 
       <md-dialog-title class="file_title"> 
           <md-input-container style="width:100%">
-            <md-file v-model="placeholder" :id="id" placeholder="选择文件" :accept="accept"  @selected="selectFile" ref="file" multiple></md-file>
+            <md-file v-model="placeholder" :id="id" placeholder="选择文件" :accept="accept"  @selected="selectFile" ref="file" multiple :fj_type="fj_type"></md-file>
           </md-input-container>
           <div v-if="selFile">已选择{{num}}个文件</div>
           <div v-else>可以上传图片或者文件</div>
@@ -126,6 +127,7 @@ export default {
       isSave:false,//是否上传过
       imgs:[],
       saveList:[],//上传过的文件下标
+      fj_type:"camera",//
     };
   },
   mixins:[comm],
@@ -406,6 +408,9 @@ export default {
     }
   },
   mounted(){ 
+    if(this.modal.fj_type){
+      this.fj_type = this.modal.fj_type+'';
+    }
     if(this.cell){
       if(this.cell.c_par){
         var ii = _.findIndex(this.cell.c_par.cels,item=>{

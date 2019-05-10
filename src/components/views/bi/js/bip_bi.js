@@ -324,6 +324,7 @@ export default {
     },
     //获取弹出框按钮
     async getDlg() { 
+      this.sbuidBtn=[];
       this.dlgBtn = [];
       let data = await this.getConstant('DLG.' + this.mparams.pbuid);
       if(data){ 
@@ -375,15 +376,30 @@ export default {
       this.ds_m.currRecord = this.selectData;
     },
     //行列转换 
-    lineToColumnRun(){ 
+    lineToColumnRun(){  
       if(this.biLay == 'table'){
         this.lineToColumn = "列转行";
         this.biLay = 'card';
       }else if(this.biLay =='card'){
         this.lineToColumn = "行转列";
         this.biLay = 'table';
-      }
+      } 
     },
+    getRowStyle(row,ccells){
+      let style = "";
+      let sctrls = ccells.sctrls;//"`5state/1:red"
+      if(sctrls){
+        let type = sctrls.substring(0,2);
+        let zd = sctrls.substring(2,sctrls.indexOf("/")) 
+        if(type =='`5'){ 
+            let vl =  sctrls.split("/")[1].split(":");
+            if(row[zd] == vl[0]){
+              style +=(" background-color:"+vl[1]+";");
+            } 
+        }
+      }
+      return style
+    }
   },
   async mounted(){
     await this.initCell();

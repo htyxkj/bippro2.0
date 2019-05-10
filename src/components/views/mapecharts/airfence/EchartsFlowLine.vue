@@ -25,7 +25,6 @@ export default{
     props:['lineseries'],
     methods:{
         async init(){
-             
             if(this.Highcharts == null){
                 this.Highcharts = await import('highcharts');
             }
@@ -36,7 +35,7 @@ export default{
                 
             var x =new Date(this.lineseries[0].time).getTime();
             var y = this.lineseries[0].val; 
-            this.data.push({x:x,y:y});
+            this.data.push({x:x,y:y}); 
             this.options ={ 
                 tooltip: {
                     // valueSuffix: 'XXXXXX',
@@ -131,7 +130,7 @@ export default{
                if(this.lineseries[0].id == -1)
                     return; 
                 var x =new Date(this.lineseries[0].time).getTime();
-                var y = this.lineseries[0].val; 
+                var y =parseFloat(this.lineseries[0].val); 
                 this.data.push({x:x,y:y});
 
                 var x =new Date(this.lineseries[0].time).getTime();

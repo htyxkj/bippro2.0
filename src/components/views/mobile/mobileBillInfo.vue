@@ -247,10 +247,20 @@ export default {
           // this.dsm.currRecord.sys_stated = billS.DICT;
           this.dsm.makeState(billS.DICT);
           this.$notify.success({ content: this.$t('commInfo.saveSucc'), placement: "mid-center" });
+
+          if(this.opera && this.dsm.currRecord.sys_stated !=4){
+            this.$dialog.confirm("是否提交此单据？", {
+              okText: this.$t('commInfo.ok'),
+              cancelText: this.$t('commInfo.cancel')
+            })
+            .then(() => { 
+              this.submit(); 
+            });
+          }
         }
         if (this.opera || this.opera !== null) {
           await this.makeCheckParams();
-        }
+        }  
         return true;
       }else{
         console.log(res.data)

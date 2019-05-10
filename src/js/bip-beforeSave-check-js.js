@@ -18,6 +18,7 @@ export default {
                     let type = constant.split(":")[0].split("_");
                     let consoleType = type[0];
                     let dataType = type[1];
+                    console.log(consoleType)
                     if(consoleType == 'Dialog' || consoleType =='Notification'){
                         if(dataType == 'date'){ //时间类型
                             let zd1 = zd[0];//字段1
@@ -127,6 +128,25 @@ export default {
                                 return retv;
                             }
                         }  
+                    }else if(consoleType == 'ORNULL'){
+                        //ORNULL:gzsopr,dqsopr;1;工作许可人/电气监护人未填写;false
+                        let cc = constant.split(":")[1].split(";");
+                        let allzd =  cc[0].split(",");
+                        let num = cc[1];
+                        let msg = cc[2];
+                        let tf = cc[3];
+                        let count =0;
+                        for(var p=0;p<allzd.length;p++){
+                            var vl = dsm.currRecord[allzd[p]];
+                            if(!vl){
+
+                            }else{
+                                count ++;
+                            }
+                        }
+                        if(this.OperationXX(count,parseInt(num),'<')){
+                            return ['Notification',msg,tf]; 
+                        }
                     }
                 } 
                 if(dsm.ds_sub>0){//有子对象
