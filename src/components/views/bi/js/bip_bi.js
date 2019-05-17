@@ -65,7 +65,7 @@ export default {
       // var arr = [];
       console.log(header, _data);
       var cdata = this.ds_m.cdata;
-      if (this.pageInfo.total > this.ds_m.cdata.length) {
+      // if (this.pageInfo.total > this.ds_m.cdata.length) {
         // console.log('big fff，服务端导出数据');
         let pdata = JSON.stringify(this.ds_cont.currRecord);
         let data1 = {
@@ -82,9 +82,9 @@ export default {
         var res = await this.downFile(data1);
         const content = res.data;
         this.exportFilesServ(content, this.mdTitle);
-      } else {
-        this.exportFiles(header, cdata, _data, '', this.mdTitle);
-      }
+      // } else {
+      //   this.exportFiles(header, cdata, _data, '', this.mdTitle);
+      // }
     },
     async getCell() {
       var pcell = this._mparams.pcell;
@@ -211,9 +211,15 @@ export default {
       if (!this.showCont) {
         this.showAllCont = false;
       }
+      setTimeout(() => {
+        if(document.getElementById("partCondition"))
+        this.tableHeight = document.getElementById("partBody").clientHeight-53 - document.getElementById("partCondition").clientHeight;    
+        else
+        this.tableHeight = document.getElementById("partBody").clientHeight-50 ;
+      }, 400); 
     },
-    dblclick(row) {},
-    async openrefs(row, index, columnIndex) {
+    dblclick(row,index) {},
+    async openrefs(row, index, columnIndex) { 
       if (columnIndex >= 0) {
         let cell = this.ds_m.ccells.cels[columnIndex];
         let slkid = row[cell.id];
@@ -223,8 +229,8 @@ export default {
           if (slkid && slkbuid) { 
             this.$refs["sbill"].open(slkid, slkbuid);
           }
-        } else {
-          console.log("dblclick")
+        } else { 
+          console.log(row,index)
           this.dblclick(row, index);
         }
       }
@@ -273,18 +279,38 @@ export default {
       }
     },
     showMore() {
-      this.showAllCont = !this.showAllCont;
+      this.showAllCont = !this.showAllCont; 
+      setTimeout(() => {
+        if(document.getElementById("partCondition"))
+        this.tableHeight = document.getElementById("partBody").clientHeight-53 - document.getElementById("partCondition").clientHeight;    
+        else
+        this.tableHeight = document.getElementById("partBody").clientHeight-50 ;   
+      }, 400);      
     },
     // async get
-    fileFJCell(row) {
+    // fileFJCell(row) {
+    //   let rwcell = {
+    //     c_par: {
+    //       obj_id: row.sbuid,
+    //       cels: [{
+    //         id: "fj_root"
+    //       }]
+    //     },
+    //     id: "fj_name",
+    //     isShow: true,
+    //     labelString: "附件名称",
+    //   };
+    //   return rwcell;
+    // },
+    fileFJCell(sbuid,id) {  
       let rwcell = {
         c_par: {
-          obj_id: row.sbuid,
+          obj_id: sbuid,
           cels: [{
             id: "fj_root"
           }]
         },
-        id: "fj_name",
+        id: id,
         isShow: true,
         labelString: "附件名称",
       };
@@ -304,13 +330,13 @@ export default {
       };
       return rwcell;
     },
-    fileFJModal(row) {
+    fileFJModal(row,id) {
       let rwmodal = {
-        fj_name: row.fj_name,
         fj_root: row.fj_root,
         sbm: row.sbm,
         sbuid: row.sbuid,
       };
+      rwmodal[id] = row[id]; 
       return rwmodal;
     },
     fileMPModal(row) {
@@ -371,9 +397,20 @@ export default {
         this.initCell()
       }
     },
+    //旧table选中行
     onTableSelect(item) {
+      this.selectData = item.row;
+      this.ds_m.currRecord = this.selectData; 
+    },
+    //新table选中行
+    TableSelect(item) {
       this.selectData = Object.values(item)[0];
       this.ds_m.currRecord = this.selectData;
+    },
+    getHeaderCellClass(item){
+      if(this.ds_m.ccells.cels[item.columnIndex].type<12){
+        return "md-numeric"
+      }      
     },
     //行列转换 
     lineToColumnRun(){  
@@ -399,6 +436,27 @@ export default {
         }
       }
       return style
+    },
+    getRowStyleNew(column){
+      let sctrls =this.ds_m.ccells.sctrls;
+      let row = column.row;
+      if(sctrls){
+        let type = sctrls.substring(0,2);
+        let zd = sctrls.substring(2,sctrls.indexOf("/")) 
+        if(type =='`5'){ 
+            let vl =  sctrls.split("/")[1].split(":");
+            if(row[zd] == vl[0]){
+              // var doc = document.getElementsByClassName('sctrl');
+              // for(var i =0;i<doc.length;i++){
+              //   doc[i].setAttribute("style","background-color: "+vl[1]+";");
+              // }
+              return 'sctrl'
+            } 
+        }
+      }
+      if(column.rowIndex%2==0){
+        return 'doubleRow';
+      } 
     }
   },
   async mounted(){
@@ -412,6 +470,7 @@ export default {
     mparams(){
       this.initCell();
       this.getDlg();
+      this.getLayout();
     },
     showAllCont(){
       if(this.showAllCont){

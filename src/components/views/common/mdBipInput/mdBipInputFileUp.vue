@@ -13,7 +13,7 @@
       <md-dialog-content :class="ISPC()?classA:classB"> 
           <md-layout :class="ISPC()?imgClassA:imgClassB">
               <!-- row -->
-            <md-layout md-gutter="8" v-for="(file,index) in srcs" :key="index" class="itemClass">
+            <md-layout md-gutter="8" v-for="(file,index) in srcs" :key="index" class="itemClass" style="overflow: hidden;">
                 <!-- 编号 -->
                 <md-layout md-column md-gutter class="colClass" md-flex="5" md-flex-xsmall="10" md-flex-small="10">
                     <md-layout>
@@ -22,7 +22,7 @@
                 </md-layout>
                 <!-- 1 -->
                 <md-layout md-column md-gutter class="colClass" md-flex="10" md-hide-small md-hide-xsmall >
-                  <md-layout><md-image style="height:100%" :md-src="file.src"></md-image></md-layout>
+                  <md-layout><md-image style="height:45px;width:45px" :md-src="file.src"></md-image></md-layout>
                 </md-layout>
                 <!-- 2 -->
                 <md-layout md-column md-gutter md-flex="50" md-flex-xsmall="40" md-flex-small="45" md-flex-medium="50">
@@ -58,7 +58,7 @@
                 </md-layout>
                 <!-- 5 --> 
                 <md-layout md-column md-gutter md-flex="10" md-flex-xsmall="15" md-flex-small="15"  md-align="center" v-if="file.img ==true">
-                  <md-button class="md-primary md-raised mybtn" @click="openImg(file.src,file.qname)" :disabled="!(progress[index]==100)">打开</md-button>
+                  <md-button class="md-primary md-raised mybtn" @click="openImg(file.srcopen,file.qname)" :disabled="!(progress[index]==100)">打开</md-button>
                 </md-layout>
             </md-layout>
           </md-layout>
@@ -236,7 +236,7 @@ export default {
       this.upLoadFils = []; 
     },
     delImg(index) {
-      console.log(this.selFiles);
+      // console.log(this.selFiles);
       this.srcs.splice(index, 1);
 			this.selFiles.splice(index, 1);
 			this.progress.splice(index, 1);
@@ -255,6 +255,7 @@ export default {
           return item.name === name;
         });
         if(iid>=0){
+          // console.log("iid"+iid)
           return ;
         }
         var size = this.getSize(e.target.files[i].size)
@@ -370,6 +371,7 @@ export default {
       this.$refs.fDia.close();
     },
     async initFile(){
+      console.log("initfile")
       this.clear();
       this.upLoadDid = this.bfjRoot?this.modal.fj_root:'';
       if(!this.upLoadDid)
@@ -383,22 +385,25 @@ export default {
         fjname: vls,
         updid: global.APIID_FILEINFO
       }; 
+      // console.log("getFileByAPINewSync")
       var res = await this.getFileByAPINewSync(params);
       if(res.data.id==0){
         this.selFiles = res.data.data.files;
+        // console.log("id ==0 ")
       }
       var fis = vls.split(';');
+      // console.log("fislength"+fis.length)
       _.forEach(fis,(name,index)=>{
         var _srcs = this.getFileIcon(name);  
-        _srcs.size = this.getSize(this.selFiles[index].size);  
-
+        if(this.selFiles[index])
+        _srcs.size = this.getSize(this.selFiles[index].size);   
         _srcs.img = false;
         var kzm = name.substring(name.lastIndexOf('.')+1);
         if(kzm == 'jpg' || kzm == 'png' || kzm == 'gif' || kzm == 'jpeg'  ){
           var snkey = JSON.parse(window.sessionStorage.getItem('snkey'));
           var fjroot = this.bfjRoot?this.modal.fj_root:'';
           var updid =  global.APIID_FILEDOWN;
-          _srcs.src = global.BIPAPIURL+global.API_UPD+'?snkey='+snkey+'&fjroot='+fjroot+'&updid='+updid+'&fjname='+name;
+          _srcs.srcopen = global.BIPAPIURL+global.API_UPD+'?snkey='+snkey+'&fjroot='+fjroot+'&updid='+updid+'&fjname='+name;
           _srcs.img = true;
         }
         this.srcs.push(_srcs);

@@ -5,8 +5,9 @@
 @import './components/component';
 @import './bill.scss';
 @import './message.scss';
-@import './others/mdwork.scss';
-
+@import './others/mdwork.scss'; 
+@import './newTable/variable.scss';
+@import './newTable/table.scss';
 .biphead{
   height: 40px;
 }

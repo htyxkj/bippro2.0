@@ -1,5 +1,5 @@
 <template> 
-<md-layout style="width:100%">
+<md-layout style="width:100%;margin:0px" md-flex="100">
   <md-input-container v-if="gpsType=='getGPS'">
     <div class="md-input-ref layout layout-row" >
       <label>{{cell.labelString}}</label>
@@ -8,15 +8,16 @@
         <md-icon>pin_drop</md-icon>
       </md-button>
     </div>  
-  </md-input-container> 
-  <div class="md-input-ref layout layout-row"  v-else-if="gpsType=='showGPS'"> 
-    <md-layout md-flex="85" class="margin0" style="min-height:24px">
-      {{modal[cell.id]}}
+  </md-input-container>  
+
+  <div class="layout layout-row margin0"  style="width:100%" md-flex="100" v-else-if="gpsType=='showGPS'"> 
+    <md-layout md-flex="85" class="margin0" style="max-height:24px;">
+      {{modal[cell.id]}}　
     </md-layout>
-    <md-layout md-flex="15" class="margin0" style="min-height:24px">
-      <md-button class="md-icon-button md-ref-filter margin0" @click="openMAP()"  style="margin:0px">
-        <md-icon  style="margin:0px;height:24px">pin_drop</md-icon>
-      </md-button>
+    <md-layout md-flex="15" class="margin0" style="max-height:24px">
+      <div @click="openMAP()">
+        <md-icon class="md-icon-button" style="margin:0px;;height:24px" >pin_drop</md-icon> 
+      </div> 
     </md-layout>
   </div>
 </md-layout>

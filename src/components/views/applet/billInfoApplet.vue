@@ -13,6 +13,7 @@
         <md-button v-if="menuP.COPY" @click="copy">{{$t('commBtn.B_COPY')}}</md-button>
         <!-- <md-button>审核 Auditing</md-button> -->
         <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
+        <md-button v-if="mparams.pprn && ISPC()" @click="print(mparams.pprn)">打印</md-button>
       </md-part-toolbar-group>
 
       <md-part-toolbar-group v-if="flowlist.length>0">
@@ -106,6 +107,16 @@ export default {
   },
   props: { dsm: Object, dsext: Array, opera: Object ,mparams:Object,menuP:Object},
   methods: {
+    print(vl){
+      if(vl == "XSPDF"){
+        let snkey= JSON.parse(window.sessionStorage.getItem('snkey'));
+        let sid = this.dsm.currRecord.sid;
+        let url =  `${global.BIPAPIURL}`+"xspdf?snkey="+snkey+"&sid="+sid;
+        url =escape (url); 
+        let fileUrl = `${global.BIPAPIURL}`+"pdfjs/web/viewer.html?file="+url; 
+        window.open(fileUrl);
+      }
+    },
     dataChange(res) { 
       this.dsm.checkEdit(res);
     },

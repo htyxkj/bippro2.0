@@ -49,3 +49,6 @@ new Vue({
   template: '<App/>',
   components: { App }
 });
+
+import VXETable from 'vxe-table'
+Vue.use(VXETable)

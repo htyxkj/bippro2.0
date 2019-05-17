@@ -1,5 +1,5 @@
 <template>
-  <div>
+<md-layout style="width:100%;margin:0px" md-flex="100">
     <md-dialog md-open-from="#upfile" md-close-to="#upfile" ref="fDia">  
       <md-dialog-title style="padding:0px;    margin: 0px;">
         <md-layout  md-align="end">
@@ -53,19 +53,21 @@
             <img v-for="src in imgs"  :src="src.url" :key="src.title">
         </viewer> 
       </md-dialog-content>  
-    </md-dialog>  
-    <div class="md-input-ref layout layout-row"> 
-      <md-layout md-flex="95" class="margin0" style="min-height:24px;  word-break: break-word;">
-        {{modal[cell.id]}}
+    </md-dialog> 
+    <div class="layout layout-row margin0"  style="width:100%" md-flex="100"> 
+      <md-layout md-flex="85" class="margin0" style="max-height:24px;">
+        {{modal[cell.id]}}　
       </md-layout>
-      <md-layout md-flex="5" md-align-end class="margin0" style="min-height:24px">
-        <md-button class="md-icon-button md-ref-filter " @click="openDialog()" style="margin:0px">
-          <md-icon  style="margin:0px;;height:24px">cloud_download</md-icon>
+      <md-layout md-flex="15" class="margin0" style="max-height:24px">
+        <div @click="openDialog()">
+          <md-icon class="md-icon-button" style="margin:0px;;height:24px" >cloud_download</md-icon>
           <md-tooltip md-direction="left">附件下载</md-tooltip>
-        </md-button>
+        </div> 
       </md-layout>
-    </div>   
-  </div>  
+    </div>
+
+
+</md-layout>  
 </template>
 
 <script>
