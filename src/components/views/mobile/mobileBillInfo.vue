@@ -27,14 +27,14 @@
           </md-layout> -->
           <template v-if="mainTabs.length<=0">
             <md-layout> 
-              <md-bip-input :showsth="sth[cell.id]"  :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" @changeShowSth="settingShowField"></md-bip-input>
+              <md-bip-input :showsth="sth"  :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" @changeShowSth="settingShowField"></md-bip-input>
             </md-layout>
           </template>
           <template v-else>
             <md-tabs class="md-transparent"  md-fixed>  
               <md-tab v-for="(item,index) in mainTabs" :md-label="item.name" :key="index">
                 <md-layout> 
-                  <md-bip-input :showsth="sth[cell.id]"  :dsm="dsm" v-for="(cell,index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" v-if="item.start <= index && item.end >= index" @changeShowSth="settingShowField"></md-bip-input>
+                  <md-bip-input :showsth="sth"  :dsm="dsm" v-for="(cell,index) in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange" v-if="item.start <= index && item.end >= index" @changeShowSth="settingShowField"></md-bip-input>
                 </md-layout>
               </md-tab>
             </md-tabs>

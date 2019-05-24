@@ -423,6 +423,7 @@ export default {
           }  
         }
       }else if(this.btnInfo.type == 'C'){//根据菜单号
+        console.log("c")
         this.loading++;
         if(await this.getParams(this.btnInfo.cellID) == false){
           this.$notify.warning({ content: "没有菜单权限！" + this.btnInfo.cellID + "!" });

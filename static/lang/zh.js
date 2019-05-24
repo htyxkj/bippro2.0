@@ -3,6 +3,7 @@ module.exports = {
   // sysTitle:'CRM',
   // sysTitle:'BIP-OA',
   sysTitle:'安全隐患管控平台',
+  // sysTitle:'项目管理',
   // sysTitle:'绩效管理',
   // sysTitle:'飞机施药质量监测监管自动化计量综合服务平台',
   // sysTitle:'物业管理',

@@ -16,6 +16,7 @@
 global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/';//安全隐患监控平台测试
 // global.BIPAPIURL = 'http://192.168.0.200:8088/airfencea/';//本机测试环境
 // global.BIPAPIURL = 'http://115.28.191.203:89/property/';//物业管理
+// global.BIPAPIURL = 'http://115.28.191.203:89/prjctadmin/';//项目管理
 // global.BIPAPIURL = 'http://192.168.1.18:9999/jd/';
 // global.DBID = 'ZT1';
 // global.DBID = 'J1';

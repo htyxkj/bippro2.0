@@ -50,5 +50,5 @@ new Vue({
   components: { App }
 });
 
-import VXETable from 'vxe-table'
+import VXETable from 'vxe-table' 
 Vue.use(VXETable)

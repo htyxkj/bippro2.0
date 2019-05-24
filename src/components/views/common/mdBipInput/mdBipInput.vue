@@ -105,8 +105,9 @@ export default {
   },
   methods: {
     switchUP(data){
+      console.log(data);
       if(this.showsth){
-        if(this.showsth.field == data.cellId){
+        if(this.showsth[ data.cellId]){
           this.$emit('changeShowSth',data.cellId)
         }
       }

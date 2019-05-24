@@ -43,20 +43,34 @@
           <md-layout  md-gutter="4" v-if="ds_cont" md-column id="partCondition">
             <template v-if="showAllCont">
               <md-layout>
-                <md-bip-input :isReport="true" v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
+                <md-layout md-flex="95">
+                  <md-bip-input :isReport="true" v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
+                </md-layout>
+                <md-layout md-flex="5" md-vertical-align="end">
+                  <!-- 隐藏显示剩余条件 -->
+                  <md-button class="bip-more md-icon-button" @click.native="showMore()">
+                    <md-tooltip md-direction="left">{{tipLaber}}</md-tooltip>
+                    <md-icon>list</md-icon>   
+                  </md-button>
+                </md-layout>
               </md-layout>
             </template>
             <template v-else>
               <md-layout>
-              <md-bip-input :isReport="true" v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"></md-bip-input>
+                <md-layout md-flex="95">
+                  <md-bip-input :isReport="true" v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"></md-bip-input>
+                </md-layout>
+                <md-layout md-flex="5" md-vertical-align="end">
+                  <!-- 隐藏显示剩余条件 -->
+                  <md-button class="bip-more md-icon-button" @click.native="showMore()">
+                    <md-tooltip md-direction="left">{{tipLaber}}</md-tooltip>
+                    <md-icon>list</md-icon>   
+                  </md-button>
+                </md-layout>
               </md-layout>
             </template>
             <md-layout>
-              <!-- 隐藏显示剩余条件 -->
-              <md-button class="bip-more md-icon-button" @click.native="showMore()">
-                <md-tooltip md-direction="right">{{tipLaber}}</md-tooltip>
-                <md-icon>list</md-icon>   
-              </md-button>
+              
             </md-layout>
           </md-layout> 
         </template>
@@ -85,12 +99,13 @@
                 </md-table-body>
               </md-table>  -->  
 
-              <vxe-table class="mytable-style" :data.sync="ds_m.cdata" :height="tableHeight"  :highlight-hover-row="true" :highlight-current-row="true" @cell-click="onTableSelect" header-cell-class-name="md-numeric"  @header-cell-click="onSortNew" :row-class-name="getRowStyleNew" border>
-                <vxe-table-column :min-width="50" :width="item.ccCharleng*9+40" v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow" :key="index" :prop="item.id" :label="item.labelString" :sortable="isSortable(item)" show-header-overflow show-overflow-tooltip ellipsis> 
+              <vxe-table class="mytable-style" :data.sync="ds_m.cdata" :height="tableHeight"  :highlight-hover-row="true" :highlight-current-row="true" @cell-click="onTableSelect" header-cell-class-name="md-numeric"  @header-cell-click="onSortNew"  :row-class-name="getRowStyleNew" border show-header-all-overflow resizable><!-- :header-cell-class-name="getTitleNewStyle" -->
+                <!-- <md-bip-bi-table-column :ds_m="ds_m" :Multi_level_title="Multi_level_title" ></md-bip-bi-table-column> -->
+                <vxe-table-column :min-width="50" :width="item.ccCharleng*9+40" v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow" :key="index" :prop="item.id" :label="item.labelString" :sortable="isSortable(item)" :fixed="isFixed(item,index)" show-header-overflow show-overflow-tooltip ellipsis> 
                   <template slot-scope="scope"> 
-                      <md-bip-bi-file-up  v-if="item.editName =='UPDOWN'" :cell="fileFJCell(scope.row.sbuid,item.id)" :modal="fileFJModal(scope.row,item.id)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>
-                      <md-bip-input-ddGPS v-else-if="item.editType == 12" :cell="fileMPCell(scope.row)" :modal="fileMPModal(scope.row)" gpsType="showGPS"></md-bip-input-ddGPS>
-                      <md-bip-ref v-else :inputValue="scope.row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="scope.row" :row="scope.row" @pkclick="openrefs(scope.row,scope.rowIndex,index)"></md-bip-ref> 
+                    <md-bip-bi-file-up  v-if="item.editName =='UPDOWN'" :cell="fileFJCell(scope.row.sbuid,item.id)" :modal="fileFJModal(scope.row,item.id)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>
+                    <md-bip-input-ddGPS v-else-if="item.editType == 12" :cell="fileMPCell(scope.row)" :modal="fileMPModal(scope.row)" gpsType="showGPS"></md-bip-input-ddGPS>
+                    <md-bip-ref v-else :inputValue="scope.row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="scope.row" :row="scope.row" @pkclick="openrefs(scope.row,scope.rowIndex,index)"></md-bip-ref> 
                   </template>
                 </vxe-table-column>
               </vxe-table>
@@ -174,11 +189,11 @@
           <md-layout class="flex" >
             <md-layout v-if="groupfilds.length!=0 && groupdatafilds.length!=0" md-flex-small="100" md-flex="100">
               <!-- 手工统计 -->
-              <md-bip-chart :showData="true" :groupfilds="groupfilds" :groupdatafilds="groupdatafilds" :modal="ds_cont.currRecord" :pcell="ds_m.ccells.obj_id" :doSearch="doSearCh" :searchCelId="ds_cont.ccells.obj_id"  :chartType="ctype" :showChart="showChart"></md-bip-chart>
+              <md-bip-chart :showData="true" :groupfilds="groupfilds" :groupdatafilds="groupdatafilds" :modal="ds_cont.currRecord" :pcell="ds_m.ccells.obj_id" :doSearch="doSearCh" :searchCelId="ds_cont.ccells.obj_id"  :chartType="ctype" :showChart="showChart" @hideChar="hideChar"></md-bip-chart>
             </md-layout>
             <md-layout v-else v-for="(item,index) in this.mparamsArr" :key="index"  md-flex-small="100" :md-flex="item.width">
               <!-- 系统初始定义统计 -->
-              <md-bip-chart :showData="mparamsArr.length==1?true:false" :groupfilds="item.groupfilds" :chartType="item.ctype"  :groupdatafilds="item.sumfilds"   :modal="ds_cont.currRecord" :pcell="ds_m.ccells.obj_id" :doSearch="doSearCh" :searchCelId="ds_cont.ccells.obj_id"  :showChart="showChart" ></md-bip-chart>
+              <md-bip-chart :showData="mparamsArr.length==1?true:false" :groupfilds="item.groupfilds" :chartType="item.ctype"  :groupdatafilds="item.sumfilds"   :modal="ds_cont.currRecord" :pcell="ds_m.ccells.obj_id" :doSearch="doSearCh" :searchCelId="ds_cont.ccells.obj_id"  :showChart="showChart" @hideChar="hideChar"></md-bip-chart>
             </md-layout> 
           </md-layout>
         </template>
@@ -218,7 +233,7 @@
             </md-select>
           </md-input-container>
           <md-input-container>
-            <md-checkbox id="my-test1" name="my-test1" v-model="checkShowC">{{$t('commLabel.L_Statist_ChartHidden')}}</md-checkbox>
+            <md-checkbox id="my-test1" name="my-test1" v-model="showChart">{{$t('commLabel.L_Statist_ChartHidden')}}</md-checkbox>
           </md-input-container>
         </md-dialog-content>
         <md-dialog-actions>
@@ -237,8 +252,9 @@ import billS from '../../classes/billState';
 import common from '../../commonModal.js'; 
 import billLinkApplet from '../../applet/billLinkApplet'
 import mdBipBiDialog from '../../biDialog/mdBipBiDialog'
+import mdBipBiTableColumn from './biTableColumn'
 export default { 
-  components:{billLinkApplet,mdBipBiDialog},
+  components:{billLinkApplet,mdBipBiDialog,mdBipBiTableColumn},
   data(){
     return { 
       pageOn:true,
@@ -246,6 +262,8 @@ export default {
       pageToolShow:false,
       bills1 : billS, 
       tableHeight:0,
+      fixedNum :0,      
+      tableData:[],
     }
   },
   mixins:[common,bipBi],
@@ -332,12 +350,19 @@ export default {
         this.fetchUIData(order);
       }
     },
-    isSortable(item){
+    isSortable(item){//是否排序
       if((item.attr & this.bills1.ORDERBY)>0){
         return "custom"
       }
+    },
+    isFixed(item,index){//固定列  
+      if(this.ds_m.ccells.sfix){ 
+        if(index < this.fixedColumn){ 
+          return "left";
+        }
+      }
     }
-  },  
+  },
   created(){ 
     this.getLayout(); 
   },

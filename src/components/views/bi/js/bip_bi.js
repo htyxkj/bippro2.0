@@ -1,9 +1,11 @@
  /* jshint esversion: 6 */ 
 import CDataSet from '../../classes/CDataSet';
+import billS from '../../classes/billState';
 export default {
   mounted() {},
   data() {
     return {
+      bills1 : billS, 
       showCont: false,
       showContLabel: this.$t('commInfo.showCont'),
       ds_cont: null,
@@ -49,9 +51,14 @@ export default {
       biLay:'table',
       timedown:null,//单据倒计时显示
       sbuidBtn:[],//业务号弹出框按钮
+      fixedColumn:0,//固定列数
+      Multi_level_title:{},//多级表头
     }
   },
   methods: {
+    hideChar(){//隐藏统计表 返回到报表列表状态   
+      this.groupTJ = !this.groupTJ; 
+    },
     async exportFile() {
       if (this.ds_m.cdata.length == 0)
         return;
@@ -63,7 +70,7 @@ export default {
         _data[cell.id] = cell.labelString;
       }
       // var arr = [];
-      console.log(header, _data);
+      // console.log(header, _data);
       var cdata = this.ds_m.cdata;
       // if (this.pageInfo.total > this.ds_m.cdata.length) {
         // console.log('big fff，服务端导出数据');
@@ -127,6 +134,37 @@ export default {
           this.doSearCh++;
           this.groupTJ = true;
         }
+        //解析分组 字段，固定列，多级表头
+        if(this.ds_m.ccells.sfix){ 
+          let sfix = this.ds_m.ccells.sfix;
+          let num = 0;
+          if(sfix.indexOf("/") >=0){
+            num = sfix.substring(0,sfix.indexOf("/") )
+          }else{
+            if(sfix.indexOf("&") >=0){ 
+              num = 0;
+            }else{
+              num = sfix;
+            }
+          }
+          this.fixedColumn = parseInt(num);
+          if(this.fixedColumn>0)
+          for(var i=0;i<this.fixedColumn;i++){
+            let cc = this.ds_m.ccells.cels[i];
+            if(!cc.isShow)
+              this.fixedColumn++;
+          }
+          if(sfix.indexOf("&") >=0){
+            let groupTitleStr = sfix.substring(sfix.indexOf("&")+1,sfix.length).split(";");
+            //gwjxkhplan.checkperson,0,2,1,考评人及分值1;gwjxkhplan.checkperson1,0,2,1,考评人及分值2;gwjxkhplan.checkperson2,0,2,1,考评人及分值3;gwjxkhplan.checkperson3,0,2,1,考评人及分值4;gwjxkhplan.checkperson4,0,2,1,考评人及分值5
+            if(groupTitleStr)
+            for(var i=0;i<groupTitleStr.length;i++){
+              let oneGTitle = groupTitleStr[i].split(",");
+              this.Multi_level_title[oneGTitle[0]] = oneGTitle[2];
+              this.Multi_level_title[oneGTitle[0]+'_TITLE'] = oneGTitle[4];
+            } 
+          }
+        } 
       } else {
         this.$notify.warning({
           content: data.message,
@@ -194,6 +232,7 @@ export default {
         this.ds_cont = null;
         this.ds_ext = [];
         this.getCell();
+
       }
     },
     onTablePagination(pager) {
@@ -206,7 +245,7 @@ export default {
     },
     showSearchInfo() {
       this.showCont = !this.showCont;
-      console.log(this.$t('commInfo.hiddenCont'));
+      // console.log(this.$t('commInfo.hiddenCont'));
       this.showContLabel = this.showCont ? this.$t('commInfo.hiddenCont') : this.$t('commInfo.showCont');
       if (!this.showCont) {
         this.showAllCont = false;
@@ -230,7 +269,7 @@ export default {
             this.$refs["sbill"].open(slkid, slkbuid);
           }
         } else { 
-          console.log(row,index)
+          // console.log(row,index)
           this.dblclick(row, index);
         }
       }
@@ -437,7 +476,7 @@ export default {
       }
       return style
     },
-    getRowStyleNew(column){
+    getRowStyleNew(column){//新table行样式
       let sctrls =this.ds_m.ccells.sctrls;
       let row = column.row;
       if(sctrls){
@@ -457,7 +496,15 @@ export default {
       if(column.rowIndex%2==0){
         return 'doubleRow';
       } 
-    }
+    },
+    getTitleNewStyle(column){//新Table表头样式
+      //ds_m.ccells.cels
+      let columnIndex = column.columnIndex
+      let cels = this.ds_m.ccells.cels[columnIndex];
+      if(cels.type<12){
+        return "titleGreen"
+      }      
+    },
   },
   async mounted(){
     await this.initCell();

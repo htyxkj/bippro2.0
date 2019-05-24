@@ -2,10 +2,11 @@
   <md-layout md-flex="100">
     <md-card>
       <md-card-media>
-        <md-layout class="chart-list-btn"  md-flex="1" md-flex-xsmall="1">
+        <md-layout class="chart-list-btn"  md-flex="100" md-flex-xsmall="100" md-align="end">
+          <md-button @click.native="isHideChar" >隐藏图表</md-button>
           <md-button @click.native="isShow" >{{showText}}数据</md-button>
         </md-layout>
-        <md-layout md-flex="33" md-flex-xsmall="100" class="md-bip-chart" v-if="showChart">
+        <md-layout md-flex="100" md-flex-xsmall="100" class="md-bip-chart" v-if="showChart">
           <md-chart ref="reportChart" :options="option" :autoResize="true"></md-chart>
         </md-layout>
       </md-card-media>
@@ -100,6 +101,9 @@ export default {
     isShow(){
       this.show = this.show==true?false:true;
       this.showText = this.showText =='显示'?'隐藏':'显示'
+    },
+    isHideChar(){ 
+      this.$emit('hideChar');
     },
     async searchData() {
       this.pageInfo.page = 1;

@@ -113,7 +113,7 @@ export default {
                 var id =1;
                 valName+=cldata.value[cldata.allCols[id]]+fh
                 this.refData.name = valName;
-                console.log("要Set了！") 
+                // console.log("要Set了！") 
                 if(!window.sessionStorage.getItem(this.bipRefId.refValue+"."+cldata.value[cldata.allCols[0]])){
                   window.sessionStorage.setItem(this.bipRefId.refValue+"."+cldata.value[cldata.allCols[0]],JSON.stringify(cldata));
                 }

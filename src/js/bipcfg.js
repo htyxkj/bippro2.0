@@ -4,6 +4,7 @@ global.APIID_CELLPARAM = 'cellparam';
 global.APIID_CELLPARAMS = 'cellparams';
 global.APIID_MENUPARAM = 'menuparam';
 global.APIID_LOGIN = 'login';
+global.APIID_UPMYPWD = 'upPassword';
 global.APIID_OUTLOGIN='outlogin';
 global.APIID_SINGLELOGIN='inglelogin';
 global.APIID_AID = 'assist';

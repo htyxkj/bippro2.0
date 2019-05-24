@@ -2,7 +2,7 @@
   <div v-if="laycell" class="bip-lay">
     <template v-if="laycell&&!laycell.btable">
       <md-layout> 
-        <md-bip-input :showsth="sth[cell.id]" :dsm="dsm" v-for="cell in cells" :ref="cell.id" :key="cell.id" :cell="cell" :modal="cds.currRecord" :btj="false" class="bip-input" @change="dataChange" @changeShowSth="settingShowField"></md-bip-input>
+        <md-bip-input :showsth="sth" :dsm="dsm" v-for="cell in cells" :ref="cell.id" :key="cell.id" :cell="cell" :modal="cds.currRecord" :btj="false" class="bip-input" @change="dataChange" @changeShowSth="settingShowField"></md-bip-input>
       </md-layout>
     </template>
     <template v-else> 

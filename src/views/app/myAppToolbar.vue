@@ -66,13 +66,54 @@
           </md-menu>
           <md-card-actions>
             <div class="layout-row layout-fill layout-align-space-between-center">
-              <md-button>下载客户端</md-button>
+              <!-- <md-button>下载客户端</md-button> -->
+              <md-button @click="upMyPwd">修改密码</md-button>
               <md-button @click="logOut">退出</md-button>
             </div>
           </md-card-actions>
         </md-card>
       </md-menu-content>
     </md-menu>
+    <md-dialog ref="uppwddialog"  style="z-index:200;" class="md-refs-dialog " >
+      <md-toolbar>  
+        <md-layout md-gutter md-flex="100" md-row>
+          <md-layout md-flex-xsmall="90" :md-flex="true" style=" margin-top: .12rem;">
+            <h1 class="md-title">修改密码</h1> 
+          </md-layout> 
+          <md-layout md-flex-xsmall="10" md-flex-small="10" md-flex-medium="10" md-flex-large="10" >
+            <md-button class="md-icon-button" @click.native="cancel()">
+              <md-icon>close</md-icon>
+            </md-button>   
+          </md-layout>
+        </md-layout> 
+      </md-toolbar>
+      <md-dialog-content>
+        <md-layout md-flex="100">
+          <md-layout md-flex="100" >
+            <md-input-container md-has-password>
+              <label>原密码</label>
+              <md-input type="password" v-model="oldpwd"></md-input>
+            </md-input-container>
+          </md-layout>
+          <md-layout md-flex="100" >
+            <md-input-container md-has-password>
+              <label>新密码</label>
+              <md-input type="password" v-model="newpwd"></md-input>
+            </md-input-container>
+          </md-layout>
+          <md-layout md-flex="100" >
+            <md-input-container md-has-password>
+              <label>重复新密码</label>
+              <md-input type="password" v-model="newpwd1"></md-input>
+            </md-input-container>
+          </md-layout>
+        </md-layout> 
+      </md-dialog-content>
+      <md-dialog-actions> 
+        <md-button class="md-accent md-raised" @click.native="close()">确定</md-button>
+        <md-button class="md-warn" @click.native="cancel()">取消</md-button>
+      </md-dialog-actions>
+    </md-dialog>
   </md-toolbar>
 </template>
 <script>
@@ -94,6 +135,9 @@ export default {
       qpText:"全屏",
       cmcName:this.$t('sysTitle'),
       TOOL_RABBITMQ:global.TOOL_RABBITMQ,
+      oldpwd:"",
+      newpwd:"",
+      newpwd1:"",
     };
   },
   props: {
@@ -253,6 +297,42 @@ export default {
           
         }
       }); 
+    },
+    upMyPwd(){
+      this.$refs["uppwddialog"].open()
+    },
+    cancel(){
+      this.$refs["uppwddialog"].close()
+    },
+    async close(){
+      if(this.newpwd != this.newpwd1){
+        this.$notify.danger({content: '两次密码不一致！'});
+        return;
+      } 
+      var uppwddata = {
+        apiId: global.APIID_UPMYPWD,
+        dbid: global.DBID,
+        usercode: JSON.parse(window.sessionStorage.getItem('user')).userCode,
+        oldPwd: this.base64Encode(this.oldpwd),
+        newPwd: this.base64Encode(this.newpwd),
+      }
+      try{
+        var res = await this.getDataByAPINew(uppwddata);
+        this.upMyPwdSuccess(res);
+      }catch(e){
+        this.$notify.danger({content: '系统连接错误！'});
+      } 
+    },
+    upMyPwdSuccess(res){
+      let data = res.data;
+      if(data.id == -1){
+        this.$notify.danger({content: data.message});
+      }else if(data.id == 0){
+        this.$notify.success({content: data.message});
+        this.logOut();
+      }else{
+        this.$notify.danger({content: '系统连接错误！'});
+      }
     }
   },
   mounted() {
@@ -275,9 +355,9 @@ export default {
     width: 80%;
   }
 }
-.md-input-container {
-  min-height: 0.3rem;
-}
+// .md-input-container {
+//   min-height: 0.3rem;
+// }
 
 .md-title {
   font-family: "微软雅黑", STHeiti, "WenQuanYi Micro Hei", SimSun, sans-serif;
@@ -403,5 +483,5 @@ export default {
 }
 .badge-light,.label-light {
  color:#888
-}
+} 
 </style>

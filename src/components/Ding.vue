@@ -30,7 +30,7 @@
                             <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" style="position: relative;">   
                                 <!-- <md-icon  v-colors="item.iconcc">{{item.menuIcon}}</md-icon>  -->
                                 <img :src="dingMenuImg+'img/ding/'+item.menuid+'.png'" style="margin:auto;width: 30px;height: 30px;"/>
-                                <div class="textNum" v-if="item.bgnum >0">{{item.bgnum}}</div>
+                                <div class="textNum" v-show="item.bgnum >0">{{item.bgnum}}</div>
                             </md-layout>
                             <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" md-align="center"> 
                                 <span>{{item.menuName}}</span>
@@ -87,16 +87,25 @@ export default {
         var lid = window.sessionStorage.getItem('isLogin');
         if(lid){  
             if(this.menuList.length<=0){
-                this.menuList = JSON.parse(window.sessionStorage.getItem('menulist'));
+                this.menuList = JSON.parse(window.sessionStorage.getItem('menulist')); 
+                for(var i =0;i<this.menuList.length;i++){
+                    if(this.menuList[i].haveChild == true){
+                        for(var j =0;j<this.menuList[i].childMenu.length;j++){
+                            const cc = this.menuList[i].childMenu[j];
+                            this.$set(cc,'bgnum',0) 
+                            this.menuList[i].childMenu[j] = cc;
+                        }
+                    }
+                } 
             }  
             if(this.ddApp.length<=0){
                 let dapp = window.sessionStorage.getItem('ddApp');
                 if(dapp)
                 this.ddApp = JSON.parse(dapp);
             }  
+            this.getNumberofBadges(); 
             this.getDDJSTicket(); 
             this.getDateStr();   
-            this.getNumberofBadges(); 
         }else{  
             this.loading=1; 
             this.corpId =this.$route.query.corpId   //企业唯一码  
@@ -291,13 +300,14 @@ export default {
                                 this.menuList[i].childMenu[j].pbuid = pbuid1;
                             }
                         }
-                        if(pbuid1)
-                            this.getNum(pbuid1,i,j); 
+                        if(pbuid1){
+                            await this.getNum(pbuid1,i,j); 
+                        }
                     }
                 }
             }
         },
-        getNum(menuid,i,j){
+        async getNum(menuid,i,j){
             let _this = this;
             var data1 = {
             dbid: global.DBID,
@@ -305,7 +315,7 @@ export default {
             apiId: global.APIID_DLG,
             menuid: "BG."+menuid,
             };
-            this.getDataByAPINewSync(data1).then((res)=>{
+            await this.getDataByAPINewSync(data1).then((res)=>{
                 if(res.data.id !=-1){
                     let name = res.data.data.btn[0];
                     let data2 = {  
@@ -315,9 +325,10 @@ export default {
                         page:1,
                         assistid: name, 
                     };
-                    this.getDataByAPINewSync(data2).then((res)=>{
-                        if(res.data) 
-                        _this.menuList[i].childMenu[j].bgnum = res.data.total;
+                    this.getDataByAPINewSync(data2).then((res)=>{ 
+                        if(res.data) {
+                            _this.menuList[i].childMenu[j].bgnum = res.data.total; 
+                        }
                     });
                 }
             });

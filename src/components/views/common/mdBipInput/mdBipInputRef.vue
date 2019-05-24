@@ -7,6 +7,7 @@
         <md-icon>search</md-icon>
       </md-button>
       <md-bip-dia :value="modal[this.cell.id]" :assType="cell.assType" ref="ref" :mdRefId="cell.editName" :multiple="multiple" :mdSelection="mdSelection" @close="onRefClose" :disabled="disabled"></md-bip-dia>
+      <md-bip-object-dia ref="objcetCell" :value="modal[this.cell.id]" :cell="cell" :assType="cell.assType" :dsm="dsm" :mdRefId="cell.editName" ></md-bip-object-dia>
     </div>
   </md-input-container>
 </template>
@@ -57,6 +58,9 @@ export default {
           }
           return;
         }
+      }else if(this.cell.assType == 'C_QUERY'){
+        this.$refs['objcetCell'].open(script) 
+        return;
       }
       this.$refs['ref'].open(script)
     },
