@@ -276,7 +276,7 @@ export default {
         },
         //获取点  第一页之后
         async _getPoint(usernumber, taskno, startTime, endTime) {
-            // console.log("获取点  第一页之后")
+            console.log("获取点  第一页之后")
             if(this.nowPage<this.pages){
                 if(this.param.page == this.pages)
                     return
@@ -293,7 +293,7 @@ export default {
                         var _point = {pt:new BMap.Point(data.longitude,data.latitude),lng: data.longitude, lat: data.latitude, planeId: data.usrcode, taskName: data.taskname, flow: data.flow, height: data.height, speed: data.speed,ssflow:data.flow,speedtime:data.speedtime}
                         this.points.push(_point)
                     }  
-                    // console.log("结束:",this.points.length)
+                    console.log("结束:",this.points.length)
                     this.nowPage++; 
                     this._getPoint(usernumber, taskno, startTime, endTime);
                 }); 
@@ -362,7 +362,7 @@ export default {
             } 
             //设置飞机转向
             var rota = this.setRotation(this.points[this.i], this.points[this.i + 1])
-            // console.log(rota)
+            console.log(rota)
             // if(rota == 0 ){
             //     rota = 360
             // }

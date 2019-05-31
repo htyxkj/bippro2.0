@@ -46,13 +46,12 @@
                 <md-layout md-flex="95">
                   <md-bip-input :isReport="true" v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
                 </md-layout>
-                <md-layout md-flex="5" md-vertical-align="end">
-                  <!-- 隐藏显示剩余条件 -->
+                <!-- <md-layout md-flex="5" md-vertical-align="end">
                   <md-button class="bip-more md-icon-button" @click.native="showMore()">
                     <md-tooltip md-direction="left">{{tipLaber}}</md-tooltip>
                     <md-icon>list</md-icon>   
                   </md-button>
-                </md-layout>
+                </md-layout> -->
               </md-layout>
             </template>
             <template v-else>
@@ -60,17 +59,19 @@
                 <md-layout md-flex="95">
                   <md-bip-input :isReport="true" v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"></md-bip-input>
                 </md-layout>
-                <md-layout md-flex="5" md-vertical-align="end">
-                  <!-- 隐藏显示剩余条件 -->
+                <!-- <md-layout md-flex="5" md-vertical-align="end"> 
                   <md-button class="bip-more md-icon-button" @click.native="showMore()">
                     <md-tooltip md-direction="left">{{tipLaber}}</md-tooltip>
                     <md-icon>list</md-icon>   
                   </md-button>
-                </md-layout>
+                </md-layout> -->
               </md-layout>
             </template>
             <md-layout>
-              
+              <md-button class="bip-more md-icon-button" @click.native="showMore()">
+                <md-tooltip md-direction="left">{{tipLaber}}</md-tooltip>
+                <md-icon>list</md-icon>   
+              </md-button>
             </md-layout>
           </md-layout> 
         </template>
@@ -99,9 +100,9 @@
                 </md-table-body>
               </md-table>  -->  
 
-              <vxe-table class="mytable-style" :data.sync="ds_m.cdata" :height="tableHeight"  :highlight-hover-row="true" :highlight-current-row="true" @cell-click="onTableSelect" header-cell-class-name="md-numeric"  @header-cell-click="onSortNew"  :row-class-name="getRowStyleNew" border show-header-all-overflow resizable><!-- :header-cell-class-name="getTitleNewStyle" -->
+              <vxe-table class="mytable-style" :data.sync="ds_m.cdata" :height="tableHeight"  :highlight-hover-row="true" :highlight-current-row="true" @cell-click="onTableSelect" header-cell-class-name="md-numeric"  @header-cell-click="onSortNew" @sort-change="sort_change" :row-class-name="getRowStyleNew" border show-header-all-overflow resizable><!-- :header-cell-class-name="getTitleNewStyle" -->
                 <!-- <md-bip-bi-table-column :ds_m="ds_m" :Multi_level_title="Multi_level_title" ></md-bip-bi-table-column> -->
-                <vxe-table-column :min-width="50" :width="item.ccCharleng*9+40" v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow" :key="index" :prop="item.id" :label="item.labelString" :sortable="isSortable(item)" :fixed="isFixed(item,index)" show-header-overflow show-overflow-tooltip ellipsis> 
+                <vxe-table-column :min-width="50" :width="item.ccCharleng*9+40" v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow" :key="index" :prop="item.id" :label="item.labelString" :sortable="isSortable(item)" show-header-overflow show-overflow-tooltip ellipsis> 
                   <template slot-scope="scope"> 
                     <md-bip-bi-file-up  v-if="item.editName =='UPDOWN'" :cell="fileFJCell(scope.row.sbuid,item.id)" :modal="fileFJModal(scope.row,item.id)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>
                     <md-bip-input-ddGPS v-else-if="item.editType == 12" :cell="fileMPCell(scope.row)" :modal="fileMPModal(scope.row)" gpsType="showGPS"></md-bip-input-ddGPS>
@@ -252,7 +253,7 @@ import billS from '../../classes/billState';
 import common from '../../commonModal.js'; 
 import billLinkApplet from '../../applet/billLinkApplet'
 import mdBipBiDialog from '../../biDialog/mdBipBiDialog'
-import mdBipBiTableColumn from './biTableColumn'
+import mdBipBiTableColumn from '../table/biTableColumn'
 export default { 
   components:{billLinkApplet,mdBipBiDialog,mdBipBiTableColumn},
   data(){
@@ -342,26 +343,8 @@ export default {
       // this.ds_m.pcell.orderby = name +"  " + type;
       this.fetchUIData(order);
     },
-    onSortNew(data){ 
-      if(data.column.order){
-        let name =data.column.property;
-        let type =data.column.order;
-        let order = name +" "+type
-        this.fetchUIData(order);
-      }
-    },
-    isSortable(item){//是否排序
-      if((item.attr & this.bills1.ORDERBY)>0){
-        return "custom"
-      }
-    },
-    isFixed(item,index){//固定列  
-      if(this.ds_m.ccells.sfix){ 
-        if(index < this.fixedColumn){ 
-          return "left";
-        }
-      }
-    }
+
+
   },
   created(){ 
     this.getLayout(); 

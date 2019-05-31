@@ -32,7 +32,7 @@
     <md-part-body> 
       <template v-if="dsm">
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null&&lay!=null">
-          <md-bip-base-layout :dsm="dsm" :layout="lay" :env="null"></md-bip-base-layout>
+          <md-bip-base-layout :dsm="dsm" :layout="lay" :sth="sth" :env="null"></md-bip-base-layout>
         </md-content>
       </template>
       <template v-if="chkinfo">
@@ -145,10 +145,76 @@ export default {
           this.dsm.currRecord.sys_stated = 4;
           this.save();
         });
+    }, 
+     //获取SWITCH开关 字段显示 隐藏信息
+    async getSwitch() {
+      this.sth={};
+      var menuid = 'STH.' + this.dsm.ccells.obj_id;
+      let me = window.sessionStorage.getItem(menuid);
+      if (me == null) {
+        var data1 = {
+          dbid: global.DBID,
+          usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+          apiId: global.APIID_DLG,
+          menuid: menuid,
+        };
+        var res = await this.getDataByAPINewSync(data1);
+        // console.log(res);
+        //创建客户;100305;cbm 
+        if (res.data.id != -1) {
+          //A:sfxs;0:;1:dxlx,smzl,number,xzqy,dhqy,cjwh,dlname,zrdw,lxfs,xjnd,sftd,remark
+          let d = res.data.data.btn;
+          let sth00 = {};
+          for(var i=0;i<d.length;d++){
+            let v = d[i];
+            let key = v.substring(0,1);
+            v = v.substring(2).split(";");
+            let showField = [];
+            for(var j=1;j<v.length;j++){
+              showField.push(v[j]);
+            } 
+            sth00 = { key:key,field:v[0],showField:showField}
+          }
+          this.sth[sth00.field] = sth00; 
+          this.settingShowField(sth00.field);
+          window.sessionStorage.setItem(menuid, JSON.stringify(this.sth));  
+        }else{
+          window.sessionStorage.setItem(menuid, 'noData');  
+        }
+        this.isSelsth=true;
+      } else { 
+        this.isSelsth=true;
+        if(me == 'noData')
+          return;
+        this.sth = JSON.parse(me);
+        for(var item in this.sth){
+          this.settingShowField(item);
+        } 
+      } 
     },
-    
-
-    async save() { 
+    //设置显示隐藏字段
+    settingShowField(key){
+      let showsth = this.sth[key];
+      let field = showsth.field;
+      let value = this.dsm.currRecord[field];
+      for(var i=0;i<showsth.showField.length;i++){
+        let fv =  showsth.showField[i].split(":"); 
+        let ff = fv[1];
+        if(ff){
+          let ff0 = ff.split(",");
+          for(var dd = 0;dd<this.dsm.ccells.cels.length;dd++){
+            if(this.isInArray(ff0,this.dsm.ccells.cels[dd].id)){ 
+              if(fv[0] == value){
+                this.dsm.ccells.cels[dd].isShow=true;
+              }else{
+                this.dsm.ccells.cels[dd].isShow=false;
+              }
+            }
+          }
+        }
+      }
+    }, 
+    async save() {
       if(this.dsm.ccells.subLayCells)
       for(var i = 0; i<this.dsm.ccells.subLayCells.length; i++){
         var aa = this.dsm.ccells.subLayCells[i];
@@ -225,6 +291,15 @@ export default {
           // this.dsm.currRecord.sys_stated = billS.DICT;
           this.dsm.makeState(billS.DICT);
           this.$notify.success({ content: this.$t('commInfo.saveSucc'), placement: "mid-center" });
+          if(this.opera && this.dsm.currRecord.sys_stated !=4){
+            this.$dialog.confirm("是否提交此单据？", {
+              okText: this.$t('commInfo.ok'),
+              cancelText: this.$t('commInfo.cancel')
+            })
+            .then(() => { 
+              this.submit(); 
+            });
+          }
         }
         if (this.opera || this.opera !== null) {
             await this.makeCheckParams();
@@ -394,6 +469,7 @@ export default {
       }
     },
     cliclItem(item) {
+      console.log(item);
       this.$refs["cp"].openCopy(item);
     },
     writeBack(res){ 
@@ -858,9 +934,13 @@ export default {
       return true;
     }, 
   }, 
-  async mounted() {   
-    if (this.dsm) { 
-      this.doMyLayout();  
+  async created(){
+    
+  },
+  async mounted() { 
+    if (this.dsm) {
+      this.doMyLayout(); 
+      this.getSwitch();
       const state = this.dsm.currRecord.sys_stated &  billS.INSERT;
       if (this.dsm.ds_sub && state === 0) {
         for(var i =0;i<this.dsm.ds_sub.length;i++){
@@ -890,13 +970,19 @@ export default {
         }
       }
     },
-    dsm(){ 
-      if(this.dsm){
-        this.dsm.createRecord();   
-        this.doMyLayout(); 
-        this.makeCheckParams();
-      }
-    }
+    // opera(){
+    //   if(this.opera)
+    //     if(this.opera.buid){
+    //       this.getWorlFlow(this.opera.buid);
+    //     }
+    // },
+    // dsm(){ 
+    //   if(this.dsm){
+    //     this.dsm.createRecord();   
+    //     this.doMyLayout(); 
+    //     this.makeCheckParams(); 
+    //   }
+    // }
   }
 };
 </script>

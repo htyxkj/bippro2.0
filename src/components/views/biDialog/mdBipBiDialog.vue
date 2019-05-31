@@ -168,6 +168,7 @@ export default {
       this.showMenu=false;
     },
     closeDialog() {
+      this.showMenu=false;
       this.getOpt(0);
       this.$refs.dialog.close(); 
       for(var i=0;i<this.prompt.length;i++){
@@ -422,19 +423,13 @@ export default {
             this.$refs[cc].open();
           }  
         }
-      }else if(this.btnInfo.type == 'C'){//根据菜单号
-        console.log("c")
+      }else if(this.btnInfo.type == 'C'){//根据菜单号 
+        this.showMenu = true;
         this.loading++;
         if(await this.getParams(this.btnInfo.cellID) == false){
           this.$notify.warning({ content: "没有菜单权限！" + this.btnInfo.cellID + "!" });
           this.closeDialog();
         }else{
-          this.getOpear(this.mparams.pflow); 
-          this.getMenuP();
-          await  this.getCell(this.mparams.pcell);
-          this.ds_m.createRecord(); 
-          let cc = await this.initCellDataC(); 
-          this.showMenu = true;
           if(!this.$refs.sbillSidenav){
             setTimeout(() => {
               this.$refs.sbillSidenav.open();  
@@ -442,8 +437,13 @@ export default {
           }else{
             this.$refs.sbillSidenav.open();  
           } 
-          this.loading--;
+          await  this.getCell(this.mparams.pcell);
+          this.getOpear(this.mparams.pflow);
+          this.getMenuP();
+          this.ds_m.createRecord();
+          this.initCellDataC(); 
         }
+        this.loading--;
       }
     },
     formatVars(sinc) {

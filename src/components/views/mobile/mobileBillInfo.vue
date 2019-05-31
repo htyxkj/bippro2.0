@@ -179,7 +179,7 @@ export default {
           this.save();
         });
     },
-    async save() {
+    async save() { 
       var str = JSON.stringify(this.dsm.currRecord);
       if((this.dsm.currRecord&billS.DELETE)==0){
         var isnull = this.checkNotNull(this.dsm);
@@ -713,7 +713,7 @@ export default {
       return false;
     },
 
-  },
+  }, 
   async mounted() {
     if (this.dsm) {
       this.getSwitch();

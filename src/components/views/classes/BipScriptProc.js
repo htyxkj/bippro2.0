@@ -5,7 +5,7 @@ export default class BipScriptProc {
     this.data = data;
     this.cells = cells;
   }
-  execute(ogs, flag, cell) {
+  execute(ogs, flag, cell) { 
     return this.executea(ogs, flag, cell);
   }
   executea(ogs, flag, cell) {

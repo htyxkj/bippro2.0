@@ -1,9 +1,9 @@
 <template>
 	<md-dialog ref="cpdialog">
-		<h4 style="margin-left:46%">{{title}}</h4>
+		<h4 style="margin-left:40%">{{title}}</h4>
 		<!-- <md-dialog-title>来源--{{title}}</md-dialog-title> -->
 		<md-dialog-content>
-			<md-content class="layout-fill" v-if="dscont&&dscont.ccells!=null">
+			<md-content v-if="dscont&&dscont.ccells!=null">
 				<md-layout>
 					<md-bip-input v-for="cell in dscont.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dscont.currRecord"
 					 :btj="false" class="bip-input" @change="dataChange"></md-bip-input>

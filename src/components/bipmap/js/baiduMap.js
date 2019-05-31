@@ -225,8 +225,7 @@ export default {
                 }else{
                     if(this.AirStripsSprayingSpanLines.length==0){
                         this.AirStripsSprayingSpanLines.push(arrInfos);
-                    }else{
-                        // console.log("将线存放到集合中最后一条线")
+                    }else{ 
                         this.AirStripsSprayingSpanLines[this.AirStripsSprayingSpanLines.length-1] = arrInfos;
                     }
                 }

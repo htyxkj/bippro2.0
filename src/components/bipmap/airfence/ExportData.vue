@@ -152,7 +152,7 @@ export default {
             let params={airid:this.qixie,taskno:this.taskno,snkey:snkey,taskname:taskname,usrNumber:this.userNumber,startTime:this.startTime,endTime:this.endTime}
             axios.post(`${global.BIPAPIURL}airidWord`,qs.stringify(params))
             .then(res=>{
-                // console.log(res)
+                console.log(res)
                 if(res.data.code == 0){
                     this.$notify.success({content:res.data.msg})
                 }else{

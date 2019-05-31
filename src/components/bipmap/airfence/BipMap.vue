@@ -78,7 +78,7 @@
                         <echarts-height-line :lineseries="plane_height"></echarts-height-line>
                     </md-card>
                 </md-layout> 
-                <md-layout md-flex="25">
+                <md-layout md-flex="20">
                     <md-card class="cardList">
                         <ul>
                             <li v-for="(item,index) in errorMSG" :key="index">
@@ -400,7 +400,7 @@ export default {
             } 
             //设置飞机转向
             var rota = this.setRotation(this.points[this.i], this.points[this.i + 1])
-            // console.log(rota)
+            console.log(rota)
             // if(rota == 0 ){
             //     rota = 360
             // }

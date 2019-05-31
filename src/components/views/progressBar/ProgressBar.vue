@@ -65,8 +65,7 @@
             },
         },
         methods: {
-            mousedownHandler(e){
-                // console.log("1",e)
+            mousedownHandler(e){ 
                 if(e.which === 1){
                     this.isMouseDownOnBall = true;
                     this.isCurrentProgress = true;
@@ -88,12 +87,10 @@
                     var t = new Date('2018-01-01 00:00:00');
                     var t_s = t.getTime();//转化为时间戳毫秒数
                     t.setTime(t_s+(time*1000)); 
-                    this.SuspensionTime=this.formatDate(t,'hh:mm:ss');
-                    // console.log(this.formatDate(t,'hh时mm分ss秒'))
+                    this.SuspensionTime=this.formatDate(t,'hh:mm:ss'); 
                 }
             },
-            mouseupHandler(e){
-                // console.log("3",e)
+            mouseupHandler(e){ 
                 if(this.isMouseDownOnBall && this.isCurrentProgress){
                     let decimal = (e.clientX - this.$el.offsetLeft-15) / this.progressElement.clientWidth;
                     let percent = decimal * 100;
@@ -103,15 +100,13 @@
                     this.isCurrentProgress = false;
                 }
             },
-            mouseoverHandler(e){
-                // console.log("4",e)
+            mouseoverHandler(e){ 
                 // 没有按左键进入进度条
                 if(e.which === 0){
                     this.isMouseDownOnBall = false;
                 }
             },
-            mouseoutHandler(e){
-                // console.log("5",e)
+            mouseoutHandler(e){ 
                 if(e.which === 1 && this.isCurrentProgress){
                     this.outProgressClientX = e.clientX;
                     this.isMouseDownOnBody = true;
@@ -119,8 +114,7 @@
                 }
             },
             // body元素的事件监听器
-            bodyEventHandler(){
-                // console.log("6",e)
+            bodyEventHandler(){ 
                 let body = document.getElementsByTagName('body')[0];
                 body.addEventListener('mousemove', this.bodyMousemoveHandler);
                 body.addEventListener('mouseup', (e) => {
@@ -132,8 +126,7 @@
                 })
             },
             // body元素的mousemove事件监听器
-            bodyMousemoveHandler(e){
-                // console.log("7",e)
+            bodyMousemoveHandler(e){ 
                 e.preventDefault();
                 if(e.which === 1 && this.isMouseDownOnBody === true){
                     let offsetX = e.clientX - this.outProgressClientX;

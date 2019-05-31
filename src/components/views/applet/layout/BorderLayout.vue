@@ -2,11 +2,11 @@
 <div class="bip-border-lay">
     <template v-if="btop">
         <template v-if="!laycfg[0].bcells">
-            <bip-comm-lay :layout="laycfg[0].comp" :dsm="dsm"></bip-comm-lay >
+            <bip-comm-lay :layout="laycfg[0].comp" :dsm="dsm"  :sth="sth" ></bip-comm-lay >
         </template>
         <template v-else>
             <md-layout>
-                <lay-cell :laycell="laycfg[0].comp" :dsm="dsm"></lay-cell>
+                <lay-cell :laycell="laycfg[0].comp" :dsm="dsm"  :sth="sth"></lay-cell>
             </md-layout>
         </template>
     </template>
@@ -14,44 +14,44 @@
         <template v-if="bleft">
             <!-- <md-layout :span="wleft"> -->
                 <template v-if="!laycfg[3].bcells">
-                    <bip-comm-lay :layout="laycfg[3].comp" :dsm="dsm"></bip-comm-lay >
+                    <bip-comm-lay :layout="laycfg[3].comp" :dsm="dsm" :sth="sth"></bip-comm-lay >
                 </template>
                 <template v-else>
                     <md-layout>
-                        <lay-cell :laycell="laycfg[3].comp" :dsm="dsm"></lay-cell>
+                        <lay-cell :laycell="laycfg[3].comp" :dsm="dsm" :sth="sth"></lay-cell>
                     </md-layout>
                 </template>
             <!-- </md-layout> -->
         </template>
         <template v-if="bcenter">
             <template v-if="!laycfg[wcenterIndex].bcells">
-                <bip-comm-lay :layout="laycfg[wcenterIndex].comp" :dsm="dsm"></bip-comm-lay >
+                <bip-comm-lay :layout="laycfg[wcenterIndex].comp" :dsm="dsm" :sth="sth"></bip-comm-lay >
             </template>
             <template v-else>
                 <md-layout :span="wcenter">
-                    <lay-cell :laycell="laycfg[wcenterIndex].comp" :dsm="dsm"></lay-cell>
+                    <lay-cell :laycell="laycfg[wcenterIndex].comp" :dsm="dsm" :sth="sth"></lay-cell>
                 </md-layout>
             </template>
         </template>
         <template v-if="bright">
             <!-- <md-layout :span="wright"> -->
                 <template v-if="!laycfg[4].bcells">
-                    <bip-comm-lay :layout="laycfg[4].comp" :dsm="dsm"></bip-comm-lay >
+                    <bip-comm-lay :layout="laycfg[4].comp" :dsm="dsm" :sth="sth"></bip-comm-lay >
                 </template>
                 <template v-else>
                     <md-layout>
-                        <lay-cell :laycell="laycfg[4].comp" :dsm="dsm"></lay-cell>
+                        <lay-cell :laycell="laycfg[4].comp" :dsm="dsm" :sth="sth"></lay-cell>
                     </md-layout>
                 </template>
         </template> 
     </template>
     <template v-if="bbuttom"> 
         <template v-if="!laycfg[2].bcells">
-            <bip-comm-lay :layout="laycfg[2].comp" :dsm="dsm"></bip-comm-lay >
+            <bip-comm-lay :layout="laycfg[2].comp" :dsm="dsm" :sth="sth"></bip-comm-lay >
         </template>
         <template v-else>
             <md-layout>
-                <lay-cell :laycell="laycfg[2].comp" :dsm="dsm"></lay-cell>
+                <lay-cell :laycell="laycfg[2].comp" :dsm="dsm" :sth="sth"></lay-cell>
             </md-layout>
         </template>  
     </template>
@@ -74,7 +74,7 @@ export default {
         bright:false,
     };
   },
-  props: {laycfg:Array,dsm :Object},
+  props: {laycfg:Array,dsm :Object,sth:Object},
   methods: { 
     initInfo(){
         // console.log("borderLayout")

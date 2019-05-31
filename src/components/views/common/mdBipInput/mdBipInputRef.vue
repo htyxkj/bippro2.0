@@ -7,7 +7,7 @@
         <md-icon>search</md-icon>
       </md-button>
       <md-bip-dia :value="modal[this.cell.id]" :assType="cell.assType" ref="ref" :mdRefId="cell.editName" :multiple="multiple" :mdSelection="mdSelection" @close="onRefClose" :disabled="disabled"></md-bip-dia>
-      <md-bip-object-dia ref="objcetCell" :value="modal[this.cell.id]" :cell="cell" :assType="cell.assType" :dsm="dsm" :mdRefId="cell.editName" ></md-bip-object-dia>
+      <md-bip-object-dia ref="objcetCell" :value="modal[this.cell.id]" :cell="cell" :assType="cell.assType" :mdRefId="cell.editName" @writeBack="writeBack"></md-bip-object-dia>
     </div>
   </md-input-container>
 </template>
@@ -155,8 +155,7 @@ export default {
         }
       }
     },
-    onBlur(){
-      // console.log("onBlur")
+    onBlur(){ 
       if (this.refData.cols){
         if(this.refValue ===''){
         //  console.log(166)
@@ -190,9 +189,22 @@ export default {
               }else{
                 count = this.refValue
               }
-              let script =  this.analysisScript();
-              let assType = this.cell.assType;
-              this.getAssistDataByAPICout(this.cell.editName,count,script,assType,this.getCallBack,this.getCallError);
+              
+              
+              // let script = "";
+              // let assType = "";
+              // let assid = this.cell.refValue.replace("{&","{")
+              // this.getAssistDataByAPICout(assid,count,script,assType,this.getCallBack,this.getCallError);
+              if(this.cell.assType && this.cell.assType =='C_QUERY'){
+                let script = "";
+                let assType = "";
+                let assid = this.cell.refValue.replace("{&","{")
+                this.getAssistDataByAPICout(assid,count,script,assType,this.getCallBack,this.getCallError);
+              }else{
+                let script =  this.analysisScript();
+                let assType = this.cell.assType;
+                this.getAssistDataByAPICout(this.cell.editName,count,script,assType,this.getCallBack,this.getCallError);
+              }
             }
           }   
         }
@@ -210,9 +222,18 @@ export default {
               }else{
                 count = this.refValue
               }
-              let script =  this.analysisScript();
-              let assType = this.cell.assType;
-              this.getAssistDataByAPICout(this.cell.editName,count,script,assType,this.getCallBack,this.getCallError);
+
+              if(this.cell.assType && this.cell.assType =='C_QUERY'){
+              
+                let script = "";
+                let assType = "";
+                let assid = this.cell.refValue.replace("{&","{")
+                this.getAssistDataByAPICout(assid,count,script,assType,this.getCallBack,this.getCallError);
+              }else{
+                let script =  this.analysisScript();
+                let assType = this.cell.assType;
+                this.getAssistDataByAPICout(this.cell.editName,count,script,assType,this.getCallBack,this.getCallError);
+              }
           }
         }else{
           this.modal[this.cell.id]='';
@@ -318,7 +339,73 @@ export default {
       return _.find(this.dsm.ccells.cels,item=>{
         return id === item.id
       });
-    }
+    },
+    writeBack(res){ 
+      //  this.$emit('writeBack',res);
+      let rtnpar = res[0];
+      let crd = this.dsm.currRecord;
+      let _self = this;
+      _.forEach(rtnpar.cdata,function(key,v){
+        let i = _.findIndex(rtnpar.kft,function(n){
+          return n.keyf ===v;
+        });
+        if(i>-1){
+          _self.$set(_self.dsm.currRecord,rtnpar.kft[i].keyt,key);
+        }else{
+          _self.$set(_self.dsm.currRecord,v,key);
+        }
+      })
+      // console.log("Set 子表")
+      //单子表
+      if(!this.istabs){
+        let oneChild = res[1]; 
+        _self.dsm.ds_sub[0].cdata=[];
+        _.forEach(oneChild.cdata,function(key,v){  
+          _self.onLineAdd(_self.dsm.ds_sub[0]); 
+          let data ={};
+          _.forEach(key,function(value,index){
+            let i = _.findIndex(oneChild.kft,function(n){ 
+              return n.keyf ===index;
+            }); 
+            if(i>-1){
+              _self.$set(_self.dsm.ds_sub[0].cdata[v],oneChild.kft[i].keyt,value); 
+            }else{ 
+              _self.$set(_self.dsm.ds_sub[0].cdata[v],index,value);
+            }   
+          }); 
+        }); 
+      }else{//多个子表
+        for(var p=1;p<=res.length;p++){
+          let oneChild = res[p]; 
+          _self.dsm.ds_sub[p].cdata=[];
+          _.forEach(oneChild.cdata,function(key,v){  
+             _self.onLineAdd(_self.dsm.ds_sub[p]);  
+            let data ={};
+            _.forEach(key,function(value,index){  
+              let i = _.findIndex(oneChild.kft,function(n){ 
+                return n.keyf ===index;
+              }); 
+              if(i>-1){
+                _self.$set(_self.childrens[p].data.cdata[v],oneChild.kft[i].keyt,value);  
+              }else{ 
+                _self.$set(_self.childrens[p].data.cdata[v],index,value); 
+              }   
+            }); 
+          });
+        }
+      } 
+    }, 
+    onLineAdd(subdsm) {  
+      // this.curr_dsm = subdsm;
+      var subId = subdsm.ccells.obj_id;
+      if (!this.dsm.canEdit) return;
+      var crd = subdsm.createRecord();
+      // console.log(subdsm,subId,crd);
+      if (!this.dsm.currRecord[subId]) {
+        this.dsm.currRecord[subId] = [];
+      }
+      this.dsm.currRecord[subId] = subdsm.cdata;
+    },    
   }, 
   watch:{
     modal:{

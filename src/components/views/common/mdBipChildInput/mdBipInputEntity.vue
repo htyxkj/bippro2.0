@@ -104,10 +104,11 @@ export default {
     async onRefOpen(type) { 
     },
     onRefClose(resdata) { 
+      console.log(this.column)
       if (resdata) {
         this.refInfo = resdata;
       }else if(this.value){
-        var parentRefs = this.$parent.$parent.column.refValues;
+        var parentRefs = this.$parent.$parent.column.refValues; 
         this.refInfo.cols = parentRefs.cols;
         this.refInfo.value = [];
         var vv = this.value.split(';')||this.value.split(',');
@@ -165,6 +166,7 @@ export default {
       });
     },
     addValue(value) {
+      console.log(value)
       if (!value || !value[this.cols[0]]) {
         return;
       }

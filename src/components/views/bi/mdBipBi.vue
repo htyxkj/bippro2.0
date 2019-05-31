@@ -1,11 +1,11 @@
 <template> 
   <div style="height:100%">
-    <!-- <template v-if="pc" >
+    <template v-if="pc" >
       <md-bip-pc-bi :mdTitle="mdTitle" :mparams="mparams" ></md-bip-pc-bi>
     </template>
-    <template v-else > -->
+    <template v-else >
       <md-bip-moblie-bi :mdTitle="mdTitle" :mparams="mparams" ></md-bip-moblie-bi>
-    <!-- </template> -->
+    </template>
   </div>
 </template> 
 <script>

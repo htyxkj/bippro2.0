@@ -1,16 +1,16 @@
 <template>
 <div class="all">
     <template v-if="layout&&layout.layType === 'B'">
-        <border-layout :laycfg="comps" :dsm="dsm" class="all"></border-layout>
+        <border-layout :laycfg="comps" :dsm="dsm" :sth="sth" class="all"></border-layout>
     </template>
     <template v-else-if="layout&&layout.layType === 'T'">
-        <tabs-layout :laycfg="comps" :dsm="dsm" class="all"></tabs-layout>
+        <tabs-layout :laycfg="comps" :dsm="dsm" :sth="sth" class="all"></tabs-layout>
     </template>
     <template v-else-if="layout&&layout.layType === 'H'">
-        <bip-horizontal-lay :laycfg="comps" :dsm="dsm" class="all"></bip-horizontal-lay>
+        <bip-horizontal-lay :laycfg="comps" :dsm="dsm" :sth="sth" class="all"></bip-horizontal-lay>
     </template>
     <template v-else-if="layout&&layout.layType === 'V'">
-        <bip-vertical-lay :laycfg="comps" :dsm="dsm" class="all"></bip-vertical-lay>
+        <bip-vertical-lay :laycfg="comps" :dsm="dsm" :sth="sth" class="all"></bip-vertical-lay>
     </template>
     <template v-else-if="layout&&layout.layType === 'U'">
         <div class="all">自定义布局</div>
@@ -25,7 +25,7 @@ export default {
             comps:[],
         };
     },
-    props: {dsm: Object,layout:Object},
+    props: {dsm: Object,layout:Object,sth:Object},
     methods: { 
     },
     computed: { 

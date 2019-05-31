@@ -1,12 +1,12 @@
 <template>
-  <md-part>
+  <md-part v-if="show">
     <template v-if="isPC">
-      <md-bip-bill-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" :mparams="mparams" @list="list" :menuP="menuP"></md-bip-bill-applet>
+      <md-bip-bill-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist &&ds_m" :mparams="mparams" @list="list" @addBill="addBill"  :menuP="menuP"></md-bip-bill-applet>
       <md-bip-bill-list-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" :mdTitle="mdTitle" :mparams="mparams" @addBill="addBill"  :menuP="menuP" v-else></md-bip-bill-list-applet>
     </template>
     <template v-else>
       <!-- <span>移动端信息</span> -->
-      <md-mobile-bill-info :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" :mparams="mparams" @list="list"></md-mobile-bill-info>
+      <md-mobile-bill-info :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" :mparams="mparams" @list="list"  @addBill="addBill" ></md-mobile-bill-info>
       <md-mobile-bill-list :dsm="ds_m" :dsext="ds_ext" :opera="opera" :mdTitle="mdTitle" @addBill="addBill"  v-else></md-mobile-bill-list>
     </template>
   </md-part>
@@ -17,7 +17,8 @@ import billS from '../classes/billState';
 import Operation from '../operation/operation'; 
 export default {
   data(){
-    return {
+    return { 
+      show:false,
       ds_m:null,
       ds_cont:null,
       ds_ext:[],
@@ -28,12 +29,12 @@ export default {
     }
   },
    props: {mdTitle:{type:String,default:''},mparams:Object},
-   created(){
-     this.getCell();
-     this.getMenuP();
+   async created(){ 
+      await this.getCell();
+      await this.getMenuP();
    },
    methods:{
-    addBill(){ 
+    async addBill(){ 
        this.blist = false;  
        if(this.ds_m.index<0)
         this.ds_m.createRecord(); 
@@ -42,6 +43,7 @@ export default {
        this.blist = true;
     },
     async getCell(){
+      this.show = false;
       var pcell = this.mparams.pcell;
       var data1 = {
       'dbid': global.DBID,
@@ -72,8 +74,10 @@ export default {
         }
       }else{
         this.$notify.warning({content: data.message,placement:'mid-center'});
-      }
-
+      } 
+      if(!this.blist){ 
+        this.ds_m.createRecord(); 
+      } 
       var pflow = this.mparams.pflow;
       if(pflow){
         data1 = {
@@ -87,6 +91,7 @@ export default {
           this.opera = new Operation(bb.data.data.opt);
           // console.log(this.opera);
       }
+      this.show=true;
     },
     //顶部按钮权限！
     getMenuP(){
@@ -94,12 +99,12 @@ export default {
     }, 
    },
    watch:{
-     mparams(){
-       this.ds_m = null;
-       this.getCell();
-       this.blist = global.BLIST;
-       this.opera = null;
-       this.getMenuP();
+    async mparams(){
+        this.ds_m = null;
+        this.opera = null;
+        await this.getCell(); 
+        this.blist = global.BLIST; 
+        this.getMenuP();
      }
    },
   computed: {

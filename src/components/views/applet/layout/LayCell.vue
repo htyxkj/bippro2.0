@@ -24,11 +24,10 @@ export default {
     return {
       widths: [],
       cds: null,
-      cells: null,
-      sth:{},
+      cells: null, 
     };
   },
-  props: { laycell: Object, dsm: Object },
+  props: { laycell: Object, dsm: Object,sth:Object},
   methods: {
     // initisShow() {
     //   let layCell = [];
@@ -82,7 +81,7 @@ export default {
         }
       } 
     },  
-    dataChange(res) {
+    dataChange(res) { 
       this.dsm.checkEdit(res);
     },   
     //判断字段类型
@@ -395,83 +394,38 @@ export default {
       }
       console.log("循环完成");
       // console.log(this.inp);
-    }, 
-    //获取SWITCH开关 字段显示 隐藏信息
-    async getSwitch() {
-      this.sth = {};
-      var menuid = "STH." + this.cds.ccells.obj_id;
-      let me = window.sessionStorage.getItem(menuid);
-      if (me == null) {
-        var data1 = {
-          dbid: global.DBID,
-          usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
-          apiId: global.APIID_DLG,
-          menuid: menuid
-        };
-        var res = await this.getDataByAPINewSync(data1);
-        // console.log(res);
-        //创建客户;100305;cbm
-        if (res.data.id != -1) {
-          //A:sfxs;0:;1:dxlx,smzl,number,xzqy,dhqy,cjwh,dlname,zrdw,lxfs,xjnd,sftd,remark
-          let d = res.data.data.btn;
-          let sth00 = {};
-          for (var i = 0; i < d.length; d++) {
-            let v = d[i];
-            let key = v.substring(0, 1);
-            v = v.substring(2).split(";");
-            let showField = [];
-            for (var j = 1; j < v.length; j++) {
-              showField.push(v[j]);
-            }
-            sth00 = { key: key, field: v[0], showField: showField };
-          }
-          this.sth[sth00.field] = sth00;
-          this.settingShowField(sth00.field);
-          window.sessionStorage.setItem(menuid, JSON.stringify(this.sth));
-        } else {
-          window.sessionStorage.setItem(menuid, "noData");
-        }
-        this.isSelsth = true;
-      } else {
-        this.isSelsth = true;
-        if (me == "noData") return;
-        this.sth = JSON.parse(me);
-        for (var item in this.sth) {
-          this.settingShowField(item);
-        }
-      }
-    },
+    },  
     //设置显示隐藏字段
-    settingShowField(key) {
+    settingShowField(key){
       console.log(key)
       let showsth = this.sth[key];
       let field = showsth.field;
-      let value = this.cds.currRecord[field];
-      for (var i = 0; i < showsth.showField.length; i++) {
-        let fv = showsth.showField[i].split(":");
+      let value = this.dsm.currRecord[field];
+      for(var i=0;i<showsth.showField.length;i++){
+        let fv =  showsth.showField[i].split(":"); 
         let ff = fv[1];
-        if (ff) {
+        if(ff){
           let ff0 = ff.split(",");
-          for (var dd = 0; dd < this.cells.length; dd++) {
-            if (this.isInArray(ff0, this.cells[dd].id)) {
-              if (fv[0] == value) {
-                this.cells[dd].isShow = true;
-              } else {
-                this.cells[dd].isShow = false;
+          for(var dd = 0;dd<this.dsm.ccells.cels.length;dd++){
+            if(this.isInArray(ff0,this.dsm.ccells.cels[dd].id)){ 
+              if(fv[0] == value){
+                this.dsm.ccells.cels[dd].isShow=true;
+              }else{
+                this.dsm.ccells.cels[dd].isShow=false;
               }
             }
           }
         }
       }
     },
-    isInArray(arr, value) {
-      for (var i = 0; i < arr.length; i++) {
-        if (value === arr[i]) {
+    isInArray(arr,value){
+      for(var i = 0; i < arr.length; i++){
+        if(value === arr[i]){
           return true;
         }
       }
       return false;
-    }, 
+    },
   },
   computed: { 
     canAddChild() {
@@ -496,7 +450,6 @@ export default {
       this.calculationWidth();
       if (this.dsm){
         this.cds = this.dsm.getDataSet(this.laycell.obj_id);
-        this.getSwitch();
       }
     }
   },

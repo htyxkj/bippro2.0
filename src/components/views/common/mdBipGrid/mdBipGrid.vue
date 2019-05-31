@@ -357,9 +357,8 @@ export default {
       return selected;
     },
 
-    setColumns(instances) {  
-      
-      this.columns = instances.map(column => new Column(column));
+    setColumns(instances) { 
+      this.columns = instances.map(column => new Column(column)); 
     },
     addColumn(instance) { 
       this.columns.push(new Column(instance));

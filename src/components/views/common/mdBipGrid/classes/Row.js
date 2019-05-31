@@ -63,8 +63,7 @@ export default class Row {
           // const script = this.getColumn(columnName);
           let script ='';
           if(column.assType == 'C_GROUP'){
-            script = this.analysisScript(column);
-            console.log(script)
+            script = this.analysisScript(column); 
           }
         this.getAssistDataByAPICout(column.refId,bb[i],script,column.assType,res=>{ 
           if(column.refValues){
@@ -72,7 +71,14 @@ export default class Row {
             if(!column.refValues.values){
               column.refValues.values = [];
             }
-            _.forEach(values,(row,index)=>{ 
+            _.forEach(values,(row,index)=>{
+              let cc = 0;
+              _.forEach(column.refValues.values,(row2,index)=>{
+                if(JSON.stringify(row) == JSON.stringify(row2)){
+                  cc = 1;
+                } 
+              });
+              if(cc == 0)
               column.refValues.values.push(row);
             });
 
@@ -114,7 +120,6 @@ export default class Row {
     }
   }
   async getAssistDataByAPICout (mdRefID,cont,script,assType,success,error) {
-    console.log("getAssistDataByAPICout")
     var  posParams = {
       'dbid': global.DBID,
       'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,

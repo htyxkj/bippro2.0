@@ -8,7 +8,7 @@
       <md-bip-input-date :isReport="is_Report" :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-date>
     </template>
     <template v-if="inputType == INPUT_REF">
-      <md-bip-input-ref :dsm='dsm' :cell="cell" :modal="modal" @change="dataChange" :ref="cell.id"></md-bip-input-ref>
+      <md-bip-input-ref :dsm='dsm' :cell="cell" :modal="modal" @change="dataChange" :ref="cell.id"  @writeBack="writeBack"></md-bip-input-ref>
     </template>
     <template v-if="inputType == INPUT_LIST">
       <md-bip-input-list :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-list>
@@ -104,6 +104,9 @@ export default {
     }
   },
   methods: {
+    writeBack(res){
+      this.$emit('writeBack',res);
+    },
     switchUP(data){
       console.log(data);
       if(this.showsth){

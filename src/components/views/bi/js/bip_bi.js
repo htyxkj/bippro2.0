@@ -175,6 +175,33 @@ export default {
     async fetchUIData(orderBY) {
       this.loading++;
       var pdata = JSON.stringify(this.ds_cont.currRecord);
+      pdata = JSON.parse(pdata)
+      for(var i =0;i<this.ds_cont.ccells.cels.length;i++){
+        let cel = this.ds_cont.ccells.cels[i];
+        if((cel.attr & this.bills1.Unconditional)>0){
+          delete pdata[cel.id]; 
+        }
+      }
+    //   let noTJ = true;
+    //   for(var i=0,l=pdata.length;i<l;i++){
+    // 　　for(var key in json[i]){
+    //       if(json[i][key] != ''){
+    //         noTJ=false;
+    //       }
+    // 　　}
+    //   }
+      // if(noTJ){
+      //   this.$dialog.confirm("请指定查询条件！", {
+      //     okText: this.$t('commInfo.ok'),
+      //     cancelText: this.$t('commInfo.cancel')
+      //   })
+      //   .then(() => {  
+      //   });
+      //   this.loading--;
+      //   return;
+      // }
+
+      pdata = JSON.stringify(pdata);
       var data1 = {
         dbid: global.DBID,
         usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
@@ -441,16 +468,6 @@ export default {
       this.selectData = item.row;
       this.ds_m.currRecord = this.selectData; 
     },
-    //新table选中行
-    TableSelect(item) {
-      this.selectData = Object.values(item)[0];
-      this.ds_m.currRecord = this.selectData;
-    },
-    getHeaderCellClass(item){
-      if(this.ds_m.ccells.cels[item.columnIndex].type<12){
-        return "md-numeric"
-      }      
-    },
     //行列转换 
     lineToColumnRun(){  
       if(this.biLay == 'table'){
@@ -476,6 +493,31 @@ export default {
       }
       return style
     },
+
+    //////////////////////////////////////////////////////////////////
+    //新table选中行
+    TableSelect(item) {
+      this.selectData = Object.values(item)[0];
+      this.ds_m.currRecord = this.selectData;
+    },
+    getHeaderCellClass(item){
+      if(this.ds_m.ccells.cels[item.columnIndex].type<12){
+        return "md-numeric"
+      }      
+    },
+    isSortable(item){//是否排序
+      if((item.attr & this.bills1.ORDERBY)>0){
+        return "custom"
+      }
+    }, 
+    isFixed(item, index) {
+      //固定列
+      if (this.ds_m.ccells.sfix) {
+        if (index < this.fixedColumn) {
+          return "left";
+        }
+      }
+    }, 
     getRowStyleNew(column){//新table行样式
       let sctrls =this.ds_m.ccells.sctrls;
       let row = column.row;
@@ -505,6 +547,38 @@ export default {
         return "titleGreen"
       }      
     },
+    onSortNew(data){ //新table表头排序
+      
+      if(data.column.sortable){
+        let order = data.column.order;
+        if(data.column.cc ==1){
+          this.$refs['newBiTable'].clearSort();
+        }
+        if(!data.column.cc && data.column.cc!=0 ){
+          data.column.cc=1;
+        }
+        if(data.column.cc && data.column.cc ==1){
+          if(order){
+            if(order =='desc'){
+              data.column.order='asc';
+            }else{
+              data.column.order='desc';
+            }
+          }else{
+            data.column.order='desc';
+          }
+          let od = data.column.property+"  "+data.column.order
+          this.fetchUIData(od);
+        }
+        data.column.cc=1;
+      }
+    },
+    sort_change(column,prop,order){ 
+      column.column.cc=0;
+      let od = column.prop +" "+column.order  
+      this.fetchUIData(od);
+    }
+    //////////////////////////////////////////////////////////////////
   },
   async mounted(){
     await this.initCell();

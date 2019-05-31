@@ -2,11 +2,11 @@
     <md-tabs>   
         <md-tab class="md-transparent"  v-for="(cfg,index) in laycfg" :key="index" :md-label="cfg.name" style="padding:0px;min-height:max-content;"> 
             <template v-if="!cfg.bcells">
-                <bip-comm-lay :layout="cfg.comp" :dsm="dsm"></bip-comm-lay >
+                <bip-comm-lay :layout="cfg.comp" :dsm="dsm"  :sth="sth"></bip-comm-lay >
             </template>
             <template v-else>
                 <md-layout>
-                    <lay-cell :laycell="cfg.comp" :dsm="dsm"></lay-cell>
+                    <lay-cell :laycell="cfg.comp" :dsm="dsm" :sth="sth"></lay-cell>
                 </md-layout> 
             </template> 
         </md-tab>
@@ -19,7 +19,7 @@ export default {
             
         };
     },
-    props: { laycfg:Array,dsm :Object},
+    props: { laycfg:Array,dsm :Object,sth:Object},
     methods: { 
     },
     computed: { 

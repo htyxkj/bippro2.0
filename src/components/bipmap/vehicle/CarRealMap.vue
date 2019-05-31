@@ -69,8 +69,7 @@ export default {
             this.taskCli.connect(headers, this.onConnected, this.onFailed);
         },
         //连接上的
-        onConnected: function(frame) { 
-            // console.log("Connected: " + frame);
+        onConnected: function(frame) {  
             //订阅频道FANOUT
             // var topic ="/exchange/" +BIPTASK +"/" + BIPTASK +"." +global.DBID +"." +this.userCode;
             this.taskCli.subscribe('/exchange/carLocus', this.responseCallback);

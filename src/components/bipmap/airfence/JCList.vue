@@ -240,7 +240,7 @@ export default {
       avgSpeed = speed/sumTime
       getSYL = syl/sumArea;
       avgFlow = flow/sumTime
-      // console.log("平均海拔(m)"+avgHigh+"--喷洒时长"+sumTime+"--平均总航速"+avgSpeed+"--喷洒里程"+sumDis+"--喷洒面积"+sumArea+"--每亩药量"+getSYL+"--平均流量"+avgFlow+"--总流量"+sumFlow)
+      console.log("平均海拔(m)"+avgHigh+"--喷洒时长"+sumTime+"--平均总航速"+avgSpeed+"--喷洒里程"+sumDis+"--喷洒面积"+sumArea+"--每亩药量"+getSYL+"--平均流量"+avgFlow+"--总流量"+sumFlow)
       jc.avgHigh=avgHigh.toFixed(4);
       jc.sumTime = sumTime;
       jc.avgSpeed = avgSpeed.toFixed(4);

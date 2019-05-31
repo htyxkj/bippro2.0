@@ -55,7 +55,8 @@
                     </md-layout>
                 </div>
                 <div class="mybtn">
-                    <md-button class="md-primary md-raised" @click="Synchronize">同步</md-button>
+                    <md-button class="md-primary md-raised" style="margin-right: 20px;" @click="Synchronize('Synchronize')">同步</md-button>
+                    <md-button class="md-primary md-raised" style="margin-left:20px" @click="Synchronize('delete')">删除数据</md-button>
                 </div>
                 <md-loading :loading="loading"></md-loading>
             </div>
@@ -120,7 +121,7 @@ export default {
             this.startTime = data.value['bgtime'];
             this.endTime = data.value['edtime'];
         },
-        Synchronize(){
+        Synchronize(operating){
             if(this.taskno==null||this.taskno==''){
                  this.$notify.warning({content:'任务标识不能为空'})
                  return;
@@ -136,7 +137,7 @@ export default {
 
             this.loading = 1
             let snkey = JSON.parse(window.sessionStorage.getItem('snkey'))
-            let params={snkey:snkey,stateTime:this.startTime,endTime:this.endTime,taskNo:this.taskno,usernumber:this.planeno}
+            let params={snkey:snkey,stateTime:this.startTime,endTime:this.endTime,taskNo:this.taskno,usernumber:this.planeno,operating:operating}
             axios.post(`${global.BIPAPIURL}SynchronizeServlet`,qs.stringify(params))
             .then(res=>{
                 if(parseInt(res.data.key) == 0){
@@ -150,9 +151,8 @@ export default {
                 this.loading=0
                 this.$notify.danger({content:'同步出错！'})
                 console.log(err)
-            })
-            
-        },  
+            }) 
+        },   
         //获取任务对应的 用户标识
         getAirId(){
             let taskno = this.taskno

@@ -2,18 +2,18 @@
 <md-layout md-felx ="100" v-if="laycfg">
     <template v-if="cfgUp">
         <template v-if="!cfgUp.bcells">
-            <bip-comm-lay :layout="cfgUp.comp" :dsm="dsm"></bip-comm-lay >
+            <bip-comm-lay :layout="cfgUp.comp" :dsm="dsm" :sth="sth"></bip-comm-lay >
         </template>
         <template v-else> 
-                <lay-cell :laycell="cfgUp.comp" :dsm="dsm"></lay-cell> 
+                <lay-cell :laycell="cfgUp.comp" :dsm="dsm" :sth="sth"></lay-cell> 
         </template>
     </template>
     <template v-if="cfgDown">
         <template v-if="!cfgDown.bcells">
-            <bip-comm-lay :layout="cfgDown.comp" :dsm="dsm"></bip-comm-lay >
+            <bip-comm-lay :layout="cfgDown.comp" :dsm="dsm" :sth="sth"></bip-comm-lay >
         </template>
         <template v-else> 
-            <lay-cell :laycell="cfgDown.comp" :dsm="dsm"></lay-cell> 
+            <lay-cell :laycell="cfgDown.comp" :dsm="dsm" :sth="sth"></lay-cell> 
         </template>
     </template>
 </md-layout>
@@ -27,7 +27,7 @@ export default {
         cfgDown:null,
     };
   },
-  props: {laycfg:Array,dsm :Object},
+  props: {laycfg:Array,dsm :Object,sth:Object},
   methods: { 
   },
   computed: { 
