@@ -19,6 +19,7 @@ global.APIID_SAVEDATA = 'savedata';
 global.APIID_CHKUP = 'chkup';
 global.APIID_DDJSAPI_TICKET='ddjsticket';
 global.APIID_TIME='systime'
+global.APIID_LONGTEXT='longtext';
 global.FULLDATE = '^(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)$';
 global.YEARMONTH = '^(?:(?!0000)[0-9]{4}-(?:0[1-9]|1[0-2])|[0-9]{4})$';
 global.APIID_FILEUP = 33; //上传文件

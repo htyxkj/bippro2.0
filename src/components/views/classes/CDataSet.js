@@ -4,6 +4,7 @@ import common from '../../core/utils/common.js';
 import scriptProc from './BipScriptProc';
 import BipScriptProc from './BipScriptProc';
 import billState from './billState';
+import CELZTUI from './cli/systool/CELZTUI'
 // 整体的数据类型
 export default class CDataSet {
   constructor(ccells) {
@@ -65,8 +66,7 @@ export default class CDataSet {
       this.checkGS();
   }
 
-  checkGS(cell) {
-    console.log("checkGS")
+  checkGS(cell) { 
     if(cell){
       const attr = cell.attr;
       if ((attr & 0x100000) > 0) {
@@ -122,7 +122,6 @@ export default class CDataSet {
 
   // 编辑检查
   checkEdit(res) {
-    // console.log("checkEdit",res)
     if(this.canEdit){
       // console.log(res);
       var cell = this.getCell(res.cellId);
@@ -134,6 +133,9 @@ export default class CDataSet {
         if(!this.currRecord.oldpk)
           this.currRecord.oldpk={};
         this.currRecord.oldpk[cell.id]=res.oldValue
+      } 
+      if(this.ccells.sui){
+        this.runSui(this.ccells.sui)
       }
     }else{
       this.currRecord[res.cellId] = res.oldValue;
@@ -257,7 +259,6 @@ export default class CDataSet {
       this.currRecord = modal;
     }
     this.canEdit = true; 
-
     return this.currRecord; 
   }
   initModal(isNew) {
@@ -455,9 +456,9 @@ export default class CDataSet {
         }
     }
     return cds
-}
+  }
 
-getCDataSet(cds,obid){
+  getCDataSet(cds,obid){
     let cds1 = null
     if(cds.ccells.obj_id === obid)
         return cds
@@ -471,5 +472,17 @@ getCDataSet(cds,obid){
         } 
     }
     return cds1
-}
+  }
+
+  runSui(sui){
+    if(!sui){
+      sui = this.ccells.sui;
+    }
+    if(sui){
+      if(sui.indexOf("inetbas.cli.systool.CELZTUI")!=-1){
+        let cc  =  new  CELZTUI(this);
+        cc.main(sui);
+      }
+    }
+  }
 }

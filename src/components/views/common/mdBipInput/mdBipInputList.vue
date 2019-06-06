@@ -20,7 +20,6 @@ export default {
   },
   methods: {
     async doQuery() {
-      // console.log(this.cell.refValue)
       if (this.cell.refValue) {
         if (this.cell.refValue.indexOf("$") > 0) { 
           var data = JSON.parse(window.sessionStorage.getItem(this.cell.refValue));
@@ -32,7 +31,6 @@ export default {
         } else {
           this.header = ["code", "name"];
           var selectList = this.cell.refValue.split(";");
-          // console.log(selectList)
           _(this.values).take(0);
           if(!this.cell.isReq){
             var item = { code: '', name: '' };
@@ -85,7 +83,7 @@ export default {
       var modalValue = this.modal[this.cell.id];
       this.oldValue = modalValue?modalValue:'';
     },
-    dataCC(value) { 
+    dataCC(value) {
     }
   },
   mounted() { 

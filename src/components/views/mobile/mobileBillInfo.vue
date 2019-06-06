@@ -718,6 +718,7 @@ export default {
     if (this.dsm) {
       this.getSwitch();
       this.doMyLayout();
+      this.dsm.runSui();
       const state = this.dsm.currRecord.sys_stated & billS.INSERT;
       if (this.dsm.ds_sub && state === 0) {
         this.getChildData(this.dsm.ds_sub[0]);

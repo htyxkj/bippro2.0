@@ -450,6 +450,73 @@ export default {
         }
       }  
     },
+    //条件值发生变化
+    dataChange(res) { 
+      console.log(this.ds_cont) 
+      let cell = this.getTJCell(res.cellId)
+      cell.refValues = res;
+      this.checkGS(cell);
+    },   
+    getTJCell(id){
+      if(this.ds_cont)
+      return _.find(this.ds_cont.ccells.cels,item=>{
+        return id === item.id
+      });
+    },
+    //进行公式计算  只做了多列计算
+    checkGS(cell) {
+      console.log("checkGS")
+      if(cell){
+        const attr = cell.attr;
+        if ((attr & 0x100000) > 0) {
+          // console.log('多列计算')
+          this.checkMulCols(cell);
+        }
+      }
+      // this.scriptProc.data = this.ds_cont.currRecord;
+      // _.forEach(this.ccells.cels, col => {
+      //   let scstr = col.script;
+      //   if (scstr && scstr.indexOf('=:') === 0) {
+      //     scstr = scstr.replace('=:', '');
+      //     // 公式计算
+      //     var vl = this.scriptProc.execute(scstr,null,col);
+      //     // console.log(vl,this.currRecord,col.id,scstr);
+      //     this.ds_cont.currRecord[col.id] = vl;
+      //   }
+      // })
+      // console.log(this.row);
+    },
+    // 多列计算
+    checkMulCols(cell) {
+      var script = cell.script;
+      if (script) {
+        script = script.split('&');
+        var cols = script[0].split(',');
+        var _indexs = script[1].split(',');
+        var refValues = cell.refValues;
+        var id = this.ds_cont.currRecord[cell.id];
+        var refInfo;
+        if (refValues) {
+          if(_.isArray(refValues.value)){
+          }else{
+            refInfo = refValues.value;
+          }
+        }
+        if (refInfo) {
+          _.forEach(cols, (col, n) => {
+            var vv = refInfo[refValues.cols[_indexs[n]]];
+            // console.log(vv,col);
+            if (vv) {
+              var cl = this.getTJCell(col);
+              if (cl.type<12 && cl.type>1) {
+                vv = new Number(vv).toFixed(cl.ccPoint);
+              }
+              this.ds_cont.currRecord[col] = vv;
+            }
+          });
+        }
+      }
+    },
     //点击弹出框按钮
     dlgBtnClick(btn) {  
       if (this.selectData) {

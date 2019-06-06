@@ -31,6 +31,7 @@ import down from './js/process.js'
         sec:'',
         timeClass:"timeClassA", 
         con:'',
+        day:'',
         timeout:false,
         nowT:0,
         img:`${global.BIPAPIURL}`+'inet/gimg/watermarks/timeout.png', 
@@ -93,11 +94,12 @@ import down from './js/process.js'
                 // alert(t);
                 t = Math.abs(t);
                 // if(t>0){
-                    // let day = Math.floor(t/86400000);
-                    // let hour=Math.floor((t/3600000)%24); 
-                    let hour=Math.floor(t/3600000);
+                    let day = Math.floor(t/86400000);
+                    let hour=Math.floor((t/3600000)%24); 
+                    // let hour=Math.floor(t/3600000);
                     let min=Math.floor((t/60000)%60);
                     let sec=Math.floor((t/1000)%60); 
+                    self.day = day;
                     self.hour = hour < 10 ? "0" + hour : hour;
                     self.min = min < 10 ? "0" + min : min;
                     self.sec = sec < 10 ? "0" + sec : sec;
@@ -112,7 +114,7 @@ import down from './js/process.js'
                     //     format =`${min}  :  ${sec}`;
                     // }
                     // self.content = con+format;
-                    self.content = `${self.con}`+' '+ `${self.hour}`+"时 "+`${self.min}`+"分 "+`${self.sec}`+"秒"
+                    self.content = `${self.con}`+' '+`${self.day}`+'天'+ `${self.hour}`+"时 "+`${self.min}`+"分 "+`${self.sec}`+"秒"
                 // }else{
                 //  clearInterval(timer);
                 //  self.content = self.endText;

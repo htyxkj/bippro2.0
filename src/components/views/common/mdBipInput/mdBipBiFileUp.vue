@@ -1,5 +1,5 @@
 <template>
-<md-layout style="width:100%;margin:0px" md-flex="100">
+  <md-layout style="width:100%;margin:0px" md-flex="100">
     <md-dialog md-open-from="#upfile" md-close-to="#upfile" ref="fDia">  
       <md-dialog-title style="padding:0px;    margin: 0px;">
         <md-layout  md-align="end">
@@ -55,26 +55,21 @@
       </md-dialog-content>  
     </md-dialog> 
     <div class="layout layout-row margin0"  style="width:100%" md-flex="100"> 
-      <md-layout md-flex="85" class="margin0" style="max-height:24px;">
+      <md-layout md-flex="85" class="margin0">
         {{modal[cell.id]}}　
       </md-layout>
       <md-layout md-flex="15" class="margin0" style="max-height:24px">
         <div @click="openDialog()">
-          <md-icon class="md-icon-button" style="margin:0px;;height:24px" >cloud_download</md-icon>
-          <md-tooltip md-direction="left">附件下载</md-tooltip>
+          <md-icon class="md-icon-button" style="margin:0px;height:24px" >cloud_download</md-icon> 
         </div> 
       </md-layout>
-    </div>
-
-
-</md-layout>  
+    </div> 
+  </md-layout>  
 </template>
 
 <script>
 import axios from "axios";
-import comm from './modal.js';
-
-
+import comm from './modal.js'; 
 export default {
   data() {
     return {
@@ -236,27 +231,9 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-/* .md-layout{margin:0;} */
-.md-button.md-icon-button{height: 0;}
-.md-dialog-content:first-child{padding-top: 0;}
-.md-dialog-content{    padding: 0 .1rem .24rem;}
-.md-input-container input{font-weight: 700;}
+<style scoped lang="scss"> 
 .classA{max-width:7rem;min-width:6.5rem;min-height:4rem;padding-top: .2rem;}/**/
  
-/* .actionC{position: absolute;bottom:.1rem;right: .1rem} */
-.actionC{
-  padding-bottom: 0.13rem; 
-  .md-button{
-    margin-left: .05rem;
-    padding: 0px;
-    margin-right: .01rem;
-    min-width: .57rem;
-  }
-}
-
-.contentC{margin-bottom: .7rem;padding-bottom: 0;}
-.myimg{position: relative;width:10% !important;height: 10% !important;}
 .imgClassA{overflow-y: auto;max-height: 4rem;overflow-x:hidden; }
 @media screen and (min-width:300px) and (max-width:321px){
     .classB{max-height: 5rem;    min-width: 1rem;}
@@ -272,14 +249,10 @@ export default {
 }
 @media screen and (min-width:413px){
     .classB{max-height: 6rem;    min-width: 1rem;}
-}  
-.iconClass{padding-bottom: .2rem;color:#22bf22; } 
-.mybtn{min-width: .4rem;min-height: .3rem;font-size: .12rem;line-height: .3rem;padding: 0; margin: 0px}
-.md-gutter-8 .md-column > .md-layout{padding-bottom: 0;}
-.cancelClass{position: absolute;bottom: .15rem;margin-left: .18rem;} 
-.colClass{max-height: .6rem;line-height: .5rem;font-size: 14px;} 
+}    
 .margin0{
   margin: 0px;
+  word-break: break-all;
 }
 </style>
 

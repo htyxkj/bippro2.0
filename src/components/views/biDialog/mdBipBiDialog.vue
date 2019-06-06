@@ -255,7 +255,11 @@ export default {
       let pdata = {};
       for(var i=0;i<keyArr.length;i++){
         let cc = keyArr[i].split("=")
-        pdata[cc[0]]=this.selectData[cc[1]];
+        if(this.selectData[cc[1]]){
+          pdata[cc[0]]=this.selectData[cc[1]];
+        }else{
+          pdata[cc[0]]=cc[1];
+        }
       } 
       var data1 = {
         "dbid": `${global.DBID}`,
@@ -424,24 +428,25 @@ export default {
           }  
         }
       }else if(this.btnInfo.type == 'C'){//根据菜单号 
-        this.showMenu = true;
+        // this.showMenu = true;
         this.loading++;
         if(await this.getParams(this.btnInfo.cellID) == false){
           this.$notify.warning({ content: "没有菜单权限！" + this.btnInfo.cellID + "!" });
           this.closeDialog();
-        }else{
+        }else{ 
+          this.getOpear(this.mparams.pflow); 
+          this.getMenuP();
+          await  this.getCell(this.mparams.pcell);
+          this.ds_m.createRecord(); 
+          let cc = await this.initCellDataC(); 
+          this.showMenu = true;
           if(!this.$refs.sbillSidenav){
             setTimeout(() => {
               this.$refs.sbillSidenav.open();  
             }, 100);
           }else{
             this.$refs.sbillSidenav.open();  
-          } 
-          await  this.getCell(this.mparams.pcell);
-          this.getOpear(this.mparams.pflow);
-          this.getMenuP();
-          this.ds_m.createRecord();
-          this.initCellDataC(); 
+          }
         }
         this.loading--;
       }
@@ -489,7 +494,7 @@ export default {
             }
           }
         }
-      }  
+      }
       for (let i = 0; i < cds.ccells.cels.length; i++) {
         var item = cds.ccells.cels[i]; 
         if(this.isInArray(field,item.id)){

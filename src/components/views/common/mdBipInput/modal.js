@@ -42,7 +42,7 @@ export default {
       multiple:false
     }
   },
-  props: {cell:Object,isSearch: {type:Boolean,default:false},modal:{},btj:{default:false,type:Boolean}},
+  props: {cell:Object,isSearch: {type:Boolean,default:false},modal:{},btj:{default:false,type:Boolean},attr:{default:0,type:Number}},
   mounted () {
     // console.log("oldValue 赋值")
     this.oldValue = '';
@@ -68,5 +68,17 @@ export default {
     parentChange(){
       // console.log('111');
     }
-  }    
+  },
+  watch:{
+    cell : { 
+      handler: function () {  
+        let notedit = this.cell.attr&this.NOTEDIT;
+        this.disabled = notedit > 0 ? true:false;
+      },
+      deep: true
+    }
+    // attr (){
+    //   console.log(this.attr)
+    // }
+  }
 }

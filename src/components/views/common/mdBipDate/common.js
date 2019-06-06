@@ -86,7 +86,7 @@ export default {
       this.$emit('focus');
     },
     onBlur() { 
-      console.log("onBlue")
+      console.log("onBlur")
       if(this.parentContainer){
         this.parentContainer.isFocused = false;
       }

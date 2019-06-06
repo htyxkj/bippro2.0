@@ -385,10 +385,11 @@ export default {
       return isok;
     },
     async makeCheckParams() {
+      console.log("makeCheckParams")
       if (this.opera === null){
         this.chkinfo = null;
         return;
-      }
+      } 
       if(this.dsm.ccells.cels[this.dsm.ccells.pkindex[this.dsm.ccells.pkindex.length-1]+1].id != this.opera.buidfld) {
         return;
       }
@@ -941,6 +942,7 @@ export default {
     if (this.dsm) {
       this.doMyLayout(); 
       this.getSwitch();
+      this.dsm.runSui();
       const state = this.dsm.currRecord.sys_stated &  billS.INSERT;
       if (this.dsm.ds_sub && state === 0) {
         for(var i =0;i<this.dsm.ds_sub.length;i++){
@@ -960,6 +962,7 @@ export default {
   },
   watch: {
     chkinfo() {
+      console.log("chkinfo")
       if (this.chkinfo) {
         if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
           this.dsm.canEdit = false; 

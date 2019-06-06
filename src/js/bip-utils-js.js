@@ -361,12 +361,13 @@ export default {
       return  menuP;
     } 
 
+    //获取常量内容
     Vue.prototype.getConstant = async function(assistid,success,error){
       var  posParams = {
         'dbid': global.DBID,
         'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
-        "apiId": "constant", //获取cellID标识 
-        'assistid': assistid, //辅助,变量标识 如 {&SOPR},{$D.SOPR}    	'cont': "BXQ0000517060001"  //查询条件
+        "apiId": "constant", //获取常量标识 
+        'assistid': assistid, //常量名称
       }
       const url = global.BIPAPIURL+global.API_COM;
       
@@ -396,7 +397,42 @@ export default {
           return constant;
       } 
     }
-
+    //获取长文本内容
+    Vue.prototype.getLongText = async function(assistid,success,error){
+      var  posParams = {
+        'dbid': global.DBID,
+        'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
+        "apiId": `${global.APIID_LONGTEXT}`, //获取长文本标识 
+        'assistid': assistid, //长文本名称
+      }
+      const url = global.BIPAPIURL+global.API_COM;
+      
+      let constant = window.sessionStorage.getItem(assistid); 
+      if(constant){
+        if(constant !=='noData'){
+          constant = JSON.parse(constant);
+        }
+      }
+      if(!constant){
+        return await axios.post(url, qs.stringify(posParams)).then(function(res){
+          let id = res.data.data.id;
+          constant = res.data.data.value;  
+          if(id ==0){
+              window.sessionStorage.setItem(assistid,JSON.stringify(constant));
+              return constant;
+          }else {
+              window.sessionStorage.setItem(assistid,"noData");
+              return null;
+          }
+        }).catch(function(err){
+          return null;
+        }); 
+      }else if(constant == 'noData' ){
+          return null;
+      }else{
+          return constant;
+      } 
+    }
     Vue.prototype.doLayout = function(str){
       let hv = new Array;
       let cs0 = str.split('');

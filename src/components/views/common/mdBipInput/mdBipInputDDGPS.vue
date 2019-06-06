@@ -3,20 +3,20 @@
   <md-input-container v-if="gpsType=='getGPS'">
     <div class="md-input-ref layout layout-row" >
       <label>{{cell.labelString}}</label>
-      <md-input readonly v-model="modal[cell.id]" :required="cell.isReq"></md-input> 
-      <md-button class="md-icon-button md-ref-filter" @click="openMAP()">
+      <md-input readonly v-model="modal[cell.id]" :required="cell.isReq" :disabled="disabled"></md-input> 
+      <md-button class="md-icon-button md-ref-filter" @click="openMAP()" :disabled="disabled">
         <md-icon>pin_drop</md-icon>
       </md-button>
     </div>  
   </md-input-container>  
 
   <div class="layout layout-row margin0"  style="width:100%" md-flex="100" v-else-if="gpsType=='showGPS'"> 
-    <md-layout md-flex="85" class="margin0" style="max-height:24px;">
+    <md-layout md-flex="85" class="margin0" >
       {{modal[cell.id]}}　
     </md-layout>
     <md-layout md-flex="15" class="margin0" style="max-height:24px">
       <div @click="openMAP()">
-        <md-icon class="md-icon-button" style="margin:0px;;height:24px" >pin_drop</md-icon> 
+        <md-icon class="md-icon-button" style="margin:0px;height:24px" >pin_drop</md-icon> 
       </div> 
     </md-layout>
   </div>
@@ -173,58 +173,11 @@ export default {
 };
 </script>
 
-<style scoped>
-/* .md-layout{margin:0;} */
-.md-button.md-icon-button{height: 0;}
-.md-dialog-content:first-child{padding-top: 0;}
-.md-input-container input{font-weight: 700;}
-.classA{min-height:5rem;max-width:6rem;max-height: 5rem;min-width:6rem;}
-
-/* .actionC{position: absolute;bottom:.1rem;right: .1rem} */
-.contentC{margin-bottom: .7rem;padding-bottom: 0;}
-.myimg{position: relative;width:10% !important;height: 10% !important;}
-.imgClassA{overflow-y: auto;max-height: 3rem;overflow-x:hidden; }
-@media screen and (min-width:300px) and (max-width:321px){
-    .classB{min-height:1rem;max-height: 5rem;}
-    .imgClassB{
-        overflow-y: auto;max-height: 2.3rem;overflow-x: hidden;
-    }
-}
-@media screen and (min-width:321px) and (max-width:361px){
-    .classB{min-height:1rem;max-height: 5rem;}
-    .imgClassB{
-        overflow-y: auto;max-height: 2.8rem;overflow-x: hidden;
-    }
-}
-@media screen and (min-width:362px) and (max-width:380px){
-    .classB{min-height:1rem;max-height: 5rem;}
-    .imgClassB{
-        overflow-y: auto;max-height: 3.3rem;overflow-x: hidden;
-    }
-}
-@media screen and (min-width:381px) and (max-width:412px){
-    .classB{min-height:1rem;max-height: 6rem;}
-    .imgClassB{
-        overflow-y: auto;max-height: 3.8rem;overflow-x: hidden;
-    }
-}
-@media screen and (min-width:413px){
-    .classB{min-height:1rem;max-height: 6rem;}
-    .imgClassB{
-        overflow-y: auto;max-height: 4rem;overflow-x: hidden;
-    }
-}
-.iClass{max-height: 1rem !important;min-height: 1rem !important;max-width: 1.1rem !important;}
-.itemClass{max-height: .6rem;position: relative;width: 100%;}
-.iconClass{padding-bottom: .2rem;color:#22bf22; }
-/* .cancelClass{margin:0;padding: 0;min-width: .24rem;min-height: .24rem;} */
-.mybtn{min-width: .4rem;min-height: .3rem;font-size: .12rem;line-height: .3rem;padding: 0; margin: 0px}
-.md-gutter-8 .md-column > .md-layout{padding-bottom: 0;}
-.cancelClass{position: absolute;bottom: .15rem;margin-left: .18rem;}
-.checkClass{position: absolute;bottom: .15rem;margin-left: .18rem;color:#22bf22;}
-.colClass{max-height: .6rem;line-height: .5rem;}
-.margin0{margin: 0px;}
- 
+<style scoped> 
+.margin0{
+  margin: 0px;
+  word-break: break-all;
+} 
 </style>
 
 

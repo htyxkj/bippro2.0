@@ -44,7 +44,7 @@
             <template v-if="showAllCont">
               <md-layout>
                 <md-layout md-flex="95">
-                  <md-bip-input :isReport="true" v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
+                  <md-bip-input :isReport="true" v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true" @change="dataChange"></md-bip-input>
                 </md-layout>
                 <md-layout md-flex="5" md-vertical-align="end">
                   <!-- 隐藏显示剩余条件 -->
@@ -58,7 +58,7 @@
             <template v-else>
               <md-layout>
                 <md-layout md-flex="95">
-                  <md-bip-input :isReport="true" v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"></md-bip-input>
+                  <md-bip-input :isReport="true" v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true" @change="dataChange"></md-bip-input>
                 </md-layout>
                 <md-layout md-flex="5" md-vertical-align="end">
                   <!-- 隐藏显示剩余条件 -->

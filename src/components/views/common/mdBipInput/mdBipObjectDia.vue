@@ -52,7 +52,7 @@
                 md-separator="/" :md-page-options="[5,10,15,20, 30, 50]" @pagination="onTablePagination">
                 </md-table-pagination>
               </md-table-tool>
-              <md-table-card>
+              <md-table-card v-show="false">
                 <md-table class="flex">
                   <md-table-header>
                     <md-table-row v-if="dssub">
@@ -154,7 +154,7 @@ export default {
 
   },
   methods:{ 
-    selectOK() {
+    selectOK() { 
       if (this.selectData) {
         let robj = this.dsm.currRecord;
         let cldata = this.dssub.cdata;
@@ -162,14 +162,14 @@ export default {
         if(this.dssub.cdata.length>0)
           this.cpinf[1].cdata = cldata;
         // console.log(this.cpinf)
-        this.$emit('writeBack',this.cpinf);
+        this.$emit('writeBack',this.cpinf); 
         this.close();
       } else {
         this.$notify.warning({
           content: "没有选择任何数据!",
           placement: "mid-center"
         });
-      }
+      } 
     },
     refresh() {
       this.pageInfo.page = 1;

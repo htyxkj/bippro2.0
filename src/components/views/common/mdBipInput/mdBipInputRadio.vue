@@ -149,6 +149,7 @@ export default {
       this.$notify.danger({ content: res.data.message });
     },
     dataCC(value) { 
+      console.log(value)
       var refBackData = {
         cellId: this.cell.id,
         value: value,
@@ -156,8 +157,10 @@ export default {
         multiple: false
       };
       if (value !== this.oldValue) this.$emit("change", refBackData);
-      var modalValue = this.modal[this.cell.id];
-      this.oldValue = modalValue?modalValue:'';
+      setTimeout(() => {
+        var modalValue = this.modal[this.cell.id];
+        this.oldValue = modalValue?modalValue:'';        
+      }, 200);
     }
   },
   mounted() {

@@ -44,7 +44,7 @@
             <template v-if="showAllCont">
               <md-layout>
                 <md-layout md-flex="95">
-                  <md-bip-input :isReport="true" v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"></md-bip-input>
+                  <md-bip-input :isReport="true" v-for="(cell) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow" :btj="true"  @change="dataChange"></md-bip-input>
                 </md-layout>
                 <!-- <md-layout md-flex="5" md-vertical-align="end">
                   <md-button class="bip-more md-icon-button" @click.native="showMore()">
@@ -57,7 +57,7 @@
             <template v-else>
               <md-layout>
                 <md-layout md-flex="95">
-                  <md-bip-input :isReport="true" v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"></md-bip-input>
+                  <md-bip-input :isReport="true" v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"  @change="dataChange"></md-bip-input>
                 </md-layout>
                 <!-- <md-layout md-flex="5" md-vertical-align="end"> 
                   <md-button class="bip-more md-icon-button" @click.native="showMore()">
@@ -140,7 +140,7 @@
                             <md-layout md-flex ="65" class="content">
                               <!-- <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref>
                               <md-bip-bi-file-up  v-else :cell="fileCell(row)" :modal="fileModal(row)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"  ></md-bip-bi-file-up> -->
-                              <md-bip-bi-file-up  v-if="item.editName =='UPDOWN'" :cell="fileFJCell(row.sbuid,item.id)" :modal="fileFJModal(row,item.id)"  ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up><!-- :cell="fileFJCell(row)" :modal="fileFJModal(row)" -->
+                              <md-bip-bi-file-up  v-if="item.editName =='UPDOWN'" :cell="fileFJCell(row.sbuid,item.id)" :modal="fileFJModal(row,item.id)"  ref="fj_name"></md-bip-bi-file-up><!-- :cell="fileFJCell(row)" :modal="fileFJModal(row)" -->
                               <md-bip-input-ddGPS v-else-if="item.editType == 12" :cell="fileMPCell(row)" :modal="fileMPModal(row)" gpsType="showGPS"></md-bip-input-ddGPS>
                               <md-bip-ref v-else :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref>                              
                             </md-layout>
@@ -150,7 +150,7 @@
                           <md-layout v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow && (item.attr& bills1.DICT)<=0"  :key="index" md-gutter  md-flex ="100" :md-gutter="16"> 
                             <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                             <md-layout md-flex ="65" class="content">
-                              <md-bip-bi-file-up  v-if="item.editName == 'UPDOWN'"  :cell="fileFJCell(row.sbuid,item.id)" :modal="fileFJModal(row,item.id)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>
+                              <md-bip-bi-file-up  v-if="item.editName == 'UPDOWN'"  :cell="fileFJCell(row.sbuid,item.id)" :modal="fileFJModal(row,item.id)" ref="fj_name"></md-bip-bi-file-up>
                               <md-bip-input-ddGPS v-else-if="item.editType == 12" :cell="fileMPCell(row)" :modal="fileMPModal(row)" gpsType="showGPS"></md-bip-input-ddGPS>
                               <md-bip-ref v-else :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref>                              
                             </md-layout>

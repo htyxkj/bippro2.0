@@ -5,13 +5,16 @@
       :id="dateID"
       ref="input"
       type="text"
-      v-model="modal[cell.id]"
+      :value="checkVal"
       :disabled="disabled"
       :required="required"
       :placeholder="placeholder"
       @focus="onFocus"
       @blur="onBlur"
-      v-on:input="updateValue($event.target.value,true)"
+      @input="onInput"
+      @keydown.up="onInput"
+      @keydown.down="onInput"
+      v-on:input="updateValue($event.target.value)"
       autocomplete="off"
     >
     <div md-menu-trigger v-on:click="dateIconClick" style="min-width: 0.1rem;max-width: 0.4rem;">
@@ -56,7 +59,7 @@ export default {
         this.checkVal = this.formattedValue(this.value);
       }
       this.oldValue = this.value;
-    } 
+    }
   },
   methods: {
     _dateID() {
@@ -92,10 +95,10 @@ export default {
           maxDate: maxDate, //设定最大日期为当前日期
           donefun: obj => {
             this.checkVal = obj.val;
-            this.updateValue(obj.val,false);
+            this.updateValue(obj.val);
           },
           clearfun: function(elem, val) {
-            this.updateValue("",false);
+            this.updateValue("");
             this.checkVal = null;
           }
         });
@@ -112,11 +115,11 @@ export default {
     },
     success(checkVal) {
       this.checkVal = this.formattedValue(checkVal);
-      this.updateValue(checkVal,false);
+      this.updateValue(checkVal);
     },
     error() {
       this.checkVal = "";
-      this.updateValue("",false);
+      this.updateValue("");
     },
     formtDate() {
       // 文档地址:http://www.jemui.com/uidoc/jedate.html
@@ -161,7 +164,7 @@ export default {
         this.dateFomt = "YYYY-MM-DD hh:mm";
       }
     },
-    updateValue(value,isgs) {
+    updateValue(value) {
       // console.log(value)
       if (value == undefined) {
         value = "";
@@ -169,10 +172,7 @@ export default {
       if (this.disabled) {
         return;
       }
-      var formattedValue = value
-      if(isgs){
-        formattedValue = this.formattedValue(value);
-      }      
+      var formattedValue = this.formattedValue(value);
       if (
         formattedValue !== value ||
         this.$refs.input.value != formattedValue
@@ -181,7 +181,7 @@ export default {
       }
       this.setParentValue(formattedValue);
       this.$emit("input", formattedValue);
-      this.$emit("change", formattedValue);  
+      this.$emit("change", formattedValue);
     },
     formattedValue(value) {
       if (this.range == "~") {

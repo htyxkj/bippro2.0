@@ -7,7 +7,7 @@
         <md-icon>search</md-icon>
       </md-button>
       <md-bip-dia :value="modal[this.cell.id]" :assType="cell.assType" ref="ref" :mdRefId="cell.editName" :multiple="multiple" :mdSelection="mdSelection" @close="onRefClose" :disabled="disabled"></md-bip-dia>
-      <md-bip-object-dia ref="objcetCell" :value="modal[this.cell.id]" :cell="cell" :assType="cell.assType" :mdRefId="cell.editName" @writeBack="writeBack"></md-bip-object-dia>
+      <md-bip-object-dia ref="objcetCell" :value="modal[this.cell.id]" :cell="cell" :assType="cell.assType" :mdRefId="cell.editName" @writeBack="writeBack" :disabled="disabled"></md-bip-object-dia>
     </div>
   </md-input-container>
 </template>
@@ -64,7 +64,7 @@ export default {
       }
       this.$refs['ref'].open(script)
     },
-    onRefClose(data){
+    onRefClose(data){ 
       if(data){
         // console.log('REF')
         data.cellId = this.cell.id;
@@ -85,22 +85,22 @@ export default {
             this.refData.oldValue = this.oldValue;
           }
           this.$set(this.modal,this.cell.id,val);
-          this.$emit('change',data);
           this.makeRefInput(data);
+          this.$emit('change',data);
         }else{
           this.refData.value = data.value[0];
-          // console.log(this.refData.value[this.refData.cols[0]],this.oldValue);、
+          // console.log(this.refData.value[this.refData.cols[0]],this.oldValue);
           // console.log(this.refData.value[this.refData.cols[0]]);
           // console.log(this.oldValue);
           if(this.refData.value[this.refData.cols[0]] !== this.oldValue){
             // this.oldValue = this.refData.value[this.refData.cols[0]] ;
             this.refData.oldValue = this.oldValue;
             this.$set(this.modal,this.cell.id,this.refData.value[this.refData.cols[0]]);
-            this.$emit('change',data);
             this.makeRefInput(data);
+            this.$emit('change',data);
           }
         }
-      }
+      } 
     },
     makeRefInput(data){
       if (this.cell.refValue) {
@@ -341,59 +341,62 @@ export default {
       });
     },
     writeBack(res){ 
-      //  this.$emit('writeBack',res);
-      let rtnpar = res[0];
-      let crd = this.dsm.currRecord;
-      let _self = this;
-      _.forEach(rtnpar.cdata,function(key,v){
-        let i = _.findIndex(rtnpar.kft,function(n){
-          return n.keyf ===v;
-        });
-        if(i>-1){
-          _self.$set(_self.dsm.currRecord,rtnpar.kft[i].keyt,key);
-        }else{
-          _self.$set(_self.dsm.currRecord,v,key);
-        }
-      })
-      // console.log("Set 子表")
-      //单子表
-      if(!this.istabs){
-        let oneChild = res[1]; 
-        _self.dsm.ds_sub[0].cdata=[];
-        _.forEach(oneChild.cdata,function(key,v){  
-          _self.onLineAdd(_self.dsm.ds_sub[0]); 
-          let data ={};
-          _.forEach(key,function(value,index){
-            let i = _.findIndex(oneChild.kft,function(n){ 
-              return n.keyf ===index;
-            }); 
-            if(i>-1){
-              _self.$set(_self.dsm.ds_sub[0].cdata[v],oneChild.kft[i].keyt,value); 
-            }else{ 
-              _self.$set(_self.dsm.ds_sub[0].cdata[v],index,value);
-            }   
-          }); 
-        }); 
-      }else{//多个子表
-        for(var p=1;p<=res.length;p++){
-          let oneChild = res[p]; 
-          _self.dsm.ds_sub[p].cdata=[];
+      if(this.dsm.canEdit){
+        let rtnpar = res[0];
+        let crd = this.dsm.currRecord;
+        let _self = this;
+        _.forEach(rtnpar.cdata,function(key,v){
+          let i = _.findIndex(rtnpar.kft,function(n){
+            return n.keyf ===v;
+          });
+          if(i>-1){
+            _self.$set(_self.dsm.currRecord,rtnpar.kft[i].keyt,key);
+          }else{
+            _self.$set(_self.dsm.currRecord,v,key);
+          }
+        })
+        // console.log("Set 子表")
+        //单子表
+        if(!this.istabs){
+          let oneChild = res[1]; 
+          _self.dsm.ds_sub[0].cdata=[];
           _.forEach(oneChild.cdata,function(key,v){  
-             _self.onLineAdd(_self.dsm.ds_sub[p]);  
+            _self.onLineAdd(_self.dsm.ds_sub[0]); 
             let data ={};
-            _.forEach(key,function(value,index){  
+            _.forEach(key,function(value,index){
               let i = _.findIndex(oneChild.kft,function(n){ 
                 return n.keyf ===index;
               }); 
               if(i>-1){
-                _self.$set(_self.childrens[p].data.cdata[v],oneChild.kft[i].keyt,value);  
+                _self.$set(_self.dsm.ds_sub[0].cdata[v],oneChild.kft[i].keyt,value); 
               }else{ 
-                _self.$set(_self.childrens[p].data.cdata[v],index,value); 
+                _self.$set(_self.dsm.ds_sub[0].cdata[v],index,value);
               }   
             }); 
-          });
-        }
-      } 
+          }); 
+        }else{//多个子表
+          for(var p=1;p<=res.length;p++){
+            let oneChild = res[p]; 
+            _self.dsm.ds_sub[p].cdata=[];
+            _.forEach(oneChild.cdata,function(key,v){  
+              _self.onLineAdd(_self.dsm.ds_sub[p]);  
+              let data ={};
+              _.forEach(key,function(value,index){  
+                let i = _.findIndex(oneChild.kft,function(n){ 
+                  return n.keyf ===index;
+                }); 
+                if(i>-1){
+                  _self.$set(_self.childrens[p].data.cdata[v],oneChild.kft[i].keyt,value);  
+                }else{ 
+                  _self.$set(_self.childrens[p].data.cdata[v],index,value); 
+                }   
+              }); 
+            });
+          }
+        }  
+        let cc = {cellId:this.cell.id};
+        this.$emit('change',cc);
+      }
     }, 
     onLineAdd(subdsm) {  
       // this.curr_dsm = subdsm;

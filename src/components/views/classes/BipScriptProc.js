@@ -198,7 +198,20 @@ export default class BipScriptProc {
     }
     return 1;
   }
+  f_substr(s0){ 
+    if(s0[0].length>=s0[2]){
+      return s0[0].substring(s0[1],s0[2]);
+    }else{
 
+    }
+  }
+  f_ifelse(s0){
+    if(s0[1]){
+      return s0[1]
+    }else{
+      return s0[2]
+    }
+  }
   invokefun(scf, fps){
     let x0 = scf.length;
     if (x0 === 1 && scf.charAt(0) === 'M'){
