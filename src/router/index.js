@@ -11,6 +11,8 @@ import Router from 'vue-router';
 // import Test1 from '@/components/Test1'
 // import Dashboard from '@/views/dashboard/Dashboard1'
 //单点登录
+import Test from '@/components/Test';
+//单点登录
 import Blank from '@/components/Blank';
 //钉钉
 import Ding from '@/components/Ding';
@@ -184,6 +186,12 @@ export default new Router({
       name:'工作台',
       component:CRMWorkbench
     },
+    {
+      path:'/Test',
+      name:'工作台',
+      component:Test
+    },
+    
   ]
 }) 
  

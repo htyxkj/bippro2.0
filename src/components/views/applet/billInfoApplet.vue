@@ -239,10 +239,12 @@ export default {
         this.dsm.currRecord.oldpk = pk;
       } 
       var str = JSON.stringify(this.dsm.currRecord);   
-      if((this.dsm.currRecord&billS.DELETE)==0){
-        var isnull = this.checkNotNull(this.dsm);
-          if(!isnull)
-            return;
+      if(this.dsm.currRecord.sys_stated !=4){
+        if((this.dsm.currRecord&billS.DELETE)==0){
+          var isnull = this.checkNotNull(this.dsm);
+            if(!isnull)
+              return;
+        }
       }
       var options = { pcell: this.dsm.pcell, jsonstr: str, opera:JSON.stringify(this.opera) };
       if(this.dsm.currRecord.sys_stated !=4){//保存前校验

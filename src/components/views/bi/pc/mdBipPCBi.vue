@@ -98,10 +98,10 @@
                   </md-table-row>
                 </md-table-body>
               </md-table>  -->  
-
-              <vxe-table ref="newBiTable" class="mytable-style" :data.sync="ds_m.cdata" :height="tableHeight"  :highlight-hover-row="true" :highlight-current-row="true" @cell-click="onTableSelect" header-cell-class-name="md-numeric"  @header-cell-click="onSortNew" @sort-change="sort_change" :row-class-name="getRowStyleNew" border show-header-all-overflow resizable><!-- :header-cell-class-name="getTitleNewStyle" -->
+              <vxe-table ref="newBiTable" class="mytable-style" :data.sync="ds_m.cdata" :height="tableHeight" :highlight-hover-row="true" :highlight-current-row="true" @cell-click="onTableSelect" header-cell-class-name="md-numeric"  @header-cell-click="onSortNew" @sort-change="sort_change" :row-class-name="getRowStyleNew" border  resizable :auto-resize="true"  >>  
+                <!-- :header-cell-class-name="getTitleNewStyle" -->
                 <!-- <md-bip-bi-table-column :ds_m="ds_m" :Multi_level_title="Multi_level_title" ></md-bip-bi-table-column> -->
-                <vxe-table-column :min-width="50" :width="item.ccCharleng*9+40" v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow" :key="index" :prop="item.id" :label="item.labelString" :sortable="isSortable(item)" :fixed="isFixed(item,index)"  show-header-overflow show-overflow-tooltip ellipsis> 
+                <vxe-table-column :min-width="item.ccCharleng*9+40" v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow" :key="index" :prop="item.id" :label="item.labelString" :sortable="isSortable(item)" :fixed="isFixed(item,index)" :remote-sort="true" show-header-overflow show-overflow> 
                   <template slot-scope="scope"> 
                     <md-bip-bi-file-up  v-if="item.editName =='UPDOWN'" :cell="fileFJCell(scope.row.sbuid,item.id)" :modal="fileFJModal(scope.row,item.id)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>
                     <md-bip-input-ddGPS v-else-if="item.editType == 12" :cell="fileMPCell(scope.row)" :modal="fileMPModal(scope.row)" gpsType="showGPS"></md-bip-input-ddGPS>
@@ -263,7 +263,9 @@ export default {
       bills1 : billS, 
       tableHeight:0,
       fixedNum :0,      
-      tableData:[],
+      tableData:[
+        {name:'cc',age:19,date3:'as'}
+      ],
     }
   },
   mixins:[common,bipBi],

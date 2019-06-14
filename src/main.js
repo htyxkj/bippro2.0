@@ -51,4 +51,21 @@ new Vue({
 });
 
 import VXETable from 'vxe-table' 
+import './sass/newTable/style/index.scss'
+VXETable.setup({ 
+  // 默认优化配置项
+  optimization : {
+    animat: false,
+    // 当列大于 20 条时自动启用横向 X 滚动渲染
+    // scrollX: {
+    //   gt: 1,
+    //   oSize: 25,
+    //   rSize: 20
+    // },
+    // scrollY:{
+    //   rHeight:49
+    // }
+  }
+})
+
 Vue.use(VXETable)

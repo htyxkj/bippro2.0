@@ -574,7 +574,7 @@ export default {
     },
     isSortable(item){//是否排序
       if((item.attr & this.bills1.ORDERBY)>0){
-        return "custom"
+        return true;
       }
     }, 
     isFixed(item, index) {
@@ -598,7 +598,10 @@ export default {
               // for(var i =0;i<doc.length;i++){
               //   doc[i].setAttribute("style","background-color: "+vl[1]+";");
               // }
-              return 'sctrl'
+              let cc = document.querySelector('tr[data-rowkey="'+ column.rowIndex+'"]')
+              // cc.css("background-color",vl[1]);
+              cc.setAttribute("style","background-color:  "+vl[1]+";");
+              // return 'sctrl'
             } 
         }
       }

@@ -148,8 +148,7 @@ export default {
     getCallError(res) {
       this.$notify.danger({ content: res.data.message });
     },
-    dataCC(value) { 
-      console.log(value)
+    dataCC(value) {
       var refBackData = {
         cellId: this.cell.id,
         value: value,

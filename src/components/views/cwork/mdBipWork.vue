@@ -70,7 +70,7 @@ export default {
               exitu = this.currUser;
             }
           }); 
-        }  
+        }
     },
     close() {
       this.$refs["dialog"].close();

@@ -204,7 +204,7 @@ export default class Row {
       var arr = sc.split("*");
       return this.checkScript(this.dsm,arr[0],arr[1])
     }else{
-      return this.checkScript(this.dsm,this.column.objid,sc)
+      return this.checkScript(this.dsm,column.objid,sc)
     } 
   }
   //c_group 检查所有对像 中的字段

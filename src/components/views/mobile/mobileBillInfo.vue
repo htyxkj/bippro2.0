@@ -181,10 +181,12 @@ export default {
     },
     async save() { 
       var str = JSON.stringify(this.dsm.currRecord);
-      if((this.dsm.currRecord&billS.DELETE)==0){
-        var isnull = this.checkNotNull(this.dsm);
-          if(!isnull)
-            return;
+      if(this.dsm.currRecord.sys_stated !=4){
+        if((this.dsm.currRecord&billS.DELETE)==0){
+          var isnull = this.checkNotNull(this.dsm);
+            if(!isnull)
+              return;
+        }
       }
       let _oldPk = this.dsm.currRecord.oldpk;
       if(_oldPk){
