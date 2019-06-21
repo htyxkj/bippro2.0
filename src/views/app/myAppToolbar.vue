@@ -117,8 +117,7 @@
   </md-toolbar>
 </template>
 <script>
-const BIPTASK = "biptask",
-  BIPMSG = "bipmsg";
+const BIPTASK = "biptask",BIPMSG = "bipmsg";
 import Stomp from "stompjs";
 import qs from 'qs'
 import axios from 'axios' 
@@ -163,24 +162,8 @@ export default {
       this.isconnt = true;
       // console.log("Connected: " + frame);
       //订阅频道
-      var topic =
-        "/exchange/" +
-        BIPTASK +
-        "/" +
-        BIPTASK +
-        "." +
-        global.DBID +
-        "." +
-        this.user.userCode;
-      var topic1 =
-        "/exchange/" +
-        BIPMSG +
-        "/" +
-        BIPMSG +
-        "." +
-        global.DBID +
-        "." +
-        this.user.userCode;
+      var topic = "/exchange/" + BIPTASK + "/" + BIPTASK + "." + global.DBID + "." + this.user.userCode;
+      var topic1 = "/exchange/" + BIPMSG + "/" + BIPMSG + "." + global.DBID + "." + this.user.userCode;
       // console.log(topic, topic1);
       this.client.subscribe(topic, this.responseCallback);
       this.client.subscribe(topic1, this.responseCallback);

@@ -1,5 +1,5 @@
 <template>
-  <!-- <div class="md-date md-input-ref layout-row">
+  <div class="md-date md-input-ref layout-row">
     <input
       class="md-input"
       :id="dateID"
@@ -21,18 +21,7 @@
         </md-button>
       </slot>
     </div>
-  </div> -->
-
-
-  <md-input-container> 
-    <div class="md-input-ref layout layout-row">
-      <label>{{cell.labelString}}</label> 
-      <md-input :id="dateID" ref="input" type="text" v-model="modal[cell.id]" :disabled="disabled" :required="required" :placeholder="placeholder" autocomplete="off"></md-input>
-      <md-button class="md-icon-button md-ref-filter" id="upfile" @click="dateIconClick()" :disabled="disabled" >
-        <md-icon>date_range</md-icon>
-      </md-button>
-    </div> 
-  </md-input-container>
+  </div>
 </template>
 
 <script>
@@ -52,26 +41,22 @@ export default {
       dateID: this._dateID(),
       checkVal: "",
       dateFomt: "YYYY-MM-DD",
-      range: false,
-      cc:"",
+      range: false
     };
   },
   watch: {
     value(){
-      if(this.value !== this.checkVal){
-        this.formtDate();
-        if (this.isReport) {
-          this.range = "~";
-          if (this.value.indexOf("~") == -1) {
-            this.checkVal = this.formattedValue("");
-          }
-        } else {
-          this.checkVal = this.formattedValue(this.value);
+      this.formtDate();
+      if (this.isReport) {
+        this.range = "~";
+        if (this.value.indexOf("~") == -1) {
+          this.checkVal = this.formattedValue("");
         }
-        this.oldValue = this.checkVal;
-        this.updateValue(this.checkVal,false)
-      } 
-    }
+      } else {
+        this.checkVal = this.formattedValue(this.value);
+      }
+      this.oldValue = this.value;
+    } 
   },
   methods: {
     _dateID() {
@@ -188,9 +173,12 @@ export default {
       if(isgs){
         formattedValue = this.formattedValue(value);
       }      
-      // if ( formattedValue !== value || this.$refs.input.value != formattedValue ) {
-      //   this.checkVal = formattedValue;
-      // }
+      if (
+        formattedValue !== value ||
+        this.$refs.input.value != formattedValue
+      ) {
+        this.$refs.input.value = formattedValue;
+      }
       this.setParentValue(formattedValue);
       this.$emit("input", formattedValue);
       this.$emit("change", formattedValue);  
@@ -221,8 +209,23 @@ export default {
     } else {
       this.checkVal = this.formattedValue(this.value);
     }
-    // this.updateValue(this.checkVal,false)
-    this.oldValue = this.checkVal;
+    this.updateValue(this.checkVal,false)
+    this.oldValue = this.value;
+    this.$nextTick(() => {
+      this.parentContainer = getClosestVueParent(
+        this.$parent,
+        "md-input-container"
+      );
+      if (!this.parentContainer) {
+        this.$destroy();
+        throw new Error("You should wrap the md-input in a md-input-container");
+      }
+      this.setParentDisabled();
+      this.setParentRequired();
+      this.setParentPlaceholder();
+      this.handleMaxLength();
+      this.updateValues();
+    });
   }
 };
 </script>

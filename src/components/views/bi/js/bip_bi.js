@@ -597,17 +597,17 @@ export default {
               // var doc = document.getElementsByClassName('sctrl');
               // for(var i =0;i<doc.length;i++){
               //   doc[i].setAttribute("style","background-color: "+vl[1]+";");
-              // }
+              // } 
               let cc = document.querySelector('tr[data-rowkey="'+ column.rowIndex+'"]')
-              // cc.css("background-color",vl[1]);
+              if(cc)
               cc.setAttribute("style","background-color:  "+vl[1]+";");
               // return 'sctrl'
-            } 
+          }
         }
       }
-      if(column.rowIndex%2==0){
-        return 'doubleRow';
-      } 
+      // if(column.rowIndex%2==0){
+      //   return 'doubleRow';
+      // } 
     },
     getTitleNewStyle(column){//新Table表头样式
       //ds_m.ccells.cels
@@ -621,7 +621,7 @@ export default {
       
       if(data.column.sortable){
         let order = data.column.order;
-        if(data.column.cc ==1){
+        if(data.column.cc == undefined ||data.column.cc ==1){
           this.$refs['newBiTable'].clearSort();
         }
         if(!data.column.cc && data.column.cc!=0 ){

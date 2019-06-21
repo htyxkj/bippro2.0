@@ -24,7 +24,7 @@
 
 
 global.BIPAPIURL = 'http://192.168.1.200:9999/jd/';
-// global.DBID = '115';//本机达博
+global.DBID = '115';//本机达博
 // global.DBID = '112';//车辆管理
 // global.DBID = '121';//一风车辆管理
 // global.DBID = '111';//会所预定
@@ -35,7 +35,7 @@ global.BIPAPIURL = 'http://192.168.1.200:9999/jd/';
 // global.DBID = '105';//京通档案
 // global.DBID = '122';//115飞防管控
 // global.DBID = '124';//CRM 
-global.DBID = '125';//安全隐患监控平台
+// global.DBID = '125';//安全隐患监控平台
 // global.DBID = '126';//本机绩效
 // global.DBID = '127';//物业管理
 // global.DBID = '129';//王阳ERP

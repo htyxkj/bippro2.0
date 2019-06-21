@@ -3,6 +3,7 @@ import BillState from './billState'
 import common from '../../core/utils/common.js';
 import scriptProc from './BipScriptProc';
 import BipScriptProc from './BipScriptProc';
+import moment from "moment";
 import billState from './billState';
 import CELZTUI from './cli/systool/CELZTUI'
 // 整体的数据类型
@@ -82,6 +83,7 @@ export default class CDataSet {
         // 公式计算
         var vl = this.scriptProc.execute(scstr,null,col);
         // console.log(vl,this.currRecord,col.id,scstr);
+        vl = this.dataFmort(cell,vl);
         this.currRecord[col.id] = vl;
       }
     })
@@ -483,6 +485,37 @@ export default class CDataSet {
         let cc  =  new  CELZTUI(this);
         cc.main(sui);
       }
+    }
+  }
+
+  dataFmort(cell,vl){
+    if(!cell || !cell.editName){
+      return vl;
+    }
+    let dateFomt = "YYYY-MM-DD hh:mm:ss";
+    if (cell.editName == "DATE") {
+      dateFomt = "YYYY-MM-DD";
+    } else if (cell.editName == "DATETIME") {
+      dateFomt = "YYYY-MM-DD hh:mm:ss";
+    } else if (cell.editName == "HS") {
+      dateFomt = "hh:mm";
+    } else if (cell.editName == "H_S") {
+      dateFomt = "hh:mm";
+    } else if (cell.editName == "H_SM") {
+      dateFomt = "hh:mm:ss";
+    } else if (cell.editName == "YM") {
+      dateFomt = "YYYYMM";
+    } else if (cell.editName == "Y-M") {
+      dateFomt = "YYYY-MM";
+    } else if (cell.editName == "Y_m") {
+      dateFomt = "YYYY-MM-DD hh:mm";
+    }
+    if(dateFomt == ""){
+      return vl;
+    }else{
+      var format = dateFomt.replace("hh", "HH");
+      vl = moment(vl).format(format)+"";
+      return vl;
     }
   }
 }

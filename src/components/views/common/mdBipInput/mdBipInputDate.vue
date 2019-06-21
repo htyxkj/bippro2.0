@@ -1,8 +1,8 @@
 <template>
-    <md-input-container>
-      <label>{{cell.labelString}}</label> 
+    <!-- <md-input-container>
+      <label>{{cell.labelString}}</label>  -->
         <md-bip-date v-model="modal[cell.id]" :modal="modal" :isReport="isReport" :cell="cell" :required="cell.isReq" :disabled="disabled" @change="dataChange" ></md-bip-date> 
-    </md-input-container>
+    <!-- </md-input-container> -->
 </template>
 <script>
 import comm from './modal.js';

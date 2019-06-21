@@ -20,7 +20,7 @@ export default {
       const hou = fps[4];
       const min = fps[5];
       return moment()
-        .add(5, "d")
+        .add(day, "d")
         .add(mon, "M")
         .add(year, "y")
         .add(hou, "h")

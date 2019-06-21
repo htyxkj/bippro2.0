@@ -56,6 +56,9 @@
         }
         this.$emit('input',this.checkVal);
       },
+      value(){
+        console.log(value)
+      }
     },
     methods: {   
       _dateID(){

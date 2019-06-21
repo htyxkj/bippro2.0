@@ -387,9 +387,15 @@ export default {
         if(this.ds_m && this.ds_m.ccells &&this.ds_m.ccells.cels)
         for(var i=0;i<this.ds_m.ccells.cels.length;i++){
           let zz = this.ds_m.ccells.cels[i]; 
-          if(zz.attr >= BillState.INITIALDATA){
-            if(zz.initValue)
-            this.ds_m.currRecord[zz.id] = this.formatVars(zz.initValue);
+          if(zz.attr >= BillState.INITIALDATA){//二次初值
+            if(zz.initValue){
+              let initv = zz.initValue;
+              if(zz.type == 93){
+                initv = "[YMDHMS]";
+              }
+              this.ds_m.currRecord[zz.id] = this.formatVars(initv);
+              this.ds_m.checkGS(this.ds_m.ccells.cels[i])
+            }
           }
         }
         if(!this.$refs.dialog){
@@ -472,6 +478,8 @@ export default {
         return  common.now('YYYYMM');
       if(sinc == '[YMD]')
         return  common.now('YYYYMMDD'); 
+      if(sinc == '[YMDHMS]') 
+        return  common.now(); 
       // sinc = sinc.replace(/\[!\]/g, deptInfo.deptCode);
       // sinc = sinc.replace(/\[#\]/g, deptInfo.cmcCode);
       // sinc = sinc.replace(/\[$\]/g, user.userCode);

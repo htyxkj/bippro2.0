@@ -120,7 +120,6 @@ export default {
         groupdatafilds: JSON.stringify(this.groupdatafilds), 
       };
       // console.log('chart serach',this.groupfilds.length,this.groupdatafilds.length,this.pcell,this.doSearch);
-      
       if ( 
         this.groupfilds.length > 0 &&
         this.groupdatafilds.length > 0 &&
