@@ -12,6 +12,7 @@ const POSTED =  0x400; ////记录已提交过
 const LSUPDATE = 0x4000;//临时改
 const ORDERBY = 0x400000;//排序
 const Unconditional=0x4;//非条件
+const MERGE = 0x10000000;//合并
 const INITIALDATA = 0x100000000//二次初值
 
 const billState = {
@@ -30,6 +31,7 @@ const billState = {
   ORDERBY,
   INITIALDATA,
   Unconditional,
+  MERGE,
 }
 
 export default billState;

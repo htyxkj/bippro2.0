@@ -100,7 +100,7 @@
                 </md-table-body>
               </md-table>  -->  
 
-              <vxe-table class="mytable-style" :data.sync="ds_m.cdata" :height="tableHeight"  :highlight-hover-row="true" :highlight-current-row="true" @cell-click="onTableSelect" header-cell-class-name="md-numeric"  @header-cell-click="onSortNew" @sort-change="sort_change" :row-class-name="getRowStyleNew" border resizable stripe><!-- :header-cell-class-name="getTitleNewStyle" -->
+              <vxe-table class="mytable-style" :data.sync="ds_m.cdata" :height="tableHeight"  :highlight-hover-row="true" :highlight-current-row="true" @cell-click="onTableSelect" header-cell-class-name="md-numeric"  @header-cell-click="onSortNew" @sort-change="sort_change" :row-class-name="getRowStyleNew" border resizable stripe :span-method="rowspanMethod"><!-- :header-cell-class-name="getTitleNewStyle" -->
                 <!-- <md-bip-bi-table-column :ds_m="ds_m" :Multi_level_title="Multi_level_title" ></md-bip-bi-table-column> -->
                 <vxe-table-column :min-width="50" :width="item.ccCharleng*9+40" v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow" :key="index" :prop="item.id" :label="item.labelString" :sortable="isSortable(item)" :remote-sort="true" show-header-overflow show-overflow> 
                   <template slot-scope="scope"> 

@@ -5,14 +5,13 @@
         <md-button :disabled="canCreate" @click.native="create">{{$t('commBtn.B_ADD')}}</md-button>
         <md-button class="md-accent" :disabled="canDelete" @click.native="delData">{{$t('commBtn.B_DEL')}}</md-button>
         <md-button @click.native="save" :disabled="canSave">{{$t('commBtn.B_SAVE')}}</md-button>
-      </md-part-toolbar-group>
-      <md-part-toolbar-group>
+
         <md-button @click.native="list">{{$t('commBtn.B_LIST')}}</md-button>
-      </md-part-toolbar-group>
-      <md-part-toolbar-group>
+
         <md-button>{{$t('commBtn.B_COPY')}}</md-button>
         <!-- <md-button>审核</md-button> -->
         <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
+        <md-button @click.native="submitProcess" :disabled="canSubmit">{{$t('commBtn.B_SubmitProcess')}}</md-button>
       </md-part-toolbar-group>
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
@@ -88,6 +87,7 @@
       </template>
       <template v-if="chkinfo">
         <md-bip-work  ref="cc" :chkinfo="chkinfo" @dataCheckUp="dataCheckUp"></md-bip-work>
+        <md-bip-work-process  ref="SubmitProcess" :chkinfo="chkinfo" @dataCheckUp="dataCheckUp"></md-bip-work-process>
       </template>
     </md-part-body>
   </md-part>
@@ -158,6 +158,22 @@ export default {
       }
       // var res = await this.getDataByAPINew(checkParasm);
       // console.log(res);
+    },
+    submitProcess(){
+      var crd = this.dsm.currRecord; 
+      if (this.opera) {
+        var state = crd[this.opera.statefld];
+        var params = {
+          sid: crd[this.opera.pkfld],
+          sbuid: crd[this.opera.buidfld],
+          statefr: state,
+          stateto: state,
+          tousr: ""
+        };
+        var ceaParams = new CeaPars(params);
+        var billuser = crd[this.opera.smakefld]; 
+        this.$refs["SubmitProcess"].open(ceaParams, billuser); 
+      }
     },
     async dataCheckUp(state) {
       this.dsm.currRecord[this.opera.statefld] = state;

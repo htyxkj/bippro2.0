@@ -13,6 +13,7 @@
         <md-button v-if="menuP.COPY" @click="copy">{{$t('commBtn.B_COPY')}}</md-button>
         <!-- <md-button>审核 Auditing</md-button> -->
         <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
+        <md-button @click.native="submitProcess" :disabled="canSubmit">{{$t('commBtn.B_SubmitProcess')}}</md-button>
         <md-button v-if="mparams.pprn && ISPC()" @click="print(mparams.pprn)">打印</md-button>
       </md-part-toolbar-group>
 
@@ -37,6 +38,7 @@
       </template>
       <template v-if="chkinfo">
         <md-bip-work  ref="cc" :chkinfo="chkinfo" @dataCheckUp="dataCheckUp"></md-bip-work>
+        <md-bip-work-process  ref="SubmitProcess" :chkinfo="chkinfo" @dataCheckUp="dataCheckUp"></md-bip-work-process>
       </template>
       <md-work-copy-flow ref="cp" v-if="flowlist.length>0" @writeBack="writeBack"></md-work-copy-flow>
     </md-part-body>
@@ -126,6 +128,22 @@ export default {
         var billuser = crd[this.opera.smakefld]; 
         this.$refs["cc"].open(ceaParams, billuser); 
       } 
+    },
+    submitProcess(){
+      var crd = this.dsm.currRecord; 
+      if (this.opera) {
+        var state = crd[this.opera.statefld];
+        var params = {
+          sid: crd[this.opera.pkfld],
+          sbuid: crd[this.opera.buidfld],
+          statefr: state,
+          stateto: state,
+          tousr: ""
+        };
+        var ceaParams = new CeaPars(params);
+        var billuser = crd[this.opera.smakefld]; 
+        this.$refs["SubmitProcess"].open(ceaParams, billuser); 
+      }
     },
     async dataCheckUp(state) {
       this.dsm.currRecord[this.opera.statefld] = state;

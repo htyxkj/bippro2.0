@@ -22,6 +22,7 @@ module.exports = {
     B_COPY:'复制',
     B_CHK:'审核/退回',
     B_SUB:'提交/退回',
+    B_SubmitProcess:'流程查看',
     B_EXP:'导出',
     B_FIRST:'首页',
     B_NEXT:'下页',

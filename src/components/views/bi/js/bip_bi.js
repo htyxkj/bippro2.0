@@ -53,6 +53,7 @@ export default {
       sbuidBtn:[],//业务号弹出框按钮
       fixedColumn:0,//固定列数
       Multi_level_title:{},//多级表头
+      span_id:{},
     }
   },
   methods: {
@@ -604,10 +605,7 @@ export default {
               // return 'sctrl'
           }
         }
-      }
-      // if(column.rowIndex%2==0){
-      //   return 'doubleRow';
-      // } 
+      } 
     },
     getTitleNewStyle(column){//新Table表头样式
       //ds_m.ccells.cels
@@ -647,7 +645,52 @@ export default {
       column.column.cc=0;
       let od = column.prop +" "+column.order  
       this.fetchUIData(od);
-    }
+    },
+    //合并行或列，该函数 Function({seq, row, rowIndex, column, columnIndex, data}) 返回计算后的值
+    rowspanMethod ({ row, $rowIndex, column, data }) {  
+      if(this.span_id !=null){ 
+        var arr = Object.keys(this.span_id);
+        if(arr.length ==0){
+          let cels = this.ds_m.ccells.cels;
+          for(var i=0 ;i<cels.length;i++){
+            let cel = cels[i];
+            if((cel.attr & this.bills1.MERGE)>0){
+              this.span_id[cel.id]=cel.id;
+            }
+          }
+          var arr = Object.keys(this.span_id);
+          if(arr.length ==0){ 
+            this.span_id =null;
+            return;
+          }
+        }
+        let prevRow = data[$rowIndex - 1]
+        let nextRow = data[$rowIndex + 1]
+        if (this.span_id[column.property]) {
+          if (prevRow && prevRow[column.property] === row[column.property]) {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+          if (nextRow && nextRow[column.property] === row[column.property]) {
+            let rowspan =2;
+            for(var i=($rowIndex + 2);i<data.length;i++){
+              let d1 = data[i];
+              if(d1[column.property] == row[column.property]){
+                rowspan++;
+              }else{
+                break;
+              }
+            } 
+            return {
+              rowspan: rowspan,
+              colspan: 1
+            }
+          }
+        }
+      }
+    } 
     //////////////////////////////////////////////////////////////////
   },
   async mounted(){
@@ -659,6 +702,7 @@ export default {
       this.showContLabel = this.showCont?this.$t('commInfo.hiddenCont'):this.$t('commInfo.showCont')
     },
     mparams(){
+      this.span_id={};
       this.initCell();
       this.getDlg();
       this.getLayout();

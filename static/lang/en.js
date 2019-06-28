@@ -15,6 +15,7 @@ module.exports = {
     B_COPY:'COPY',
     B_CHK:'CheckUP/Back',
     B_SUB:'Submit/Back',
+    B_SubmitProcess:'Process view',
     B_EXP:'Export',
     B_FIRST:'First',
     B_NEXT:'Next',
