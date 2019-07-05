@@ -859,7 +859,7 @@ export default {
       let cc = new Array;
       cc.push(this.dsm.ccells);
       this.lay= new BipLayout(this.mparams.playout,cc);
-      console.log(this.lay)
+      // console.log(this.lay)
     },
   },
   computed: {

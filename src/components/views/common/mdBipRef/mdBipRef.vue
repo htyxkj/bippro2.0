@@ -28,7 +28,7 @@ export default {
   computed:{
     bpk(){
       if(this.bipRefId){
-        if((this.bipRefId.attr&1)>0){
+        if((this.bipRefId.attr&1)>0 || (this.bipRefId.attr&(0x80000))){
           return true;
         }
       }

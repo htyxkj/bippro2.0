@@ -100,7 +100,7 @@
                 </md-table-body>
               </md-table>  -->  
 
-              <vxe-table class="mytable-style" :data.sync="ds_m.cdata" :height="tableHeight"  :highlight-hover-row="true" :highlight-current-row="true" @cell-click="onTableSelect" header-cell-class-name="md-numeric"  @header-cell-click="onSortNew" @sort-change="sort_change" :row-class-name="getRowStyleNew" border resizable stripe :span-method="rowspanMethod"><!-- :header-cell-class-name="getTitleNewStyle" -->
+              <vxe-table class="mytable-style" :data.sync="ds_m.cdata" :height="tableHeight" highlight-current-row @cell-click="onTableSelect" header-cell-class-name="md-numeric"  @header-cell-click="onSortNew" @sort-change="sort_change" :row-class-name="getRowStyleNew" border resizable stripe :span-method="rowspanMethod"><!-- :header-cell-class-name="getTitleNewStyle" -->
                 <!-- <md-bip-bi-table-column :ds_m="ds_m" :Multi_level_title="Multi_level_title" ></md-bip-bi-table-column> -->
                 <vxe-table-column :min-width="50" :width="item.ccCharleng*9+40" v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow" :key="index" :prop="item.id" :label="item.labelString" :sortable="isSortable(item)" :remote-sort="true" show-header-overflow show-overflow> 
                   <template slot-scope="scope"> 
@@ -244,6 +244,7 @@
       </md-dialog>
     </md-part-body>
     <bill-link-applet ref="sbill"  ></bill-link-applet>
+    <bill-blbip-applet ref="BL_BIP"></bill-BLBIP-applet>
     <md-bip-bi-dialog ref="biDialog"  ></md-bip-bi-dialog>
   </md-part>
 </template>
@@ -251,11 +252,12 @@
 import bipBi from '../js/bip_bi.js' 
 import billS from '../../classes/billState';
 import common from '../../commonModal.js'; 
+import billBlbipApplet from '../../applet/billBLBIPApplet' 
 import billLinkApplet from '../../applet/billLinkApplet'
 import mdBipBiDialog from '../../biDialog/mdBipBiDialog'
 import mdBipBiTableColumn from '../table/biTableColumn'
 export default { 
-  components:{billLinkApplet,mdBipBiDialog,mdBipBiTableColumn},
+  components:{billLinkApplet,mdBipBiDialog,mdBipBiTableColumn,billBlbipApplet},
   data(){
     return { 
       pageOn:true,
@@ -272,26 +274,6 @@ export default {
   computed: { 
   },
   methods:{  
-    getLayout(){
-      let pbds = this.mparams.pbds; 
-      if(pbds){
-        if(pbds.indexOf("layout") !=-1){
-          let pbds0 = pbds.substring(pbds.indexOf("layout"),pbds.length);
-          let lay = pbds0.split("&")[0];
-          this.biLay = lay.substring(lay.indexOf("\"")+1,lay.lastIndexOf("\""));
-          if(this.biLay =='card'){
-            this.lineToColumn = "列转行";          
-          }
-        }else{
-          this.biLay="table";
-        }
-        if(pbds.indexOf("timedown") !=-1){
-          let pbds0 = pbds.substring(pbds.indexOf("timedown"),pbds.length);
-          let lay = pbds0.split("&")[0];
-          this.timedown = lay.substring(lay.indexOf("\"")+1,lay.lastIndexOf("\"")); 
-        }
-      }
-    },
     moblieButton(btn,item){ 
       this.selectData = item; 
       this.ds_m.currRecord = item;
@@ -347,7 +329,7 @@ export default {
 
   },
   created(){ 
-    this.getLayout(); 
+    // this.getPbds();
   },
   mounted(){  
     setTimeout(() => {

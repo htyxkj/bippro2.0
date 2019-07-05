@@ -54,6 +54,7 @@ export default {
       fixedColumn:0,//固定列数
       Multi_level_title:{},//多级表头
       span_id:{},
+      menuList: JSON.parse(window.sessionStorage.getItem("menulist")),
     }
   },
   methods: {
@@ -128,7 +129,7 @@ export default {
           }
         }
         if (!this._mparams.bgroup) {
-          this.fetchUIData(); //一进入页面不查询
+          // this.fetchUIData(); //一进入页面不查询
         } else {
           this.groupfilds = [];
           this.groupdatafilds = [];
@@ -234,10 +235,7 @@ export default {
       this.pageInfo.size = 20;
       this.pageInfo.page = 1;
       this.pageInfo.total = 0;
-
-
       this.groupTJ = false;
-
       if (global.BI_SHOWCONDITION) {
         this.showCont = true; //隐藏，显示条件
         this.showAllCont = true; //隐藏，显示条件 剩余
@@ -246,7 +244,7 @@ export default {
         this.showAllCont = false; //隐藏，显示条件 剩余
       }
     },
-    initCell() {
+    async initCell() {
       this.initInf();
       this.mparamsArr = this.mparams;
       // this.mparamsArr.push(this.mparams); 
@@ -259,7 +257,7 @@ export default {
         this.ds_m = null;
         this.ds_cont = null;
         this.ds_ext = [];
-        this.getCell();
+        await this.getCell();
 
       }
     },
@@ -290,11 +288,59 @@ export default {
       if (columnIndex >= 0) {
         let cell = this.ds_m.ccells.cels[columnIndex];
         let slkid = row[cell.id];
-        if ((cell.attr & 0x80000) > 0) {
+        if ((cell.attr & this.bills1.BELINKED) > 0) {
           let slkbuidCell = this.ds_m.ccells.cels[columnIndex + 1];
           let slkbuid = row[slkbuidCell.id];
-          if (slkid && slkbuid) { 
-            this.$refs["sbill"].open(slkid, slkbuid);
+          let data =  await this.getConstant('BL_' + this.mparams.pbuid+"_"+cell.id); 
+          if(data == null){
+            if (slkid && slkbuid) { 
+              this.$refs["sbill"].open(slkid, slkbuid);
+            }
+          }else{
+            data = data[0].split("&"); 
+            let menuID = data[0];
+            let tjd="";
+            for(var i=1;i<data.length;i++){
+              let dd = data[i].split("=");
+              tjd += dd[1]+"="+row[dd[0]]+"&"
+            }
+            tjd = tjd.substring(0,tjd.length-1); 
+            let mm = this.getMenu(this.menuList,menuID);
+            if (!mm) {
+              this.$notify.info({
+                content: "没有" + menuID + "菜单权限!"
+              });
+              return false;
+            }else{
+              let pbuid = mm.command.substring(mm.command.indexOf("=")+1,mm.command.indexOf("&"));
+              let data1 = {
+                dbid: global.DBID,
+                usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
+                apiId: global.APIID_MPARAMS,
+                pbuid: pbuid,
+                pmenuid:menuID,
+              }; 
+              var res = await this.getDataByAPINewSync(data1);
+              if(res.data.id ==0){
+                let mparams = res.data.data.mparams; 
+                let pbds0 = this.getPbds(mparams.pbds,'ptran')
+                if(pbds0){
+                  mparams.pbds= mparams.pbds.replace(pbds0,'ptran="'+tjd+'"')
+                }else{
+                  if(mparams.pbds && mparams.pbds.length>1){
+                    mparams.pbds+='&ptran="'+tjd+'"';
+                  }else{
+                    mparams.pbds = 'ptran="'+tjd+'"';
+                  }
+                }
+                this.$refs["BL_BIP"].open(mparams,mm.menuName);
+              }else{
+                this.$notify.info({
+                  content: "没有菜单参数!"
+                });
+                return false;
+              }
+            }
           }
         } else { 
           // console.log(row,index)
@@ -561,7 +607,77 @@ export default {
       }
       return style
     },
-
+    //解析菜单参数中的其他定义
+    doPbds(){
+      let pbds = this.mparams.pbds; 
+      if(pbds){
+        if(pbds.indexOf("layout") !=-1){ 
+          let lay = this.getPbds(pbds,'layout') 
+          this.biLay = lay.substring(lay.indexOf("\"")+1,lay.lastIndexOf("\""));
+          if(this.biLay =='card'){
+            this.lineToColumn = "列转行";          
+          }
+        }else{
+          this.biLay="table";
+        }
+        if(pbds.indexOf("timedown") !=-1){ 
+          let lay = this.getPbds(pbds,'timedown') 
+          this.timedown = lay.substring(lay.indexOf("\"")+1,lay.lastIndexOf("\"")); 
+        }
+        if(pbds.indexOf("ptran") !=-1){ 
+          let pbds0 = this.getPbds(pbds,'ptran') 
+          pbds0 = pbds0.substring(pbds0.indexOf("\"")+1,pbds0.lastIndexOf("\""));
+          let pbdsArr = pbds0.split("&");
+          for(var i=0;i<pbdsArr.length;i++){
+            let onep = pbdsArr[i].split("=");
+            this.ds_cont.currRecord[onep[0]] = onep[1]; 
+          }
+          this.fetchUIData();
+        }
+      }
+    },
+    //拆分菜单参数中的其他定义
+    getPbds(pbds,key){
+      if(pbds.indexOf(key)!=-1){
+        let st0 = pbds.substring(pbds.indexOf(key),pbds.length);
+        let st1 = st0.split("");
+        let i=0;
+        let vl = ""; 
+        for(var j=0;j<st1.length;j++){
+          let item  = st1[j]
+          if(item == "\"")
+            i++ 
+          if(item == "\"" && i==2){
+            vl+=item;
+            break;
+          }
+          if(i==0 &item =="&"){
+            break;
+          }
+          vl+=item;
+        };
+        return vl;
+      }else{
+        return null;
+      }
+    },
+    //遍历菜单
+    getMenu(menus,mid){
+      let mm;
+      for (let i = 0; i < menus.length; i++) {
+        let menu = menus[i];
+        if (menu.menuId === mid) {
+          mm = menu;
+          break;
+        }
+        if(menu.haveChild){
+          mm = this.getMenu(menu.childMenu,mid);
+          if(mm)
+            break;
+        }
+      }
+      return mm;
+    },
     //////////////////////////////////////////////////////////////////
     //新table选中行
     TableSelect(item) {
@@ -599,13 +715,27 @@ export default {
               // for(var i =0;i<doc.length;i++){
               //   doc[i].setAttribute("style","background-color: "+vl[1]+";");
               // } 
-              let cc = document.querySelector('tr[data-rowkey="'+ column.rowIndex+'"]')
-              if(cc)
-              cc.setAttribute("style","background-color:  "+vl[1]+";");
-              // return 'sctrl'
+              // let cc = document.querySelector('tr[data-rowkey="'+ column.rowIndex+'"]')
+              // if(cc)
+              // cc.setAttribute("style","background-color:  "+vl[1]+";");
+              // 创建我们的样式表
+
+                var style = document.createElement('style');
+                style.innerHTML =
+                    '.sctrl {' +
+                        'background-color: '+vl[1]+' !important;' +
+                    '}';
+                // 获取第一个脚本标记
+                var ref = document.querySelector('script');
+                // 在第一个脚本标签之前插入新样式
+                ref.parentNode.insertBefore(style, ref);
+              return 'sctrl'
           }
         }
       } 
+      // if(column.rowIndex%2==0){
+      //   return 'doubleRow';
+      // } 
     },
     getTitleNewStyle(column){//新Table表头样式
       //ds_m.ccells.cels
@@ -694,18 +824,32 @@ export default {
     //////////////////////////////////////////////////////////////////
   },
   async mounted(){
+
+    if(this.$refs['BL_BIP'])
+      this.$refs['BL_BIP'].close();
+    // if(this.$refs['biDialog'])
+    //   this.$refs['biDialog'].close(); 
+    if(this.$refs['sbill'])
+      this.$refs['sbill'].close();
     await this.initCell();
-    await this.getDlg();
+    await this.getDlg();  
+    this.doPbds(); 
   }, 
   watch:{
     showCont(){
       this.showContLabel = this.showCont?this.$t('commInfo.hiddenCont'):this.$t('commInfo.showCont')
     },
-    mparams(){
+    async mparams(){
+      if(this.$refs['BL_BIP'])
+        this.$refs['BL_BIP'].close();
+      // if(this.$refs['biDialog'])
+      //   this.$refs['biDialog'].close(); 
+      if(this.$refs['sbill'])
+        this.$refs['sbill'].close();
       this.span_id={};
-      this.initCell();
+      await this.initCell();
       this.getDlg();
-      this.getLayout();
+      this.doPbds();
     },
     showAllCont(){
       if(this.showAllCont){

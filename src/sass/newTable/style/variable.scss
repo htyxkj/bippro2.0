@@ -20,9 +20,9 @@ $vxe-table-border-color: #e8eaec;
 $vxe-table-background-color: #ffffff;
 
 /*table row*/
-$vxe-table-row-striped-background-color: #fafafa; 
+$vxe-table-row-striped-background-color: #e0e0e0;//隔行变色
 $vxe-table-row-hover-background-color: #4eaf826e;//鼠标悬浮
-$vxe-table-row-selected-background-color:#4eaf82;//选中行背景色
+$vxe-table-row-selected-background-color:#4eaf82 !important;//选中行背景色
 
 /*table column*/
 $vxe-table-column-icon-border-color: #c0c4cc;
@@ -45,8 +45,3 @@ $vxe-table-validate-error-color: #f56c6c;
 /*tooltip*/
 $vxe-tooltip-dark-background-color: #303133;
 $vxe-tooltip-light-background-color: #fff;
-
-
-
-$vxe-table-background-color-sctrl:rgba(236, 35, 24, 0.14);
-$vxe-table-background-color-doubleRow: #e0e0e0; //隔行变色

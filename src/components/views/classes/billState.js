@@ -13,7 +13,8 @@ const LSUPDATE = 0x4000;//临时改
 const ORDERBY = 0x400000;//排序
 const Unconditional=0x4;//非条件
 const MERGE = 0x10000000;//合并
-const INITIALDATA = 0x100000000//二次初值
+const INITIALDATA = 0x100000000;//二次初值
+const BELINKED = 0x80000;//关联
 
 const billState = {
   INSERT,
@@ -32,6 +33,7 @@ const billState = {
   INITIALDATA,
   Unconditional,
   MERGE,
+  BELINKED,
 }
 
 export default billState;

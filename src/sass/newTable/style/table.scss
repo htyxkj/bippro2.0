@@ -83,12 +83,6 @@
       border-bottom: 1px solid $vxe-table-border-color;
     }
   }
-  .sctrl{
-    background-color: $vxe-table-background-color-sctrl;
-  }
-  .doubleRow{
-    background-color: $vxe-table-background-color-doubleRow;
-  }
   &.t--highlight {
     .vxe-body--row {
       &:hover {

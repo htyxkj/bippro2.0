@@ -99,7 +99,7 @@
                 </md-table-body>
               </md-table>  -->  
               <vxe-table ref="newBiTable" class="mytable-style" :data.sync="ds_m.cdata" :height="tableHeight" 
-                :highlight-hover-row="true" :highlight-current-row="true" @cell-click="onTableSelect" 
+                highlight-hover-row highlight-current-row @cell-click="onTableSelect" 
                 header-cell-class-name="md-numeric"  @header-cell-click="onSortNew" @sort-change="sort_change" 
                 :row-class-name="getRowStyleNew" border  resizable :auto-resize="true"  stripe 
                 :span-method="rowspanMethod">  
@@ -246,8 +246,9 @@
         </md-dialog-actions>
       </md-dialog>
     </md-part-body>
-    <bill-link-applet ref="sbill"  ></bill-link-applet>
-    <md-bip-bi-dialog ref="biDialog"  ></md-bip-bi-dialog>
+    <bill-link-applet ref="sbill"></bill-link-applet>
+    <bill-blbip-applet ref="BL_BIP"></bill-BLBIP-applet>
+    <md-bip-bi-dialog ref="biDialog"></md-bip-bi-dialog>
   </md-part>
 </template>
 <script> 
@@ -255,10 +256,11 @@ import bipBi from '../js/bip_bi.js'
 import billS from '../../classes/billState';
 import common from '../../commonModal.js'; 
 import billLinkApplet from '../../applet/billLinkApplet'
+import billBlbipApplet from '../../applet/billBLBIPApplet' 
 import mdBipBiDialog from '../../biDialog/mdBipBiDialog'
 import mdBipBiTableColumn from '../table/biTableColumn'
 export default { 
-  components:{billLinkApplet,mdBipBiDialog,mdBipBiTableColumn},
+  components:{billLinkApplet,mdBipBiDialog,mdBipBiTableColumn,billBlbipApplet},
   data(){
     return { 
       pageOn:true,
@@ -277,26 +279,6 @@ export default {
   computed: { 
   },
   methods:{  
-    getLayout(){
-      let pbds = this.mparams.pbds; 
-      if(pbds){
-        if(pbds.indexOf("layout") !=-1){
-          let pbds0 = pbds.substring(pbds.indexOf("layout"),pbds.length);
-          let lay = pbds0.split("&")[0];
-          this.biLay = lay.substring(lay.indexOf("\"")+1,lay.lastIndexOf("\""));
-          if(this.biLay =='card'){
-            this.lineToColumn = "列转行";          
-          }
-        }else{
-          this.biLay="table";
-        }
-        if(pbds.indexOf("timedown") !=-1){
-          let pbds0 = pbds.substring(pbds.indexOf("timedown"),pbds.length);
-          let lay = pbds0.split("&")[0];
-          this.timedown = lay.substring(lay.indexOf("\"")+1,lay.lastIndexOf("\"")); 
-        }
-      }
-    },
     moblieButton(btn,item){ 
       this.selectData = item; 
       this.ds_m.currRecord = item;
@@ -352,7 +334,7 @@ export default {
 
   },
   created(){ 
-    this.getLayout(); 
+    // this.getPbds();
   },
   mounted(){  
     setTimeout(() => {

@@ -227,9 +227,10 @@ export default {
     close(){  
       this.blink=false;
       this.opera= null;
-
-      this.ds_m.clearData();
-      this.ds_m.currRecord=null;
+      if(this.ds_m){
+        this.ds_m.clearData();
+        this.ds_m.currRecord=null;
+      }
       this.sidv='';
     },
     //顶部按钮权限！
