@@ -83,7 +83,7 @@ export default class CDataSet {
         // 公式计算
         var vl = this.scriptProc.execute(scstr,null,col);
         // console.log(vl,this.currRecord,col.id,scstr);
-        vl = this.dataFmort(cell,vl);
+        vl = this.dataFmort(col,vl);
         this.currRecord[col.id] = vl;
       }
     })
@@ -318,6 +318,14 @@ export default class CDataSet {
       }
       if (iniVl == '[Y2-M]') {
         iniVl = common.now('YY-MM');
+      }
+      if (iniVl && iniVl.indexOf("[Y]") !=-1) {
+        let Y = common.now('YYYY');
+        iniVl = iniVl.replace("[Y]",Y);
+      }
+      if (iniVl && iniVl.indexOf("[M]") !=-1) {
+        let Y = common.now('MM');
+        iniVl = iniVl.replace("[M]",Y);
       }
       if (item.type <= 5) {
         if (iniVl == undefined)

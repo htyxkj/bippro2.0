@@ -15,7 +15,7 @@
       </md-toolbar>
       <md-dialog-content style="background-color: #f0eff4;">
         <div>
-          <div class="div1"> 
+          <!-- <div class="div1"> 
             <div class="div2-1">
               <img class="image2" src="../../../img/check/process_ty.png">
               <div class="div3">
@@ -49,28 +49,42 @@
                 </div>
               </div>
             </div> 
-            
-            <div v-for="(item,index) in info" class="div2-1">
-              <img class="image2" v-if="item.cid == -1" src="../../../img/check/process_bh.png">
-              <img class="image2" v-else-if="item.cid == -2" src="../../../img/check/process_ds.png">
-              <img class="image2" v-else src="../../../img/check/process_ty.png">
-              <div class="div3">
-                <div style="float:left;">&nbsp;&nbsp;{{item.nameto}}<br/>&nbsp;&nbsp;
-                  <span style="color:#8FB95C;font-size: 10px">{{item.stto}}</span>
-                </div>
-                <div class="div4">
-                  <span style="font-size:11px">
-                    {{item.dateto}}
-                  </span>
-                </div>
-                <div class="div4">
-                  <img class="image3" v-if="item.cid == -1" src="../../../img/check/process_bh1.png">
-                  <img class="image3" v-else-if="item.cid == -2" src="../../../img/check/process_ds1.png">
-                  <img class="image3" v-else src="../../../img/check/process_ty1.png">
+            </div> -->
+            <div v-for="(item,index) in info" >
+              <div class="div2-1" v-if=" (item.stfr == '驳回' || item.stfr == '新建')">
+                <img class="image2" src="../../../img/check/process_ty.png">
+                <div class="div3">
+                  <div style="float:left;">&nbsp;&nbsp;{{item.namefr}}<br/>&nbsp;&nbsp;
+                    <span style="color:#8FB95C;font-size: 10px">发起申请</span>
+                  </div>
+                  <div class="div4">
+                    <span style="font-size:11px">
+                      {{item.datefr}}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+              <div class="div2-1">
+                <img class="image2" v-if="item.cid < 0 && item.cid != -20000" src="../../../img/check/process_bh.png">
+                <img class="image2" v-else-if="item.cid == -20000" src="../../../img/check/process_ds.png">
+                <img class="image2" v-else src="../../../img/check/process_ty.png">
+                <div class="div3">
+                  <div style="float:left;">&nbsp;&nbsp;{{item.nameto}}<br/>&nbsp;&nbsp;
+                    <span style="color:#8FB95C;font-size: 10px">{{item.stto}}</span>
+                  </div>
+                  <div class="div4">
+                    <span style="font-size:11px">
+                      {{item.dateto}}
+                    </span>
+                  </div>
+                  <div class="div4">
+                    <img class="image3" v-if="item.cid <0 && item.cid != -20000" src="../../../img/check/process_bh1.png">
+                    <img class="image3" v-else-if="item.cid == -20000" src="../../../img/check/process_ds1.png">
+                    <img class="image3" v-else src="../../../img/check/process_ty1.png">
+                  </div>
+                </div>
+              </div> 
+            </div> 
         </div>
       </md-dialog-content>
 
@@ -96,6 +110,7 @@ export default {
       if(res.data.id == 0){
         this.info = res.data.data.info;
       }
+      console.log(this.info)
       if(this.chkinfo && this.chkinfo.chkInfos && this.chkinfo.chkInfos.length>0){
         let data = this.info[this.info.length-1];
         if(data && !data.nameto){
@@ -105,12 +120,12 @@ export default {
           });
           name = name.substring(0,name.length-1)
           this.info[this.info.length-1].nameto=name; 
-          this.info[this.info.length-1].cid=-2; 
+          this.info[this.info.length-1].cid=-20000; 
         }
       }
 
       this.oneRow = this.info[0];
-      this.info = this.info.slice(1);
+      // this.info = this.info.slice(1);
       this.$refs["dialog"].open();
 
     },

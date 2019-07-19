@@ -31,7 +31,7 @@
       <!-- <md-bip-dia :assType="column.assType" ref="ref" :options="refOptions" :multiple="multiple" :mdSelection="true" :disabled="disabled" :md-ref-id="mdRefId" @open="onRefOpen" @close="onRefClose"></md-bip-dia> -->
 
       <md-bip-dia :assType="column.assType" ref="ref" :mdRefId="column.editName" :multiple="multiple" :mdSelection="mdSelection" @close="onRefClose" :disabled="disabled"></md-bip-dia> 
-
+      <md-bip-object-dia ref="objcetCell"  :cell="column" :assType="column.assType" :mdRefId="column.editName" @writeBack="writeBack" :disabled="disabled" :cds="dsm" ></md-bip-object-dia>
   </div>
 </template>
 
@@ -97,8 +97,13 @@ export default {
       var script = await this.analysisScript();  
       // if(script){ 
         this.refIsOpened = true;
-        this.$emit("init", this.refOptions);
-        this.$refs["ref"].open(script);
+        this.$emit("init", this.refOptions); 
+        if(this.column.assType == 'C_GROUP'){ 
+
+        }else if(this.column.assType == 'C_QUERY'){
+          this.$refs['objcetCell'].open(script) 
+          return;
+        }
       // }
     },
     async onRefOpen(type) { 
@@ -306,6 +311,46 @@ export default {
         }
       }
     },
+
+    writeBack(res){
+      console.log(res)
+      if(this.dsm.canEdit){
+        let rtnpar = res[0];
+        let crd = this.dsm.currRecord;
+        let _self = this; 
+        // console.log("Set 子表")
+        //单子表
+          let oneChild = res[0]; 
+          // _self.dsm.ds_sub[0].cdata=[]; 
+          _.forEach(oneChild.cdata,function(key,v){  
+            _self.onLineAdd(_self.dsm.ds_sub[0]); 
+            let data ={};
+            _.forEach(key,function(value,index){
+              let i = _.findIndex(oneChild.kft,function(n){ 
+                return n.keyf ===index;
+              }); 
+              if(i>-1){
+                _self.$set(_self.dsm.ds_sub[0].cdata[v],oneChild.kft[i].keyt,value); 
+              }else{ 
+                _self.$set(_self.dsm.ds_sub[0].cdata[v],index,value);
+              }   
+            }); 
+          });
+        let cc = {cellId:this.column.id};
+        this.$emit('change',cc);
+      }
+    },
+    onLineAdd(subdsm) {  
+      // this.curr_dsm = subdsm;
+      var subId = subdsm.ccells.obj_id;
+      if (!this.dsm.canEdit) return;
+      var crd = subdsm.createRecord();
+      // console.log(subdsm,subId,crd);
+      if (!this.dsm.currRecord[subId]) {
+        this.dsm.currRecord[subId] = [];
+      }
+      this.dsm.currRecord[subId] = subdsm.cdata;
+    }, 
   }, 
   mounted() { 
     this.$nextTick(() => {

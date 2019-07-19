@@ -2,6 +2,7 @@ const INSERT = 1; //--新增
 const EDITED = 2; //值改变
 const DELETE = 4; //加删除标志
 const EDITSUB = 8; //字表改变
+const NOTNULL = 0x2;//非空
 const EDITEDPK = 0x10; //主键改变
 const IMPORT =  0x20; //这主要用于导入记录(结合INSERT使用,保存时先做更新,不存在时再做插入)
 const REPLACESUB= 0x40; //(替换子表)修改前先删除子表
@@ -15,6 +16,7 @@ const Unconditional=0x4;//非条件
 const MERGE = 0x10000000;//合并
 const INITIALDATA = 0x100000000;//二次初值
 const BELINKED = 0x80000;//关联
+const SINGLEVAL = 0x400000;//单值
 
 const billState = {
   INSERT,
@@ -34,6 +36,8 @@ const billState = {
   Unconditional,
   MERGE,
   BELINKED,
+  SINGLEVAL,
+  NOTNULL,
 }
 
 export default billState;

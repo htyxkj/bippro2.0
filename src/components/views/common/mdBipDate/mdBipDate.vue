@@ -37,6 +37,7 @@
 
 <script>
 import common from "./common";
+import billS from "../../classes/billState.js"
 import getClosestVueParent from "../../../core/utils/getClosestVueParent";
 import moment from "moment";
 import mobildDate from "./mobileDate/datePicker.js";
@@ -60,7 +61,8 @@ export default {
     value(){
       if(this.value !== this.checkVal){
         this.formtDate();
-        if (this.isReport) {
+        let cc = (this.cell.attr & billS.SINGLEVAL);
+        if (this.isReport && cc<=0) {
           this.range = "~";
           if (this.value.indexOf("~") == -1) {
             this.checkVal = this.formattedValue("");
@@ -127,7 +129,7 @@ export default {
     },
     success(checkVal) {
       this.checkVal = this.formattedValue(checkVal);
-      this.updateValue(checkVal,false);
+      this.updateValue(this.checkVal,false);
     },
     error() {
       this.checkVal = "";
@@ -213,10 +215,12 @@ export default {
   },
   mounted() { 
     this.formtDate();
-    if (this.isReport) {
+    let cc = (this.cell.attr & billS.SINGLEVAL);
+    if (this.isReport && cc<=0) {
       this.range = "~";
       if (this.value.indexOf("~") == -1) {
         this.checkVal = this.formattedValue("");
+        this.updateValue("",false);
       }
     } else {
       this.checkVal = this.formattedValue(this.value);

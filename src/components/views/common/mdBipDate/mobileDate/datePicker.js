@@ -385,7 +385,6 @@ export default {
             time_ss = time_ss > 9 ? time_ss : '0' + time_ss;
 
             var v = (date_yy % passY + this.minY) + "-" + date_mm + "-" + date_dd +' '+time_hh+':'+time_mm+':'+time_ss;
-            this.trigger.value = v; 
             this.checkV = v;
             this.success(this.checkV)
             setTimeout(() => {

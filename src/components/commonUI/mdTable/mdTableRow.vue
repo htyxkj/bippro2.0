@@ -143,7 +143,7 @@
           if (this.mdSelection) {
             this.parentTable.hasRowSelection = true;
           }
-          this.parentTable.data.push(this.mdItem);
+          // this.parentTable.data.push(this.mdItem);
         }
       }
     },

@@ -6,7 +6,7 @@
             <h1 class="md-title">{{title}}</h1> 
           </md-layout> 
           <md-layout md-flex-xsmall="10" md-flex-small="10" md-flex-medium="10" md-flex-large="10" >
-            <md-button class="md-icon-button" @click.native="cancel()">
+            <md-button class="md-icon-button" @click.native="close()">
               <md-icon>close</md-icon>
             </md-button>   
           </md-layout>
@@ -14,7 +14,7 @@
       </md-toolbar>
       <md-dialog-content class="no-padding"> 
         <md-content class="flex layout-column">
-          <md-layout v-if="dscont&&dscont.ccells!=null" style="margin-bottom:10px">
+          <md-layout v-if="dscont&&dscont.ccells!=null&&showDscont" style="margin-bottom:10px">
             <md-bip-input v-for="cell in dscont.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dscont.currRecord"
             :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
           </md-layout>
@@ -53,7 +53,7 @@
                 </md-table-pagination>
               </md-table-tool>
               <md-table-card v-show="false">
-                <md-table class="flex">
+                <md-table class="flex" v-if="dssub">
                   <md-table-header>
                     <md-table-row v-if="dssub">
                       <md-table-head v-for="(item) in dssub.ccells.cels" :key="item.id" v-if="item.isShow" :md-numeric="item.type===3">{{item.labelString}}</md-table-head>
@@ -123,15 +123,15 @@ export default {
         }
       }
     },
-    mdSelection:{
-      type:Boolean,
-      default:false
-    },
     disabled:{
       type:Boolean,
       default:false
     },
     assType:null,//辅助类型 
+    cds:{
+      type:Object,
+      default:null
+    }
   },
   data(){
     return{ 
@@ -148,6 +148,8 @@ export default {
       cpsparam:null,
       mdAutoSelect: true,
       cpinf:[],
+      mdSelection:false,
+      showDscont:false,
     } 
   },
   mounted(){ 
@@ -156,11 +158,17 @@ export default {
   methods:{ 
     selectOK() { 
       if (this.selectData) {
-        let robj = this.dsm.currRecord;
-        let cldata = this.dssub.cdata;
-        this.cpinf[0].cdata = robj;
-        if(this.dssub.cdata.length>0)
-          this.cpinf[1].cdata = cldata;
+        if(this.mdSelection){
+          this.cpinf[0].cdata = this.selectData;
+        }else{
+          let robj = this.dsm.currRecord;        
+          this.cpinf[0].cdata = robj;
+          if(this.dssub){
+            let cldata = this.dssub.cdata;
+            if(this.dssub.cdata.length>0)
+              this.cpinf[1].cdata = cldata;
+          }
+        }
         // console.log(this.cpinf)
         this.$emit('writeBack',this.cpinf); 
         this.close();
@@ -183,8 +191,14 @@ export default {
       this.featchData();
     },
     async open(){ 
+      this.showDscont=false;
+      this.selectData = null;
+      this.dsm = null;
       await this.doQuery();
+      //初始化条件
+      this.initDscont();
       this.$refs['dialog'].open();
+      this.showDscont=true;
       await this.featchData(); 
       this.initCPInf();
     }, 
@@ -211,23 +225,32 @@ export default {
         this.dsm = new CDataSet(data.cells[1]);
         this.dsm.cdata = [];
         this.dsm.pcell = data.pcell;
-        this.dssub = new CDataSet(data.cells[1].subLayCells[0]);
-        this.dssub.cdata = [];
+        if(data.cells[1].subLayCells){
+          this.dssub = new CDataSet(data.cells[1].subLayCells[0]);
+          this.dssub.cdata = [];
+        }
       }else{
         this.refData = [];
         this.pageInfo.total = 0;
         this.$notify.danger({content: data.message});
       }
+      if((this.dsm.ccells.attr & 0x40 )>0)
+        this.mdSelection = true;
     },
     getCallError(res){ 
       this.$notify.danger({content: "出错了！"});
     },
     onTableSelect(item) {
       // console.log(item);
-      this.selectData = Object.values(item)[0];
+      if(this.mdSelection){
+        this.selectData = [];
+        this.selectData = item;
+      }else{
+        this.selectData = Object.values(item)[0]; 
+        this.dsm.currRecord = this.selectData;
+      }
       // console.log(this.selectData)
-      this.dsm.currRecord = this.selectData;
-      if (this.selectData) this.getChildData(Object.values(item)[0]);
+      if (this.selectData && this.dssub) this.getChildData(Object.values(item)[0]);
     },
     onTablePagination(pager) {
       this.pageInfo.page = pager.page;
@@ -256,13 +279,15 @@ export default {
         this.pageInfo.total = res.data.data.pages.totalItem;
         if (this.dsm.cdata.length > 0) {
           this.dsm.clearData();
+          if(this.dssub)
           this.dssub.clearData();
         }
-        _.forEach(res.data.data.pages.celData, row => {
-          // row.sys_stated = BillState.HISTORY;
-          this.dsm.addRow(row);
-          // console.log(row)
-        });
+        this.dsm.cdata = res.data.data.pages.celData;
+        // _.forEach(res.data.data.pages.celData, row => {
+        //   // row.sys_stated = BillState.HISTORY;
+        //   this.dsm.addRow(row);
+        //   // console.log(row)
+        // });
       }
     },
     setRowColor(_index) {
@@ -325,7 +350,19 @@ export default {
       });
       this.cpinf = cpinf1;
     }, 
-    
+    initDscont(){  
+      let cels = this.dscont.ccells.cels;
+      for(var i =0;i<cels.length;i++){
+        let cel = cels[i]
+        if(cel.script){
+          let scr = cel.script.split("*");
+          let dd = this.cds.getDataSet(scr[0])
+          if(dd)
+          this.dscont.currRecord[cel.id] = dd.currRecord[scr[1]]
+        }
+      }
+    }
+
   },
   watch:{ 
   },

@@ -1,7 +1,7 @@
 <template>
   <md-input-container>
     <label :for="cell.id">{{cell.labelString}}</label>
-    <md-select :name="cell.id" :id="cell.id" v-model="modal[cell.id]" :required="cell.isReq" :disabled="disabled" @change="dataCC" :class="disabled?disabledStyleA:disabledStyleB">
+    <md-select :name="cell.id" :id="cell.id" v-model="modal[cell.id]" :required="cell.isReq" :disabled="disabled" :class="disabled?disabledStyleA:disabledStyleB">
       <md-option :value="item[header[0]]+''" v-for="(item,index) in values" :key="index" @selected="optionSel(index)">{{item[header[1]]}}</md-option>
     </md-select>
   </md-input-container>
@@ -62,7 +62,9 @@ export default {
         if (data.code == 1) {
           this.values = data.values;
           if(!this.cell.isReq){
-            var item = { code: '', name: '' };
+            let item = {};
+            item[this.header[0]] = ''
+            item[this.header[1]] = ''
             this.values.splice(0, 0, item);  
           }
         }
@@ -83,10 +85,9 @@ export default {
       var modalValue = this.modal[this.cell.id];
       this.oldValue = modalValue?modalValue:'';
     },
-    dataCC(value) {
-    }
   },
   mounted() { 
+    console.log("List")
     if (this.cell) {
       let notedit = this.cell.attr & this.NOTEDIT;
       this.disabled = notedit > 0 ? true : false;

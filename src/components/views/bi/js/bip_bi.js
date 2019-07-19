@@ -183,6 +183,16 @@ export default {
         if((cel.attr & this.bills1.Unconditional)>0){
           delete pdata[cel.id]; 
         }
+        if((cel.attr & this.bills1.NOTNULL)>0){
+          if(!pdata[cel.id]){
+            this.$notify.warning({
+              content: "条件项 【" + cel.labelString + "】不能为空！",
+              placement: "mid-center"
+            });
+            this.loading--;
+            return;
+          }
+        }
       }
     //   let noTJ = true;
     //   for(var i=0,l=pdata.length;i<l;i++){
@@ -290,7 +300,9 @@ export default {
         let slkid = row[cell.id];
         if ((cell.attr & this.bills1.BELINKED) > 0) {
           let slkbuidCell = this.ds_m.ccells.cels[columnIndex + 1];
-          let slkbuid = row[slkbuidCell.id];
+          let slkbuid = ''
+          if(slkbuidCell)
+            slkbuid = row[slkbuidCell.id];
           let data =  await this.getConstant('BL_' + this.mparams.pbuid+"_"+cell.id); 
           if(data == null){
             if (slkid && slkbuid) { 
