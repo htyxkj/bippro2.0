@@ -583,10 +583,11 @@ export default {
           this.$refs["biDialog"].openREF(btn,  this.selectData,this.ds_m,this.getOpt); 
       }
     },
-    getOpt(state) {
+    async getOpt(state) {
       this.btnDisabled = false;
       if (state == 1) {
-        this.initCell()
+        // await this.initCell()
+        this.fetchUIData()
       }
     },
     //旧table选中行

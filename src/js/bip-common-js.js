@@ -13,7 +13,7 @@
 // global.BIPAPIURL = 'http://www.bip-soft.com:89/clubreserv/';//会所预定
 // global.BIPAPIURL = 'http://www.juminfuwu.cn:88/nc_jxgl/';//绩效管理
 // global.BIPAPIURL = 'http://www.juminfuwu.cn:88/xsgk/';//安全隐患监控平台正式
-// global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/';//安全隐患监控平台测试
+global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/';//安全隐患监控平台测试
 // global.BIPAPIURL = 'http://192.168.0.200:8088/airfencea/';//本机测试环境
 // global.BIPAPIURL = 'http://115.28.191.203:89/property/';//物业管理
 // global.BIPAPIURL = 'http://115.28.191.203:89/prjctadmin/';//项目管理
@@ -21,10 +21,10 @@
 // global.BIPAPIURL = 'http://192.168.1.18:9999/jd/';
 // global.DBID = 'ZT1';
 // global.DBID = 'J1';
-// global.DBID = '01';
+global.DBID = '01';
 
 
-global.BIPAPIURL = 'http://192.168.1.200:9999/jd/';
+// global.BIPAPIURL = 'http://192.168.1.200:9999/jd/';
 // global.DBID = '115';//本机达博
 // global.DBID = '112';//车辆管理
 // global.DBID = '121';//一风车辆管理
@@ -37,7 +37,7 @@ global.BIPAPIURL = 'http://192.168.1.200:9999/jd/';
 // global.DBID = '122';//115飞防管控
 // global.DBID = '124';//CRM 
 // global.DBID = '125';//安全隐患监控平台
-global.DBID = '126';//本机绩效
+// global.DBID = '126';//本机绩效
 // global.DBID = '127';//物业管理
 // global.DBID = '129';//王阳ERP
 // global.DBID = '133';//本机安全隐患监控平台
