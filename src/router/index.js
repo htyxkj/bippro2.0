@@ -16,7 +16,7 @@ import Test from '@/components/Test';
 import Blank from '@/components/Blank';
 //钉钉
 import Ding from '@/components/Ding';
-
+import WxApplets from '@/components/WxApplets';
 //系统基础路由
 const Test1 = () => import('@/components/Test1');
 const Dashboard = () => import('@/views/dashboard/Dashboard1');//首页
@@ -98,6 +98,14 @@ export default new Router({
       path: '/ding',
       name: 'ding',
       component: Ding,
+      beforeEnter: (to, from, next) => {
+        // console.log(to,from,next); 
+        next(); 
+      }
+    },{
+      path: '/wxApplets',
+      name: 'wxApplets',
+      component: WxApplets,
       beforeEnter: (to, from, next) => {
         // console.log(to,from,next); 
         next(); 

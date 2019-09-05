@@ -1,7 +1,7 @@
 <template>
 <div class="layout-fill">
-    <div  v-if="isLogin" class="md-app layout-fill layout-column flex">
-      <div v-if="isLoginPage != 2">
+  <div  v-if="isLogin" class="md-app layout-fill layout-column flex">
+      <div v-if="isLoginPage == 0 || isLoginPage == -1 || isLoginPage == 1">
         <bip-menus ref="menu" :md-token="mdToken" :md-title="mdTitle"></bip-menus>
         <app-toolbar ref="toolbar" @toggle="toggle" :md-token="mdToken" :md-title="mdTitle" @logout="exit"></app-toolbar>
       </div>
@@ -11,6 +11,7 @@
     <app-login v-if="isLoginPage == 0"  @emitLogin="emitLogin"></app-login><!-- 登录页 -->
     <app-blank v-else-if="isLoginPage == 1"  @blankLogin="emitLogin"></app-blank><!-- 单点登录页 -->
     <app-ding v-else-if="isLoginPage == 2"  @dingLogin="emitLogin"></app-ding><!-- 钉钉登录页 -->
+    <wx-applets v-else-if="isLoginPage == 3"  @dingLogin="emitLogin"></wx-applets><!-- 微信小程序登录页 -->
   </div>
 </div>
 </template>
@@ -21,6 +22,7 @@ import bipMenu from './bipMenus';
 import Login from '../Login';
 import Blank from '../../components/Blank';
 import Ding from '../../components/Ding';
+import wxApplets from '../../components/WxApplets.vue';
 export default {
   name: 'myapp',
   data () {
@@ -28,14 +30,15 @@ export default {
       mdToken: 'bbb',
       mdTitle: '',
       isLogin: false,
-      isLoginPage:-1,
+      isLoginPage:-1, 
     }
 
   },
-  components:{'app-toolbar':appToolbar,'app-content':appContent,'bip-menus': bipMenu,'app-login':Login,'app-blank':Blank,'app-ding':Ding},
+  components:{'app-toolbar':appToolbar,'app-content':appContent,'bip-menus': bipMenu,'app-login':Login,'app-blank':Blank,'app-ding':Ding
+  ,'wx-applets':wxApplets
+  },
   methods: {
-    created(){ 
-      
+    created(){  
     },
     toggle() { 
       // if(this.$route.path != '/task' &&this.$route.path != '/msg' &&this.$route.path != '/blank') 
@@ -101,7 +104,7 @@ export default {
   async mounted(){
     // let isLoginPage = window.sessionStorage.getItem('isLoginPage');
     // console.log(isLoginPage);
-    // this.isLoginPage = isLoginPage;
+    // this.isLoginPage = isLoginPage; 
     if(this.$route.path == '/blank'){
       this.isLoginPage=1;
       window.sessionStorage.setItem('isLoginPage', 1)
@@ -109,6 +112,10 @@ export default {
       this.isLoginPage=2;
       this.isLogin = true;
       window.sessionStorage.setItem('isLoginPage', 2)
+    }if(this.$route.path == '/wxApplets'){
+      this.isLoginPage=3;
+      this.isLogin = true;
+      window.sessionStorage.setItem('isLoginPage', 3)
     }else if(this.$route.path == '/JCMap'){
       let usercode = this.$route.query.usercode
       // pbuid=4003&pmenuid=4003&title=设计核查报表

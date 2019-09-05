@@ -4,31 +4,17 @@
       <md-part-toolbar-group>
         <!-- 查询 -->
         <md-button @click.native="search()">{{$t('commBtn.B_FIND')}}</md-button>
-        <!-- <md-button @click.native="clear">清空</md-button> -->
-      </md-part-toolbar-group>
-      <!-- <md-part-toolbar-group>
-        <md-button>复制</md-button>
-      </md-part-toolbar-group> -->
-      <md-part-toolbar-group>
-        <!-- 列表 -->
-        <!-- <md-button @click.native="list()">{{$t('commBtn.B_LIST')}}</md-button> -->
-      </md-part-toolbar-group>
-      <md-part-toolbar-group>
         <!-- 统计 -->
         <md-button @click.native="searchCount('dialog')">{{$t('commBtn.B_STATISTICS')}}</md-button>
-      </md-part-toolbar-group>
-      <md-part-toolbar-group>
         <!-- 导出 -->
-        <md-button @click.native="exportFile()">{{$t('commBtn.B_EXP')}}</md-button>
-      </md-part-toolbar-group>
-      <!-- 隐藏显示条件按钮  顶部 -->
-      <md-part-toolbar-group>
-          <md-button @click.native="showSearchInfo">{{showContLabel}}</md-button>
-          <md-button @click.native="lineToColumnRun">{{lineToColumn}}</md-button>
-      </md-part-toolbar-group>
-      <!-- 常量定义的按钮 -->
-      <md-part-toolbar-group v-if="biLay != 'card'">
+        <md-button @click.native="exportFile()">{{$t('commBtn.B_EXP')}}</md-button> 
+        <!-- 隐藏显示条件按钮  顶部 --> 
+        <md-button @click.native="showSearchInfo">{{showContLabel}}</md-button>
+        <md-button @click.native="lineToColumnRun">{{lineToColumn}}</md-button> 
+        <!-- 常量定义的按钮 -->
+        <template v-if="biLay != 'card'">
           <md-button :disabled="btnDisabled" v-for="(item,index) in dlgBtn" :key="index" @click.native="dlgBtnClick(item)">{{item.name}}</md-button>
+        </template> 
       </md-part-toolbar-group>
 
       <span class="flex"></span>

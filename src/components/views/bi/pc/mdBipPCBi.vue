@@ -102,6 +102,7 @@
                 highlight-hover-row highlight-current-row @cell-click="onTableSelect" 
                 header-cell-class-name="md-numeric"  @header-cell-click="onSortNew" @sort-change="sort_change" 
                 :row-class-name="getRowStyleNew" border  resizable :auto-resize="true"  stripe 
+                :sort-config="{trigger: 'cell'}"
                 :span-method="rowspanMethod">  
                 <!-- :header-cell-class-name="getTitleNewStyle" -->
                 <!-- <md-bip-bi-table-column :ds_m="ds_m" :Multi_level_title="Multi_level_title" ></md-bip-bi-table-column> -->
