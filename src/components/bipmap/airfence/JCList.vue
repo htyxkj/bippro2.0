@@ -41,18 +41,18 @@
               </md-layout>
 
               <md-layout md-flex="25" md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33">
-                  <md-input-container>
-                    <label for="plane">起始时间</label>
+                  <!-- <md-input-container>
+                    <label for="plane">起始时间</label> -->
                     <!-- <md-date :btime="true" v-model="startTime"></md-date> -->
-                    <md-bip-date v-model="startTime" :value="startTime" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
-                  </md-input-container>
+                    <md-bip-date v-model="modaleimt.startTime" :value="modaleimt.startTime" :modal="modaleimt" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
+                  <!-- </md-input-container> -->
               </md-layout>
               <md-layout md-flex="25" md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33">
-                <md-input-container>
-                  <label for="plane">结束时间</label>
+                <!-- <md-input-container>
+                  <label for="plane">结束时间</label> -->
                   <!-- <md-date :btime="true" v-model="endTime"></md-date> -->
-                  <md-bip-date v-model="endTime" :value="endTime" :isReport="false" :cell="eTCell" :required="eTCell.isReq" :disabled="false" ></md-bip-date> 
-                </md-input-container>
+                  <md-bip-date v-model="modaleimt.endTime" :value="modaleimt.endTime" :modal="modaleimt" :isReport="false" :cell="eTCell" :required="eTCell.isReq" :disabled="false" ></md-bip-date> 
+                <!-- </md-input-container> -->
               </md-layout>
               <md-layout md-flex="25" md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33">
                 <md-input-container>
@@ -135,8 +135,9 @@ export default {
       planeVal:'',
       taskno:'',
       tasks:[],
-      startTime:'',
-      endTime:'',
+      // startTime:'',
+      // endTime:'',
+      modaleimt:{startTime:'',endTime:''},
       cytime:0,
       kf:'',
       hb:'',
@@ -178,12 +179,14 @@ export default {
           editName: "DATETIME", 
           id: "startTime", 
           isReq: true, 
+          labelString:'开始时间'
       }, 
       //结束时间
       eTCell:{ 
           editName: "DATETIME", 
           id: "endTime",
           isReq: true, 
+          labelString:'结束时间'
       }, 
     }
   },
@@ -195,8 +198,8 @@ export default {
       this.mdSelection=true;
       this.multiple = true;
       this.taskno=data.value[data.cellId]
-      this.startTime = data.value['bgtime'];
-      this.endTime = data.value['edtime'];
+      this.modaleimt.startTime = data.value['bgtime'];
+      this.modaleimt.endTime = data.value['edtime'];
     },
     merge(){ 
       if(this.selectedRows.length<=0){
@@ -290,8 +293,8 @@ export default {
         method:210,
         taskNo:this.taskno,
         userNumber:this.planeno,
-        startTime:this.startTime,
-        endTime:this.endTime,
+        startTime:this.modaleimt.startTime,
+        endTime:this.modaleimt.endTime,
         cyjg:this.cytime,
         kf:this.kf,
         minzyl:this.minzyl, 
@@ -318,8 +321,8 @@ export default {
         method:212,
         taskNo:this.taskno,
         userNumber:this.planeno,
-        startTime:this.startTime,
-        endTime:this.endTime,
+        startTime:this.modaleimt.startTime,
+        endTime:this.modaleimt.endTime,
         cyjg:this.cytime,
         kf:this.kf,
         minzyl:this.minzyl, 

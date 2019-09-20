@@ -1,5 +1,36 @@
 <template>
-    <div class="contentBar">
+    <md-layout style="padding:20px">
+        <md-layout md-flex="100">
+            <div style="text-align: center;width: 100%;font-size: 24px;">飞机飞行数据同步</div>
+        </md-layout>
+        <md-layout md-flex="100">
+            <md-bip-input-ref  :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-ref>
+        </md-layout>
+        <md-layout md-flex="100">
+            <md-input-container>
+                <label for="plane">账户标识</label> 
+                <md-input :required="true" v-model="planeVal"></md-input>
+            </md-input-container>
+        </md-layout>
+        <md-layout md-flex="100">
+            <md-input-container>
+                <label for="plane">器械编号</label> 
+                <md-input :required="true" v-model="qixieVal"></md-input>
+            </md-input-container>
+        </md-layout>
+        <md-layout md-flex="100">
+            <md-bip-date v-model="modaleimt.startTime" :value="modaleimt.startTime" :modal="modaleimt" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
+        </md-layout>
+        <md-layout md-flex="100">
+            <md-bip-date v-model="modaleimt.endTime" :value="modaleimt.endTime" :modal="modaleimt" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
+        </md-layout>
+        <md-layout md-flex="100">
+            <div class="mybtn">
+                <md-button class="md-primary md-raised" @click="exportData">生成报告</md-button>
+            </div>
+        </md-layout>
+    </md-layout>
+    <!-- <div class="contentBar">
         <div :class="contentA">
             <div class="content-area">
                 <h3>飞航报告导出</h3>
@@ -49,8 +80,7 @@
                         <md-layout md-flex="85" md-flex-xsmall="70">
                             <md-input-container>
                             <label class="area-label">起始时间</label>
-                            <md-bip-date v-model="startTime" :value="startTime" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
-                            <!-- <md-date :btime="true" v-model="startTime"></md-date> -->
+                                <md-bip-date v-model="startTime" :value="startTime" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
                             </md-input-container>
                         </md-layout>
                     </md-layout>
@@ -64,7 +94,6 @@
                             <md-input-container>
                             <label class="area-label">结束时间</label>
                             <md-bip-date v-model="endTime" :value="endTime" :isReport="false" :cell="eTCell" :required="eTCell.isReq" :disabled="false" ></md-bip-date> 
-                            <!-- <md-date :btime="true" v-model="endTime"></md-date> -->
                             </md-input-container>
                         </md-layout>
                     </md-layout>
@@ -76,7 +105,7 @@
             </div>
             <md-loading :loading="loading"></md-loading>
         </div>
-    </div>
+    </div> -->
 </template>
 
 <script>
@@ -91,8 +120,9 @@ export default {
             taskno:'',
             userNumber:'', 
             userNumbers:[],
-            startTime:'',
-            endTime:'',
+            // startTime:'',
+            // endTime:'',
+            modaleimt:{startTime:'',endTime:''},
             contentA:'contentA',
             contentB:'contentB',
             cmcCode:'',
@@ -124,12 +154,14 @@ export default {
                 editName: "DATETIME", 
                 id: "startTime", 
                 isReq: true, 
+                labelString:"开始时间",
             }, 
             //结束时间
             eTCell:{ 
                 editName: "DATETIME", 
                 id: "endTime",
                 isReq: true, 
+                labelString:"结束时间",
             }, 
         }
     },
@@ -137,8 +169,8 @@ export default {
         dataChange(data){ 
             this.taskname = data.value['taskname']
             this.taskno=data.value[data.cellId] 
-            this.startTime = data.value['bgtime'];
-            this.endTime = data.value['edtime'];
+            this.modaleimt.startTime = data.value['bgtime'];
+            this.modaleimt.endTime = data.value['edtime'];
         }, 
         exportData(){
             //!this.qixie ||
@@ -149,7 +181,7 @@ export default {
             this.loading=1; 
             let snkey = JSON.parse(window.sessionStorage.getItem('snkey'))
             let taskname = encodeURI(this.taskname);
-            let params={airid:this.qixie,taskno:this.taskno,snkey:snkey,taskname:taskname,usrNumber:this.userNumber,startTime:this.startTime,endTime:this.endTime}
+            let params={airid:this.qixie,taskno:this.taskno,snkey:snkey,taskname:taskname,usrNumber:this.userNumber,startTime:this.modaleimt.startTime,endTime:this.modaleimt.endTime}
             axios.post(`${global.BIPAPIURL}airidWord`,qs.stringify(params))
             .then(res=>{
                 console.log(res)
@@ -254,6 +286,7 @@ export default {
 }
 .mybtn{
     text-align: center;
+    width: 100%;
 }
 .md-button.md-icon-button{
   height:.24rem !important;

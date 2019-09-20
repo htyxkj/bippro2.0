@@ -26,16 +26,16 @@
           <div :class="ISPC()?careapc:carea" >
              <md-layout md-row md-gutter="16"> 
                <md-layout md-flex="50" md-flex-xsmall="50">
-                <md-input-container>
-                  <label>开始时间</label> 
-                  <md-bip-date v-model="startTime" :value="startTime" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
-                </md-input-container>
+                <!-- <md-input-container>
+                  <label>开始时间</label>  -->
+                  <md-bip-date v-model="modaleimt.startTime" :value="modaleimt.startTime" :modal="modaleimt" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
+                <!-- </md-input-container> -->
               </md-layout> 
               <md-layout md-flex="50" md-flex-xsmall="50">
-                <md-input-container>
-                  <label>结束时间</label> 
-                  <md-bip-date v-model="endTime" :value="endTime" :isReport="false" :cell="eTCell" :required="eTCell.isReq" :disabled="false" ></md-bip-date> 
-                </md-input-container>
+                <!-- <md-input-container>
+                  <label>结束时间</label>  -->
+                  <md-bip-date v-model="modaleimt.endTime" :value="modaleimt.endTime" :modal="modaleimt" :isReport="false" :cell="eTCell" :required="eTCell.isReq" :disabled="false" ></md-bip-date> 
+                <!-- </md-input-container> -->
               </md-layout>
             </md-layout>
           </div>
@@ -104,8 +104,9 @@ export default {
       planeVal:'',
       taskno:'', 
       tasks:[],
-      startTime:'',
-      endTime:'',
+      // startTime:'',
+      // endTime:'',
+      modaleimt:{startTime:'',endTime:''},
       careapc:'c-areapc',
       carea:'c-area',
       cmcCode : '',// JSON.parse(window.sessionStorage.getItem('user')).deptInfo.cmcCode,
@@ -125,12 +126,14 @@ export default {
         editName: "DATETIME", 
         id: "startTime", 
         isReq: true, 
+        labelString:"开始时间",
       }, 
       //结束时间
       eTCell:{  
         editName: "DATETIME", 
         id: "endTime", 
         isReq: true, 
+        labelString:"结束时间",
       }, 
     }
   },
@@ -147,8 +150,8 @@ export default {
   methods: {
     dataChange(data){ 
       this.taskno=data.value[data.cellId] 
-      this.startTime = data.value['bgtime'];
-      this.endTime = data.value['edtime'];  
+      this.modaleimt.startTime = data.value['bgtime'];
+      this.modaleimt.endTime = data.value['edtime'];  
     },
     ok() {
       if(this.redio){
@@ -165,18 +168,18 @@ export default {
         this.$notify.warning({content:'用户标识不能为空'})
         return
       } 
-      if(!this.startTime || !this.endTime){
+      if(!this.modaleimt.startTime || !this.modaleimt.endTime){
         this.$notify.warning({content:'时间不能为空'})
         return
       }
-      if(!this.compareDate(this.startTime,this.endTime)){
+      if(!this.compareDate(this.modaleimt.startTime,this.modaleimt.endTime)){
         this.$notify.warning({content:'结束时间不能大于开始时间'})
         return
       }
       if(this.redio){
-        this.getOpt(this.planeno,this.taskno,this.startTime,this.endTime,this.redioVal,this.isShowZYQ)
+        this.getOpt(this.planeno,this.taskno,this.modaleimt.startTime,this.modaleimt.endTime,this.redioVal,this.isShowZYQ)
       }else{
-        this.getOpt(this.planeno,this.taskno,this.startTime,this.endTime)
+        this.getOpt(this.planeno,this.taskno,this.modaleimt.startTime,this.modaleimt.endTime)
       }
       this.closeDialog()
     },

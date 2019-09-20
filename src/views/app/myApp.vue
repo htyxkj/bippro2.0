@@ -6,12 +6,29 @@
         <app-toolbar ref="toolbar" @toggle="toggle" :md-token="mdToken" :md-title="mdTitle" @logout="exit"></app-toolbar>
       </div>
       <app-content class="layout-fill flex md-part layout-column"></app-content>   
+      <template v-if="isLoginPage == 3">
+        <md-bottom-bar @change="bottomBar" style="z-index:1000">
+          <md-bottom-bar-item md-icon="home" md-active>
+            首页
+          </md-bottom-bar-item>
+          <md-bottom-bar-item md-icon="menu">
+            菜单
+          </md-bottom-bar-item>
+          <md-bottom-bar-item md-icon="message">
+            消息
+          </md-bottom-bar-item>
+          <md-bottom-bar-item md-icon="supervisor_account">
+            我的
+          </md-bottom-bar-item>
+          
+        </md-bottom-bar>
+      </template>
   </div>
   <div v-else> 
     <app-login v-if="isLoginPage == 0"  @emitLogin="emitLogin"></app-login><!-- 登录页 -->
     <app-blank v-else-if="isLoginPage == 1"  @blankLogin="emitLogin"></app-blank><!-- 单点登录页 -->
     <app-ding v-else-if="isLoginPage == 2"  @dingLogin="emitLogin"></app-ding><!-- 钉钉登录页 -->
-    <wx-applets v-else-if="isLoginPage == 3"  @dingLogin="emitLogin"></wx-applets><!-- 微信小程序登录页 -->
+    <wx-applets v-else-if="isLoginPage == 3"  @appletsLogin="emitLogin"></wx-applets><!-- 微信小程序登录页 -->
   </div>
 </div>
 </template>
@@ -22,7 +39,7 @@ import bipMenu from './bipMenus';
 import Login from '../Login';
 import Blank from '../../components/Blank';
 import Ding from '../../components/Ding';
-import wxApplets from '../../components/WxApplets.vue';
+import wxApplets from '../../components/wxApplets/WxApplets.vue';
 export default {
   name: 'myapp',
   data () {
@@ -99,7 +116,17 @@ export default {
       window.sessionStorage.clear();
       this.$router.push({path:'/',name:''})
       this.isLogin = false;
-    }, 
+    },
+    bottomBar(route){
+      if(route == 0)
+        this.$router.push({path:'/wxApplets'});
+      if(route == 1)
+        this.$router.push({path:'/wxAppletsMenu'});
+      if(route == 2)
+        this.$router.push({path:'/wxAppletsMsg'});
+      if(route == 3)
+        this.$router.push({path:'/wxAppletsMe'});     
+    },
   },
   async mounted(){
     // let isLoginPage = window.sessionStorage.getItem('isLoginPage');
@@ -122,13 +149,17 @@ export default {
       this.emitLogin()
       return;
     }else{
-        this.isLoginPage=0;
-        var lid = window.sessionStorage.getItem('isLogin');
-        if(lid){
-          this.isLogin = true;
-        }else{
-          this.isLogin = false;
-        } 
+      let lp = window.sessionStorage.getItem("isLoginPage");
+      this.isLoginPage=0;
+      if(lp){
+        this.isLoginPage=lp;
+      }
+      var lid = window.sessionStorage.getItem('isLogin');
+      if(lid){
+        this.isLogin = true;
+      }else{
+        this.isLogin = false;
+      } 
     }
     this.setTitle();
   },

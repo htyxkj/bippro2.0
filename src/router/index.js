@@ -16,7 +16,13 @@ import Test from '@/components/Test';
 import Blank from '@/components/Blank';
 //钉钉
 import Ding from '@/components/Ding';
-import WxApplets from '@/components/WxApplets';
+//微信小程序
+import WxApplets from '@/components/wxApplets/WxApplets';
+import WxAppletsMessage from '@/components/wxApplets/WxAppletsMessage';
+import WxAppletsMenu from '@/components/wxApplets/WxAppletsMenu';
+import WxAppletsMe from '@/components/wxApplets/WxAppletsMe';
+
+
 //系统基础路由
 const Test1 = () => import('@/components/Test1');
 const Dashboard = () => import('@/views/dashboard/Dashboard1');//首页
@@ -99,18 +105,43 @@ export default new Router({
       name: 'ding',
       component: Ding,
       beforeEnter: (to, from, next) => {
-        // console.log(to,from,next); 
         next(); 
       }
-    },{
+    },
+    
+    //微信小程序
+    {
       path: '/wxApplets',
       name: 'wxApplets',
       component: WxApplets,
       beforeEnter: (to, from, next) => {
-        // console.log(to,from,next); 
         next(); 
       }
     },{
+      path: '/WxAppletsMenu',
+      name: 'WxAppletsMenu',
+      component: WxAppletsMenu,
+      beforeEnter: (to, from, next) => {
+        next(); 
+      }
+    },
+    {
+      path: '/wxAppletsMsg',
+      name: 'WxAppletsMessage',
+      component: WxAppletsMessage,
+      beforeEnter: (to, from, next) => {
+        next(); 
+      }
+    },{
+      path: '/wxAppletsMe',
+      name: 'wxAppletsMe',
+      component: WxAppletsMe,
+      beforeEnter: (to, from, next) => {
+        next(); 
+      }
+    }
+    //end    
+    ,{
       path: '/layoutui',
       name: '页面布局',
       component: CommLayUI

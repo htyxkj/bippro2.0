@@ -1,67 +1,30 @@
 <template>
-    <div class="contentBar">
-        <div :class="contentA">
-            <div class="content-area">
-                <h3>飞机飞行数据同步</h3>
-                <div class="c-area">
-                    <md-layout md-row md-gutter="16">
-                    <md-layout md-flex="15" md-flex-xsmall="30">
-                        <label class="area-label">任务标识</label>
-                    </md-layout>
-                    <md-layout md-flex="85" md-flex-small="85"> 
-                        <md-bip-input-ref  :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-ref>
-                    </md-layout>
-                    </md-layout>
-                </div>
-                <div class="c-area"> 
-                    <md-layout md-row md-gutter="16">
-                        <md-layout md-flex="15" md-flex-xsmall="30">
-                            <label class="area-label">账户标识</label>
-                        </md-layout>
-                        <md-layout md-flex="85" md-flex-xsmall="70">
-                            <md-input-container>
-                                <label for="plane">账户标识</label> 
-                                <md-input :required="true" v-model="planeVal"></md-input>
-                            </md-input-container> 
-                        </md-layout>
-                    </md-layout>  
-                </div>
-                <div class="c-area">
-                    <md-layout md-row md-gutter="16">
-                        <md-layout md-flex="15" md-flex-xsmall="30">
-                            <label class="area-label">起始时间</label>
-                        </md-layout>
-                        <md-layout md-flex="85" md-flex-xsmall="70">
-                            <md-input-container>
-                            <label for="plane">起始时间</label> 
-                            <!-- <md-date :btime="true" v-model="startTime"></md-date> -->
-                            <md-bip-date v-model="startTime" :value="startTime" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
-                            </md-input-container>
-                        </md-layout>
-                    </md-layout>
-                </div>
-                <div class="c-area">
-                    <md-layout md-row md-gutter="16">
-                        <md-layout md-flex="15" md-flex-xsmall="30">
-                            <label class="area-label">结束时间</label>
-                        </md-layout>
-                        <md-layout md-flex="85" md-flex-xsmall="70">
-                            <md-input-container>
-                            <label for="plane">结束时间</label> 
-                            <!-- <md-date :btime="true" v-model="endTime"></md-date> -->
-                            <md-bip-date v-model="endTime" :value="endTime" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
-                            </md-input-container>
-                        </md-layout>
-                    </md-layout>
-                </div>
-                <div class="mybtn">
-                    <md-button class="md-primary md-raised" style="margin-right: 20px;" @click="Synchronize('Synchronize')">同步</md-button>
-                    <md-button class="md-primary md-raised" style="margin-left:20px" @click="Synchronize('delete')">删除数据</md-button>
-                </div>
-                <md-loading :loading="loading"></md-loading>
+    <md-layout style="padding:20px">
+        <md-layout md-flex="100">
+            <div style="text-align: center;width: 100%;font-size: 24px;">飞机飞行数据同步</div>
+        </md-layout>
+        <md-layout md-flex="100">
+            <md-bip-input-ref :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-ref>
+        </md-layout>
+        <md-layout md-flex="100">
+            <md-input-container>
+                <label for="plane">账户标识</label> 
+                <md-input :required="true" v-model="planeVal"></md-input>
+            </md-input-container> 
+        </md-layout>
+        <md-layout md-flex="100">
+            <md-bip-date v-model="modaleimt.startTime" :value="modaleimt.startTime" :modal="modaleimt" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
+        </md-layout>
+        <md-layout md-flex="100">
+            <md-bip-date v-model="modaleimt.endTime" :value="modaleimt.endTime" :modal="modaleimt" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
+        </md-layout>
+        <md-layout md-flex="100">
+            <div class="mybtn">
+                <md-button class="md-primary md-raised" style="margin-right: 20px;" @click="Synchronize('Synchronize')">同步</md-button>
+                <md-button class="md-primary md-raised" style="margin-left:20px" @click="Synchronize('delete')">删除数据</md-button>
             </div>
-        </div>
-    </div>
+        </md-layout>
+    </md-layout>
 </template>
 
 <script>
@@ -70,8 +33,9 @@ import qs from 'qs'
 export default {
     data(){
         return{ 
-            startTime:'',
-            endTime:'',
+            // startTime:'',
+            // endTime:'',
+            modaleimt:{startTime:'',endTime:''},
             planeno:'',
             planeVal:'',
             taskno:'',
@@ -106,38 +70,40 @@ export default {
                 editName: "DATETIME", 
                 id: "startTime", 
                 isReq: true, 
+                labelString:"开始时间",
             }, 
             //结束时间
             eTCell:{  
                 editName: "DATETIME", 
                 id: "endTime", 
                 isReq: true, 
+                labelString:"结束时间",
             }, 
         }
     },  
     methods: {
         dataChange(data){
             this.taskno=data.value[data.cellId]
-            this.startTime = data.value['bgtime'];
-            this.endTime = data.value['edtime'];
+            this.modaleimt.startTime = data.value['bgtime'];
+            this.modaleimt.endTime = data.value['edtime'];
         },
         Synchronize(operating){
             if(this.taskno==null||this.taskno==''){
                  this.$notify.warning({content:'任务标识不能为空'})
                  return;
             }
-            if(this.startTime==null||this.startTime==''){
+            if(this.modaleimt.startTime==null||this.modaleimt.startTime==''){
                  this.$notify.warning({content:'起始时间不能为空'})
                  return;
             }
-            if(this.endTime==null||this.endTime==''){
+            if(this.modaleimt.endTime==null||this.modaleimt.endTime==''){
                  this.$notify.warning({content:'结束时间不能为空'})
                  return;
             }
 
             this.loading = 1
             let snkey = JSON.parse(window.sessionStorage.getItem('snkey'))
-            let params={snkey:snkey,stateTime:this.startTime,endTime:this.endTime,taskNo:this.taskno,usernumber:this.planeno,operating:operating}
+            let params={snkey:snkey,stateTime:this.modaleimt.startTime,endTime:this.modaleimt.endTime,taskNo:this.taskno,usernumber:this.planeno,operating:operating}
             axios.post(`${global.BIPAPIURL}SynchronizeServlet`,qs.stringify(params))
             .then(res=>{
                 if(parseInt(res.data.key) == 0){
@@ -230,6 +196,7 @@ export default {
 }
 .mybtn{
     text-align: center;
+    width: 100%;
 }
 .md-button.md-icon-button{
   height:.24rem !important;

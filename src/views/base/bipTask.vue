@@ -80,7 +80,7 @@ export default {
   beforeDestroy(){
     if(this.isconnt){
       this.disconnect();
-    }
+  }
       
   },
   methods: {

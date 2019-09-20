@@ -277,16 +277,16 @@ export default {
   animation: slideInUp 0.3s ease;
   -webkit-animation: slideInUp 0.3s ease;
 }
-@-webkit-keyframes slideInUp {
-  from {
-    -webkit-transform: translate3d(0, 100%, 0);
-    transform: translate3d(0, 100%, 0);
-  }
-  to {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-  }
-}
+// @-webkit-keyframes slideInUp {
+//   from {
+//     -webkit-transform: translate3d(0, 100%, 0);
+//     transform: translate3d(0, 100%, 0);
+//   }
+//   to {
+//     -webkit-transform: translate3d(0, 0, 0);
+//     transform: translate3d(0, 0, 0);
+//   }
+// }
 .ym_roll,
 .date_roll,
 .datetime_roll,
@@ -297,14 +297,14 @@ export default {
   overflow: hidden;
   font-weight: bold;
   background-color: transparent;
-  -webkit-mask: -webkit-gradient(
-    linear,
-    0% 50%,
-    0% 100%,
-    from(#debb47),
-    to(rgba(36, 142, 36, 0))
-  );
-  -webkit-mask: -webkit-linear-gradient(top, #debb47 50%, rgba(36, 142, 36, 0));
+  // -webkit-mask: -webkit-gradient(
+  //   linear,
+  //   0% 50%,
+  //   0% 100%,
+  //   from(#debb47),
+  //   to(rgba(36, 142, 36, 0))
+  // );
+  // -webkit-mask: -webkit-linear-gradient(top, #debb47 50%, rgba(36, 142, 36, 0));
 }
 .ym_roll > div,
 .date_roll > div,
@@ -329,18 +329,18 @@ export default {
   margin-top: -6em;
 }
 .date_roll_mask {
-  -webkit-mask: -webkit-gradient(
-    linear,
-    0% 40%,
-    0% 0%,
-    from(#debb47),
-    to(rgba(36, 142, 36, 0))
-  );
-  -webkit-mask: -webkit-linear-gradient(
-    bottom,
-    #debb47 50%,
-    rgba(36, 142, 36, 0)
-  );
+  // -webkit-mask: -webkit-gradient(
+  //   linear,
+  //   0% 40%,
+  //   0% 0%,
+  //   from(#debb47),
+  //   to(rgba(36, 142, 36, 0))
+  // );
+  // -webkit-mask: -webkit-linear-gradient(
+  //   bottom,
+  //   #debb47 50%,
+  //   rgba(36, 142, 36, 0)
+  // );
   padding: 1em 0 3em 0;
 }  
 .date_grid {

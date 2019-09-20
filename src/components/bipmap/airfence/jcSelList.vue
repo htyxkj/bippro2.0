@@ -30,16 +30,16 @@
                   <md-bip-input-fileUp :cell="rwcell" :modal="rwmodal" :ref="rwcell.id" @change="dataChange"></md-bip-input-fileUp>
               </md-layout> 
               <md-layout md-flex="50" md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33">
-                <md-input-container>
-                  <label>开始时间</label> 
-                  <md-bip-date v-model="startTime" :value="startTime" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
-                </md-input-container>
+                <!-- <md-input-container>
+                  <label>开始时间</label>  -->
+                  <md-bip-date v-model="modaleimt.startTime" :value="modaleimt.startTime" :modal="modaleimt" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
+                <!-- </md-input-container> -->
               </md-layout>
               <md-layout md-flex="50" md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33">
-                <md-input-container>
-                  <label for="plane">结束时间</label>
-                  <md-bip-date v-model="endTime" :value="endTime" :isReport="false" :cell="eTCell" :required="eTCell.isReq" :disabled="false" ></md-bip-date> 
-                </md-input-container>
+                <!-- <md-input-container>
+                  <label for="plane">结束时间</label> -->
+                  <md-bip-date v-model="modaleimt.endTime" :value="modaleimt.endTime" :modal="modaleimt" :isReport="false" :cell="eTCell" :required="eTCell.isReq" :disabled="false" ></md-bip-date> 
+                <!-- </md-input-container> -->
               </md-layout>  
                
             </md-layout>
@@ -110,8 +110,9 @@ export default {
   data(){
     return{
       taskno:'',
-      startTime:'',
-      endTime:'',
+      // startTime:'',
+      // endTime:'',
+      modaleimt:{startTime:'',endTime:''},
       loading:0,
       ffList:[],
       cmcCode : '',
@@ -163,12 +164,14 @@ export default {
         editName: "DATETIME", 
         id: "startTime", 
         isReq: true, 
+        labelString:'开始时间'
       }, 
       //结束时间
       eTCell:{  
         editName: "DATETIME", 
         id: "endTime", 
         isReq: true, 
+        labelString:'结束时间'
       }, 
     }
   },
@@ -220,8 +223,8 @@ export default {
       this.param.cont="~sid ='"+taskno+"'";
       let _this = this;
       axios.post(global.BIPAPIURL+global.API_COM, qs.stringify(this.param)).then(res => {
-        _this.startTime = res.data.values[0].bgtime;
-        _this.endTime = res.data.values[0].edtime; 
+        _this.modaleimt.startTime = res.data.values[0].bgtime;
+        _this.modaleimt.endTime = res.data.values[0].edtime; 
       });
       
     },
@@ -249,8 +252,8 @@ export default {
 
       _this.loading = 1 
       let taskno = _this.taskno
-      let startTime = _this.startTime;
-      let endTime = _this.endTime;
+      let startTime = _this.modaleimt.startTime;
+      let endTime = _this.modaleimt.endTime;
       let params ={snkey:_this.snkey,method:216,taskNo:taskno,startTime:startTime,endTime:endTime}
       axios.post(`${global.BIPAPIURL}MapServlet`,qs.stringify(params))
       .then(res=>{
@@ -304,8 +307,8 @@ export default {
       var b = require('js-base64').Base64; 
       let task = b.encode(this.taskno);
       let user = b.encode(jc.airid);
-      let stTime = b.encode(this.startTime);
-      let endTime = b.encode(this.endTime);
+      let stTime = b.encode(this.modaleimt.startTime);
+      let endTime = b.encode(this.modaleimt.endTime);
       window.open(`${global.BIPAPIURL}`+'JCMap'+ `?task=${task}&user=${user}&stTime=${stTime}&endTime=${endTime}`);
     }
   },
