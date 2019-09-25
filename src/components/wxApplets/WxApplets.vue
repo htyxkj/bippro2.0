@@ -62,7 +62,7 @@ export default {
     async created(){
         window.sessionStorage.setItem('isLoginType', 4); 
         var lid = window.sessionStorage.getItem('isLogin');
-        if(lid){
+        if(lid && lid !=  'false' ){
             if(this.menuList.length<=0){
                 this.menuList = JSON.parse(window.sessionStorage.getItem('menulist')); 
             }
@@ -119,6 +119,9 @@ export default {
                 this.getDateStr();  
             } else {
                 this.$notify.danger({content: res.data.message})
+                window.sessionStorage.clear();
+                this.$router.push({path:'/',name:''})
+
             }
         },
         async loginRemote(secret) { 

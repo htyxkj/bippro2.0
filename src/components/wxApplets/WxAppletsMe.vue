@@ -8,27 +8,64 @@
                 <div style="width:100%;text-align:center;">{{user.userName}}</div>
             </div>
             <div class="center">
-                <md-list>
+                <md-list style="padding: 0px;">
                     <md-list-item>
                         账户编码：{{user.userCode}}
                     </md-list-item>
-                    <md-list-item>
+                    <md-list-item style="border-top: 1px solid #DFDFDF;">
                         隶属部门：{{user.deptInfo.cmcName}}
                     </md-list-item>
+                </md-list>
+            </div>
+            <div class="center">
+                <md-list style="padding: 0px;">
                     <md-list-item>
                         <span>我的企业</span>
                         <md-list-expand>
-                            <md-list>
+                            <ul style="padding-left:.16rem;border-top: 1px solid #DFDFDF;">
+                                <template  v-for="(item,index) in scm" >
+                                    <li :key="index" class="scm"
+                                    :style="item.orgcode.startsWith(user.deptInfo.cmcCode)?'color:#2384DD;':''"
+                                    v-on:click ="switchScm(item.secret)">
+                                        <img src="../../img/bip.png"/> 
+                                        <span style="padding-left:.16rem;">{{item.orgname}}</span> 
+                                    </li>
+                                    <hr class="scmhr" />
+                                </template>
+                                <li class="scm" v-on:click="creageSCM" style="text-align: center;line-height: 40px;">
+                                    <md-icon style="color:#2384DD">add</md-icon>添加企业
+                                </li>
+                            </ul>
+                            <!-- <md-list>  
                                 <md-list-item class="md-inset" v-for="(item,index) in scm" :key="index" 
                                 :style="item.orgcode== user.deptInfo.cmcCode?'color:red':''"
-                                @click.native="switchScm(item.secret)">{{item.orgname}}</md-list-item>
+                                @click.native="switchScm(item.secret)">
+                                    <img src="../../img/bip.png"/>{{item.orgname}}
+                                </md-list-item>
                                 <md-list-item class="md-inset" @click.native="creageSCM">创建企业/加入企业</md-list-item>
-                            </md-list>
+                            </md-list> -->
                         </md-list-expand>
                     </md-list-item>
                 </md-list>
             </div>
+            <div class="center">
+                <md-list style="padding: 0px;">
+                    <md-list-item @click.native="mySetting">
+                        个人设置
+                    </md-list-item>
+                </md-list>
+            </div>
+            <div class="center">
+                <md-list style="padding: 0px;">
+                    <md-list-item @click.native="logout">
+                        退出
+                    </md-list-item>
+                </md-list>
+            </div>
         </div>
+        <md-dialog ref="dialog"  class="md-refs-dialog">
+
+        </md-dialog>
     </div> 
 </template>
 <script>
@@ -61,6 +98,12 @@ export default {
         },
         switchScm(secret){
             wx.miniProgram.navigateTo({url: '/pages/web/web?secret=' + secret})
+        },
+        logout(){
+            wx.miniProgram.navigateTo({url: '/pages/logout/logout'})
+        },
+        mySetting(){
+            this.$refs['dialog'].open();
         },
         async getUserAllScm(userCode){
             var logindata = {
@@ -105,5 +148,15 @@ export default {
     }
     .center{
         margin-top: 10px
+    }
+    .scm{
+        text-align:start;
+        list-style:none;
+        height:40px;
+        margin: 10px 0px;
+    } 
+    .scmhr{
+        margin: 0px;
+        margin-left: .5rem;
     }
 </style>

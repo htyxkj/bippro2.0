@@ -25,6 +25,8 @@
       </template>
   </div>
   <div v-else> 
+    asdfsadfasdfasfdsdfs
+    {{isLoginPage}}
     <app-login v-if="isLoginPage == 0"  @emitLogin="emitLogin"></app-login><!-- 登录页 -->
     <app-blank v-else-if="isLoginPage == 1"  @blankLogin="emitLogin"></app-blank><!-- 单点登录页 -->
     <app-ding v-else-if="isLoginPage == 2"  @dingLogin="emitLogin"></app-ding><!-- 钉钉登录页 -->
@@ -59,6 +61,15 @@ export default {
     },
     toggle() { 
       // if(this.$route.path != '/task' &&this.$route.path != '/msg' &&this.$route.path != '/blank') 
+      var lid = window.sessionStorage.getItem('isLogin');
+      console.log(lid)
+      if(lid){
+        this.isLogin = true;
+      }else{
+        this.isLogin = false;
+        this.isLoginPage = 0;
+        return;
+      }
       if(!this.$route.query.othersys || this.$route.query.othersys == 0){
         if(this.$refs.menu){
           this.$refs.menu.toggle(); 
