@@ -1,85 +1,133 @@
 <template>
     <div style="background-color:#f6f6f6"> 
-        <div style="height: 100%;overflow: auto;">
+        <div style="height: 100%;overflow: auto;background-color: white;">
             <md-tabs md-fixed>
                 <md-tab md-label="我的消息"> <!--  md-icon="notifications_none" -->
-                    <template v-for="(row,index) in msgs">
-                        <md-layout>
-                            <md-card  style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
-                                <md-card-expand>
-                                    <md-card-header> 
-                                        <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
-                                            <md-layout md-flex ="35" class="title11" >{{$t('bipmsg.head.sid')}}</md-layout>
-                                            <md-layout md-flex ="65">
-                                                {{(msgPageInfo.page-1)*msgPageInfo.size+index+1}}
-                                            </md-layout>
-                                        </md-layout>
-                                        <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
-                                            <md-layout md-flex ="35" class="title11" >{{$t('bipmsg.head.title')}}</md-layout>
-                                            <md-layout md-flex ="65">
-                                                {{row.title}}
-                                            </md-layout>
-                                        </md-layout>
-                                        <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
-                                            <md-layout md-flex ="35" class="title11" >{{$t('bipmsg.head.time')}}</md-layout>
-                                            <md-layout md-flex ="65">
-                                                {{row.dmake}}
-                                            </md-layout>
-                                        </md-layout>
-                                        <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
-                                            <md-layout md-flex ="35" class="title11" >{{$t('bipmsg.head.state')}}</md-layout>
-                                            <md-layout md-flex ="65">
-                                                {{getStatus(row.brd)}}
-                                            </md-layout>
-                                        </md-layout>
-                                        <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
-                                            <md-layout md-flex ="100" md-align="center">
-                                                <button type="button" class="small-btn" @click="view(index)">{{$t('bipmsg.btnView')}}</button>
-                                                <button type="button" class="small-btn md-btn" @click="del(index)">{{$t('bipmsg.btnDel')}}</button>
-                                            </md-layout>
-                                        </md-layout>
-                                    </md-card-header> 
-                                </md-card-expand>
-                            </md-card>                            
-                        </md-layout>
+                    <template v-if="msgs && msgs.length>0">
+                        <template v-if="!msgDetails">
+                            <template v-for="(row,index) in msgs">
+                                <md-layout>
+                                    <md-card  style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
+                                        <md-card-expand>
+                                            <md-card-header> 
+                                                <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                    <md-layout md-flex ="35" class="title11" >{{$t('bipmsg.head.sid')}}</md-layout>
+                                                    <md-layout md-flex ="65">
+                                                        {{(msgPageInfo.page-1)*msgPageInfo.size+index+1}}
+                                                    </md-layout>
+                                                </md-layout>
+                                                <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                    <md-layout md-flex ="35" class="title11" >{{$t('bipmsg.head.title')}}</md-layout>
+                                                    <md-layout md-flex ="65">
+                                                        {{row.title}}
+                                                    </md-layout>
+                                                </md-layout>
+                                                <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                    <md-layout md-flex ="35" class="title11" >{{$t('bipmsg.head.time')}}</md-layout>
+                                                    <md-layout md-flex ="65">
+                                                        {{row.dmake}}
+                                                    </md-layout>
+                                                </md-layout>
+                                                <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                    <md-layout md-flex ="35" class="title11" >{{$t('bipmsg.head.state')}}</md-layout>
+                                                    <md-layout md-flex ="65">
+                                                        {{getStatus(row.brd)}}
+                                                    </md-layout>
+                                                </md-layout>
+                                                <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                    <md-layout md-flex ="100" md-align="center">
+                                                        <button type="button" class="small-btn" @click="view(index)">{{$t('bipmsg.btnView')}}</button>
+                                                        <button type="button" class="small-btn md-btn" @click="del(index)">{{$t('bipmsg.btnDel')}}</button>
+                                                    </md-layout>
+                                                </md-layout>
+                                            </md-card-header> 
+                                        </md-card-expand>
+                                    </md-card>                            
+                                </md-layout>
+                            </template>                
+                            <md-table-pagination style="background-color: white;" :md-size="msgPageInfo.size" :md-total="msgPageInfo.total" :md-page="msgPageInfo.page" :md-label="$t('commInfo.Per')" md-separator="/" :md-page-options="[5, 10,15, 25, 50]" @pagination="onPagination" class="flex"></md-table-pagination>
+                        </template>
+                        <template v-else>
+                            <md-layout style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
+                                <md-layout md-flex ="35" class="title11" >标题</md-layout>
+                                <md-layout md-flex ="65">
+                                    {{msgs[msgIndex].title}}
+                                </md-layout>
+                            </md-layout>
+                            <md-layout style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
+                                <md-layout md-flex ="35" class="title11" >时间</md-layout>
+                                <md-layout md-flex ="65">
+                                    {{msgs[msgIndex].dmake}}
+                                </md-layout>
+                            </md-layout>
+                            <md-layout style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
+                                <md-layout md-flex ="35" class="title11" >状态</md-layout>
+                                <md-layout md-flex ="65">
+                                    {{getStatus(msgs[msgIndex].brd)}}
+                                </md-layout>
+                            </md-layout>
+                            <md-layout md-gutter  md-flex ="100" :md-gutter="16">
+                                <md-layout md-flex ="35" class="title11" >内容</md-layout>    
+                            </md-layout>
+                            <md-layout md-gutter  md-flex ="100" :md-gutter="16"> 
+                                <textarea class="area-inner" readonly v-model="msgs[msgIndex].content"></textarea>
+                            </md-layout>
+                            <md-layout md-gutter md-flex ="100" :md-gutter="16">
+                                <md-layout md-flex ="50" md-align="end" style="padding:0px;">
+                                    <md-button class="md-raised md-primary" style="width:100%" @click="upStat(msgIndex)">已读</md-button>
+                                </md-layout>
+                                <md-layout md-flex ="50" style="padding:0px;">
+                                    <md-button class="md-raised" style="width:100%" @click="msgDetails = !msgDetails">取消</md-button>
+                                </md-layout>
+                            </md-layout>
+                        </template>
                     </template>
-                    <md-table-pagination style="background-color: white;" :md-size="msgPageInfo.size" :md-total="msgPageInfo.total" :md-page="msgPageInfo.page" :md-label="$t('commInfo.Per')" md-separator="/" :md-page-options="[5, 10,15, 25, 50]" @pagination="onPagination" class="flex"></md-table-pagination>
+                    <template v-else>
+                        <div style="text-align: center;">
+                            <img style="width:65%" src="@/img/wxApplets/nomsg.png"/>
+                        </div>
+                        <div style="text-align: center;color:#888888;font-size: 16px;">
+                            暂无消息
+                        </div>
+                    </template>
                 </md-tab>
-
                 <md-tab md-label="我的任务"> <!--  md-icon="work"  -->
                     <template v-if="!bdj"> 
-                        <template v-for="(row,index) in taskValues">
-                            <md-card  style="margin-bottom: 20px;box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
-                                <md-card-expand>
-                                    <md-card-header> 
-                                        <md-layout v-for="(item,index) in taskLayCel.cels" :key="item.id" > 
-                                            <md-layout  :md-numeric="item.type===3" v-if="item.isShow"   md-gutter  md-flex ="100" :md-gutter="16">
-                                                <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
-                                                <md-layout md-flex ="65">
-                                                <md-bip-ref :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row"></md-bip-ref>
+                        <template v-if="taskValues.length>0">
+                            <template v-for="(row,index) in taskValues">
+                                <md-card  style="margin-bottom: 20px;box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
+                                    <md-card-expand>
+                                        <md-card-header> 
+                                            <md-layout v-for="(item,index) in taskLayCel.cels" :key="item.id"> 
+                                                <md-layout  :md-numeric="item.type===3" v-if="item.isShow"  style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
+                                                    <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
+                                                    <md-layout md-flex ="65">
+                                                    <md-bip-ref :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row"></md-bip-ref>
+                                                    </md-layout>
                                                 </md-layout>
                                             </md-layout>
-                                        </md-layout>
-                                        <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
-                                            <md-layout md-flex ="100" md-align="center">
-                                                <button type="button" class="small-btn" style="width: 150px;"  @click="rowClick(row)">{{$t('bipmsg.btnView')}}</button>
+                                            <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                <md-layout md-flex ="100" md-align="center">
+                                                    <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="rowClick(row)">{{$t('bipmsg.btnView')}}</button>
+                                                </md-layout>
                                             </md-layout>
-                                        </md-layout>
-                                    </md-card-header> 
-                                </md-card-expand>
-                            </md-card>
+                                        </md-card-header> 
+                                    </md-card-expand>
+                                </md-card>
+                            </template>
+                            <md-table-pagination style="background-color: white;" :md-size="taskPageInfo.size"
+                                :md-total="taskPageInfo.total" :md-page="taskPageInfo.page" :md-label="$t('commInfo.Per')"
+                                md-separator="/" :md-page-options="[10,20, 30, 50]" @pagination="onTablePagination" >
+                            </md-table-pagination> 
                         </template>
-                        <md-table-pagination
-                            style="background-color: white;"
-                            :md-size="taskPageInfo.size"
-                            :md-total="taskPageInfo.total"
-                            :md-page="taskPageInfo.page"
-                            :md-label="$t('commInfo.Per')"
-                            md-separator="/"
-                            :md-page-options="[10,20, 30, 50]"
-                            @pagination="onTablePagination"
-                            >
-                        </md-table-pagination> 
+                        <template v-else>
+                            <div style="text-align: center;">
+                                <img style="width:65%" src="@/img/wxApplets/notask.png"/>
+                            </div>
+                            <div style="text-align: center;color:#888888;font-size: 16px;">
+                                暂无任务
+                            </div>
+                        </template>
                     </template>
                     <template v-if="bdj">
                         <md-bip-task-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" @gotask="gotask"></md-bip-task-applet>
@@ -124,7 +172,9 @@ export default {
             bdj: false,
             userCode:JSON.parse(window.sessionStorage.getItem("user")).userCode,
             taskCli:null,
-            isconnt: false
+            isconnt: false,
+            msgDetails:false,
+            msgIndex:0,
         }
     },
     async mounted(){
@@ -157,12 +207,15 @@ export default {
             }
         },
         view(index) {
-            var that =this
-            this.$msgDialog.open({ msgTitle: this.msgs[index].title,msgTM:this.msgs[index].dmake, msgStatus: this.getStatus(this.msgs[index].brd),msgContent:this.msgs[index].content,upStatus(){that.upStat(index)} })
+            this.msgDetails = true;
+            this.msgIndex = index;
+            // var that =this
+            // this.$msgDialog.open({ msgTitle: this.msgs[index].title,msgTM:this.msgs[index].dmake, msgStatus: this.getStatus(this.msgs[index].brd),msgContent:this.msgs[index].content,upStatus(){that.upStat(index)} })
         },
         //修改状态
         async upStat(index){
             // this.msgs[index].status = '已读'
+            this.msgDetails = !this.msgDetails;
             var data1={
                 snkey : JSON.parse(window.sessionStorage.getItem('snkey')),
                 apiId : global.APIID_TA_MSG,
@@ -443,5 +496,10 @@ export default {
   background-color: #ff4949;
   border-color: #ff4949;
   margin-left: 10px;
+}
+.area-inner {
+    max-height: 3.2rem;
+    height: 1.2rem;
+    width: 100%;
 }
 </style>

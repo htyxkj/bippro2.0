@@ -22,7 +22,7 @@
             <md-bip-date v-model="modaleimt.startTime" :value="modaleimt.startTime" :modal="modaleimt" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
         </md-layout>
         <md-layout md-flex="100">
-            <md-bip-date v-model="modaleimt.endTime" :value="modaleimt.endTime" :modal="modaleimt" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
+            <md-bip-date v-model="modaleimt.endTime" :value="modaleimt.endTime" :modal="modaleimt" :isReport="false" :cell="eTCell" :required="eTCell.isReq" :disabled="false" ></md-bip-date> 
         </md-layout>
         <md-layout md-flex="100">
             <div class="mybtn">

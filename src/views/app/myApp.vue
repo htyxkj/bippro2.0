@@ -25,12 +25,11 @@
       </template>
   </div>
   <div v-else> 
-    asdfsadfasdfasfdsdfs
-    {{isLoginPage}}
     <app-login v-if="isLoginPage == 0"  @emitLogin="emitLogin"></app-login><!-- 登录页 -->
     <app-blank v-else-if="isLoginPage == 1"  @blankLogin="emitLogin"></app-blank><!-- 单点登录页 -->
     <app-ding v-else-if="isLoginPage == 2"  @dingLogin="emitLogin"></app-ding><!-- 钉钉登录页 -->
     <wx-applets v-else-if="isLoginPage == 3"  @appletsLogin="emitLogin"></wx-applets><!-- 微信小程序登录页 -->
+     <app-cccc v-else-if="isLoginPage == 4"  @dingLogin="emitLogin"></app-cccc><!-- 钉钉登录页 -->
   </div>
 </div>
 </template>
@@ -42,6 +41,7 @@ import Login from '../Login';
 import Blank from '../../components/Blank';
 import Ding from '../../components/Ding';
 import wxApplets from '../../components/wxApplets/WxApplets.vue';
+import cccc from '../../components/cccc/cccc'
 export default {
   name: 'myapp',
   data () {
@@ -53,7 +53,8 @@ export default {
     }
 
   },
-  components:{'app-toolbar':appToolbar,'app-content':appContent,'bip-menus': bipMenu,'app-login':Login,'app-blank':Blank,'app-ding':Ding
+  components:{'app-toolbar':appToolbar,'app-content':appContent,'bip-menus': bipMenu,'app-login':Login,'app-blank':Blank
+  ,'app-ding':Ding,'app-cccc':cccc
   ,'wx-applets':wxApplets
   },
   methods: {
@@ -159,7 +160,13 @@ export default {
       // pbuid=4003&pmenuid=4003&title=设计核查报表
       this.emitLogin()
       return;
-    }else{
+    }
+    
+    else if(this.$route.path == '/cccc'){
+      this.isLoginPage = 4;
+    }
+    
+    else{
       let lp = window.sessionStorage.getItem("isLoginPage");
       this.isLoginPage=0;
       if(lp){

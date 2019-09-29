@@ -10,6 +10,10 @@ import Router from 'vue-router';
 // import Fence from '@/components/bipmap/AlectricFence'
 // import Test1 from '@/components/Test1'
 // import Dashboard from '@/views/dashboard/Dashboard1'
+
+import cccc from '@/components/cccc/cccc';
+
+
 //单点登录
 import Test from '@/components/Test';
 //单点登录
@@ -80,12 +84,12 @@ export default new Router({
     {
       path: '/',
       name: 'Index',
-      component: Dashboard
+      component: BipMapCurrent
     },
     {
       path: '/index',
       name: 'Dashbord',
-      component: Dashboard,  
+      component: BipMapCurrent,  
     },
     {
       path: '/task',
@@ -108,7 +112,14 @@ export default new Router({
         next(); 
       }
     },
-    
+    {
+      path: '/cccc',
+      name: 'cccc',
+      component: cccc,
+      beforeEnter: (to, from, next) => {
+        next(); 
+      }
+    },
     //微信小程序
     {
       path: '/wxApplets',

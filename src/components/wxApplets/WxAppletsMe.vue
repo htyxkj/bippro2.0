@@ -48,13 +48,13 @@
                     </md-list-item>
                 </md-list>
             </div>
-            <div class="center">
+            <!-- <div class="center">
                 <md-list style="padding: 0px;">
                     <md-list-item @click.native="mySetting">
                         个人设置
                     </md-list-item>
                 </md-list>
-            </div>
+            </div> -->
             <div class="center">
                 <md-list style="padding: 0px;">
                     <md-list-item @click.native="logout">
@@ -66,7 +66,7 @@
         <md-dialog ref="dialog"  class="md-refs-dialog">
 
         </md-dialog>
-    </div> 
+    </div>
 </template>
 <script>
 import qs from 'qs'

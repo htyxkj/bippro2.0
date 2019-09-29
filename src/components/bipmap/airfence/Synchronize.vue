@@ -1,30 +1,32 @@
 <template>
-    <md-layout style="padding:20px">
-        <md-layout md-flex="100">
+    <div style="padding:20px">
+        <md-layout>
             <div style="text-align: center;width: 100%;font-size: 24px;">飞机飞行数据同步</div>
         </md-layout>
-        <md-layout md-flex="100">
+        <md-layout>
             <md-bip-input-ref :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-ref>
         </md-layout>
-        <md-layout md-flex="100">
+        <md-layout>
             <md-input-container>
                 <label for="plane">账户标识</label> 
                 <md-input :required="true" v-model="planeVal"></md-input>
             </md-input-container> 
         </md-layout>
-        <md-layout md-flex="100">
+        <md-layout>
             <md-bip-date v-model="modaleimt.startTime" :value="modaleimt.startTime" :modal="modaleimt" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
         </md-layout>
-        <md-layout md-flex="100">
-            <md-bip-date v-model="modaleimt.endTime" :value="modaleimt.endTime" :modal="modaleimt" :isReport="false" :cell="sTCell" :required="sTCell.isReq" :disabled="false" ></md-bip-date> 
+        <md-layout>
+            <md-bip-date v-model="modaleimt.endTime" :value="modaleimt.endTime" :modal="modaleimt" :isReport="false" :cell="eTCell" :required="eTCell.isReq" :disabled="false" ></md-bip-date> 
         </md-layout>
-        <md-layout md-flex="100">
-            <div class="mybtn">
-                <md-button class="md-primary md-raised" style="margin-right: 20px;" @click="Synchronize('Synchronize')">同步</md-button>
-                <md-button class="md-primary md-raised" style="margin-left:20px" @click="Synchronize('delete')">删除数据</md-button>
-            </div>
+        <md-layout md-align="center">
+            <md-button class="md-primary md-raised" style="margin-right: 20px;" @click="Synchronize('Synchronize')">同步</md-button>
+            <md-button class="md-primary md-raised" style="margin-left:20px" @click="Synchronize('delete')">删除数据</md-button>
+            <md-button class="md-primary md-raised" style="margin-left:20px" @click="Synchronize('checkData')">数据对比</md-button>
         </md-layout>
-    </md-layout>
+        <md-layout>
+            来源数据：{{jsrNum}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 目标数据：{{bipNum}}
+        </md-layout>
+    </div>
 </template>
 
 <script>
@@ -79,6 +81,8 @@ export default {
                 isReq: true, 
                 labelString:"结束时间",
             }, 
+            jsrNum:0,
+            bipNum:0,
         }
     },  
     methods: {
@@ -106,10 +110,16 @@ export default {
             let params={snkey:snkey,stateTime:this.modaleimt.startTime,endTime:this.modaleimt.endTime,taskNo:this.taskno,usernumber:this.planeno,operating:operating}
             axios.post(`${global.BIPAPIURL}SynchronizeServlet`,qs.stringify(params))
             .then(res=>{
-                if(parseInt(res.data.key) == 0){
-                    this.$notify.success({content:res.data.msg}) 
+                if(operating == 'checkData'){
+                    console.log(res)
+                    this.jsrNum = res.data.jsrNum;
+                    this.bipNum = res.data.bipNum;
                 }else{
-                    this.$notify.danger({content:res.data.msg})
+                    if(parseInt(res.data.key) == 0){
+                        this.$notify.success({content:res.data.msg}) 
+                    }else{
+                        this.$notify.danger({content:res.data.msg})
+                    }
                 }
                 this.loading=0
             })
