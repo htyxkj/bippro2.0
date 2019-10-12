@@ -131,14 +131,25 @@ export default {
         }
       }
     },
-    emitLogin(isLoginPage) {
+    emitLogin() {
       console.log("登陆成功")
-      if(!isLoginPage)
-        isLoginPage  = -1;
-      if(this.loginSuccess !=-1)
-        this.isLoginPage = this.loginSuccess;
       this.isLogin = true;
       window.sessionStorage.setItem("isLogin", JSON.stringify(this.isLogin));
+      var ua = window.navigator.userAgent.toLowerCase();//获取判断用的对象
+      let _this = this;
+      if (ua.match(/MicroMessenger/i) == "micromessenger") {
+            wx.miniProgram.getEnv(function(res) {
+            if (res.miniprogram) {
+                // 走在小程序的逻辑
+                _this.isLoginPage = 3;
+            } else {
+                // 走不在小程序的逻辑
+                // alert("走不在小程序的逻辑2")
+            }
+        }) 
+      }else{
+
+      }
     },
     blankLogin() {
       this.isLogin = true;
