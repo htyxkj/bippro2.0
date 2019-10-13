@@ -7,8 +7,8 @@
                 </md-layout> 
                 <hr style="width:100%;color:#EBEEF0;margin:0px" />
                 <md-layout md-gutter >
-                    <md-layout  v-for="(item,index) in mu.childMenu" :key="index" md-flex-small="25" md-flex-medium="25" class="title2" >
-                        <template v-if="item.menuattr !=4">
+                    <template v-for="(item,index) in mu.childMenu" >
+                        <md-layout :key="index" md-flex-small="25" md-flex-medium="25" class="title2" v-if="item.menuattr !=4" >
                             <div v-on:click="url('/layoutui?'+item.command+'&title='+item.menuName)" style="margin:0px;padding:0px;width:100%">
                                 <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" style="position: relative;">   
                                     <!-- <md-icon  v-colors="item.iconcc">{{item.menuIcon}}</md-icon>  -->
@@ -19,8 +19,8 @@
                                     <span>{{item.menuName}}</span>
                                 </md-layout> 
                             </div>
-                        </template>
-                    </md-layout> 
+                        </md-layout> 
+                    </template>
                 </md-layout> 
             </div> 
         </div>
