@@ -32,6 +32,8 @@ export default {
         pagesize: 999999,
         assistid: null,
         cont: null,
+        gwCode:null,
+        user:null,
       },
       isLoginType:null,
     }
@@ -42,9 +44,17 @@ export default {
       if(lt)
       this.isLoginType=parseInt(lt); 
       console.log(this.isLoginType)
-      this.usercode = JSON.parse(window.sessionStorage.getItem('user')).userCode; //用户编码  
+      this.user = JSON.parse(window.sessionStorage.getItem('user'))
+      this.usercode = this.user.userCode; //用户编码  
+      if(this.user.gwCode)
+      this.gwCode = this.user.gwCode;
       this.param.usercode = this.usercode;
-      let hvcc = await this.getConstant("INDEX"); 
+      let hvcc = null;
+      if(this.gwCode != null)
+        hvcc = await this.getConstant("INDEX_"+this.gwCode);       
+      if (hvcc == null || hvcc == '')
+        hvcc = await this.getConstant("INDEX");
+      console.log(hvcc)
       if (hvcc == null || hvcc == '')
         return;
       this.constant = hvcc[0];
@@ -123,6 +133,8 @@ export default {
       }).catch(err => {
         console.log(err);
       });
+      if(!value || value.length ==0) 
+        return;
 
       //初始化图表OptiOnsObject.assign({}, lineC.chart);
       var lineChart = JSON.parse(JSON.stringify(lineTwoXC.chart));
@@ -233,7 +245,8 @@ export default {
       }).catch(err => {
         console.log(err)
       })
-
+      if(!value || value.length ==0) 
+        return;
       //初始化图表OptiOnsObject.assign({}, lineC.chart);
       var lineChart = JSON.parse(JSON.stringify(lineOneXC.chart));
       var categories = []; //X1轴 

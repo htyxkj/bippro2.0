@@ -27,7 +27,7 @@
           <input type="checkbox">{{$t('login.rememberPwd')}}
         </label>
         <div class="forgetPwd">
-          <a href="#">{{$t('login.forgetPwd')}}</a>
+          <router-link to="/register"   >注册</router-link>
         </div>
       </div>
       <button type="button" class="btn btn-success btn-block btn-my" @click="loginRemote">{{$t('login.loginBtn')}}</button>

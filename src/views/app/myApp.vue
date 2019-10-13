@@ -13,7 +13,7 @@
       </div>
       <app-content class="layout-fill flex md-part layout-column"></app-content>
       <template v-if="isLoginPage == 3">
-        <md-bottom-bar @change="bottomBar" style="z-index:1000">
+        <md-bottom-bar @change="bottomBar" style="z-index:50">
           <md-bottom-bar-item md-icon="home" md-active>首页</md-bottom-bar-item>
           <md-bottom-bar-item md-icon="menu">菜单</md-bottom-bar-item>
           <md-bottom-bar-item md-icon="message">消息</md-bottom-bar-item>

@@ -171,26 +171,26 @@ export default {
         _this.$notify.danger({ content: "注册类型不能为空" });
       } else {
         // 2.校验手机号码是否存在
+          
         await this.getTel();
-    
         if (this.existence > 0) {
             _this.$notify.danger({ content: "该手机号已被注册" });
         } 
          else {
          // 3.校验验证码是否正确
-          // const url = this.smsRUL+"ckxcode";
-          //  let posParams = {tels:this.tel,xcode:this.code};
-          //  await axios.post(url, qs.stringify(posParams)).then(res=>{
-          //    if(res.data.type!=0){
-          //     _this.$notify.danger({ content: res.data.info });
-          //    }
-          //    else{
-            this.saveLonginUppwd()
-          //    }
-          //  })
-          //  .catch(err=>{
-          //    console.log(err)
-          //  })
+          const url = this.smsRUL+"ckxcode";
+           let posParams = {tels:this.tel,xcode:this.code};
+           await axios.post(url, qs.stringify(posParams)).then(res=>{
+             if(res.data.type!=0){
+              _this.$notify.danger({ content: res.data.info });
+             }
+             else{
+           this.saveLonginUppwd()
+             }
+           })
+           .catch(err=>{
+             console.log(err)
+           })
          }
       }
     },
@@ -228,11 +228,12 @@ export default {
         usrcode: this.tel,
         tel: this.tel,
         gwcode: this.type,
-        orgcode: "1",
+        orgcode: "2",
         usrattr: "3",
         dlstate:1,
         password:'yVZncpbC'
       };
+      console.log(jsonstr);
       var data1 = {
         dbid: `${global.DBID}`,
         usercode: "100003",
@@ -293,7 +294,7 @@ export default {
             name : this.name
           }
         })
-       }else {
+       }else  if(this.type == '003'){
          await this.$router.push({  
           path:'/check',   //跳转的路径
           query:{           //路由传参时push和query搭配使用 ，作用时传递参数
@@ -304,7 +305,7 @@ export default {
       
     },
     //获取短信验证码
-    getCode (){
+    async  getCode (){
       if (this.tel == "") {
         this.$notify.danger({ content: "手机号不能为空" });
         return;
@@ -315,6 +316,13 @@ export default {
            return;
           // console.log("号码错误");
       }
+         await this.getTel();
+        if (this.existence > 0) {
+            this.$notify.danger({ content: "该手机号已被注册" });
+            console.log('5555555s');
+            return
+        } 
+        console.log('5555555s');
 
 
       const url = this.smsRUL+"/xcode";

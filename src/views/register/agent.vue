@@ -184,12 +184,13 @@ export default {
       regions2: [],
       cityvalues2: "",
       orgcode:"",
-      name:""
+      name:"",
+      gwcode:""
     };
   },
   created() {
     this.usrcode = this.$route.query.tel;
-
+     
     var name;
     this.name=this.$route.query.name;
 
@@ -366,12 +367,19 @@ export default {
         _this.$notify.danger({ content: "县不能为空" });
       } else {
         let orgcode = "";
+        let gwcode="";
         if (this.dltype == "1") {
           orgcode = this.cityvalues;
+          gwcode ='001'
+          console.log(gwcode);
         } else if (this.dltype == "2") {
           orgcode = this.cityvalues1;
+           gwcode ='004'
+              console.log(gwcode);
         } else {
           orgcode = this.cityvalues2;
+           gwcode ='005'
+              console.log(gwcode);
         }
 
         let jsonstr = {
@@ -382,6 +390,7 @@ export default {
           provinces: this.cityvalues,
           city: this.cityvalues1,
           county: this.cityvalues2,
+          gwcode:gwcode,
           sys_stated:2
         };
 

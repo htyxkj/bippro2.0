@@ -181,6 +181,7 @@ export default {
           city: this.cityvalues1,
           county: this.cityvalues2,
           tel: this.usrcode,
+          frsopr:this.name,
           ilevl: "5",
           corg: "1",
           scm: this.cityvalues2,

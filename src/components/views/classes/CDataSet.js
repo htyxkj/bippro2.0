@@ -313,6 +313,9 @@ export default class CDataSet {
       if (iniVl == '[Y2M]') {
         iniVl = common.now('YYMM');
       }
+      if (iniVl == '[Y2MD]') {
+        iniVl = common.now('YYMMDD');
+      }
       if (iniVl == '[Y-M]') {
         iniVl = common.now('YYYY-MM');
       }
@@ -434,6 +437,7 @@ export default class CDataSet {
     sinc = sinc.replace(/\[#\]/g, deptInfo.cmcCode);
     sinc = sinc.replace(/\[$\]/g, user.userCode);
     sinc = sinc.replace(/\[Y2M\]/g, common.now('YYMM'));
+    sinc = sinc.replace(/\[Y2MD\]/g, common.now('YYMMDD'));
     sinc = sinc.replace(/\[YM\]/g, common.now('YYYYMM'));
     sinc = sinc.replace(/\[YMD\]/g, common.now('YYYYMMDD'));
     return sinc;

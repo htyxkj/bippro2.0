@@ -5,18 +5,21 @@
                 <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" class="title"> 
                     {{mu.menuName}}
                 </md-layout> 
+                <hr style="width:100%;color:#EBEEF0;margin:0px" />
                 <md-layout md-gutter >
-                    <md-layout  v-for="(item,index) in mu.childMenu" :key="index" md-flex-small="25" md-flex-medium="25" class="title2" v-if="item.menuattr !=4" >
-                        <div v-on:click="url('/layoutui?'+item.command+'&title='+item.menuName)" style="margin:0px;padding:0px;width:100%">
-                            <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" style="position: relative;">   
-                                <!-- <md-icon  v-colors="item.iconcc">{{item.menuIcon}}</md-icon>  -->
-                                <img :src="dingMenuImg+item.menuIcon" style="margin:auto;width: 30px;height: 30px;"/>
-                                <div class="textNum" v-show="item.bgnum >0">{{item.bgnum}}</div>
-                            </md-layout>
-                            <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" md-align="center"> 
-                                <span>{{item.menuName}}</span>
-                            </md-layout> 
-                        </div>
+                    <md-layout  v-for="(item,index) in mu.childMenu" :key="index" md-flex-small="25" md-flex-medium="25" class="title2" >
+                        <template v-if="item.menuattr !=4">
+                            <div v-on:click="url('/layoutui?'+item.command+'&title='+item.menuName)" style="margin:0px;padding:0px;width:100%">
+                                <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" style="position: relative;">   
+                                    <!-- <md-icon  v-colors="item.iconcc">{{item.menuIcon}}</md-icon>  -->
+                                    <img :src="dingMenuImg+item.menuIcon" style="margin:auto;width: 30px;height: 30px;"/>
+                                    <div class="textNum" v-show="item.bgnum >0">{{item.bgnum}}</div>
+                                </md-layout>
+                                <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" md-align="center"> 
+                                    <span>{{item.menuName}}</span>
+                                </md-layout> 
+                            </div>
+                        </template>
                     </md-layout> 
                 </md-layout> 
             </div> 
@@ -180,7 +183,7 @@ export default {
 }
 </script> 
 <style lang="scss" scoped>
-  .title{font-size: 0.18rem;font-weight: 30}
+  .title{font-size: 16px;}
   .title2{font-size: 0.13rem;margin-top: 0.15rem} 
   .blank{background-color: white;margin-top: 10px;padding-left: 15px;padding-top:10px;padding-right: 15px;}
   .blank1{background-color: white;padding-left: 10px;padding-top:10px;padding-right: 15px;}

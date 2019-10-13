@@ -4,23 +4,41 @@
         <div style="height: 100%;overflow: auto;">
             <div class="blank" v-if="shortcutMenu && shortcutMenu.length>0"> 
                 <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" class="title"> 
-                    快捷菜单
+                    &nbsp;&nbsp;快捷菜单
                 </md-layout> 
+                <hr style="width:100%;color:#EBEEF0;margin:0px" />
                 <md-layout md-gutter >
-                    <md-layout  v-for="(item,index) in shortcutMenu" :key="index" md-flex-small="25" md-flex-medium="25" class="title2" v-if="item.menuattr !=4" >
-                        <div v-on:click="url('/layoutui?'+item.command+'&title='+item.menuName)" style="margin:0px;padding:0px;width:100%">
-                            <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" style="position: relative;">   
-                                <img :src="dingMenuImg+item.menuIcon" style="margin:auto;width: 30px;height: 30px;"/>
-                                <div class="textNum" v-show="item.bgnum >0">{{item.bgnum}}</div>
-                            </md-layout>
-                            <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" md-align="center"> 
-                                <span>{{item.menuName}}</span>
-                            </md-layout> 
-                        </div>
+                    <md-layout  v-for="(item,index) in shortcutMenu" :key="index" md-flex-small="25" md-flex-medium="25" class="title2">
+                        <template v-if="item.menuattr !=4">
+                            <div v-on:click="url('/layoutui?'+item.command+'&title='+item.menuName)" style="margin:0px;padding:0px;width:100%">
+                                <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" style="position: relative;">   
+                                    <img :src="dingMenuImg+item.menuIcon" style="margin:auto;width: 30px;height: 30px;"/>
+                                    <div class="textNum" v-show="item.bgnum >0">{{item.bgnum}}</div>
+                                </md-layout>
+                                <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" md-align="center"> 
+                                    <span>{{item.menuName}}</span>
+                                </md-layout> 
+                            </div>
+                        </template>
                     </md-layout> 
                 </md-layout>
             </div>
-         
+
+            <md-layout v-for="(item,index) in summaryCar" :key="index" md-flex-small="100" md-flex-medium="100" class="summaryCar">
+                <md-layout md-flex-small="100" md-flex-medium="100" style="font-size: 16px;">
+                    &nbsp;&nbsp;{{item.name}}
+                </md-layout>
+                <hr style="width:100%;color:#EBEEF0;margin:0px" />
+                <md-layout v-for="(vl,vik) in item.value" :key="vik" md-flex="50" md-flex-xsmall="50" md-flex-small="50" :style="vik==0?'border-right: 1px solid #EBEEF0;':''">   
+                    <md-layout md-flex="100" md-align="center">
+                        <span>{{vl.name}}</span>
+                    </md-layout>
+                    <md-layout md-flex="100" md-align="center"  style="font-size: 16px;color:red">
+                        {{vl.value}}
+                    </md-layout>
+                </md-layout>
+            </md-layout>
+
             <md-layout md-flex-small="100" md-flex="66" style="margin-top:0px">
                 <md-card style="box-shadow: 0px 0px 0px;"> 
                     <md-card-media>
@@ -55,6 +73,7 @@ export default {
             shortcutMenu:[],
             dingMenuImg :`${global.BIPAPIURL}`,
             secret:null,
+            summaryCar:[],
         }
     },
     async mounted(){ 
@@ -69,9 +88,14 @@ export default {
             if(this.shortcutMenu.length<=0){
                 this.shortcutMenu = JSON.parse(window.sessionStorage.getItem("shortcutMenu"));
             }
+            if(this.summaryCar.length<=0){
+                let c = JSON.parse(window.sessionStorage.getItem("summaryCar"));
+                if(c)
+                    this.summaryCar=c;
+            }
             let user = JSON.parse(window.sessionStorage.getItem('user'));
             if(!this.shortcutMenu || (this.shortcutMenu && this.shortcutMenu.length<=0)){
-                this.getshortcutMenu(user.userCode)
+                this.getshortcutMenu(user.userCode,user.gwCode)
             }
             this.getDateStr();
         }else{  
@@ -115,7 +139,7 @@ export default {
                 window.sessionStorage.setItem('menulist', JSON.stringify(this.menuList));
                 window.sessionStorage.setItem('snkey', JSON.stringify(snkey));
                 window.sessionStorage.setItem('isLogin', true); 
-                this.getshortcutMenu(userI.userCode)
+                this.getshortcutMenu(userI.userCode,userI.gwCode)
                 this.getDateStr();  
             } else {
                 this.$notify.danger({content: res.data.message})
@@ -140,37 +164,84 @@ export default {
                 this.$notify.danger({content: '系统连接错误！！'});
             }
         }, 
-        async getshortcutMenu(userCode){
-            console.log(userCode) 
+        async getshortcutMenu(userCode,gwCode){
             var logindata = {
                 apiId: global.APIID_SHORTCUTMENU,
                 dbid: global.DBID,
                 usercode: userCode,
+                gwCode:gwCode,
             }
             try{
                 var res = await this.getDataByAPINew(logindata);
-                console.log(res)
+                this.summaryCar = [];
                 if(res.data.id ==0){
-                    let m = res.data.data.menu;
-                    let mjson = JSON.parse(m); 
-                    this.shortcutMenu = [];
-                    let menu = mjson.menuid.split(";");
-                    for(var i=0;i<this.menuList.length;i++){
-                        menu.forEach( (item) => {
-                            let menu = this.findMenuById(item,this.menuList[i]);
-                            if(menu){
-                                this.shortcutMenu.push(menu);
-                            }
-                        });
+                    let mydesk = res.data.data.mydesk;
+                    for(var i=0;i<mydesk.length;i++){
+                        let cc = JSON.stringify(mydesk[i]);
+                        let djson = JSON.parse(cc);
+                        if(djson.comtype == 'Menu'){
+                            this.mkShortcutMenu(djson);
+                        }else if(djson.comtype == 'Summary'){
+                            await this.mkMyCar(djson,userCode);
+                        }
                     }
-                    if(this.shortcutMenu.length>0){
-                        window.sessionStorage.setItem("shortcutMenu",JSON.stringify(this.shortcutMenu));
-                    } 
                 }
             }catch(e){
                 console.log(e)
                 this.$notify.danger({content: '系统连接错误！！'});
             }
+        },
+        //构建Car块
+        async mkMyCar(mjson,userCode){
+            let car = {name:mjson.sname,value:[]};
+            let cont = mjson.cont;
+            cont = cont.substring(1,cont.length-1);
+            cont = cont.split(",")
+            let v = [];
+            for(var i=0;i<cont.length;i++){
+                let data2 = {  
+                    dbid: global.DBID,
+                    usercode: userCode,
+                    apiId: global.APIID_AIDO, 
+                    page:1,
+                    assistid: cont[i], //辅助名称
+                    currentPage:1,  //页数
+                    pageSize: 2,//每页条数
+                };
+                await this.getDataByAPINewSync(data2).then((res)=>{ 
+                    if(res.data.id && res.data.id ==-1){
+
+                    }else{
+                        let value = "0"
+                        if(res.data.values){
+                            value = res.data.values[0][res.data.allCols[1]]
+                        }
+                        let cc = {name:res.data.title,value:value}
+                        car.value.push(cc);
+                    }
+                });
+            }
+            this.summaryCar.push(car);
+            if(this.summaryCar.length>0){
+                window.sessionStorage.setItem("summaryCar",JSON.stringify(this.summaryCar));
+            } 
+        },
+        //构建自定义菜单
+        mkShortcutMenu(mjson){
+            this.shortcutMenu = [];
+            let mid = JSON.parse(mjson.cont)
+            let menu = mid.menuid.split(";");
+            for(var i=0;i<this.menuList.length;i++){
+                menu.forEach( (item) => {
+                    let menu = this.findMenuById(item,this.menuList[i]);
+                    if(menu){
+                        this.shortcutMenu.push(menu);
+                    }
+                });
+            }
+            if(this.shortcutMenu.length>0){
+                window.sessionStorage.setItem("shortcutMenu",JSON.stringify(this.shortcutMenu));
+            } 
         },
         findMenuById(menuId,menu){
             if(menu.menuId==menuId){
@@ -194,7 +265,7 @@ export default {
 }
 </script> 
 <style lang="scss" scoped>
-  .title{font-size: 0.18rem;font-weight: 30}
+  .title{font-size: 16px;}
   .title2{font-size: 0.13rem;margin-top: 0.15rem} 
   .blank{background-color: white;margin-top: 10px;padding-left: 15px;padding-top:10px;padding-right: 15px;}
   .blank1{background-color: white;padding-left: 10px;padding-top:10px;padding-right: 15px;}
@@ -211,4 +282,9 @@ export default {
     color: white;
     position: absolute;
   }
+    .summaryCar{
+        background-color: white;
+        padding:0px 10px 5px 10px;
+        margin-bottom: 10px;
+    }
 </style>

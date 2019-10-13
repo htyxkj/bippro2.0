@@ -10,10 +10,10 @@
         <md-input v-model="indent" required></md-input>
       </md-input-container>
 
-      <md-input-container>
+      <md-input-container v-show="DD">
         <md-icon class="md-primary">menu</md-icon>
-        <label for="dltype">监督类型</label>
-        <md-select name="dltype" id="dltype" v-model="dltype" required>
+        <label for="dltype" >监督类型</label>
+        <md-select name="dltype" id="dltype" v-model="dltype"  required>
           <md-option value="1">省级监督</md-option>
           <md-option value="2">市级监督</md-option>
           <md-option value="3">县级监督</md-option>
@@ -78,7 +78,7 @@
           </md-layout>
         </md-layout>
       </div>
-      <div class="citys" v-if="dltype == '2'">
+      <!-- <div class="citys" v-if="dltype == '2'">
         <md-layout md-gutter>
           <md-layout md-flex-medium="50">
             <md-input-container>
@@ -140,7 +140,7 @@
             </md-input-container>
           </md-layout>
         </md-layout>
-      </div>
+      </div> -->
 
       <div class="reg-btn">
         <md-button class="md-raised md-primary">
@@ -182,7 +182,9 @@ export default {
       regions1: [],
       cityvalues1: "",
       regions2: [],
-      cityvalues2: ""
+      cityvalues2: "",
+      DD:false
+  
     };
   },
   created() {
@@ -324,7 +326,7 @@ export default {
           orgcode = this.cityvalues;
         } else if (this.dltype == "2") {
           orgcode = this.cityvalues1;
-        } else {
+        } else  if (this.dltype == "3"){
           orgcode = this.cityvalues2;
         }
         let jsonstr = {
@@ -341,7 +343,7 @@ export default {
           dbid: `${global.DBID}`,
           usercode: "100003",
           apiId: "savedata",
-          pcell: "6003ZA", // 对象标识
+          pcell: "6003ZAA", // 对象标识
           jsonstr: JSON.stringify(jsonstr),
           datatype: 1
         };
