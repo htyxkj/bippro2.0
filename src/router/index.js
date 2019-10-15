@@ -29,7 +29,8 @@ import agent from '@/views/register/agent';
 import company from '@/views/register/company';
 import check from '@/views/register/check';
 import zcxy from '@/views/register/zcxy';
-
+//微信支付页面
+const wxPay  = () => import('@/components/wxPay/wxPay');
 
 //系统基础路由
 const Test1 = () =>
@@ -208,6 +209,10 @@ export default new Router({
             beforeEnter: (to, from, next) => {
                 next();
             }
+        },{
+            path:'/wxPay',
+            name:'wxPay',
+            component:wxPay,
         }
         //end    
         , {

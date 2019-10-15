@@ -12,8 +12,10 @@
       <md-part-toolbar-group> -->
         <md-button v-if="menuP.COPY" @click="copy">{{$t('commBtn.B_COPY')}}</md-button>
         <!-- <md-button>审核 Auditing</md-button> -->
-        <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
-        <md-button @click.native="submitProcess" :disabled="canSubmit">{{$t('commBtn.B_SubmitProcess')}}</md-button>
+        <template v-if="(mparams.pattr & 0x100) >0">
+          <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
+          <md-button @click.native="submitProcess" :disabled="canSubmit">{{$t('commBtn.B_SubmitProcess')}}</md-button>
+        </template>
         <md-button v-if="mparams.pprn && ISPC()" @click="print(mparams.pprn)">打印</md-button>
       </md-part-toolbar-group>
 

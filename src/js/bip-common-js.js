@@ -21,10 +21,10 @@
 // global.BIPAPIURL = 'http://115.28.191.203:89/prjctadmin/';//项目管理
 // global.BIPAPIURL = 'http://115.28.191.203:89/nc_jxgl/';//115绩效管理
 // global.BIPAPIURL = 'http://192.168.1.18:9999/jd/';
-// global.BIPAPIURL = 'https://www.bip-soft.com/supervise/' //115食安
+global.BIPAPIURL = 'https://www.bip-soft.com/supervise/' //115食安
 // global.DBID = 'ZT1';
 // global.DBID = 'J1';
-// global.DBID = '01';
+global.DBID = '01';
 
 
 // global.BIPAPIURL = 'http://192.168.1.200:9999/jd/';
@@ -46,6 +46,7 @@
 // global.DBID = '133';//本机安全隐患监控平台
 // global.DBID = '134';//图书管理
 // global.DBID = '137'//CRM
+// global.DBID = '140'//三农餐饮监管
 global.API_COM = 'api'; //web端入口
 global.API_UPD = 'upd'; //附件操作接口
 //队列消息配置
