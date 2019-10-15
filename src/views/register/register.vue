@@ -40,11 +40,21 @@
         <md-icon class="md-primary">menu</md-icon>
         <label for="type" >注册类型</label>
         <md-select name="type" id="type" v-model="type" required>
-          <md-option value="001">代理</md-option>
+          <md-option value="001">管理中心</md-option>
           <md-option value="002">被监督单位</md-option>
           <md-option value="003">监督员</md-option>
         </md-select>
       </md-input-container>
+    
+    <!-- <checkbox class="zctk"  v-model="checkbox" Style="zoom: 80%" >  
+      <label>已阅读并同意<a @click="go"> 《软件许可及服务协议》</a>      </label>
+    </checkbox> -->
+
+        <div>
+          <input type="checkbox" class="zctk"  v-model="checkbox" Style="zoom: 100%" >
+              <label class="zctkl">已阅读并同意<a @click="go"> 《软件许可及服务协议》</a>      </label>
+        </div>
+
 
       <div class="reg-btn">
         <md-button class="md-raised md-primary">
@@ -52,7 +62,8 @@
         </md-button>
       </div>
 
-      <!-- <md-button @click="change" class="md-raised md-primary" >个人企业</md-button> -->
+ 
+
     </div>
   </div>
 </template>>
@@ -91,16 +102,34 @@ export default {
       show: true,
       count: '',
       timer: null,
+      checkbox:false,
     };
   },
   created() {
     this.loginRemote();
-    console.log("cc")
+    console.log("cc");
+
+     this.tel = this.$route.query.tel;
+      this.name=this.$route.query.name;
+      this.code=this.$route.query.code;
+      this.password=this.$route.query.password;
+      this.type=this.$route.query.type;
+
+      console.log(this.tel);
+      console.log(this.name);
+      console.log(this.type);
+      console.log(this.type);
+
+
+
+
+
   },
   mounted() {},
   methods: {
     //保存、登录、修改密码
     async saveLonginUppwd(){
+      
       await this.saveInsuData();
       await this.loginRemote1();
       await this.upPwd()
@@ -155,6 +184,23 @@ export default {
         this.$notify.danger({ content: "系统连接错误！！" });
       }
     },
+
+        async go(){
+          this.$router.push({
+          path:'/zcxy',   //跳转的路径
+          query:{           //路由传参时push和query搭配使用 ，作用时传递参数
+            tel : this.tel,
+           name : this.name,
+           code:this.code,
+           password:this.password,
+           type:this.type
+
+          }
+        })
+        },
+
+
+
     // (1)用户对象保存
     async saveInsuser() {
       // 1.校验字段是否为空
@@ -169,7 +215,10 @@ export default {
         _this.$notify.danger({ content: "密码不能为空" });
       } else if (this.type == "") {
         _this.$notify.danger({ content: "注册类型不能为空" });
-      } else {
+      }else if (this.checkbox == false) {
+        _this.$notify.danger({ content: "是否同意注册协议" });
+      }
+       else {
         // 2.校验手机号码是否存在
           
         await this.getTel();
@@ -249,6 +298,7 @@ export default {
           if (res.data.id == 0) {
             _this.$notify.success({ content: "保存成功" });
             // 页面跳转
+
             this.change()
           } else {
             _this.$notify.danger({ content: "保存失败" });
@@ -384,5 +434,13 @@ img{
 }
 .reg-btn-con {
   padding: 3px 80px;
+}
+.zctk{
+  color: #6b6b6b;
+  text-align: center;
+  
+}
+.zctkl{
+  color: #6b6b6b;
 }
 </style>

@@ -14,9 +14,9 @@
         <md-icon class="md-primary">menu</md-icon>
         <label for="dltype">代理类型</label>
         <md-select name="dltype" id="dltype" v-model="dltype" required>
-          <md-option value="1">省级代理</md-option>
-          <md-option value="2">市级代理</md-option>
-          <md-option value="3">县级代理</md-option>
+          <md-option value="1">省级管理中心</md-option>
+          <md-option value="2">市级管理中心</md-option>
+          <md-option value="3">县级管理中心</md-option>
         </md-select>
       </md-input-container>
 

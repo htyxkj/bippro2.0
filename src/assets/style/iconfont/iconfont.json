@@ -1,0 +1,65 @@
+{
+  "id": "1457403",
+  "name": "1",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "8973196",
+      "name": "返 回",
+      "font_class": "fanhui2",
+      "unicode": "e6be",
+      "unicode_decimal": 59070
+    },
+    {
+      "icon_id": "9219182",
+      "name": "返 回",
+      "font_class": "fanhui1",
+      "unicode": "e650",
+      "unicode_decimal": 58960
+    },
+    {
+      "icon_id": "9459569",
+      "name": "返 回",
+      "font_class": "fanhui4",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "9487006",
+      "name": "返 回",
+      "font_class": "fanhui",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "9492000",
+      "name": "返 回",
+      "font_class": "back-ico",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "10123574",
+      "name": "返 回",
+      "font_class": "fanhui5",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "10400314",
+      "name": "返 回",
+      "font_class": "fanhui-copy-copy",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "10405336",
+      "name": "返 回",
+      "font_class": "fanhui6",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    }
+  ]
+}

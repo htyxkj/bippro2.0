@@ -92,7 +92,7 @@ export default {
         window.sessionStorage.setItem('menulist', JSON.stringify(mlist));
         window.sessionStorage.setItem('snkey', JSON.stringify(snkey));
         this.$emit('emitLogin');
-        this.$notify.success({content: '成功登陆'})
+        this.$notify.success({content: '成功登陆',duration:1000})
       } else {
         // console.log(res.data.message);
         this.$notify.danger({content: res.data.message})
