@@ -1,7 +1,7 @@
 <template>
     <md-layout md-gutter md-column class="mapbody">
         <md-layout md-gutter md-row>
-            <md-layout md-flex-small="100" md-flex="75">  
+            <md-layout md-flex-small="100" md-flex="75" style="background-color:#fff;">  
                 <md-card class="mapcard">
                     <div class="mapdiv">
                         <div :class="ISPC()?mybtnpc:mybtn">
@@ -36,7 +36,7 @@
                             </md-layout>  
                         </div>  
 
-                        <div id="container"></div>
+                        <div id="container" style="background-color:#fff;"></div>
                         </div> 
 
                         <div class="jdt" >
@@ -60,36 +60,35 @@
                 <md-loading :loading="loading"></md-loading>
             </md-layout>
             <md-layout md-flex-small="100" md-flex="25" md-column>
-                <!-- 仪表盘 -->
-                <md-layout md-flex="25">
-                    <md-card class="mycard">
-                        <echarts-gauge :gaugeseries="gaugeseries"></echarts-gauge>
-                    </md-card>
-                </md-layout>
-                <!-- 流量 -->
-                <md-layout md-flex="25">
-                    <md-card class="mycard">
-                        <echarts-flow-line :lineseries="plane_ssflow"></echarts-flow-line>
-                    </md-card>
-                </md-layout>
-                <!-- 高度 -->
-                <md-layout md-flex="25">
-                    <md-card class="mycard">
-                        <echarts-height-line :lineseries="plane_height"></echarts-height-line>
-                    </md-card>
-                </md-layout> 
-                <md-layout md-flex="20">
-                    <md-card class="cardList">
-                        <ul>
-                            <li v-for="(item,index) in errorMSG" :key="index">
-                                <span v-if="item!=''">
-                                    <md-icon class="list-icon">error</md-icon>
-                                    <span class="md-body-1">{{item}}</span>
-                                </span>
-                            </li>
-                        </ul>
-                    </md-card>
-                </md-layout>
+                <md-list>
+                    <md-list-item>
+                        <md-card class="mycard">
+                            <echarts-gauge :gaugeseries="gaugeseries"></echarts-gauge>
+                        </md-card>
+                    </md-list-item>
+                    <md-list-item>
+                        <md-card class="mycard">
+                             <echarts-flow-line :lineseries="plane_ssflow"></echarts-flow-line>
+                        </md-card>
+                    </md-list-item>
+                    <md-list-item>
+                        <md-card class="mycard">
+                            <echarts-height-line :lineseries="plane_height"></echarts-height-line>
+                        </md-card>
+                    </md-list-item>
+                    <md-list-item>
+                        <md-card class="cardList">
+                            <ul>
+                                <li v-for="(item,index) in errorMSG" :key="index">
+                                    <span v-if="item!=''">
+                                        <md-icon class="list-icon">error</md-icon>
+                                        <span class="md-body-1">{{item}}</span>
+                                    </span>
+                                </li>
+                            </ul>
+                        </md-card>
+                    </md-list-item>
+                </md-list>
             </md-layout>
         </md-layout>
     </md-layout>
@@ -695,6 +694,7 @@ export default {
 }
 .cardList{
     display: block;
+    height:150px;
     background-color: #f4f4f4 !important;
     ul{
         padding: 0;
@@ -784,7 +784,9 @@ export default {
 .mycard{
     margin-bottom: 0;
     overflow: hidden;
-    display: flex;  
+    height:150px;
+
+    // display: flex;  
 } 
 .jdt{ 
     position: absolute;

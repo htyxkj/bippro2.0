@@ -110,12 +110,12 @@ export default new Router({
         {
             path: '/',
             name: 'Index',
-            component: WxApplets
+            component: Dashboard
         },
         {
             path: '/index',
             name: 'Dashbord',
-            component: WxApplets,
+            component: Dashboard,
         },
         {
             path: '/task',

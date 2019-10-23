@@ -106,7 +106,6 @@ export default {
     },
     methods: {
         async url(url){
-            this.$emit('appletsLogin');
             await this.$router.push(url)
         },
         async loginSuccess(res) {
@@ -141,6 +140,7 @@ export default {
                 window.sessionStorage.setItem('isLogin', true); 
                 this.getshortcutMenu(userI.userCode,userI.gwCode)
                 this.getDateStr();  
+                this.$emit('appletsLogin');
             } else {
                 this.$notify.danger({content: res.data.message})
                 window.sessionStorage.clear();

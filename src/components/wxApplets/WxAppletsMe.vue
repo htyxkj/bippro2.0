@@ -62,6 +62,13 @@
                     </md-list-item>
                 </md-list>
             </div>
+            <div class="center">
+                <md-list style="padding: 0px;">
+                    <md-list-item @click.native="pay">
+                        支付测试
+                    </md-list-item>
+                </md-list>
+            </div>
         </div>
         <md-dialog ref="dialog"  class="md-refs-dialog">
 
@@ -101,6 +108,9 @@ export default {
         },
         logout(){
             wx.miniProgram.navigateTo({url: '/pages/logout/logout'})
+        },
+        pay(){
+            wx.miniProgram.navigateTo({url: '/pages/pay/pay?sid=123456789&money=1'})
         },
         mySetting(){
             this.$refs['dialog'].open();

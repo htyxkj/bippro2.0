@@ -1,7 +1,7 @@
 <template>
   <md-sidenav class="md-left md-app-menu has-extend" ref="mainSidenav">
     <md-toolbar>
-      <img src="../../img/bip.png" alt="People">
+      <img src="../../img/bip.png" alt="People" style="width:40px;height:40px">
       <!-- <md-subheader class="md-title">{{$t('sysTitle')}}</md-subheader> -->
       <md-subheader class="md-title">{{cmcName}}</md-subheader>
     </md-toolbar>
