@@ -21,10 +21,10 @@
 // global.BIPAPIURL = 'http://115.28.191.203:89/prjctadmin/';//项目管理
 // global.BIPAPIURL = 'http://115.28.191.203:89/nc_jxgl/';//115绩效管理
 // global.BIPAPIURL = 'http://192.168.1.18:9999/jd/';
-// global.BIPAPIURL = 'https://www.bip-soft.com/supervise/' //115食安
-// global.DBID = 'ZT1';
-// global.DBID = 'J1';
-// global.DBID = '01';
+global.BIPAPIURL = 'https://www.bip-soft.com/supervise/' //115食安
+    // global.DBID = 'ZT1';
+    // global.DBID = 'J1';
+global.DBID = '01';
 
 
 // global.BIPAPIURL = 'http://192.168.1.200:9999/jd/';

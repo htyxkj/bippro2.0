@@ -28,7 +28,7 @@ import register from '@/views/register/register';
 import agent from '@/views/register/agent';
 import company from '@/views/register/company';
 import check from '@/views/register/check';
-import zcxy from '@/views/register/zcxy';
+
 
 
 //系统基础路由
@@ -169,14 +169,8 @@ export default new Router({
                 next();
             }
         },
-        {
-            path: '/zcxy',
-            name: 'zcxy',
-            component: zcxy,
-            beforeEnter: (to, from, next) => {
-                next();
-            }
-        },
+
+
 
         //微信小程序
         {
@@ -186,7 +180,8 @@ export default new Router({
             beforeEnter: (to, from, next) => {
                 next();
             }
-        }, {
+        },
+        {
             path: '/WxAppletsMenu',
             name: 'WxAppletsMenu',
             component: WxAppletsMenu,
@@ -201,7 +196,8 @@ export default new Router({
             beforeEnter: (to, from, next) => {
                 next();
             }
-        }, {
+        },
+        {
             path: '/wxAppletsMe',
             name: 'wxAppletsMe',
             component: WxAppletsMe,
@@ -210,7 +206,8 @@ export default new Router({
             }
         }
         //end    
-        , {
+        ,
+        {
             path: '/layoutui',
             name: '页面布局',
             component: CommLayUI
@@ -227,11 +224,13 @@ export default new Router({
             path: '/CarLocus',
             name: '汽车轨迹回放',
             component: CarLocus
-        }, {
+        },
+        {
             path: '/Adjust',
             name: '调度',
             component: Adjust
-        }, {
+        },
+        {
             path: '/Fence',
             name: '电子围栏',
             component: Fence
