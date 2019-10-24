@@ -141,7 +141,7 @@ export default {
             wx.miniProgram.getEnv(function(res) {
             if (res.miniprogram) {
                 // 走在小程序的逻辑
-           if(_this.$route.path == "/" || _this.$route.path == "/index")
+           if(_this.$route.path == "/" || _this.$route.path == "/index" || _this.$route.path == "/WxApplets")
                 _this.isLoginPage = 3;
             } else {
                 // 走不在小程序的逻辑

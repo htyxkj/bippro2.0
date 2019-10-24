@@ -10,8 +10,10 @@
 
         <md-button>{{$t('commBtn.B_COPY')}}</md-button>
         <!-- <md-button>审核</md-button> -->
-        <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
-        <md-button @click.native="submitProcess" :disabled="canSubmit">{{$t('commBtn.B_SubmitProcess')}}</md-button>
+        <template v-if="(mparams.pattr & 0x100) >0">
+          <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
+          <md-button @click.native="submitProcess" :disabled="canSubmit">{{$t('commBtn.B_SubmitProcess')}}</md-button>
+        </template>
       </md-part-toolbar-group>
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
