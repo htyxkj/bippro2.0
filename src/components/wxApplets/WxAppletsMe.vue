@@ -110,7 +110,10 @@ export default {
             wx.miniProgram.navigateTo({url: '/pages/logout/logout'})
         },
         pay(){
-            wx.miniProgram.navigateTo({url: '/pages/pay/pay?sid=123456789&money=1'})
+            let time = new Date().getTime();
+            let tkid = 'TK'+time;
+            let sid = 'ZF'+time;
+            wx.miniProgram.navigateTo({url: '/pages/pay/pay?sid='+sid+'&tkid='+tkid+'&money=1'})
         },
         mySetting(){
             this.$refs['dialog'].open();
