@@ -147,6 +147,7 @@ export default {
     async bh(bup) {
       this.cea.stateto = this.chkinfo.state;
       this.cea.bup = "2";
+      this.cea.yjcontext = this.content;
       this.cea.tousr = bup ? "#" : this.billuser;
       var res = await this.getCeaCheckInfo(this.cea, 34);
       // console.log(res, "驳回！");
@@ -159,6 +160,7 @@ export default {
         if (this.chkinfo.checked) {
           this.cea.stateto = this.chkinfo.state;
           this.cea.statefr = this.chkinfo.state;
+          this.cea.yjcontext = this.content;
           var id = 39;
           if (this.chkinfo.state !== "6") {
             id = 40;
