@@ -13,8 +13,8 @@
 // global.BIPAPIURL = 'http://www.bip-soft.com:89/clubreserv/';//会所预定
 // global.BIPAPIURL = 'http://www.juminfuwu.cn:88/nc_jxgl/';//绩效管理
 // global.BIPAPIURL = 'http://www.juminfuwu.cn:88/xsgk/';//安全隐患监控平台正式
-// global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/';//安全隐患监控平台测试
-global.BIPAPIURL = 'https://www.bip-soft.com/xsgk/';//安全隐患监控平台测试
+global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/';//安全隐患监控平台测试
+// global.BIPAPIURL = 'https://www.bip-soft.com/xsgk/';//安全隐患监控平台测试
 // global.BIPAPIURL = 'http://115.28.191.203:89/bip-library/';//图书管理
 // global.BIPAPIURL = 'http://192.168.0.200:8088/airfencea/';//本机测试环境
 // global.BIPAPIURL = 'http://115.28.191.203:89/property/';//物业管理

@@ -77,6 +77,11 @@
                       {{item.dateto}}
                     </span>
                   </div>
+                  <div class="div5">
+                    <span style="font-size:11px">
+                      {{item.dscto}}
+                    </span>
+                  </div>
                   <div class="div4">
                     <img class="image3" v-if="item.cid <0 && item.cid != -20000" src="../../../img/check/process_bh1.png">
                     <img class="image3" v-else-if="item.cid == -20000" src="../../../img/check/process_ds1.png">
@@ -168,7 +173,7 @@ export default {
   }
   .div3 {
     background-color: #FFFFFF;
-    height: 52px;
+    height: 65px;
     // width: 85%;
     margin: auto;
     margin-top: -43px;
@@ -184,6 +189,13 @@ export default {
     height: 100%;
     margin-right: 3px;
     // max-width: 80px;
+  }
+  .div5{
+    margin-top: 34px;
+    float:left; 
+    height:100%;
+    margin-left: 6px;
+    position: relative;
   }
   .image3 {
     width: 50px;
