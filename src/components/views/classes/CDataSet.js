@@ -116,6 +116,8 @@ export default class CDataSet {
               vv = new Number(vv).toFixed(cl.ccPoint);
             }
             this.currRecord[col] = vv;
+          }else {
+            this.currRecord[col] =null;
           }
         });
       }
