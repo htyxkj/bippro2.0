@@ -51,7 +51,8 @@ export default {
     return {
       stateId: "",
       userIds: [],
-      content: this.$t('cwork.agree'),
+      //content: this.$t('cwork.agree'),
+      content:"",
       users: [],
       list: [],
       cea: null,
@@ -77,6 +78,9 @@ export default {
     },
     //同意并提交到下一个节点
     async checkUp() {
+      console.log('22222222');
+       this.content="同意";
+      console.log('33333333');
       this.cea.stateto = this.stateId;
       this.cea.yjcontext = this.content;
       this.cea.tousr = this.makeUU();
@@ -116,15 +120,32 @@ export default {
       }
       return ids;
     },
-    //驳回
-    checkBack() {
-      this.$dialog
+     BHjy(){
+      if (this.content == "") {
+        this.$notify.danger({ content: "驳回说明不能为空" });
+      }else {
+         this.$dialog
         .confirm("确定驳回吗？", {
           okText: "确定",
           cancelText: "取消"
         })
         .then(() => {
           this.bh(false);
+       
+      });
+      this.close();
+      }
+    },
+    //驳回
+    checkBack() {
+      this.BHjy();
+      // this.$dialog
+      //   .confirm("确定驳回吗？", {
+      //     okText: "确定",
+      //     cancelText: "取消"
+      //   })
+      //   .then(() => {
+      //     this.bh(false);
           // if(this.chkinfo.upState === '0' ||this.chkinfo.upState === '1'){
           //   //this.bh(false);
           // }else{
@@ -141,13 +162,20 @@ export default {
           // }
           // console.log(this.chkinfo);
           //this.bh();
-        });
-      this.close();
+      //   });
+      // this.close();
     },
     async bh(bup) {
       this.cea.stateto = this.chkinfo.state;
       this.cea.bup = "2";
+
+
+      console.log('555555');
       this.cea.yjcontext = this.content;
+      console.log( this.content);
+      console.log('6666666666');
+
+
       this.cea.tousr = bup ? "#" : this.billuser;
       var res = await this.getCeaCheckInfo(this.cea, 34);
       // console.log(res, "驳回！");

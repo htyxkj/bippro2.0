@@ -78,9 +78,9 @@
                     </span>
                   </div>
                   <div class="div5">
-                    <span style="font-size:11px">
+                    <span style="font-size:11px"  >
                       {{item.dscto}}
-                    </span>
+                  </span>
                   </div>
                   <div class="div4">
                     <img class="image3" v-if="item.cid <0 && item.cid != -20000" src="../../../img/check/process_bh1.png">
@@ -195,14 +195,14 @@ export default {
     float:left; 
     height:100%;
     margin-left: 6px;
-    position: relative;
+    position: absolute;
   }
   .image3 {
     width: 50px;
     height: 34px;
     position: absolute;
     right: 30%;
-    margin-top: 14px;
+    margin-top: 20px;
   }
 
 </style>
