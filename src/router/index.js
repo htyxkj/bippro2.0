@@ -111,12 +111,12 @@ export default new Router({
         {
             path: '/',
             name: 'Index',
-            component: Dashboard
+            component: Ding
         },
         {
             path: '/index',
             name: 'Dashbord',
-            component: Dashboard,
+            component: Ding,
         },
         {
             path: '/task',
