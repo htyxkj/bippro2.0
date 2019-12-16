@@ -410,7 +410,6 @@ export default {
   },
 
   async mounted() { 
-    
     if (this.$slots.default && this.$slots.default.filter) { 
       const columnComponents = this.$slots.default
         .filter(column => column.componentInstance)

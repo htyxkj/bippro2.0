@@ -27,7 +27,7 @@ export default class CDataSet {
         this.ds_sub.push(ds);
       });
     }
-    this.scriptProc = new BipScriptProc(this.currRecord,this.ccells.cels);
+    this.scriptProc = new BipScriptProc(this.currRecord,this.ccells.cels,this.ds_par);
   }
 
   indexPKID(cell, bfull, bcid){
@@ -78,10 +78,11 @@ export default class CDataSet {
     this.scriptProc.data = this.currRecord;
     _.forEach(this.ccells.cels, col => {
       let scstr = col.script;
+      if(!cell || col.id != cell.id)
       if (scstr && scstr.indexOf('=:') === 0) {
         scstr = scstr.replace('=:', '');
         // 公式计算
-        var vl = this.scriptProc.execute(scstr,null,col);
+        var vl = this.scriptProc.execute(scstr,null,col,this.ds_par);
         // console.log(vl,this.currRecord,col.id,scstr);
         vl = this.dataFmort(col,vl);
         this.currRecord[col.id] = vl;

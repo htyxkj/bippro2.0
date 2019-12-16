@@ -12,7 +12,7 @@
 // global.BIPAPIURL = 'http://192.168.100.13:8080/skxjtfile/';//京通档案（水科学院）
 // global.BIPAPIURL = 'http://www.bip-soft.com:89/clubreserv/';//会所预定
 // global.BIPAPIURL = 'http://www.juminfuwu.cn:88/nc_jxgl/';//绩效管理
-global.BIPAPIURL = 'https://test.juminfuwu.cn/bip-share/'; //安全隐患监控平台正式
+global.BIPAPIURL = 'https://test.juminfuwu.cn/bip-share/'; //财务共享
 //global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/';//安全隐患监控平台测试
 // global.BIPAPIURL = 'https://www.bip-soft.com/xsgk/';//安全隐患监控平台测试
 // global.BIPAPIURL = 'http://115.28.191.203:89/bip-library/';//图书管理
@@ -48,6 +48,7 @@ global.DBID = '01';
 // global.DBID = '134';//图书管理
 // global.DBID = '137'//CRM
 // global.DBID = '140'//三农餐饮监管
+// global.DBID = '141'//财务共享
 global.API_COM = 'api'; //web端入口
 global.API_UPD = 'upd'; //附件操作接口
 //队列消息配置

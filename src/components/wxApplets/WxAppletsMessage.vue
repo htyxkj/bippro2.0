@@ -1,8 +1,50 @@
 <template>
     <div style="background-color:#f6f6f6"> 
         <div style="height: 100%;overflow: auto;background-color: white;">
-            <md-tabs md-fixed>
-                <md-tab md-label="我的消息"> <!--  md-icon="notifications_none" -->
+            <md-tabs md-fixed :md-dynamic-height="false" class="myMobileMTTabs">
+                <md-tab md-label="我的任务" class="oneTab" :style="bdj ==false?'height: 100%':'padding:0px;height: 100%'"> <!--  md-icon="work"  -->
+                    <template v-if="!bdj"> 
+                        <template v-if="taskValues.length>0">
+                            <template v-for="(row,index) in taskValues">
+                                <md-card  style="margin-bottom: 20px;box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
+                                    <md-card-expand>
+                                        <md-card-header> 
+                                            <md-layout v-for="(item,index) in taskLayCel.cels" :key="item.id"> 
+                                                <md-layout  :md-numeric="item.type===3" v-if="item.isShow"  style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
+                                                    <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
+                                                    <md-layout md-flex ="65">
+                                                    <md-bip-ref :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row"></md-bip-ref>
+                                                    </md-layout>
+                                                </md-layout>
+                                            </md-layout>
+                                            <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                <md-layout md-flex ="100" md-align="center">
+                                                    <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="rowClick(row)">{{$t('bipmsg.btnView')}}</button>
+                                                </md-layout>
+                                            </md-layout>
+                                        </md-card-header> 
+                                    </md-card-expand>
+                                </md-card>
+                            </template>
+                            <md-table-pagination style="background-color: white;" :md-size="taskPageInfo.size"
+                                :md-total="taskPageInfo.total" :md-page="taskPageInfo.page" :md-label="$t('commInfo.Per')"
+                                md-separator="/" :md-page-options="[10,20, 30, 50]" @pagination="onTablePagination" >
+                            </md-table-pagination> 
+                        </template>
+                        <template v-else>
+                            <div style="text-align: center;">
+                                <img style="width:65%" src="@/img/wxApplets/notask.png"/>
+                            </div>
+                            <div style="text-align: center;color:#888888;font-size: 16px;">
+                                暂无任务
+                            </div>
+                        </template>
+                    </template>
+                    <template v-if="bdj">
+                        <md-bip-task-applet v-if="ds_m" :dsm="ds_m" :dsext="ds_ext" :opera="opera" @gotask="gotask"></md-bip-task-applet>
+                    </template>
+                </md-tab> 
+                <md-tab md-label="我的消息" class="oneTab"> <!--  md-icon="notifications_none" -->
                     <template v-if="msgs && msgs.length>0">
                         <template v-if="!msgDetails">
                             <template v-for="(row,index) in msgs">
@@ -91,48 +133,6 @@
                         </div>
                     </template>
                 </md-tab>
-                <md-tab md-label="我的任务"> <!--  md-icon="work"  -->
-                    <template v-if="!bdj"> 
-                        <template v-if="taskValues.length>0">
-                            <template v-for="(row,index) in taskValues">
-                                <md-card  style="margin-bottom: 20px;box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
-                                    <md-card-expand>
-                                        <md-card-header> 
-                                            <md-layout v-for="(item,index) in taskLayCel.cels" :key="item.id"> 
-                                                <md-layout  :md-numeric="item.type===3" v-if="item.isShow"  style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
-                                                    <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
-                                                    <md-layout md-flex ="65">
-                                                    <md-bip-ref :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row"></md-bip-ref>
-                                                    </md-layout>
-                                                </md-layout>
-                                            </md-layout>
-                                            <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
-                                                <md-layout md-flex ="100" md-align="center">
-                                                    <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="rowClick(row)">{{$t('bipmsg.btnView')}}</button>
-                                                </md-layout>
-                                            </md-layout>
-                                        </md-card-header> 
-                                    </md-card-expand>
-                                </md-card>
-                            </template>
-                            <md-table-pagination style="background-color: white;" :md-size="taskPageInfo.size"
-                                :md-total="taskPageInfo.total" :md-page="taskPageInfo.page" :md-label="$t('commInfo.Per')"
-                                md-separator="/" :md-page-options="[10,20, 30, 50]" @pagination="onTablePagination" >
-                            </md-table-pagination> 
-                        </template>
-                        <template v-else>
-                            <div style="text-align: center;">
-                                <img style="width:65%" src="@/img/wxApplets/notask.png"/>
-                            </div>
-                            <div style="text-align: center;color:#888888;font-size: 16px;">
-                                暂无任务
-                            </div>
-                        </template>
-                    </template>
-                    <template v-if="bdj">
-                        <md-bip-task-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" @gotask="gotask"></md-bip-task-applet>
-                    </template>
-                </md-tab> 
             </md-tabs>
         </div>
         <md-loading :loading="loading"></md-loading>
@@ -465,8 +465,15 @@ export default {
     }
 }
 </script> 
+<style lang="scss">
+.myMobileMTTabs{
+    height:100%;
+    .md-tabs-content{
+        height: 100% !important;
+    }
+}
+</style>
 <style lang="scss" scoped>
-
 .md-card .md-card-content:last-child {
   padding-bottom: 0rem; 
 }

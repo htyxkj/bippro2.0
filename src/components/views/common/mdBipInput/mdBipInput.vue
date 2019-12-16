@@ -17,7 +17,7 @@
       <md-bip-input-edit-list :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-edit-list>
     </template>
     <template v-if="inputType == INPUT_FILE">
-      <md-bip-input-fileUp :cell="cell" :modal="modal" :ref="cell.id" @change="dataChange"></md-bip-input-fileUp>
+      <md-bip-input-fileUp :cell="cell" :modal="modal" :ref="cell.id" :dsm="dsm" @change="dataChange"></md-bip-input-fileUp>
     </template>
     <template v-if="inputType == INPUT_TEXTAFC"> 
       <md-bip-input-editor  :cell="cell" :modal="modal" :id="cell.id" :ref="cell.id"  @change="dataChange"></md-bip-input-editor >

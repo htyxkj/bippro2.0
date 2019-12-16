@@ -215,7 +215,7 @@ export default {
       this.billuser = billU;
       // console.log(billU,this.currUser);
       if (this.cea.statefr == "0" || this.cea.statefr == "1" || this.cea.statefr == "5") {
-        if (billU !== this.currUser) {
+        if (billU !== this.currUser && this.billuser != undefined) {
           this.$notify.danger({
             content: "只有制单人可以提交!",
             placement: "mid-center"
@@ -336,12 +336,13 @@ export default {
       return this.$t('cwork.agree');
     },
     canYes() {
+      console.log("sdfsdf")
       if (this.chkinfo) {
         if (this.chkinfo.state === "6") {
           return true;
         }
         if(this.chkinfo.state === "0" || this.chkinfo.state === "1" || this.chkinfo.state === "5"){
-          if(this.billuser == this.currUser){
+          if(this.billuser == this.currUser || this.billuser == undefined){
             return false;
           }
           return true;
@@ -363,7 +364,7 @@ export default {
     },
     canTH() {
       if (this.chkinfo.state) {
-        // console.log(this.chkinfo);
+        console.log(this.chkinfo);
         if (this.chkinfo.state === "0" || this.chkinfo.state === "1") {
           return true;
         }
@@ -371,7 +372,7 @@ export default {
           return false;
         }
         if(this.chkinfo.state === "6" && this.chkinfo.upState === "0"){
-          if(this.currUser === this.billuser){
+          if(this.currUser === this.billuser  || this.billuser == undefined){
             return false;
           }else{
             return true;

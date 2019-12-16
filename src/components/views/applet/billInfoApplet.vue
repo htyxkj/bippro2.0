@@ -968,11 +968,13 @@ export default {
       const state = this.dsm.currRecord.sys_stated &  billS.INSERT;
       if (this.dsm.ds_sub && state === 0) {
         for(var i =0;i<this.dsm.ds_sub.length;i++){
+          if(this.dsm.ds_sub[i].cdata.length ==0 )
           this.getChildData(this.dsm.ds_sub[i]);
         }
         await this.makeCheckParams();
       } else if (this.dsm.ds_sub.length > 0) {
         for(var i =0;i<this.dsm.ds_sub.length;i++){
+          if(!this.dsm.currRecord.noClear)
           this.dsm.ds_sub[i].clearData();
         }
       }

@@ -1,11 +1,14 @@
 import baseV from './base.vue';
 const baseTool = baseV.methods;
 export default class BipScriptProc {
-  constructor(data, cells) {
+  constructor(data, cells,ds_par) {
     this.data = data;
     this.cells = cells;
+    this.ds_par = ds_par;
   }
-  execute(ogs, flag, cell) { 
+  execute(ogs, flag, cell,ds_par) { 
+    if(!this.ds_par)
+      this.ds_par = ds_par;
     return this.executea(ogs, flag, cell);
   }
   executea(ogs, flag, cell) {
@@ -364,6 +367,10 @@ export default class BipScriptProc {
     var b0 = c0 == '^' || c0 == '<';
     if (b0) {
       // 取父节点数据或者上一行数据
+      if(this.ds_par){
+        s0 = s0.substring(1,s0.length);
+        return this.ds_par.currRecord[s0]
+      }
     } else if (c0 >= 'a' && c0 <= 'z') {
       // 当前数据
       ov = this.data[s0];

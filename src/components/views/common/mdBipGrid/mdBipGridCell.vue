@@ -12,7 +12,7 @@
         </md-input-container>
       </template> -->
       <template v-else-if="column&&inputType == INPUT_FILE">
-          <md-bip-child-input-file :row="row"  v-model="row.data[column.field]" :column="column" :ref="column.field" ></md-bip-child-input-file>
+          <md-bip-child-input-file :row="row" :cell="cell" v-model="row.data[column.field]" :column="column" :ref="column.field" ></md-bip-child-input-file>
           <!-- <md-bip-child-input-list v-model="row.data[column.field]" :column="column" :ref="column.field" ></md-bip-child-input-list> -->
       </template>
       <template v-else-if="column&&column.templateEditor">

@@ -496,9 +496,13 @@ export default {
             btn.key = b[2];
           }else if(type == "C"){
             btn.cellID = b[1];
-            btn.key = b[2];
-            if(b[3])
-            btn.selKey=b[3];
+            let kv="";
+            for(var j=2;j<b.length-1;j++){
+              kv += b[j]+";";
+            }
+            kv = kv.substring(0,kv.length-1);
+            btn.key = kv;
+            btn.selKey=b[b.length-1];
           }
           if(type =="D"){
             btn.columnIndex= parseInt(b[1]);

@@ -29,7 +29,7 @@
                     &nbsp;&nbsp;{{item.name}}
                 </md-layout>
                 <hr style="width:100%;color:#EBEEF0;margin:0px" />
-                <md-layout v-for="(vl,vik) in item.value" :key="vik" md-flex="50" md-flex-xsmall="50" md-flex-small="50" :style="vik==0?'border-right: 1px solid #EBEEF0;':''">   
+                <md-layout v-for="(vl,vik) in item.value" :key="vik" md-flex="50" md-flex-xsmall="50" md-flex-small="50" :style="vik==0?'border-right: 1px solid #EBEEF0;':''" @click.native="summaryCarClick(vl.menuid)">   
                     <md-layout md-flex="100" md-align="center">
                         <span>{{vl.name}}</span>
                     </md-layout>
@@ -79,7 +79,6 @@ export default {
     async mounted(){ 
     },
     async created(){
-        window.sessionStorage.setItem('isLoginType', 4); 
         var lid = window.sessionStorage.getItem('isLogin');
         if(lid && lid !=  'false' ){
             if(this.menuList.length<=0){
@@ -99,9 +98,10 @@ export default {
             }
             this.getDateStr();
         }else{  
-            this.loading=1; 
-            this.secret = this.$route.query.secret;
-            this.loginRemote(this.secret);
+            // alert("未登陆！")
+            // this.loading=1; 
+            // this.secret = this.$route.query.secret;
+            // this.loginRemote(this.secret);
         }  
     },
     methods: {
@@ -199,12 +199,14 @@ export default {
             cont = cont.split(",")
             let v = [];
             for(var i=0;i<cont.length;i++){
+                let refName = cont[i].split(";")[0];
+                let menuid = cont[i].split(";")[1];
                 let data2 = {  
                     dbid: global.DBID,
                     usercode: userCode,
                     apiId: global.APIID_AIDO, 
                     page:1,
-                    assistid: cont[i], //辅助名称
+                    assistid: refName, //辅助名称
                     currentPage:1,  //页数
                     pageSize: 2,//每页条数
                 };
@@ -216,7 +218,7 @@ export default {
                         if(res.data.values){
                             value = res.data.values[0][res.data.allCols[1]]
                         }
-                        let cc = {name:res.data.title,value:value}
+                        let cc = {name:res.data.title,value:value,menuid:menuid}
                         car.value.push(cc);
                     }
                 });
@@ -257,7 +259,34 @@ export default {
                 }
                 return null;
             }
-        }
+        },
+        summaryCarClick(menuid){
+            let menuList = JSON.parse(window.sessionStorage.getItem('menulist')); 
+            let mm = this.getMenu(menuList,menuid);
+            if (!mm) {
+                this.$notify.info({
+                content: "没有" + menuid + "菜单权限!"
+                });
+            }else{
+                this.$router.push(`/layoutui?${mm.command}&title=${mm.menuName}&othersys=1`) 
+            }
+        },
+        getMenu(menus,menuID){
+            let mm;
+            for (let i = 0; i < menus.length; i++) {
+                let menu = menus[i];
+                if (menu.menuId === menuID) {
+                mm = menu;
+                break;
+                }
+                if(menu.haveChild){
+                mm = this.getMenu(menu.childMenu,menuID);
+                if(mm)
+                    break;
+                }
+            }
+            return mm;
+            },
     },
     watch: { 
 

@@ -4,7 +4,7 @@
     <md-dialog md-open-from="#upfile" md-close-to="#upfile" ref="fDia"> 
       <md-dialog-title class="file_title"> 
           <md-input-container style="width:100%">
-            <md-file v-model="placeholder" :id="id" placeholder="选择文件" :accept="accept"  @selected="selectFile" ref="file" multiple :fj_type="fj_type"></md-file>
+            <md-file v-model="placeholder" :id="id" placeholder="选择文件" :accept="accept"  @selected="selectFile" ref="file" multiple :fj_type="fj_type"  :disabled="!dsm.canEdit"></md-file>
           </md-input-container>
           <div v-if="selFile">已选择{{num}}个文件</div>
           <div v-else>可以上传图片或者文件</div>
@@ -50,11 +50,11 @@
                 </md-layout>
                 <!-- 3 -->
                 <md-layout md-column md-gutter md-flex="10" md-flex-xsmall="15" md-flex-small="15" md-align="center">
-                  <md-button class="md-accent md-raised mybtn" @click="delFile(index)" :disabled="!(progress[index]==100)">删除</md-button>
+                  <md-button class="md-accent md-raised mybtn" @click="delFile(index)" :disabled="!(progress[index]==100) || !dsm.canEdit">删除</md-button>
                 </md-layout>
                 <!-- 4 -->
                 <md-layout md-column md-gutter md-flex="10"  md-flex-xsmall="15" md-flex-small="15" md-align="center">
-                  <md-button class="md-primary md-raised mybtn" @click="download(index)" :disabled="!(progress[index]==100)">下载</md-button>
+                  <md-button class="md-primary md-raised mybtn" @click="download(index)" :disabled="!(progress[index]==100) || !dsm.canEdit">下载</md-button>
                 </md-layout>
                 <!-- 5 --> 
                 <md-layout md-column md-gutter md-flex="10" md-flex-xsmall="15" md-flex-small="15"  md-align="center" v-if="file.img ==true">
@@ -64,9 +64,9 @@
           </md-layout>
       </md-dialog-content>
       <md-dialog-actions class="actionC">
-        <md-button class="md-primary md-raised" @click="ok()">确定</md-button>
-        <md-button class="md-primary md-raised" @click="save" :disabled="btndis">上传文件</md-button>
-        <md-button class="md-accent md-raised" @click="clear()" :disabled="btndis">清空列表</md-button>
+        <md-button class="md-primary md-raised" @click="ok()" :disabled="!dsm.canEdit">确定</md-button>
+        <md-button class="md-primary md-raised" @click="save" :disabled="btndis  || !dsm.canEdit">上传文件</md-button>
+        <md-button class="md-accent md-raised" @click="clear()" :disabled="btndis  || !dsm.canEdit">清空列表</md-button>
         <md-button class="md-raised" @click="closeDialog('fDia')">取消</md-button>
       </md-dialog-actions>
       <!-- </div> -->
@@ -103,6 +103,7 @@
 import axios from "axios";
 import comm from './modal.js';
 export default {
+  props:{dsm:Object},
   data() {
     return {
       upmsg: "附件上传",
@@ -428,6 +429,9 @@ export default {
         }
       }
     }
+  },
+  created(){
+    console.log(this.dsm)
   }
 };
 </script>

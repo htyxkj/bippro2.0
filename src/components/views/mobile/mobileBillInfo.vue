@@ -1,14 +1,14 @@
 <template>
   <md-part>
-    <md-part-toolbar>
+    <md-part-toolbar  v-if="menuP">
       <md-part-toolbar-group>
-        <md-button :disabled="canCreate" @click.native="create">{{$t('commBtn.B_ADD')}}</md-button>
-        <md-button class="md-accent" :disabled="canDelete" @click.native="delData">{{$t('commBtn.B_DEL')}}</md-button>
-        <md-button @click.native="save" :disabled="canSave">{{$t('commBtn.B_SAVE')}}</md-button>
+        <md-button v-if="menuP.INSERT" :disabled="canCreate" @click.native="create">{{$t('commBtn.B_ADD')}}</md-button>
+        <md-button v-if="menuP.DELETE" class="md-accent" :disabled="canDelete" @click.native="delData">{{$t('commBtn.B_DEL')}}</md-button>
+        <md-button v-if="menuP.SAVE"@click.native="save" :disabled="canSave">{{$t('commBtn.B_SAVE')}}</md-button>
 
-        <md-button @click.native="list">{{$t('commBtn.B_LIST')}}</md-button>
+        <md-button v-if="menuP.LIST" @click.native="list">{{$t('commBtn.B_LIST')}}</md-button>
 
-        <md-button>{{$t('commBtn.B_COPY')}}</md-button>
+        <md-button v-if="menuP.COPY">{{$t('commBtn.B_COPY')}}</md-button>
         <!-- <md-button>审核</md-button> -->
         <template v-if="(mparams.pattr & 0x100) >0">
           <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
@@ -53,6 +53,13 @@
             </md-step>
             <md-step id="step2" :md-label="$t('commBtn.child.title')" :mdButtonContinue="$t('commBtn.child.next')" :mdButtonBack="$t('commBtn.child.back')" :mdButtonFinish="$t('commBtn.child.finish')" :mdEditable="true">
               <div>
+                <ul class="childHjList" v-if="dsm.ds_sub[0].cdata && dsm.ds_sub[0].cdata.length">
+                  <template  v-for="(cell,index) in dsm.ccells.cels">
+                    <li :key="index" v-if="(cell.attr&0x200)>0 && (cell.attr&0x2000)>0">
+                      {{cell.labelString}} : {{dsm.currRecord[cell.id]}}
+                    </li>
+                  </template>
+                </ul>
                 <md-list>
                   <md-list-item v-for="(dj,djIndex) in dsm.ds_sub[0].cdata" :key="djIndex" @click.stop="itemClick(dsm.ds_sub[0],djIndex)">
                     <!-- 删除 -->
@@ -109,7 +116,7 @@ export default {
       isSelsth:false,
     };
   },
-  props: { dsm: Object, dsext: Array, opera: Object, mparams:Object },
+  props: { dsm: Object, dsext: Array, opera: Object, mparams:Object,menuP:Object},
   methods: {
     dataChange(res) { 
       // console.log(res);
@@ -156,10 +163,80 @@ export default {
         };
         var ceaParams = new CeaPars(params);
         var billuser = crd[this.opera.smakefld];
+        let cont = await this.submitCont();
+        ceaParams.content = cont;
         this.$refs["cc"].open(ceaParams, billuser);
       }
       // var res = await this.getDataByAPINew(checkParasm);
       // console.log(res);
+    },
+    //推送微信钉钉审批消息  拼接审批内容
+    async submitCont(){
+      let cont = "";
+      let pbds = this.mparams.pbds;
+      if(pbds.indexOf("CONT=") >-1){
+        pbds = pbds.substring(pbds.indexOf("CONT="),pbds.length);
+        pbds = pbds.split("&")[0];
+        pbds = pbds.substring(pbds.indexOf("\"")+1,pbds.lastIndexOf("\"")).split(",");
+        for(var i=0;i<pbds.length;i++){
+          let cellID = pbds[i];
+          let cell = this.dsm.getCell(cellID);
+          let dataV = this.dsm.currRecord[cell.id];
+          try{
+            if(cell.refValue){
+              let ref = window.sessionStorage.getItem(cell.refValue+"."+dataV);
+              if(ref != null){
+                ref = JSON.parse(ref);
+                dataV = ref.value[ref.allCols[1]]
+              }else{
+                let ref = window.sessionStorage.getItem(cell.refValue);
+                ref = JSON.parse(ref);
+                if(ref != null && ref.values){
+                  let values = ref.values;
+                  if(values)
+                  for(var j = 0;j<values.length;j++){
+                    if(values[j][ref.allCols[0]] == dataV){
+                      dataV = values[j][ref.allCols[1]];
+                    }
+                  }
+                }else{
+                  let count = dataV;
+                  let script = "";
+                  let assType = cell.assType;
+                  let assid = cell.refValue.replace("{&","{")
+                  var  posParams = {
+                    'dbid': global.DBID,
+                    'usercode': JSON.parse(window.sessionStorage.getItem('user')).userCode,
+                    'apiId': global.APIID_AIDO,
+                    'assistid': assid,
+                    'cont':count,
+                    'script':script,
+                    'assType':assType,
+                  }
+                  let refServ = await this.getDataByAPINewSync(posParams);
+                  if(refServ.data.code ==1){
+                    let values = refServ.data.values;
+                    for(var j = 0;j<values.length;j++){
+                      if(values[j][refServ.data.allCols[0]] == dataV){
+                        dataV = values[j][refServ.data.allCols[1]];
+                        let sessData= {allCols:refServ.data.allCols,value:{}};
+                        sessData.value[refServ.data.allCols[0]] = values[j][refServ.data.allCols[0]];
+                        sessData.value[refServ.data.allCols[1]] = values[j][refServ.data.allCols[1]];
+                        window.sessionStorage.setItem(cell.refValue,JSON.stringify(sessData));
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }catch(e){
+            dataV = this.dsm.currRecord[cell.id];
+          }
+          cont+=cell.labelString+":"+dataV +"|||";
+        }
+      }
+      console.log(cont)
+      return cont;
     },
     submitProcess(){
       var crd = this.dsm.currRecord; 
@@ -433,11 +510,46 @@ export default {
       // console.log(this.curr_dsm);
     },
     finish(){
-      if((this.dsm.currRecord.sys_stated&billS.EDITED)>0)
+      if((this.dsm.currRecord.sys_stated&billS.EDITED)>0){
         this.save();
+      }
+    },
+    //子表数据发生变化 将合计值合计到主表上
+    smSub(){
+      if(this.dsm.ds_sub && this.dsm.ds_sub.length>0){
+        for(var i =0 ;i<this.dsm.ds_sub.length;i++){
+          let child = this.dsm.ds_sub[i];
+          let hjK = [];
+          for(var j=0;j<child.ccells.cels.length;j++){
+            let cel = child.ccells.cels[j];
+            if((cel.attr & 0x2000 )>0){
+              hjK.push(cel.id);
+            }
+          }
+          for(var z=0;z<hjK.length;z++){
+            let key = hjK[z];
+            let hjz = new Number(0);
+            if(child.cdata.length>0){
+              for(var j=0;j<child.cdata.length;j++){
+                let data = child.cdata[j];
+                let v0 = new Number(data[key]);
+                if (isNaN(v0)) {
+                  v0 = 0;
+                }
+                hjz = hjz + v0;
+              }
+              this.dsm.currRecord[key] = hjz;
+            }
+          }
+        }
+      }
+      console.log(this.dsm)
     },
     childChange(res){
       this.curr_dsm.checkEdit(res);
+      if(this.curr_dsm.canEdit){
+        this.smSub()
+      }
       this.dsm.currRecord.sys_stated = this.dsm.currRecord.sys_stated | billS.EDITED;
     },
     //listitem 点击step2 单据
@@ -735,15 +847,18 @@ export default {
 
   }, 
   async mounted() {
+    console.log("mounted")
     if (this.dsm) {
       this.getSwitch();
       this.doMyLayout();
       this.dsm.runSui();
       const state = this.dsm.currRecord.sys_stated & billS.INSERT;
       if (this.dsm.ds_sub && state === 0) {
+        if(this.dsm.ds_sub[0].cdata.length ==0 )
         this.getChildData(this.dsm.ds_sub[0]);
         await this.makeCheckParams();
       } else if (this.dsm.ds_sub.length > 0) {
+        if(!this.dsm.currRecord.noClear)
         this.dsm.ds_sub[0].clearData();
       }
     }
@@ -773,6 +888,11 @@ export default {
 
 <style lang="scss" scoped>
 .md-layout{margin: 0;}
+.childHjList{
+  margin: 0px;
+  padding: 0px;
+  li{list-style-type:none;}  
+}
 </style>
 
 

@@ -18,13 +18,13 @@
             </md-button>  
           </md-layout>
         </md-layout> 
-        <template>
-          <!-- <template v-if="isPC"> -->
+        <template v-if="isPC">
           <!-- <md-bip-bill-applet :dsm="ds_m" :dsext="ds_ext" :opera="opera" v-if="!blist" :mparams="mparams" @list="list"></md-bip-bill-applet> -->
-          <md-bip-bill-applet v-if="ds_m && ds_m.currRecord && ds_m.currRecord[this.opera.pkfld]" :dsm="ds_m" :opera="opera" :mparams="mparams" :menuP="menuP"></md-bip-bill-applet>
+          <md-bip-bill-applet v-if="ds_m && ds_m.currRecord && ds_m.currRecord[this.opera.pkfld]" :dsm="ds_m" :opera="opera" :mparams="mparams" :menuP="menuP"></md-bip-bill-applet>      
         </template>
-        <!-- <template v-else> 
-        </template>--> 
+        <template v-else> 
+          <md-mobile-bill-info v-if="ds_m && ds_m.currRecord && ds_m.currRecord[this.opera.pkfld]" :dsm="ds_m" :opera="opera" :mparams="mparams" :menuP="menuP"></md-mobile-bill-info>
+        </template> 
         <md-loading :loading="loading"></md-loading>
     </md-sidenav>
   </div>

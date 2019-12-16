@@ -39,7 +39,12 @@
         </md-layout>
       </md-layout> 
       <template>
-        <md-bip-bill-applet  v-if="ds_m && ds_m.currRecord" :dsm="ds_m" :opera="opera" :mparams="mparams" :menuP="menuP"></md-bip-bill-applet>
+        <template v-if="isPC">
+          <md-bip-bill-applet  v-if="ds_m && ds_m.currRecord && ds_m.currRecord[this.opera.pkfld]" :dsm="ds_m" :opera="opera" :mparams="mparams" :menuP="menuP"></md-bip-bill-applet>
+        </template>
+        <template v-else> 
+          <md-mobile-bill-info v-if="ds_m && ds_m.currRecord && ds_m.currRecord[this.opera.pkfld]" :dsm="ds_m" :opera="opera" :mparams="mparams" :menuP="menuP"></md-mobile-bill-info>
+        </template> 
       </template>
       <md-loading :loading="loading"></md-loading>
     </md-sidenav>
@@ -59,6 +64,7 @@ import common from '../../core/utils/common.js';
 export default {
   data() {
     return {
+      isPC: this.ISPC(),
       usrCode : JSON.parse(window.sessionStorage.getItem('user')).userCode ,
       cells:null, 
       ds_m:null,
@@ -246,6 +252,7 @@ export default {
       })
     },
     async initCellDataC(){
+      console.log("initCellDataC")
       let cellID = this.btnInfo.cellID;
       let key = this.btnInfo.selKey;
       if(!key)
@@ -261,11 +268,19 @@ export default {
           pdata[cc[0]]=cc[1];
         }
       } 
+      let pcell = "";
+      let k_v = this.btnInfo.key.split(";");
+      let dz1 = k_v[0].split(",");
+      let vv1 = dz1[0].split("=")[1];
+      let dz2 = k_v[1].split(",");
+      let vv2 = dz2[0].split("=")[1];
+      pcell = vv1+"("+vv2+")"
+        
       var data1 = {
         "dbid": `${global.DBID}`,
         "usercode": this.usrCode,
         "apiId": "findcelldata", //cellparam pbuid=21243&pmenuid=22403
-        "pcell": this.btnInfo.key.split(",")[0].split("=")[1],
+        "pcell": pcell,
         "pdata": JSON.stringify(pdata),
       }; 
       let _this =this; 
@@ -278,20 +293,56 @@ export default {
             }
             _this.ds_m.currRecord.sys_stated = 512;
           }else{
-            let dz = _this.btnInfo.key.split(",");
-            if(dz.length>1){ 
-              for(var i=1;i<dz.length;i++){
-                let vv = dz[i].split("=");
-                _this.ds_m.currRecord[vv[1]] = _this.selectData[vv[0]];
+            let k_v = _this.btnInfo.key.split(";");
+            for(var j=0;j<k_v.length;j++){
+              let dz = k_v[j].split(",");
+              let vv = dz[0].split("=");
+              let cdsm = this.cdsm.getDataSet(vv[0]);
+              let todsm = this.ds_m.getDataSet(vv[1]);
+              todsm.clearData();
+              todsm.createRecord();
+              if(dz.length>1){
+                for(var i=1;i<dz.length;i++){
+                  let vv = dz[i].split("=");
+                  todsm.currRecord[vv[1]] = cdsm.currRecord[vv[0]];
+                }
+                todsm.currRecord.sys_stated = 3;
+                todsm.cdata[0].sys_stated = 3;
+                todsm.currRecord.noClear = true;
+              }
+            }
+            this.ds_m.checkGS();
+            if(this.ds_m.ds_sub.length>0){
+              for(var i=0;i<this.ds_m.ds_sub.length;i++){
+                this.ds_m.ds_sub[i].checkGS();
+                this.ds_m.currRecord[this.ds_m.ds_sub[i].ccells.obj_id] = this.ds_m.ds_sub[i].cdata;
               }
             }
           }
         }else{
-          let dz = _this.btnInfo.key.split(",");
-          if(dz.length>1){ 
-            for(var i=1;i<dz.length;i++){
-              let vv = dz[i].split("=");
-              _this.ds_m.currRecord[vv[1]] = _this.selectData[vv[0]];
+          let k_v = _this.btnInfo.key.split(";");
+          for(var j=0;j<k_v.length;j++){
+            let dz = k_v[j].split(",");
+            let vv = dz[0].split("=");
+            let cdsm = this.cdsm.getDataSet(vv[0]);
+            let todsm = this.ds_m.getDataSet(vv[1]);
+            todsm.clearData();
+            todsm.createRecord();
+            if(dz.length>1){
+              for(var i=1;i<dz.length;i++){
+                let vv = dz[i].split("=");
+                todsm.currRecord[vv[1]] = cdsm.currRecord[vv[0]];
+              }
+              todsm.currRecord.sys_stated = 3;
+              todsm.cdata[0].sys_stated = 3;
+              todsm.currRecord.noClear = true;
+            }
+          }
+          this.ds_m.checkGS();
+          if(this.ds_m.ds_sub.length>0){
+            for(var i=0;i<this.ds_m.ds_sub.length;i++){
+              this.ds_m.ds_sub[i].checkGS();
+              this.ds_m.currRecord[this.ds_m.ds_sub[i].ccells.obj_id] = this.ds_m.ds_sub[i].cdata;
             }
           }
         }

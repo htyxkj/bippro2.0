@@ -8,11 +8,8 @@
       </md-part-toolbar-group>-->
       <md-part-toolbar-group>
         <md-button @click.native="gotask">{{$t('biptask.gotask')}}</md-button>
-      </md-part-toolbar-group>
-      <md-part-toolbar-group>
-        <!-- <md-button>复制</md-button> -->
-        <!-- <md-button>审核</md-button> -->
-        <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>
+        <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>      
+        <md-button @click.native="TaskSubmitProcess" :disabled="canSubmit">{{$t('commBtn.B_SubmitProcess')}}</md-button>
       </md-part-toolbar-group>
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
@@ -32,7 +29,7 @@
           <md-stepper md-vertical  @completed="finish">
             <md-step id="step1" :md-label="dsm.ccells.desc" :mdButtonContinue="$t('commBtn.child.next')" :mdButtonBack="$t('commBtn.child.back')" :mdButtonFinish="$t('commBtn.child.finish')" :mdEditable="true">
               <md-layout>
-                <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+                <md-bip-input :dsm="dsm" v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
               </md-layout>
             </md-step>
             <md-step id="step2" :md-label="$t('commBtn.child.title')" :mdButtonContinue="$t('commBtn.child.next')" :mdButtonBack="$t('commBtn.child.back')" :mdButtonFinish="$t('commBtn.child.finish')" :mdEditable="true">
@@ -50,7 +47,7 @@
                       <md-list>
                         <md-layout class="flex layout-column">
                             <md-layout>
-                              <md-bip-input v-for="item in dsm.ds_sub[0].ccells.cels" :ref="item.id" :key="item.id" :cell="item" :modal="dj" :btj="false" class="bip-input" @change="childChange"></md-bip-input>
+                              <md-bip-input :dsm="dsm" v-for="item in dsm.ds_sub[0].ccells.cels" :ref="item.id" :key="item.id" :cell="item" :modal="dj" :btj="false" class="bip-input" @change="childChange"></md-bip-input>
                             </md-layout>
                         </md-layout>
                       </md-list>
@@ -73,6 +70,7 @@
       </template>
       <template v-if="chkinfo">
         <md-bip-work  ref="cc" :chkinfo="chkinfo" @dataCheckUp="dataCheckUp"></md-bip-work>
+        <md-bip-work-process  ref="TASKSubmitProcess" :chkinfo="chkinfo" @dataCheckUp="dataCheckUp"></md-bip-work-process>
       </template>
     </md-part-body>
   </md-part>
@@ -374,7 +372,24 @@ export default {
         subdsm.cdata = ccdata;
         this.curr_dsm = subdsm;
       }
-    }
+    },
+    //审批流程查看
+    async TaskSubmitProcess(){
+      var crd = this.dsm.currRecord; 
+      if (this.opera) {
+        var state = crd[this.opera.statefld];
+        var params = {
+          sid: crd[this.opera.pkfld],
+          sbuid: crd[this.opera.buidfld],
+          statefr: state,
+          stateto: state,
+          tousr: ""
+        };
+        var ceaParams = new CeaPars(params);
+        var billuser = crd[this.opera.smakefld]; 
+        this.$refs["TASKSubmitProcess"].open(ceaParams, billuser); 
+      }
+    },
   },
   computed: {
     canEditChild(){
@@ -483,7 +498,6 @@ export default {
       }
       return false;
     },
-
   },
   async mounted() {
     if (this.dsm) {

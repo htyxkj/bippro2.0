@@ -19,7 +19,7 @@
             </div>
             <div class="center">
                 <md-list style="padding: 0px;">
-                    <md-list-item>
+                    <!-- <md-list-item>
                         <span>我的企业</span>
                         <md-list-expand>
                             <ul style="padding-left:.16rem;border-top: 1px solid #DFDFDF;">
@@ -35,17 +35,9 @@
                                 <li class="scm" v-on:click="creageSCM" style="text-align: center;line-height: 40px;">
                                     <md-icon style="color:#2384DD">add</md-icon>添加企业
                                 </li>
-                            </ul>
-                            <!-- <md-list>  
-                                <md-list-item class="md-inset" v-for="(item,index) in scm" :key="index" 
-                                :style="item.orgcode== user.deptInfo.cmcCode?'color:red':''"
-                                @click.native="switchScm(item.secret)">
-                                    <img src="../../img/bip.png"/>{{item.orgname}}
-                                </md-list-item>
-                                <md-list-item class="md-inset" @click.native="creageSCM">创建企业/加入企业</md-list-item>
-                            </md-list> -->
+                            </ul> 
                         </md-list-expand>
-                    </md-list-item>
+                    </md-list-item> -->
                 </md-list>
             </div>
             <!-- <div class="center">
@@ -62,13 +54,13 @@
                     </md-list-item>
                 </md-list>
             </div>
-            <div class="center">
+            <!-- <div class="center">
                 <md-list style="padding: 0px;">
                     <md-list-item @click.native="pay">
                         支付测试
                     </md-list-item>
                 </md-list>
-            </div>
+            </div> -->
         </div>
         <md-dialog ref="dialog"  class="md-refs-dialog">
 
@@ -107,7 +99,14 @@ export default {
             wx.miniProgram.navigateTo({url: '/pages/web/web?secret=' + secret})
         },
         logout(){
-            wx.miniProgram.navigateTo({url: '/pages/logout/logout'})
+            if (dd.env.platform !="notInDingTalk") {
+                dd.biz.navigation.close({
+                    onSuccess : function(result) {},
+                    onFail : function(err) {}
+                })
+            }else{
+                wx.miniProgram.navigateTo({url: '/pages/logout/logout'})
+            }
         },
         pay(){
             let time = new Date().getTime();

@@ -12,24 +12,26 @@
         ></app-toolbar>
       </div>
       <app-content class="layout-fill flex md-part layout-column"></app-content>
-      <template v-if="isLoginPage == 3">
+      <template v-if="isLoginPage == 3 || isLoginPage == 2">
         <md-bottom-bar @change="bottomBar" style="z-index:50">
-          <md-bottom-bar-item md-icon="home" md-active>首页</md-bottom-bar-item>
-          <md-bottom-bar-item md-icon="menu">菜单</md-bottom-bar-item>
-          <md-bottom-bar-item md-icon="message">消息</md-bottom-bar-item>
-          <md-bottom-bar-item md-icon="supervisor_account">我的</md-bottom-bar-item>
+          <md-bottom-bar-item md-icon="home" :md-active="getBarActive('home')">首页</md-bottom-bar-item>
+          <md-bottom-bar-item md-icon="menu" :md-active="getBarActive('menu')">菜单</md-bottom-bar-item>
+          <md-bottom-bar-item md-icon="message" :md-active="getBarActive('message')">消息</md-bottom-bar-item>
+          <md-bottom-bar-item md-icon="supervisor_account" :md-active="getBarActive('supervisor_account')">我的</md-bottom-bar-item>
         </md-bottom-bar>
       </template>
     </div>
     <div v-else>
-      <app-login v-if="isLoginPage == 0" @emitLogin="emitLogin"></app-login>
       <!-- 登录页 -->
-      <app-blank v-else-if="isLoginPage == 1" @blankLogin="emitLogin"></app-blank>
+      <app-login v-if="isLoginPage == 0" @emitLogin="emitLogin"></app-login>
       <!-- 单点登录页 -->
-      <app-ding v-else-if="isLoginPage == 2" @dingLogin="emitLogin"></app-ding>
+      <app-blank v-else-if="isLoginPage == 1" @blankLogin="emitLogin"></app-blank>
+
       <!-- 钉钉登录页 -->
-      <wx-applets v-else-if="isLoginPage == 3" @appletsLogin="emitLogin"></wx-applets>
+      <app-ding v-else-if="isLoginPage == 2" @dingLogin="emitLogin"></app-ding>
       <!-- 微信小程序登录页 -->
+      <wx-applets v-else-if="isLoginPage == 3" @appletsLogin="emitLogin"></wx-applets>
+      
 
       <!--食品监管注册页面  -->
       <app-register v-else-if="isLoginPage == 4" @dingLogin="emitLogin"></app-register>
@@ -46,8 +48,10 @@ import Blank from "../../components/Blank";
 import Ding from "../../components/Ding";
 import wxApplets from "../../components/wxApplets/WxApplets.vue";
 import register from "../register/register";
+import mobile from './mobileJS/mobileInit.js' 
 
 export default {
+  mixins:[mobile],
   name: "myapp",
   data() {
     return {
@@ -55,7 +59,7 @@ export default {
       mdTitle: "",
       isLogin: false,
       isLoginPage: -1,
-      loginSuccess:-1
+      selBar:null,
     };
   },
   components: {
@@ -68,13 +72,10 @@ export default {
     "app-register": register,
     "wx-applets": wxApplets
   },
-  created(){
-    let cc = this.$route.query.loginSuccess;
-    if(cc)
-      this.loginSuccess = cc;
+  async created(){
+    
   },
   methods: {
-    created() {},
     toggle() {
       // if(this.$route.path != '/task' &&this.$route.path != '/msg' &&this.$route.path != '/blank')
       var lid = window.sessionStorage.getItem("isLogin");
@@ -131,25 +132,60 @@ export default {
         }
       }
     },
-    emitLogin() {
-      console.log("登陆成功")
+    mobileNoLogin(){
+      this.isLogin = false;
+      this.isLoginPage = 0;
+    },
+    emitLogin(checkRoute) {
+      console.log("其他页面登录方法执行完成");
+      if(checkRoute){
+        this.selBar = checkRoute;
+        this.$router.push({ path: "/"+checkRoute });
+      }
       this.isLogin = true;
-      window.sessionStorage.setItem("isLogin", JSON.stringify(this.isLogin));
-      var ua = window.navigator.userAgent.toLowerCase();//获取判断用的对象
-      let _this = this;
-      if (ua.match(/MicroMessenger/i) == "micromessenger") {
-            wx.miniProgram.getEnv(function(res) {
-            if (res.miniprogram) {
-                // 走在小程序的逻辑
-           if(_this.$route.path == "/" || _this.$route.path == "/index" || _this.$route.path == "/WxApplets")
-                _this.isLoginPage = 3;
-            } else {
-                // 走不在小程序的逻辑
-                // alert("走不在小程序的逻辑2")
-            }
-        }) 
-      }else{
+      window.sessionStorage.setItem("isLogin",true);
+      let lp = window.sessionStorage.getItem("isLoginPage");
+      this.isLoginPage = 0;
+      if (lp) {
+        this.isLoginPage = lp;
+      }
+      // console.log("登陆成功")
+      // this.isLogin = true;
+      // window.sessionStorage.setItem("isLogin", JSON.stringify(this.isLogin));
+      // var ua = window.navigator.userAgent.toLowerCase();//获取判断用的对象
+      // let _this = this;
+      // if (ua.match(/MicroMessenger/i) == "micromessenger") {
+      //       wx.miniProgram.getEnv(function(res) {
+      //       if (res.miniprogram) {
+      //           // 走在小程序的逻辑
+      //      if(_this.$route.path == "/" || _this.$route.path == "/index" || _this.$route.path == "/WxApplets")
+      //           _this.isLoginPage = 3;
+      //       } else {
+      //           // 走不在小程序的逻辑
+      //           // alert("走不在小程序的逻辑2")
+      //       }
+      //   }) 
+      // }else{
 
+      // }
+    },
+    //初始化登录后底部按钮栏选中的按钮  默认为home,
+    getBarActive(barid){
+      if(!this.selBar){
+        if(barid == 'home')
+          return true;
+      }else{
+        if(this.selBar == 'wxApplets' && barid == 'home'){
+          return true;
+        }else if(this.selBar == 'wxAppletsMenu' && barid == 'menu'){
+          return true;
+        }else if(this.selBar == 'wxAppletsMsg' && barid == 'message'){
+          return true;
+        }else if(this.selBar == 'wxAppletsMe' && barid == 'supervisor_account'){
+          return true;
+        }else{
+          return false
+        }
       }
     },
     blankLogin() {
@@ -169,6 +205,7 @@ export default {
       if (route == 3) this.$router.push({ path: "/wxAppletsMe" });
     },
     chekcRoutePath(){
+      // alert(this.$route.path)
       if (this.$route.path == "/blank") {
         this.isLoginPage = 1;
         window.sessionStorage.setItem("isLoginPage", 1);
@@ -176,42 +213,37 @@ export default {
         this.isLoginPage = 2;
         this.isLogin = true;
         window.sessionStorage.setItem("isLoginPage", 2);
-      }
-      if (this.$route.path == "/wxApplets") {
+      }else if (this.$route.path == "/wxApplets") {
         this.isLoginPage = 3;
         this.isLogin = true;
         window.sessionStorage.setItem("isLoginPage", 3);
-      }
+      }else if (this.$route.path == "/mobileWD") {
 
-      if (this.$route.path == "/register") {
+      }else if (this.$route.path == "/register") {
         this.isLoginPage = 4;
         this.isLogin = true;
         window.sessionStorage.setItem("isLoginPage", 4);
-      }
-      else if (this.$route.path == "/JCMap") {
+      }else if (this.$route.path == "/JCMap") {
         let usercode = this.$route.query.usercode;
-        // pbuid=4003&pmenuid=4003&title=设计核查报表
         this.emitLogin();
-        return;
       } else {
-        let lp = window.sessionStorage.getItem("isLoginPage");
-        this.isLoginPage = 0;
-        if (lp) {
-          this.isLoginPage = lp;
-        }
         var lid = window.sessionStorage.getItem("isLogin");
         if (lid) {
           this.isLogin = true;
         } else {
           this.isLogin = false;
         }
+        let lp = window.sessionStorage.getItem("isLoginPage");
+        this.isLoginPage = 0;
+        if (lp) {
+          this.isLoginPage = lp;
+        }
       }
-    }
+    },
+
   },
   async mounted() {
-    // let isLoginPage = window.sessionStorage.getItem('isLoginPage');
-    // console.log(isLoginPage);
-    // this.isLoginPage = isLoginPage;
+    await this.mobileLogin(this.$route,this.emitLogin,this.mobileNoLogin);
     this.chekcRoutePath();
     this.setTitle();
   },

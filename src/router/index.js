@@ -107,16 +107,21 @@ export default new Router({
     mode: 'history',
     base: basePro,
     routes: [
-        //系统 路由
+        //系统 路由mobileWD
+        {
+            path: '/mobileWD',
+            name: 'mobileWD',
+            component: WxApplets
+        },
         {
             path: '/',
             name: 'Index',
-            component: Ding
+            component: Dashboard
         },
         {
             path: '/index',
             name: 'Dashbord',
-            component: Ding,
+            component: Dashboard,
         },
         {
             path: '/task',

@@ -1,4 +1,4 @@
-<template>
+    <template>
     <div style="background-color:#f6f6f6"> 
         <div>
             <div v-if="ddApp.length>0" class="blank1"> 
@@ -29,7 +29,7 @@
                         <div v-on:click="url('/layoutui?'+item.command+'&title='+item.menuName)" style="margin:0px;padding:0px;width:100%">
                             <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" style="position: relative;">   
                                 <!-- <md-icon  v-colors="item.iconcc">{{item.menuIcon}}</md-icon>  -->
-                                <img :src="dingMenuImg+'img/ding/'+item.menuId+'.png'" style="margin:auto;width: 30px;height: 30px;"/>
+                               <img :src="dingMenuImg+'img/ding/'+item.menuId+'.png'" style="margin:auto;width: 30px;height: 30px;"/>
                                 <div class="textNum" v-show="item.bgnum >0">{{item.bgnum}}</div>
                             </md-layout>
                             <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" md-align="center"> 
@@ -358,4 +358,4 @@ export default {
     color: white;
     position: absolute;
   }
-</style>
+</style> 
