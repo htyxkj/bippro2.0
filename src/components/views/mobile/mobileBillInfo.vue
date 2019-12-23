@@ -853,10 +853,11 @@ export default {
       this.doMyLayout();
       this.dsm.runSui();
       const state = this.dsm.currRecord.sys_stated & billS.INSERT;
-      if (this.dsm.ds_sub && state === 0) {
+      if(state === 0)
+      await this.makeCheckParams();
+      if (this.dsm.ds_sub && state === 0 && this.dsm.ds_sub.length>0) {
         if(this.dsm.ds_sub[0].cdata.length ==0 )
         this.getChildData(this.dsm.ds_sub[0]);
-        await this.makeCheckParams();
       } else if (this.dsm.ds_sub.length > 0) {
         if(!this.dsm.currRecord.noClear)
         this.dsm.ds_sub[0].clearData();
