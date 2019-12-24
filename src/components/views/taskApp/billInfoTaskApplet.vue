@@ -23,14 +23,14 @@
       <template v-if="dsm&&!dsm.haveChild">
         <md-content class="layout-fill" v-if="dsm&&dsm.ccells!=null">
           <md-layout>
-            <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+            <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" :dsm="dsm" class="bip-input" @change="dataChange"></md-bip-input>
           </md-layout>
         </md-content>
       </template>
       <template v-else>
         <md-content class="flex layout-column" v-if="dsm&&dsm.ccells!=null">
           <md-layout>
-            <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" class="bip-input" @change="dataChange"></md-bip-input>
+            <md-bip-input v-for="cell in dsm.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="dsm.currRecord" :btj="false" :dsm="dsm" class="bip-input" @change="dataChange"></md-bip-input>
           </md-layout>
           <md-layout class="flex layout-column" v-if="dsm.ds_sub&&dsm.ds_sub.length==1">
               <md-bip-grid :datas="dsm.ds_sub[0].cdata" ref="grid" :row-focused="true" :auto-load="true" @onAdd="onLineAdd(dsm.ds_sub[0])" @onRemove="onRemove" :showAdd="canAddChild" :showRemove="canAddChild" @rowChange="rowChange" @click="rowClick(dsm.ds_sub[0])">

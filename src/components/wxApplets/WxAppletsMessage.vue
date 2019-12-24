@@ -2,7 +2,7 @@
     <div style="background-color:#f6f6f6"> 
         <div style="height: 100%;overflow: auto;background-color: white;">
             <md-tabs md-fixed :md-dynamic-height="false" class="myMobileMTTabs">
-                <md-tab md-label="我的任务" class="oneTab" :style="bdj ==false?'height: 100%':'padding:0px;height: 100%'"> <!--  md-icon="work"  -->
+                <md-tab md-label="待办" class="oneTab" :style="bdj ==false?'height: 100%':'padding:0px;height: 100%'"> <!--  md-icon="work"  -->
                     <template v-if="!bdj"> 
                         <template v-if="taskValues.length>0">
                             <template v-for="(row,index) in taskValues">
@@ -19,7 +19,7 @@
                                             </md-layout>
                                             <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
                                                 <md-layout md-flex ="100" md-align="center">
-                                                    <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="rowClick(row)">{{$t('bipmsg.btnView')}}</button>
+                                                    <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="rowClick(row,0)">{{$t('bipmsg.btnView')}}</button>
                                                 </md-layout>
                                             </md-layout>
                                         </md-card-header> 
@@ -41,10 +41,52 @@
                         </template>
                     </template>
                     <template v-if="bdj">
-                        <md-bip-task-applet v-if="ds_m" :dsm="ds_m" :dsext="ds_ext" :opera="opera" @gotask="gotask"></md-bip-task-applet>
+                        <md-bip-task-applet v-if="ds_m" :dsm="ds_m" :dsext="ds_ext" :opera="opera" @gotask="gotask(0)"></md-bip-task-applet>
                     </template>
                 </md-tab> 
-                <md-tab md-label="我的消息" class="oneTab"> <!--  md-icon="notifications_none" -->
+                <md-tab md-label="已办" class="oneTab" :style="doBdj ==false?'height: 100%':'padding:0px;height: 100%'"> <!--  md-icon="work"  -->
+                    <template v-if="!doBdj"> 
+                        <template v-if="taskDoValues.length>0">
+                            <template v-for="(row,index) in taskDoValues">
+                                <md-card  style="margin-bottom: 20px;box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
+                                    <md-card-expand>
+                                        <md-card-header> 
+                                            <md-layout v-for="(item,index) in taskLayCel.cels" :key="item.id"> 
+                                                <md-layout  :md-numeric="item.type===3" v-if="item.isShow"  style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
+                                                    <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
+                                                    <md-layout md-flex ="65">
+                                                    <md-bip-ref :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row"></md-bip-ref>
+                                                    </md-layout>
+                                                </md-layout>
+                                            </md-layout>
+                                            <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                <md-layout md-flex ="100" md-align="center">
+                                                    <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="rowClick(row,1)">{{$t('bipmsg.btnView')}}</button>
+                                                </md-layout>
+                                            </md-layout>
+                                        </md-card-header> 
+                                    </md-card-expand>
+                                </md-card>
+                            </template>
+                            <md-table-pagination style="background-color: white;" :md-size="taskDoPageInfo.size"
+                                :md-total="taskDoPageInfo.total" :md-page="taskDoPageInfo.page" :md-label="$t('commInfo.Per')"
+                                md-separator="/" :md-page-options="[10,20, 30, 50]" @pagination="taskDoPageChange" >
+                            </md-table-pagination> 
+                        </template>
+                        <template v-else>
+                            <div style="text-align: center;">
+                                <img style="width:65%" src="@/img/wxApplets/notask.png"/>
+                            </div>
+                            <div style="text-align: center;color:#888888;font-size: 16px;">
+                                暂无任务
+                            </div>
+                        </template>
+                    </template>
+                    <template v-if="doBdj">
+                        <md-bip-task-applet v-if="ds_m" :dsm="ds_m" :dsext="ds_ext" :opera="opera" @gotask="gotask(1)"></md-bip-task-applet>
+                    </template>
+                </md-tab> 
+                <md-tab md-label="消息" class="oneTab"> <!--  md-icon="notifications_none" -->
                     <template v-if="msgs && msgs.length>0">
                         <template v-if="!msgDetails">
                             <template v-for="(row,index) in msgs">
@@ -164,12 +206,19 @@ export default {
                 page: 1,
                 total: 0
             },
+            taskDoValues:[],
+            taskDoPageInfo: {
+                size: 20,
+                page: 1,
+                total: 0
+            },
             opera: {},
             ds_m:{},
             ds_ext:[],
             menuList: JSON.parse(window.sessionStorage.getItem("menulist")),
             mparams:null,
             bdj: false,
+            doBdj:false,
             userCode:JSON.parse(window.sessionStorage.getItem("user")).userCode,
             taskCli:null,
             isconnt: false,
@@ -179,6 +228,7 @@ export default {
     },
     async mounted(){
         this.getMsg();
+        this.getTask_DO();
     },
     created() {
         this.fetchTaskData();
@@ -263,8 +313,11 @@ export default {
         /********************* 我的消息结束 ****************/
 
         /********************* 我的任务开始 ****************/
-        gotask(){
+        gotask(type){
+            if(type == 0)
             this.bdj = false;
+            if(type == 1)
+            this.doBdj = false;
         },
         disconnect() {
             this.taskCli.disconnect();
@@ -314,7 +367,7 @@ export default {
                 this.taskPageInfo.size = res.data.data.pages.pageSize;
             }
         },
-        async rowClick(row) {
+        async rowClick(row,type) {
             // console.log(row);
             row.brd = 1;
             var pflow = row.buid;
@@ -341,9 +394,12 @@ export default {
                 var pdata = {};
                 pdata[this.opera.pkfld] = row.buno;
                 await this.fetchUIData(pdata);
-                console.log(this.ds_m.cdata);
                 if(this.ds_m.cdata.length>0)
-                    this.bdj = true;
+                    if(type == 0){
+                        this.bdj = true;
+                    }else if(type ==1){
+                        this.doBdj = true;
+                    }
                 }
             }
         },
@@ -457,8 +513,46 @@ export default {
             }else{
                 this.$notify.warning({content: data.message,placement:'mid-center'});
             }
-        }
+        },
         /********************* 我的任务结束 ****************/
+
+        /********************* 我的已办开始 ****************/
+        
+        async getTask_DO(){
+            let data2 = {  
+                dbid: global.DBID,
+                usercode: this.userCode,
+                apiId: global.APIID_AIDO, 
+                page:1,
+                assistid: 'V_INSTASK_DO', //辅助名称
+                currentPage:this.taskDoPageInfo.currentPage,  //页数
+                pageSize: this.taskDoPageInfo.pageSize,//每页条数
+                cont: ""
+            };
+            let cont = "~frusr = '"+this.userCode+"'"
+            data2.cont = cont;
+            this.getDataByAPINewSync(data2).then((res)=>{ 
+                console.log(res)
+                if(res.data){
+                    this.taskDoPageInfo.size=res.data.size
+                    this.taskDoPageInfo.total=res.data.total
+                }
+                if(res.data.values){
+                    this.taskDoValues = res.data.values;
+                }
+            });
+        },
+        taskDoPageChange(page) {
+            if(this.taskDoPageInfo.size!=page.size){
+                this.taskDoPageInfo.page = 1;
+            }else{
+                this.taskDoPageInfo.page = page.page;
+            }
+            this.taskDoPageInfo.size  = page.size;
+            this.getTask_DO();
+        }
+        /********************* 我的已办结束 ****************/
+
     },
     watch: { 
 

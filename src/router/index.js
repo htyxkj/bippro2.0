@@ -189,7 +189,7 @@ export default new Router({
             }
         },
         {
-            path: '/WxAppletsMenu',
+            path: '/wxAppletsMenu',
             name: 'WxAppletsMenu',
             component: WxAppletsMenu,
             beforeEnter: (to, from, next) => {
