@@ -52,7 +52,7 @@ export default {
       stateId: "",
       userIds: [],
       //content: this.$t('cwork.agree'),
-      content:"",
+      content:this.content,
       users: [],
       list: [],
       cea: null,
@@ -79,8 +79,14 @@ export default {
     //同意并提交到下一个节点
     async checkUp() {
       console.log('22222222');
-       this.content="同意";
-      console.log('33333333');
+       if(!this.content|| this.content.length<=0){
+         this.content="同意";
+       }
+          console.log(this.content);
+            console.log('33333333');     
+       
+         
+
       this.cea.stateto = this.stateId;
       this.cea.yjcontext = this.content;
       this.cea.tousr = this.makeUU();
