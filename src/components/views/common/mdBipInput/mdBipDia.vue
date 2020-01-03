@@ -6,12 +6,12 @@
             <h1 class="md-title">{{title}}</h1> 
           </md-layout>
           <md-layout md-flex-xsmall="0" :md-flex="true">
-            <md-input-container class="md-flex md-header-search">
+            <!-- <md-input-container class="md-flex md-header-search">
               <md-input class="md-header-search-input"  placeholder="search" @keyup.enter.native="doQuery(word)" v-model="word"></md-input>
               <md-button class="md-icon-button md-inset" @click="doQuery(word)">
                 <md-icon>search</md-icon>
               </md-button>
-            </md-input-container>  
+            </md-input-container>   -->
           </md-layout>
           <md-layout md-flex-xsmall="10" md-flex-small="10" md-flex-medium="10" md-flex-large="10" >
             <md-button class="md-icon-button" @click.native="cancel()">
@@ -21,6 +21,14 @@
         </md-layout> 
       </md-toolbar>
       <md-dialog-content class="no-padding">
+        <md-layout md-flex-xsmall="0" :md-flex="true">
+          <md-input-container class="md-flex md-header-search my-search">
+            <md-input class="md-header-search-input"  placeholder="search" @keyup.enter.native="doQuery(word)" v-model="word"></md-input>
+            <md-button class="md-icon-button md-inset" @click="doQuery(word)">
+              <md-icon>search</md-icon>
+            </md-button>
+          </md-input-container>  
+        </md-layout>
         <md-table ref="table" @select="selectedRow" :multiple="multiple" :md-selection="mdSelection">
           <md-table-header>
             <md-table-row>
@@ -320,3 +328,12 @@ export default {
  
 };
 </script>
+<style scoped>
+.my-search{
+  padding: 0px;
+  margin: 0px;
+  border-bottom: 1px solid #ffffff;
+  margin-bottom: 5px;
+  padding-left: 10px;
+}
+</style>
