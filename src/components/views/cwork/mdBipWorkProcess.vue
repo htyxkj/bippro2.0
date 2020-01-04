@@ -15,6 +15,13 @@
       </md-toolbar>
       <md-dialog-content style="background-color: #f0eff4;">
         <div>
+          <div class="md-work-dialog">
+            <md-avatar class="md-large md-fab md-fab-top-left" tabindex="-9999">
+              <template v-if="chkinfo && chkinfo.state =='6'">
+                <img src="../../../img/check/shtg.png">
+              </template>
+            </md-avatar>
+          </div>
           <!-- <div class="div1"> 
             <div class="div2-1">
               <img class="image2" src="../../../img/check/process_ty.png">
@@ -50,7 +57,7 @@
               </div>
             </div> 
             </div> -->
-            <div v-for="(item,index) in info" >
+            <div v-for="(item,index) in info" :key="index">
               <div class="div2-1" v-if=" (item.stfr == '驳回' || item.stfr == '新建')">
                 <img class="image2" src="../../../img/check/process_ty.png">
                 <div class="div3">
@@ -70,7 +77,15 @@
                 <img class="image2" v-else src="../../../img/check/process_ty.png">
                 <div class="div3">
                   <div style="float:left;">&nbsp;&nbsp;{{item.nameto}}<br/>&nbsp;&nbsp;
-                    <span style="color:#8FB95C;font-size: 10px">{{item.stto}}</span>
+                    <span style="color:#8FB95C;font-size: 10px">
+                      <template v-if="chkinfo && chkinfo.state =='6'">
+                        <!-- 已批准/可执行 -->
+                        {{item.stto}}
+                      </template>
+                      <template v-else>
+                        {{item.stto}}
+                      </template>
+                    </span>
                   </div>
                   <div class="div4">
                     <span style="font-size:11px">

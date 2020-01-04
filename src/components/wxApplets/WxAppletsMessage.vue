@@ -5,11 +5,11 @@
                 <md-tab md-label="待办" class="oneTab" :style="bdj ==false?'height: 100%':'padding:0px;height: 100%'"> <!--  md-icon="work"  -->
                     <template v-if="!bdj"> 
                         <template v-if="taskValues.length>0">
-                            <template v-for="(row,index) in taskValues">
+                            <template v-for="(row,index1) in taskValues">
                                 <md-card  style="margin-bottom: 20px;box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
                                     <md-card-expand>
                                         <md-card-header> 
-                                            <md-layout v-for="(item,index) in taskLayCel.cels" :key="item.id"> 
+                                            <md-layout v-for="(item,index2) in taskLayCel.cels" :key="item.id"> 
                                                 <md-layout  :md-numeric="item.type===3" v-if="item.isShow"  style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
                                                     <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                                                     <md-layout md-flex ="65">
@@ -47,11 +47,11 @@
                 <md-tab md-label="已办" class="oneTab" :style="doBdj ==false?'height: 100%':'padding:0px;height: 100%'"> <!--  md-icon="work"  -->
                     <template v-if="!doBdj"> 
                         <template v-if="taskDoValues.length>0">
-                            <template v-for="(row,index) in taskDoValues">
+                            <template v-for="(row,index1) in taskDoValues">
                                 <md-card  style="margin-bottom: 20px;box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
                                     <md-card-expand>
                                         <md-card-header> 
-                                            <md-layout v-for="(item,index) in taskLayCel.cels" :key="item.id"> 
+                                            <md-layout v-for="(item,index2) in taskLayCel.cels" :key="item.id"> 
                                                 <md-layout  :md-numeric="item.type===3" v-if="item.isShow"  style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
                                                     <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                                                     <md-layout md-flex ="65">
@@ -390,15 +390,18 @@ export default {
                 // this.mparams = null;
                 console.log(this.mparams)
                 if(this.mparams){
-                await this.getCell();
-                var pdata = {};
-                pdata[this.opera.pkfld] = row.buno;
-                await this.fetchUIData(pdata);
-                if(this.ds_m.cdata.length>0)
-                    if(type == 0){
-                        this.bdj = true;
-                    }else if(type ==1){
-                        this.doBdj = true;
+                    await this.getCell();
+                    var pdata = {};
+                    pdata[this.opera.pkfld] = row.buno;
+                    await this.fetchUIData(pdata);
+                    if(this.ds_m.cdata.length>0){
+                        if(type == 0){
+                            this.bdj = true;
+                        }else if(type ==1){
+                            this.doBdj = true;
+                        }
+                    }else{
+                        this.$notify.warning({content: '未找到原单！'});
                     }
                 }
             }
