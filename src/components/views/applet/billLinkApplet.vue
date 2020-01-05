@@ -75,6 +75,7 @@ export default {
       this.loading--;
     },
     async getParams(sbuid, menuId) {
+      // console.log(sbuid,menuId)
       let data1 = {
         dbid: global.DBID,
         usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
@@ -160,7 +161,17 @@ export default {
         this.currMenu = mm; 
         if (!this.mparams) {
           // console.log("远程调用mparams");
-          let bok = await this.getParams(sbuid, mm.menuId);
+          let command =  mm.command;
+          let cmmArr = command.split("&");
+          let pbuId = "";
+          for(var i=0;i<cmmArr.length;i++){
+            let cmm = cmmArr[i]
+            if(cmm.indexOf("pbuid")!=-1){
+              console.log(cmm)
+              pbuId = cmm.split("=")[1]
+            }
+          }
+          let bok = await this.getParams(pbuId, mm.menuId);
           if (bok) {
             // console.log("远程调用getCell");
             return await this.getCell();
