@@ -4,7 +4,7 @@
       <md-part-toolbar-group>
         <md-button v-if="menuP.INSERT" :disabled="canCreate" @click.native="create">{{$t('commBtn.B_ADD')}}</md-button>
         <md-button v-if="menuP.DELETE" class="md-accent" :disabled="canDelete" @click.native="delData">{{$t('commBtn.B_DEL')}}</md-button>
-        <md-button v-if="menuP.SAVE"@click.native="save" :disabled="canSave">{{$t('commBtn.B_SAVE')}}</md-button>
+        <md-button v-if="menuP.SAVE" @click.native="save" :disabled="canSave">{{$t('commBtn.B_SAVE')}}</md-button>
 
         <md-button v-if="menuP.LIST" @click.native="list">{{$t('commBtn.B_LIST')}}</md-button>
 
@@ -235,7 +235,6 @@ export default {
           cont+=cell.labelString+":"+dataV +"|||";
         }
       }
-      console.log(cont)
       return cont;
     },
     submitProcess(){

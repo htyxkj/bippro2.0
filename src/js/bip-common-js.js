@@ -12,8 +12,8 @@
 // global.BIPAPIURL = 'http://192.168.100.13:8080/skxjtfile/';//京通档案（水科学院）
 // global.BIPAPIURL = 'http://www.bip-soft.com:89/clubreserv/';//会所预定
 // global.BIPAPIURL = 'http://www.juminfuwu.cn:88/nc_jxgl/';//绩效管理
-// global.BIPAPIURL = 'http://120.79.16.71/bip-share/'; //财务共享
-global.BIPAPIURL = 'https://test.juminfuwu.cn/bip-share/'; //财务共享
+global.BIPAPIURL = 'http://120.79.16.71/bip-share/'; //财务共享
+// global.BIPAPIURL = 'https://test.juminfuwu.cn/bip-share/'; //财务共享
 // global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/'; //安全隐患监控平台测试
 // global.BIPAPIURL = 'https://www.bip-soft.com/xsgk/';//安全隐患监控平台测试
 // global.BIPAPIURL = 'http://115.28.191.203:89/bip-library/';//图书管理

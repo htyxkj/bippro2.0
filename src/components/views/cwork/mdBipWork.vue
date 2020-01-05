@@ -140,15 +140,7 @@ export default {
         })
       }else{
         this.cea.stateagr = cuCheck.stateId;
-      }
-      // return;
-
-
-
-
-       
-      
-
+      } 
       var res = null;
       if (this.stateId == 6) {
         res = await this.getCeaCheckInfo(this.cea, 34);
@@ -157,20 +149,18 @@ export default {
           this.$notify.danger({ content: "没有审批人", placement: "mid-center" });
         } else {
           res = await this.getCeaCheckInfo(this.cea, 34);
-          // console.log(res);
         }
       }
-      console.log(res);
       if (res.data.id == 0) {
         this.$emit("dataCheckUp", this.stateId);
         this.$notify.success({ content: "提交成功！", placement: "mid-center" });
-        this.close();
       } else {
         this.$notify.danger({
           content: res.data.message,
           placement: "mid-center"
         });
       }
+      this.close();
       // this.$notify.danger({ content: "没有审批人", placement: "mid-center" });
       // console.log(res,'同意并提交');
     },
@@ -366,15 +356,26 @@ export default {
               this.users = []; 
                _.forEach(this.chkinfo.list, item => {
                 let u = {node:null,users:[],hq:false}
+                let usrCode =[];
+                let users =[];
+                _.forEach(item.users,u=>{
+                  if(usrCode.indexOf(u.userCode) == -1 ){
+                    usrCode.push(u.userCode);
+                    users.push(u);
+                  }
+                })
                 u.node = item.stateName;
-                u.users = item.users;
+                u.users = users;
                 this.users.push(u); 
               });
               if (this.users.length == 1) {
                 console.log(this.users)
                 for(var i=0;i<this.users.length;i++){
-                  if(this.users[i].users)
-                  this.userIds[i] = this.users[i].users[0].userCode;
+                  if(this.users[i].users){
+                    if(this.userIds[i] = this.users[i].users[0]){
+                      this.userIds[i] = this.users[i].users[0].userCode;
+                    }
+                  }
                 }
               }
             }
@@ -419,14 +420,14 @@ export default {
       //0：新建状态，1:驳回状态；2:待审核；3:已审核;4:执行状态
       var id = 0;
       if (this.chkinfo) {
-        if (this.chkinfo.state == "0" || this.chkinfo.state == "5") {
+        if (this.chkinfo.currState.stateId == "0" || this.chkinfo.currState.stateId == "5") {
           id = 0;
-        } else if (this.chkinfo.state == "1") {
+        } else if (this.chkinfo.currState.stateId == "1") {
           id = 1;
-        } else if (this.chkinfo.state == "6") {
+        } else if (this.chkinfo.currState.stateId == "6") {
           id = 4;
         } else {
-          if (this.chkinfo.checked) {
+          if (this.chkinfo.currState.checked) {
             id = 3;
           } else {
             id = 2;
