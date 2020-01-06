@@ -297,7 +297,7 @@ export default {
             }
           }
         }else{
-          if(!this.chkinfo.currState.users){
+          if(!this.chkinfo.currState.users && !this.chkinfo.currState.userssh){
             if (this.cea.statefr !== "6") {
               this.$notify.danger({
                 content: "没有审批人!",

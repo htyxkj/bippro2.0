@@ -28,7 +28,7 @@
     "vue-i18n": "^7.8.0",
     "vue-router": "^2.7.0",
     "vuejs-dialog": "^0.4.5",
-    "vxe-table": "1.0.1",
+    "vxe-table": "^1.0.1",
     "wangeditor": "^3.1.1",
     "xe-utils": "1.9.4",
     "xlsx": "^0.11.17"

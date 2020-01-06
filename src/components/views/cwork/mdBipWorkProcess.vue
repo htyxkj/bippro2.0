@@ -17,7 +17,7 @@
         <div>
           <div class="md-work-dialog">
             <md-avatar class="md-large md-fab md-fab-top-left" tabindex="-9999">
-              <template v-if="chkinfo && chkinfo.state =='6'">
+              <template v-if="chkinfo && chkinfo.currState.stateId =='6'">
                 <img src="../../../img/check/shtg.png">
               </template>
             </md-avatar>
@@ -58,7 +58,7 @@
             </div> 
             </div> -->
             <div v-for="(item,index) in info" :key="index">
-              <div class="div2-1" v-if=" (item.stfr == '驳回' || item.stfr == '新建')">
+              <template v-if="item.stfr =='one'">
                 <img class="image2" src="../../../img/check/process_ty.png">
                 <div class="div3">
                   <div style="float:left;">&nbsp;&nbsp;{{item.namefr}}<br/>&nbsp;&nbsp;
@@ -70,7 +70,21 @@
                     </span>
                   </div>
                 </div>
-              </div>
+              </template>
+              <template v-else>
+              <!-- <div class="div2-1" v-if=" (item.stfr == '驳回' || item.stfr == '新建')">
+                <img class="image2" src="../../../img/check/process_ty.png">
+                <div class="div3">
+                  <div style="float:left;">&nbsp;&nbsp;{{item.namefr}}<br/>&nbsp;&nbsp;
+                    <span style="color:#8FB95C;font-size: 10px">发起申请</span>
+                  </div>
+                  <div class="div4">
+                    <span style="font-size:11px">
+                      {{item.datefr}}
+                    </span>
+                  </div>
+                </div>
+              </div> -->
               <div class="div2-1">
                 <img class="image2" v-if="item.cid < 0 && item.cid != -20000" src="../../../img/check/process_bh.png">
                 <img class="image2" v-else-if="item.cid == -20000" src="../../../img/check/process_ds.png">
@@ -104,6 +118,7 @@
                   </div>
                 </div>
               </div> 
+              </template>
             </div> 
         </div>
       </md-dialog-content>
@@ -130,17 +145,50 @@ export default {
       if(res.data.id == 0){
         this.info = res.data.data.info;
       }
-      console.log(this.info)
-      if(this.chkinfo && this.chkinfo.chkInfos && this.chkinfo.chkInfos.length>0){
-        let data = this.info[this.info.length-1];
-        if(data && !data.nameto){
-          let name ="";
-          this.chkinfo.chkInfos .forEach(item => {
-            name += item.userName+" , "
+      // if(this.chkinfo && this.chkinfo.chkInfos && this.chkinfo.chkInfos.length>0){
+      //   let data = this.info[this.info.length-1];
+      //   if(data && !data.nameto){
+      //     let name ="";
+      //     this.chkinfo.chkInfos .forEach(item => {
+      //       name += item.userName+" , "
+      //     });
+      //     name = name.substring(0,name.length-1)
+      //     this.info[this.info.length-1].nameto=name; 
+      //     this.info[this.info.length-1].cid=-20000; 
+      //   }
+      // }
+      
+      let d = {cid:0,namefr:this.chkinfo.upUser.userName,stfr:'one'}
+      this.info.unshift(d)
+      
+      if(this.chkinfo && this.chkinfo.currState && this.chkinfo.currState.checked == false){
+        if(this.chkinfo.currState.hq){
+          let nodes  = this.chkinfo.currState.cnodes;
+          _.forEach(nodes,item => {
+            if(!item.checked){
+              let stto = item.stateName;
+              let d = {cid:-20000,nameto:"",stto:stto}
+              let users = item.users;
+              if(users){
+                _.forEach(users,u=>{
+                  d.nameto = u.userName;
+                  this.info.push(d);
+                })
+              }
+            }
           });
-          name = name.substring(0,name.length-1)
-          this.info[this.info.length-1].nameto=name; 
-          this.info[this.info.length-1].cid=-20000; 
+        }else{
+          if(!this.chkinfo.currState.checked){
+              let stto = this.chkinfo.currState.stateName;
+              let users = this.chkinfo.currState.users;
+              if(users){
+                _.forEach(users,u=>{
+                  let d = {cid:-20000,nameto:"",stto:stto}
+                  d.nameto = u.userName;
+                  this.info.push(d);
+                })
+              }
+          }
         }
       }
 

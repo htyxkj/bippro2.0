@@ -132,6 +132,7 @@ export default {
           sid: crd[this.opera.pkfld],
           sbuid: crd[this.opera.buidfld],
           statefr: state,
+          sorg:crd[this.opera.sorgfld],
           stateto: state,
           tousr: ""
         };
@@ -263,6 +264,7 @@ export default {
       var params = {
         sid: crd[this.opera.pkfld],
         sbuid: crd[this.opera.buidfld],
+        sorg:crd[this.opera.sorgfld],
         statefr: crd[this.opera.statefld],
         stateto: crd[this.opera.statefld],
         spuserId: ""

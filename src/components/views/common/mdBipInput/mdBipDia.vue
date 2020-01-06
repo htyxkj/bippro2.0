@@ -185,6 +185,7 @@ export default {
       items=[];
     },
     doQuery(word){ 
+      word =word.replace(/(^\s*)|(\s*$)/g, "");
       var option={
         'pageSize': this.pageInfo.size,
         'page':this.pageInfo.page,
