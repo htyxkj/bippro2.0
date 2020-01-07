@@ -277,11 +277,29 @@ export default {
         this.makeRefInput(this.refData);
       }else if(data.code == 0){
         if(this.refData.cols){
+          if((this.cell.attr & 0x2000000) <=0){//非输入虑0
+            if(this.modal[this.cell.id] != this.refValue){
+              this.refData.value[this.refData.cols[1]] = this.refValue;
+              this.refData.value[this.refData.cols[0]] = this.refValue;
+              this.$set(this.modal,this.cell.id,this.refValue);
+              this.$emit('change',this.refData);
+            }
+          }else{
+            this.$notify.warning({content: data.message});
+          }
           this.makeRefInput(this.refData);
         }else{
-          this.refValue='';
+          if((this.cell.attr & 0x2000000) <=0){//非输入虑0
+            if(this.modal[this.cell.id] != this.refValue){
+              let refD = {cellId:this.cell.id,oldValue:this.refValue}
+              this.$set(this.modal,this.cell.id,this.refValue);
+              this.$emit('change',refD);
+            }
+          }else{
+            this.refValue='';
+            this.$notify.warning({content: data.message});
+          }
         }
-        this.$notify.warning({content: data.message});
       }else{
         this.$notify.danger({content: data.message});
       }

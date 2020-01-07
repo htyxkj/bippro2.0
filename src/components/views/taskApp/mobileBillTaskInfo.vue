@@ -515,7 +515,7 @@ export default {
   watch: {
     chkinfo() {
       if (this.chkinfo) {
-        if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
+        if (this.chkinfo.currState.stateId !== "0" && this.chkinfo.currState.stateId !== "1") {
           this.dsm.canEdit = false;
         }
       }

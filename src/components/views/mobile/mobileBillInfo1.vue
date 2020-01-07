@@ -236,7 +236,7 @@ export default {
       console.log("row Change", row);
       const state = this.dsm.currRecord.sys_stated;
       if(this.chkinfo){
-        if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
+        if (this.chkinfo.currState.stateId !== "0" && this.chkinfo.currState.stateId !== "1") {
           return ;
         }
       }
@@ -339,7 +339,7 @@ export default {
           return true;
         }
         if (this.chkinfo) {
-          // if(this.chkinfo.state=='6'){
+          // if(this.chkinfo.currState.stateId=='6'){
           //   return true;
           // }else{
           //   return false;
@@ -378,7 +378,7 @@ export default {
   watch:{
     chkinfo(){
       if(this.chkinfo){
-        if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
+        if (this.chkinfo.currState.stateId !== "0" && this.chkinfo.currState.stateId !== "1") {
           this.dsm.canEdit = false;
         }
       }

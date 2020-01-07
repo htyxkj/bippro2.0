@@ -72,7 +72,7 @@
                 </div>
               </template>
               <template v-else>
-              <!-- <div class="div2-1" v-if=" (item.stfr == '驳回' || item.stfr == '新建')">
+              <div class="div2-1" v-if=" (item.stfr == '驳回' || item.stfr == '新建')">
                 <img class="image2" src="../../../img/check/process_ty.png">
                 <div class="div3">
                   <div style="float:left;">&nbsp;&nbsp;{{item.namefr}}<br/>&nbsp;&nbsp;
@@ -84,7 +84,7 @@
                     </span>
                   </div>
                 </div>
-              </div> -->
+              </div>
               <div class="div2-1">
                 <img class="image2" v-if="item.cid < 0 && item.cid != -20000" src="../../../img/check/process_bh.png">
                 <img class="image2" v-else-if="item.cid == -20000" src="../../../img/check/process_ds.png">
@@ -157,9 +157,10 @@ export default {
       //     this.info[this.info.length-1].cid=-20000; 
       //   }
       // }
-      
-      let d = {cid:0,namefr:this.chkinfo.upUser.userName,stfr:'one'}
-      this.info.unshift(d)
+      if(this.info.length==0){
+        let d = {cid:0,namefr:this.chkinfo.upUser.userName,stfr:'one'}
+        this.info.unshift(d)
+      }
       
       if(this.chkinfo && this.chkinfo.currState && this.chkinfo.currState.checked == false){
         if(this.chkinfo.currState.hq){

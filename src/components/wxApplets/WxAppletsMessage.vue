@@ -351,7 +351,7 @@ export default {
                 usercode: this.userCode,
                 apiId: global.APIID_CELLPARAM,
                 pcell: "SYRW",
-                pdata: "{brd:0,}",
+                pdata: "",
                 bebill: 1,
                 currentPage: this.taskPageInfo.page,
                 pageSize: this.taskPageInfo.size,

@@ -132,7 +132,7 @@ export default {
       console.log("row Change", row);
       const state = this.dsm.currRecord.sys_stated;
       if (this.chkinfo) {
-        if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
+        if (this.chkinfo.currState.stateId !== "0" && this.chkinfo.currState.stateId !== "1") {
           return;
         }
       }

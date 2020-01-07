@@ -867,10 +867,10 @@ export default {
   watch: {
     chkinfo() {
       if (this.chkinfo) {
-        if (this.chkinfo.state !== "0" && this.chkinfo.state !== "1") {
+        if (this.chkinfo.currState.stateId !== "0" && this.chkinfo.currState.stateId !== "1") {
           this.dsm.canEdit = false;
         }
-        if ((this.dsm.ccells.attr & billS.LSUPDATE) > 0 && this.chkinfo.state !== "6") {//临时改  
+        if ((this.dsm.ccells.attr & billS.LSUPDATE) > 0 && this.chkinfo.currState.stateId !== "6") {//临时改  
           console.log("临时改")
           this.dsm.canEdit = true;
         }

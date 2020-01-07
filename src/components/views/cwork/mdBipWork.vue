@@ -191,16 +191,9 @@ export default {
       }
     },
     async bh(bup) {
-      this.cea.stateto = this.chkinfo.state;
+      this.cea.stateto = this.chkinfo.currState.stateId;
       this.cea.bup = "2";
-
-
-      console.log('555555');
-      this.cea.yjcontext = this.content;
-      console.log( this.content);
-      console.log('6666666666');
-
-
+      this.cea.yjcontext = this.content; 
       this.cea.tousr = bup ? "#" : this.billuser;
       var res = await this.getCeaCheckInfo(this.cea, 34);
       // console.log(res, "驳回！");
@@ -442,7 +435,7 @@ export default {
     getYes() {
       // console.log(this.chkinfo);
       if (this.chkinfo) {
-        if (this.chkinfo.state == "0" || this.chkinfo.state == "1" || this.chkinfo.state == "5") {
+        if (this.chkinfo.currState.stateId == "0" || this.chkinfo.currState.stateId == "1" || this.chkinfo.currState.stateId == "5") {
           return this.$t('cwork.submit');
         }
       }
@@ -490,15 +483,15 @@ export default {
       return false;
     },
     canTH() {
-      if (this.chkinfo.state) {
+      if (this.chkinfo.currState.stateId) {
         console.log(this.chkinfo);
-        if (this.chkinfo.state === "0" || this.chkinfo.state === "1") {
+        if (this.chkinfo.currState.stateId === "0" || this.chkinfo.currState.stateId === "1") {
           return true;
         }
-        if(this.chkinfo.state === "5"){
+        if(this.chkinfo.currState.stateId === "5"){
           return false;
         }
-        if(this.chkinfo.state === "6" && this.chkinfo.upState === "0"){
+        if(this.chkinfo.currState.stateId === "6" && this.chkinfo.upState === "0"){
           if(this.currUser === this.billuser  || this.billuser == undefined){
             return false;
           }else{
@@ -521,7 +514,7 @@ export default {
     },
     canBH() {
       if (this.chkinfo) {
-        if (this.chkinfo.state === "0" ||this.chkinfo.state === "1" || this.chkinfo.state === "5" ||this.chkinfo.state === "6") {
+        if (this.chkinfo.currState.stateId === "0" ||this.chkinfo.currState.stateId === "1" || this.chkinfo.currState.stateId === "5" ||this.chkinfo.currState.stateId === "6") {
           return true;
         }
          var exitu = "";
