@@ -139,7 +139,7 @@
                         <md-layout v-if="timedown" md-flex ="100"  md-align="center" >
                           <md-bip-time-down :row="row" :timedown="timedown" :callback="callback" endText="已经结束了"></md-bip-time-down>
                         </md-layout>
-                        <md-layout v-for="(item, index) in ds_m.ccells.cels"  v-if="item.isShow && (item.attr&bills1.DICT)>0":key="index"  md-gutter  md-flex ="100" :md-gutter="16"> 
+                        <md-layout v-for="(item, index) in ds_m.ccells.cels"  v-if="item.isShow && (item.attr&bills1.DICT)>0" :key="index" md-flex ="100" :md-gutter="16"> 
                             <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                             <md-layout md-flex ="65" class="content">
                               <!-- <md-bip-ref v-if="item.editName!='UPDOWN'" :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row" :row="row" @pkclick="openrefs(row,rowIndex,index)"></md-bip-ref>
@@ -151,7 +151,7 @@
                         </md-layout>
                       </md-card-header> 
                       <md-card-content> 
-                          <md-layout v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow && (item.attr& bills1.DICT)<=0"  :key="index" md-gutter  md-flex ="100" :md-gutter="16"> 
+                          <md-layout v-for="(item, index) in ds_m.ccells.cels" v-if="item.isShow && (item.attr& bills1.DICT)<=0"  :key="index" md-flex ="100" :md-gutter="16"> 
                             <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                             <md-layout md-flex ="65" class="content">
                               <md-bip-bi-file-up  v-if="item.editName == 'UPDOWN'"  :cell="fileFJCell(row.sbuid,item.id)" :modal="fileFJModal(row,item.id)" ref="fj_name" style="padding: 0px;margin: 0px;min-height: 0px;"></md-bip-bi-file-up>

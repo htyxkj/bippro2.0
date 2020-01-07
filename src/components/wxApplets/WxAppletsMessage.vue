@@ -6,18 +6,18 @@
                     <template v-if="!bdj"> 
                         <template v-if="taskValues.length>0">
                             <template v-for="(row,index1) in taskValues">
-                                <md-card  style="margin-bottom: 20px;box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
+                                <md-card  style="margin-bottom: 20px;box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;" :key="index1">
                                     <md-card-expand>
                                         <md-card-header> 
                                             <md-layout v-for="(item,index2) in taskLayCel.cels" :key="item.id"> 
-                                                <md-layout  :md-numeric="item.type===3" v-if="item.isShow"  style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
+                                                <md-layout :key="index2"  :md-numeric="item.type===3" v-if="item.isShow"  style="border-bottom: 1px solid #DDDDDD;" md-flex ="100" :md-gutter="16">
                                                     <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                                                     <md-layout md-flex ="65">
                                                     <md-bip-ref :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row"></md-bip-ref>
                                                     </md-layout>
                                                 </md-layout>
                                             </md-layout>
-                                            <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                            <md-layout md-flex ="100" :md-gutter="16"> 
                                                 <md-layout md-flex ="100" md-align="center">
                                                     <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="rowClick(row,0)">{{$t('bipmsg.btnView')}}</button>
                                                 </md-layout>
@@ -46,20 +46,30 @@
                 </md-tab> 
                 <md-tab md-label="已办" class="oneTab" :style="doBdj ==false?'height: 100%':'padding:0px;height: 100%'"> <!--  md-icon="work"  -->
                     <template v-if="!doBdj"> 
+                        <md-layout v-if="showDoTJ">
+                            <md-layout v-for="(tjcel,index) in taskDoTjCel.cels" :key="'tjk'+index">
+                                <md-bip-input :dsm="taskDoDSM" :ref="tjcel.id" :key="tjcel.id" :cell="tjcel" :modal="taskDoDSM.currRecord" :btj="false" class="bip-input" ></md-bip-input>
+                            </md-layout>
+                            <md-layout md-flex ="100" md-align="center">
+                                <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="getTask_DO">查找</button>
+                            </md-layout>
+                        </md-layout>
+                        <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;margin-bottom: 20px;" @click="showDoTJ = !showDoTJ">显示/隐藏 条件</button>
+                        
                         <template v-if="taskDoValues.length>0">
                             <template v-for="(row,index1) in taskDoValues">
-                                <md-card  style="margin-bottom: 20px;box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
+                                <md-card :key="index1" style="margin-bottom: 20px;box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
                                     <md-card-expand>
                                         <md-card-header> 
-                                            <md-layout v-for="(item,index2) in taskLayCel.cels" :key="item.id"> 
-                                                <md-layout  :md-numeric="item.type===3" v-if="item.isShow"  style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
+                                            <md-layout v-for="(item,index2) in taskDoCel.cels" :key="item.id"> 
+                                                <md-layout :key="index2" :md-numeric="item.type===3" v-if="item.isShow"  style="border-bottom: 1px solid #DDDDDD;" md-flex ="100" :md-gutter="16">
                                                     <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                                                     <md-layout md-flex ="65">
                                                     <md-bip-ref :inputValue="row[item.id]" :bipRefId="item" :md-numeric="item.type === 3" :modal="row"></md-bip-ref>
                                                     </md-layout>
                                                 </md-layout>
                                             </md-layout>
-                                            <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                            <md-layout md-flex ="100" :md-gutter="16"> 
                                                 <md-layout md-flex ="100" md-align="center">
                                                     <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="rowClick(row,1)">{{$t('bipmsg.btnView')}}</button>
                                                 </md-layout>
@@ -90,35 +100,35 @@
                     <template v-if="msgs && msgs.length>0">
                         <template v-if="!msgDetails">
                             <template v-for="(row,index) in msgs">
-                                <md-layout>
+                                <md-layout :key="index">
                                     <md-card  style="margin-bottom: 20px;    box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
                                         <md-card-expand>
                                             <md-card-header> 
-                                                <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                <md-layout md-flex ="100" :md-gutter="16"> 
                                                     <md-layout md-flex ="35" class="title11" >{{$t('bipmsg.head.sid')}}</md-layout>
                                                     <md-layout md-flex ="65">
                                                         {{(msgPageInfo.page-1)*msgPageInfo.size+index+1}}
                                                     </md-layout>
                                                 </md-layout>
-                                                <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                <md-layout md-flex ="100" :md-gutter="16"> 
                                                     <md-layout md-flex ="35" class="title11" >{{$t('bipmsg.head.title')}}</md-layout>
                                                     <md-layout md-flex ="65">
                                                         {{row.title}}
                                                     </md-layout>
                                                 </md-layout>
-                                                <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                <md-layout md-flex ="100" :md-gutter="16"> 
                                                     <md-layout md-flex ="35" class="title11" >{{$t('bipmsg.head.time')}}</md-layout>
                                                     <md-layout md-flex ="65">
                                                         {{row.dmake}}
                                                     </md-layout>
                                                 </md-layout>
-                                                <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                <md-layout md-flex ="100" :md-gutter="16"> 
                                                     <md-layout md-flex ="35" class="title11" >{{$t('bipmsg.head.state')}}</md-layout>
                                                     <md-layout md-flex ="65">
                                                         {{getStatus(row.brd)}}
                                                     </md-layout>
                                                 </md-layout>
-                                                <md-layout  md-gutter  md-flex ="100" :md-gutter="16"> 
+                                                <md-layout md-flex ="100" :md-gutter="16"> 
                                                     <md-layout md-flex ="100" md-align="center">
                                                         <button type="button" class="small-btn" @click="view(index)">{{$t('bipmsg.btnView')}}</button>
                                                         <button type="button" class="small-btn md-btn" @click="del(index)">{{$t('bipmsg.btnDel')}}</button>
@@ -132,31 +142,31 @@
                             <md-table-pagination style="background-color: white;" :md-size="msgPageInfo.size" :md-total="msgPageInfo.total" :md-page="msgPageInfo.page" :md-label="$t('commInfo.Per')" md-separator="/" :md-page-options="[5, 10,15, 25, 50]" @pagination="onPagination" class="flex"></md-table-pagination>
                         </template>
                         <template v-else>
-                            <md-layout style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
+                            <md-layout style="border-bottom: 1px solid #DDDDDD;" md-flex ="100" :md-gutter="16">
                                 <md-layout md-flex ="35" class="title11" >标题</md-layout>
                                 <md-layout md-flex ="65">
                                     {{msgs[msgIndex].title}}
                                 </md-layout>
                             </md-layout>
-                            <md-layout style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
+                            <md-layout style="border-bottom: 1px solid #DDDDDD;" md-flex ="100" :md-gutter="16">
                                 <md-layout md-flex ="35" class="title11" >时间</md-layout>
                                 <md-layout md-flex ="65">
                                     {{msgs[msgIndex].dmake}}
                                 </md-layout>
                             </md-layout>
-                            <md-layout style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
+                            <md-layout style="border-bottom: 1px solid #DDDDDD;" md-flex ="100" :md-gutter="16">
                                 <md-layout md-flex ="35" class="title11" >状态</md-layout>
                                 <md-layout md-flex ="65">
                                     {{getStatus(msgs[msgIndex].brd)}}
                                 </md-layout>
                             </md-layout>
-                            <md-layout md-gutter  md-flex ="100" :md-gutter="16">
+                            <md-layout md-flex ="100" :md-gutter="16">
                                 <md-layout md-flex ="35" class="title11" >内容</md-layout>    
                             </md-layout>
-                            <md-layout md-gutter  md-flex ="100" :md-gutter="16"> 
+                            <md-layout md-flex ="100" :md-gutter="16"> 
                                 <textarea class="area-inner" readonly v-model="msgs[msgIndex].content"></textarea>
                             </md-layout>
-                            <md-layout md-gutter md-flex ="100" :md-gutter="16">
+                            <md-layout md-flex ="100" :md-gutter="16">
                                 <md-layout md-flex ="50" md-align="end" style="padding:0px;">
                                     <md-button class="md-raised md-primary" style="width:100%" @click="upStat(msgIndex)">已读</md-button>
                                 </md-layout>
@@ -199,14 +209,18 @@ export default {
             },
 
 
-            taskLayCel: {},
-            taskValues: [],
+            taskLayCel: {},//代办对象
+            taskValues: [],//代办数据
             taskPageInfo: {
                 size: 20,
                 page: 1,
                 total: 0
             },
-            taskDoValues:[],
+            taskDoTjCel:{},//已办条件对象
+            taskDoDSM:null,
+            showDoTJ:false,
+            taskDoCel:{},//已办对象
+            taskDoValues:[],//已办数据
             taskDoPageInfo: {
                 size: 20,
                 page: 1,
@@ -227,12 +241,13 @@ export default {
         }
     },
     async mounted(){
+        await this.getTaskDoTj();
         this.getMsg();
         this.getTask_DO();
     },
     created() {
         this.fetchTaskData();
-        this.connectQ();
+        // this.connectQ();
     },
     beforeDestroy(){
         if(this.isconnt){
@@ -240,7 +255,7 @@ export default {
         }
     },
     methods: { 
-        /********************* 我的消息开始 ****************/
+    /********************* 我的消息开始 ****************/
         async getMsg(){
             var data1={
                 snkey : JSON.parse(window.sessionStorage.getItem('snkey')),
@@ -274,7 +289,6 @@ export default {
                 state:2
             };
             var res = await this.getDataByAPINew(data1);
-            // console.log(res,'1111');
             if(res.data.id==0){
                 this.msgs[index].brd = 2;
             }
@@ -310,9 +324,9 @@ export default {
                 return this.$t('bipmsg.btnRead');
             }
         },
-        /********************* 我的消息结束 ****************/
+    /********************* 我的消息结束 ****************/
 
-        /********************* 我的任务开始 ****************/
+    /********************* 我的任务开始 ****************/
         gotask(type){
             if(type == 0)
             this.bdj = false;
@@ -322,29 +336,29 @@ export default {
         disconnect() {
             this.taskCli.disconnect();
         },
-        connectQ: function() {
-            console.log("//初始化mqtt客户端，并连接mqtt服务")
-            //初始化mqtt客户端，并连接mqtt服务
-            var ws = new WebSocket(global.MQTT_SERVICE);
-            this.taskCli = Stomp.over(ws);
-            var headers = {
-                login: global.MQTT_USERNAME, //用户名
-                passcode: global.MQTT_PASSWORD, //密码
-                host: global.MQTT_HOST // 虚拟空间
-            };
-            this.taskCli.connect(headers, this.onConnected, this.onFailed);
-        },
-        onConnected: function(frame) {
-            this.isconnt = true;
-            // console.log("Connected: " + frame);
-            //订阅频道
-            var topic ="/exchange/" +BIPTASK +"/" + BIPTASK +"." +global.DBID +"." +this.userCode;
-            this.taskCli.subscribe(topic, this.responseCallback);
-        },
-        responseCallback: function(frame) {
-            if(!this.bdj)
-                this.fetchTaskData();
-        },
+        // connectQ: function() {
+        //     console.log("//初始化mqtt客户端，并连接mqtt服务")
+        //     //初始化mqtt客户端，并连接mqtt服务
+        //     var ws = new WebSocket(global.MQTT_SERVICE);
+        //     this.taskCli = Stomp.over(ws);
+        //     var headers = {
+        //         login: global.MQTT_USERNAME, //用户名
+        //         passcode: global.MQTT_PASSWORD, //密码
+        //         host: global.MQTT_HOST // 虚拟空间
+        //     };
+        //     this.taskCli.connect(headers, this.onConnected, this.onFailed);
+        // },
+        // onConnected: function(frame) {
+        //     this.isconnt = true;
+        //     // console.log("Connected: " + frame);
+        //     //订阅频道
+        //     var topic ="/exchange/" +BIPTASK +"/" + BIPTASK +"." +global.DBID +"." +this.userCode;
+        //     this.taskCli.subscribe(topic, this.responseCallback);
+        // },
+        // responseCallback: function(frame) {
+        //     if(!this.bdj)
+        //         this.fetchTaskData();
+        // },
         async fetchTaskData() {
             var data1 = {
                 dbid: global.DBID,
@@ -358,7 +372,6 @@ export default {
                 cellid: ""
             };
             var res = await this.getDataByAPINew(data1);
-            console.log(res);
             if (res.data.id == 0) {
                 this.taskLayCel = await this.makeCellCL(res.data.data.layCels);
                 this.taskValues = res.data.data.pages.celData;
@@ -368,7 +381,6 @@ export default {
             }
         },
         async rowClick(row,type) {
-            // console.log(row);
             row.brd = 1;
             var pflow = row.buid;
             var data1 = {
@@ -381,14 +393,7 @@ export default {
             if (bb.data.id == 0) this.opera = new Operation(bb.data.data.opt);
             if (this.opera) {
                 var menuid = this.opera.pmenuid;
-                // var bb = this.getMenuById(this.menuList, menuid);
-                // // console.log(bb);
-                // // this.bdj = true;
-                // if(bb)
                 await this.fetchParams(pflow,menuid);
-                // else
-                // this.mparams = null;
-                console.log(this.mparams)
                 if(this.mparams){
                     await this.getCell();
                     var pdata = {};
@@ -419,7 +424,6 @@ export default {
                 'pageSize': 1,
                 'cellid': ''
             }
-            // console.log(data1);
             var res = await this.getDataByAPINewSync(data1);
             if(res.data.id==0){
                 if(this.ds_m.cdata.length>0){
@@ -448,7 +452,6 @@ export default {
             var menu = null;
             for (let i = 0; i < menus.length; i++) {
                 var item = menus[i];
-                // console.log(item);
                 if (item.menuId == id) {
                 menu = item;
                 } else {
@@ -471,13 +474,10 @@ export default {
                 pmenuid: pmenuid
             };
             if (pbuid && pmenuid) {
-                //var bb = await this.getDataByAPINew(data1,this.getCallBack,this.getCallError);
                 var res = await this.getDataByAPINewSync(data1);
-                // console.log(res);
                 if (res.data.id == 0) {
                 this.mparams = res.data.data.mparams;
                 } else {
-                // console.log(res);
                 this.$notify.warning({
                     content: res.data.message,
                     placement: "mid-center"
@@ -517,33 +517,32 @@ export default {
                 this.$notify.warning({content: data.message,placement:'mid-center'});
             }
         },
-        /********************* 我的任务结束 ****************/
+    /********************* 我的任务结束 ****************/
 
-        /********************* 我的已办开始 ****************/
-        
+    /********************* 我的已办开始 ****************/
         async getTask_DO(){
-            let data2 = {  
+            let pdata = this.taskDoDSM.currRecord
+            pdata = JSON.stringify(pdata);
+            console.log(pdata)
+            var data1 = {
                 dbid: global.DBID,
                 usercode: this.userCode,
-                apiId: global.APIID_AIDO, 
-                page:1,
-                assistid: 'V_INSTASK_DO', //辅助名称
-                currentPage:this.taskDoPageInfo.currentPage,  //页数
-                pageSize: this.taskDoPageInfo.pageSize,//每页条数
-                cont: ""
+                apiId: global.APIID_CELLPARAM,
+                pcell: "INSSPLIST",
+                pdata: pdata,
+                bebill: 1,
+                currentPage: this.taskDoPageInfo.page,
+                pageSize: this.taskDoPageInfo.size,
+                cellid: ""
             };
-            let cont = "~frusr = '"+this.userCode+"'"
-            data2.cont = cont;
-            this.getDataByAPINewSync(data2).then((res)=>{ 
-                console.log(res)
-                if(res.data){
-                    this.taskDoPageInfo.size=res.data.size
-                    this.taskDoPageInfo.total=res.data.total
-                }
-                if(res.data.values){
-                    this.taskDoValues = res.data.values;
-                }
-            });
+            var res = await this.getDataByAPINew(data1);
+            if (res.data.id == 0) {
+                this.taskDoCel = await this.makeCellCL(res.data.data.layCels);
+                this.taskDoValues = res.data.data.pages.celData;
+                this.taskDoPageInfo.page = res.data.data.pages.currentPage;
+                this.taskDoPageInfo.total = res.data.data.pages.totalItem;
+                this.taskDoPageInfo.size = res.data.data.pages.pageSize;
+            }
         },
         taskDoPageChange(page) {
             if(this.taskDoPageInfo.size!=page.size){
@@ -553,8 +552,26 @@ export default {
             }
             this.taskDoPageInfo.size  = page.size;
             this.getTask_DO();
+        },
+        async getTaskDoTj(){
+             var data1 = {
+            'dbid': global.DBID,
+            'usercode': this.userCode,
+            'apiId': global.APIID_CELLPARAMS,
+            'pcell': 'INSSPLISTTJ'
+            }
+            var res = await this.getDataByAPINewSync(data1);
+            var data = res.data;
+            if(data.id===0){
+                var cells = data.data.layCels;
+                this.taskDoTjCel = cells[0];
+                this.taskDoDSM = new CDataSet(this.taskDoTjCel);
+                this.taskDoDSM.createRecord();
+            }else{
+                this.taskDoTjCel=null;
+            }
         }
-        /********************* 我的已办结束 ****************/
+    /********************* 我的已办结束 ****************/
 
     },
     watch: { 
