@@ -298,6 +298,21 @@ export default {
               });
             }
           }
+          if(!this.chkinfo.list || this.chkinfo.list.length<=0){
+            this.$notify.danger({
+              content: "未找到下一审批节点!",
+              placement: "mid-center"
+            });
+          }else{
+            _.forEach(this.chkinfo.list,item => {
+              if(!item.cnodes){
+                this.$notify.danger({
+                  content: "节点："+item.stateName+" 未定义审批人！",
+                  placement: "mid-center"
+                });
+              }
+            });
+          }
         }
         // if (this.chkinfo.currState.cnodes ) {
         //   var exitu = "";
@@ -334,15 +349,19 @@ export default {
             if(item.hq){//会审
               this.userIds = [];
               this.users = [];
-              for(var j=0;j<item.cnodes.length;j++){
-                let users = item.cnodes[j].users;
-                for(var k=0;k<users.length;k++){
-                  this.userIds.push(users[k].userCode)
+              if(item.cnodes){
+                for(var j=0;j<item.cnodes.length;j++){
+                  let users = item.cnodes[j].users;
+                  for(var k=0;k<users.length;k++){
+                    this.userIds.push(users[k].userCode)
+                  }
+                  let u = {node:null,users:[],hq:true}
+                  u.node = item.cnodes[j].stateName;
+                  u.users = item.cnodes[j].users;
+                  this.users.push(u);
                 }
-                let u = {node:null,users:[],hq:true}
-                u.node = item.cnodes[j].stateName;
-                u.users = item.cnodes[j].users;
-                this.users.push(u);
+              }else{
+                // this.$notify.danger({ content: "没有审批人", placement: "mid-center" });
               }
             }else{
               this.userIds = [];

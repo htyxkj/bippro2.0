@@ -95,6 +95,7 @@ export default class CDataSet {
   checkMulCols(cell) {
     var script = cell.script;
     if (script) {
+      script = script.split(";")[0]
       script = script.split('&');
       var cols = script[0].split(',');
       var _indexs = script[1].split(',');

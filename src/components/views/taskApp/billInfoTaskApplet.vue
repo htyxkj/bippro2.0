@@ -115,6 +115,12 @@ export default {
         var ceaParams = new CeaPars(params);
         var billuser = crd[this.opera.smakefld];
         // console.log(billuser);
+        var res = await this.getCeaCheckInfo(ceaParams, 33);
+        if (res.data.id == 0) {
+          this.chkinfo = res.data.data.info;
+        } else {
+          this.chkinfo = {};
+        }
         this.$refs["cc"].open(ceaParams, billuser);
       }
       // var res = await this.getDataByAPINew(checkParasm);

@@ -44,17 +44,25 @@
                         <md-bip-task-applet v-if="ds_m" :dsm="ds_m" :dsext="ds_ext" :opera="opera" @gotask="gotask(0)"></md-bip-task-applet>
                     </template>
                 </md-tab> 
-                <md-tab md-label="已办" class="oneTab" :style="doBdj ==false?'height: 100%':'padding:0px;height: 100%'"> <!--  md-icon="work"  -->
+                <md-tab md-label="已办" class="oneTab" :style="doBdj ==false?'height: 100%;padding-top: 0px;':'padding:0px;height: 100%'"> <!--  md-icon="work"  -->
                     <template v-if="!doBdj"> 
-                        <md-layout v-if="showDoTJ">
-                            <md-layout v-for="(tjcel,index) in taskDoTjCel.cels" :key="'tjk'+index">
-                                <md-bip-input :dsm="taskDoDSM" :ref="tjcel.id" :key="tjcel.id" :cell="tjcel" :modal="taskDoDSM.currRecord" :btj="false" class="bip-input" ></md-bip-input>
-                            </md-layout>
-                            <md-layout md-flex ="100" md-align="center">
-                                <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="getTask_DO">查找</button>
+                        <md-layout>
+                            <md-layout md-flex ="65" style="font-size: 20px;line-height: normal;">查询条件</md-layout>
+                            <md-layout md-flex ="35">
+                                <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="showTaskDoTj = !showTaskDoTj">
+                                    <template v-if="!showTaskDoTj">
+                                        显示
+                                    </template>
+                                    <template v-else>
+                                        隐藏
+                                    </template>
+                                </button>
                             </md-layout>
                         </md-layout>
-                        <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;margin-bottom: 20px;" @click="showDoTJ = !showDoTJ">显示/隐藏 条件</button>
+                        <md-layout v-if="taskDoTj && showTaskDoTj">
+                            <md-bip-input :dsm="taskDoTj" v-for="cell in taskDoTj.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="taskDoTj.currRecord" :btj="false" class="bip-input"></md-bip-input>
+                            <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="getTask_DO">查找</button>
+                        </md-layout>
                         
                         <template v-if="taskDoValues.length>0">
                             <template v-for="(row,index1) in taskDoValues">
@@ -216,11 +224,10 @@ export default {
                 page: 1,
                 total: 0
             },
-            taskDoTjCel:{},//已办条件对象
-            taskDoDSM:null,
-            showDoTJ:false,
-            taskDoCel:{},//已办对象
-            taskDoValues:[],//已办数据
+            showTaskDoTj:false,
+            taskDoTj:null,
+            taskDoCel:{},
+            taskDoValues:[],
             taskDoPageInfo: {
                 size: 20,
                 page: 1,
@@ -241,7 +248,7 @@ export default {
         }
     },
     async mounted(){
-        await this.getTaskDoTj();
+        await this.getTaskDoTJ();
         this.getMsg();
         this.getTask_DO();
     },
@@ -250,9 +257,9 @@ export default {
         // this.connectQ();
     },
     beforeDestroy(){
-        if(this.isconnt){
-            this.disconnect();
-        }
+        // if(this.isconnt){
+        //     this.disconnect();
+        // }
     },
     methods: { 
     /********************* 我的消息开始 ****************/
@@ -520,10 +527,10 @@ export default {
     /********************* 我的任务结束 ****************/
 
     /********************* 我的已办开始 ****************/
+        
         async getTask_DO(){
-            let pdata = this.taskDoDSM.currRecord
-            pdata = JSON.stringify(pdata);
-            console.log(pdata)
+            let pdata = this.taskDoTj.currRecord;
+            pdata = JSON.stringify(pdata)
             var data1 = {
                 dbid: global.DBID,
                 usercode: this.userCode,
@@ -536,6 +543,7 @@ export default {
                 cellid: ""
             };
             var res = await this.getDataByAPINew(data1);
+            console.log(res);
             if (res.data.id == 0) {
                 this.taskDoCel = await this.makeCellCL(res.data.data.layCels);
                 this.taskDoValues = res.data.data.pages.celData;
@@ -543,6 +551,28 @@ export default {
                 this.taskDoPageInfo.total = res.data.data.pages.totalItem;
                 this.taskDoPageInfo.size = res.data.data.pages.pageSize;
             }
+            // let data2 = {  
+            //     dbid: global.DBID,
+            //     usercode: this.userCode,
+            //     apiId: global.APIID_AIDO, 
+            //     page:1,
+            //     assistid: 'V_INSTASK_DO', //辅助名称
+            //     currentPage:this.taskDoPageInfo.currentPage,  //页数
+            //     pageSize: this.taskDoPageInfo.pageSize,//每页条数
+            //     cont: ""
+            // };
+            // let cont = "~frusr = '"+this.userCode+"'"
+            // data2.cont = cont;
+            // this.getDataByAPINewSync(data2).then((res)=>{ 
+            //     console.log(res)
+            //     if(res.data){
+            //         this.taskDoPageInfo.size=res.data.size
+            //         this.taskDoPageInfo.total=res.data.total
+            //     }
+            //     if(res.data.values){
+            //         this.taskDoValues = res.data.values;
+            //     }
+            // });
         },
         taskDoPageChange(page) {
             if(this.taskDoPageInfo.size!=page.size){
@@ -553,8 +583,8 @@ export default {
             this.taskDoPageInfo.size  = page.size;
             this.getTask_DO();
         },
-        async getTaskDoTj(){
-             var data1 = {
+        async getTaskDoTJ(){
+            var data1 = {
             'dbid': global.DBID,
             'usercode': this.userCode,
             'apiId': global.APIID_CELLPARAMS,
@@ -564,11 +594,13 @@ export default {
             var data = res.data;
             if(data.id===0){
                 var cells = data.data.layCels;
-                this.taskDoTjCel = cells[0];
-                this.taskDoDSM = new CDataSet(this.taskDoTjCel);
-                this.taskDoDSM.createRecord();
-            }else{
-                this.taskDoTjCel=null;
+                const celL = cells.length;
+                if(celL==1){
+                    var cells0 = cells[0];
+                    cells0 = await this.makeCellCL(cells0);
+                    this.taskDoTj = new CDataSet(cells0);
+                    this.taskDoTj.createRecord();
+                }
             }
         }
     /********************* 我的已办结束 ****************/
