@@ -305,7 +305,7 @@ export default {
             });
           }else{
             _.forEach(this.chkinfo.list,item => {
-              if(!item.cnodes){
+              if(!item.users && item.stateId !='6'){
                 this.$notify.danger({
                   content: "节点："+item.stateName+" 未定义审批人！",
                   placement: "mid-center"
