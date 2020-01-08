@@ -44,14 +44,32 @@
                         <md-bip-task-applet v-if="ds_m" :dsm="ds_m" :dsext="ds_ext" :opera="opera" @gotask="gotask(0)"></md-bip-task-applet>
                     </template>
                 </md-tab> 
-                <md-tab md-label="已办" class="oneTab" :style="doBdj ==false?'height: 100%':'padding:0px;height: 100%'"> <!--  md-icon="work"  -->
+                <md-tab md-label="已办" class="oneTab" :style="doBdj ==false?'height: 100%;padding-top: 0px;':'padding:0px;height: 100%'"> <!--  md-icon="work"  -->
                     <template v-if="!doBdj"> 
+                        <md-layout>
+                            <md-layout md-flex ="65" style="font-size: 20px;line-height: normal;">查询条件</md-layout>
+                            <md-layout md-flex ="35">
+                                <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="showTaskDoTj = !showTaskDoTj">
+                                    <template v-if="!showTaskDoTj">
+                                        显示
+                                    </template>
+                                    <template v-else>
+                                        隐藏
+                                    </template>
+                                </button>
+                            </md-layout>
+                        </md-layout>
+                        <md-layout v-if="taskDoTj && showTaskDoTj">
+                            <md-bip-input :dsm="taskDoTj" v-for="cell in taskDoTj.ccells.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="taskDoTj.currRecord" :btj="false" class="bip-input"></md-bip-input>
+                            <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="getTask_DO">查找</button>
+                        </md-layout>
+                        
                         <template v-if="taskDoValues.length>0">
                             <template v-for="(row,index1) in taskDoValues">
                                 <md-card  style="margin-bottom: 20px;box-shadow: rgba(226, 226, 226, 0.54) 0px 0px 10px;">
                                     <md-card-expand>
                                         <md-card-header> 
-                                            <md-layout v-for="(item,index2) in taskLayCel.cels" :key="item.id"> 
+                                            <md-layout v-for="(item,index2) in taskDoCel.cels" :key="item.id"> 
                                                 <md-layout  :md-numeric="item.type===3" v-if="item.isShow"  style="border-bottom: 1px solid #DDDDDD;"  md-gutter  md-flex ="100" :md-gutter="16">
                                                     <md-layout md-flex ="35" class="title11" >{{item.labelString}}</md-layout>
                                                     <md-layout md-flex ="65">
@@ -206,6 +224,9 @@ export default {
                 page: 1,
                 total: 0
             },
+            showTaskDoTj:false,
+            taskDoTj:null,
+            taskDoCel:{},
             taskDoValues:[],
             taskDoPageInfo: {
                 size: 20,
@@ -227,20 +248,21 @@ export default {
         }
     },
     async mounted(){
+        await this.getTaskDoTJ();
         this.getMsg();
         this.getTask_DO();
     },
     created() {
         this.fetchTaskData();
-        this.connectQ();
+        // this.connectQ();
     },
     beforeDestroy(){
-        if(this.isconnt){
-            this.disconnect();
-        }
+        // if(this.isconnt){
+        //     this.disconnect();
+        // }
     },
     methods: { 
-        /********************* 我的消息开始 ****************/
+    /********************* 我的消息开始 ****************/
         async getMsg(){
             var data1={
                 snkey : JSON.parse(window.sessionStorage.getItem('snkey')),
@@ -310,9 +332,9 @@ export default {
                 return this.$t('bipmsg.btnRead');
             }
         },
-        /********************* 我的消息结束 ****************/
+    /********************* 我的消息结束 ****************/
 
-        /********************* 我的任务开始 ****************/
+    /********************* 我的任务开始 ****************/
         gotask(type){
             if(type == 0)
             this.bdj = false;
@@ -322,29 +344,29 @@ export default {
         disconnect() {
             this.taskCli.disconnect();
         },
-        connectQ: function() {
-            console.log("//初始化mqtt客户端，并连接mqtt服务")
-            //初始化mqtt客户端，并连接mqtt服务
-            var ws = new WebSocket(global.MQTT_SERVICE);
-            this.taskCli = Stomp.over(ws);
-            var headers = {
-                login: global.MQTT_USERNAME, //用户名
-                passcode: global.MQTT_PASSWORD, //密码
-                host: global.MQTT_HOST // 虚拟空间
-            };
-            this.taskCli.connect(headers, this.onConnected, this.onFailed);
-        },
-        onConnected: function(frame) {
-            this.isconnt = true;
-            // console.log("Connected: " + frame);
-            //订阅频道
-            var topic ="/exchange/" +BIPTASK +"/" + BIPTASK +"." +global.DBID +"." +this.userCode;
-            this.taskCli.subscribe(topic, this.responseCallback);
-        },
-        responseCallback: function(frame) {
-            if(!this.bdj)
-                this.fetchTaskData();
-        },
+        // connectQ: function() {
+        //     console.log("//初始化mqtt客户端，并连接mqtt服务")
+        //     //初始化mqtt客户端，并连接mqtt服务
+        //     var ws = new WebSocket(global.MQTT_SERVICE);
+        //     this.taskCli = Stomp.over(ws);
+        //     var headers = {
+        //         login: global.MQTT_USERNAME, //用户名
+        //         passcode: global.MQTT_PASSWORD, //密码
+        //         host: global.MQTT_HOST // 虚拟空间
+        //     };
+        //     this.taskCli.connect(headers, this.onConnected, this.onFailed);
+        // },
+        // onConnected: function(frame) {
+        //     this.isconnt = true;
+        //     // console.log("Connected: " + frame);
+        //     //订阅频道
+        //     var topic ="/exchange/" +BIPTASK +"/" + BIPTASK +"." +global.DBID +"." +this.userCode;
+        //     this.taskCli.subscribe(topic, this.responseCallback);
+        // },
+        // responseCallback: function(frame) {
+        //     if(!this.bdj)
+        //         this.fetchTaskData();
+        // },
         async fetchTaskData() {
             var data1 = {
                 dbid: global.DBID,
@@ -517,33 +539,55 @@ export default {
                 this.$notify.warning({content: data.message,placement:'mid-center'});
             }
         },
-        /********************* 我的任务结束 ****************/
+    /********************* 我的任务结束 ****************/
 
-        /********************* 我的已办开始 ****************/
+    /********************* 我的已办开始 ****************/
         
         async getTask_DO(){
-            let data2 = {  
+            let pdata = this.taskDoTj.currRecord;
+            pdata = JSON.stringify(pdata)
+            var data1 = {
                 dbid: global.DBID,
                 usercode: this.userCode,
-                apiId: global.APIID_AIDO, 
-                page:1,
-                assistid: 'V_INSTASK_DO', //辅助名称
-                currentPage:this.taskDoPageInfo.currentPage,  //页数
-                pageSize: this.taskDoPageInfo.pageSize,//每页条数
-                cont: ""
+                apiId: global.APIID_CELLPARAM,
+                pcell: "INSSPLIST",
+                pdata: pdata,
+                bebill: 1,
+                currentPage: this.taskDoPageInfo.page,
+                pageSize: this.taskDoPageInfo.size,
+                cellid: ""
             };
-            let cont = "~frusr = '"+this.userCode+"'"
-            data2.cont = cont;
-            this.getDataByAPINewSync(data2).then((res)=>{ 
-                console.log(res)
-                if(res.data){
-                    this.taskDoPageInfo.size=res.data.size
-                    this.taskDoPageInfo.total=res.data.total
-                }
-                if(res.data.values){
-                    this.taskDoValues = res.data.values;
-                }
-            });
+            var res = await this.getDataByAPINew(data1);
+            console.log(res);
+            if (res.data.id == 0) {
+                this.taskDoCel = await this.makeCellCL(res.data.data.layCels);
+                this.taskDoValues = res.data.data.pages.celData;
+                this.taskDoPageInfo.page = res.data.data.pages.currentPage;
+                this.taskDoPageInfo.total = res.data.data.pages.totalItem;
+                this.taskDoPageInfo.size = res.data.data.pages.pageSize;
+            }
+            // let data2 = {  
+            //     dbid: global.DBID,
+            //     usercode: this.userCode,
+            //     apiId: global.APIID_AIDO, 
+            //     page:1,
+            //     assistid: 'V_INSTASK_DO', //辅助名称
+            //     currentPage:this.taskDoPageInfo.currentPage,  //页数
+            //     pageSize: this.taskDoPageInfo.pageSize,//每页条数
+            //     cont: ""
+            // };
+            // let cont = "~frusr = '"+this.userCode+"'"
+            // data2.cont = cont;
+            // this.getDataByAPINewSync(data2).then((res)=>{ 
+            //     console.log(res)
+            //     if(res.data){
+            //         this.taskDoPageInfo.size=res.data.size
+            //         this.taskDoPageInfo.total=res.data.total
+            //     }
+            //     if(res.data.values){
+            //         this.taskDoValues = res.data.values;
+            //     }
+            // });
         },
         taskDoPageChange(page) {
             if(this.taskDoPageInfo.size!=page.size){
@@ -553,8 +597,28 @@ export default {
             }
             this.taskDoPageInfo.size  = page.size;
             this.getTask_DO();
+        },
+        async getTaskDoTJ(){
+            var data1 = {
+            'dbid': global.DBID,
+            'usercode': this.userCode,
+            'apiId': global.APIID_CELLPARAMS,
+            'pcell': 'INSSPLISTTJ'
+            }
+            var res = await this.getDataByAPINewSync(data1);
+            var data = res.data;
+            if(data.id===0){
+                var cells = data.data.layCels;
+                const celL = cells.length;
+                if(celL==1){
+                    var cells0 = cells[0];
+                    cells0 = await this.makeCellCL(cells0);
+                    this.taskDoTj = new CDataSet(cells0);
+                    this.taskDoTj.createRecord();
+                }
+            }
         }
-        /********************* 我的已办结束 ****************/
+    /********************* 我的已办结束 ****************/
 
     },
     watch: { 
