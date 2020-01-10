@@ -298,7 +298,7 @@ export default {
               });
             }
           }
-          if(!this.chkinfo.list || this.chkinfo.list.length<=0){
+          if(!this.chkinfo.list || this.chkinfo.list.length<=0 && this.cea.statefr !== "6"){
             this.$notify.danger({
               content: "未找到下一审批节点!",
               placement: "mid-center"

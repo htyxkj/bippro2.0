@@ -138,6 +138,10 @@ export default {
     },
     onFocus(){
       // console.log("onFocus")
+      if((this.cell.attr & 0x2000000) > 0){//非输入虑0 直接打开选择框
+        this.openRef();
+        return;
+      }
       if (this.refData.cols){
         if(this.multiple){
           var val=""
