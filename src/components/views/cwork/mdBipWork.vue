@@ -191,14 +191,28 @@ export default {
       }
     },
     async bh(bup) {
-      this.cea.stateto = this.chkinfo.currState.stateId;
+      let cuCheck = this.chkinfo.currState;
+      if(cuCheck.hq){//当前进行审批的节点是会签
+        _.forEach(cuCheck.cnodes,item=>{
+          if(item.users){
+            _.forEach(item.users,usr=>{
+              if(usr.userCode == this.currUser){
+                this.cea.stateto = item.stateId;
+              }
+            })
+          }
+        })
+      }else{
+        this.cea.stateto = this.stateId;
+      }
       this.cea.bup = "2";
       this.cea.yjcontext = this.content; 
       this.cea.tousr = bup ? "#" : this.billuser;
       var res = await this.getCeaCheckInfo(this.cea, 34);
-      // console.log(res, "驳回！");
-      if(res.data.id === 0)
+      if(res.data.id === 0){
         this.$emit("dataCheckUp",res.data.data.info);
+        this.$notify.success({content:"驳回成功"});
+      }
     },
     //退回
     async cancelCheck() {
@@ -537,12 +551,23 @@ export default {
           return true;
         }
          var exitu = "";
-        _.forEach(this.chkinfo.chkInfos, item => {
-          if (item.userCode === this.currUser) {
-            exitu = this.currUser;
-            return;
-          }
-        });
+         if(!this.chkinfo.currState.hq){
+          _.forEach(this.chkinfo.currState.users, item => {
+            if (item.userCode === this.currUser) {
+              exitu = this.currUser;
+              return;
+            }
+          });
+         }else{
+           _.forEach(this.chkinfo.currState.cnodes, item => {
+             _.forEach(item.users,us=>{
+                if (us.userCode === this.currUser) {
+                  exitu = this.currUser;
+                  return;
+                }
+             })
+          });
+         }
         if (exitu) {
           return false;
         } else {
