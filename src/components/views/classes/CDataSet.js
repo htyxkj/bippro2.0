@@ -273,6 +273,9 @@ export default class CDataSet {
     let xinc = this.ccells.autoInc;
     if (xinc > 0)
       xinc = xinc - 1;
+    if(this.ccells.pkindex && this.ccells.pkindex.length ==1){
+      xinc = this.ccells.pkindex[0];
+    }
     let cel = this.ccells.cels[xinc];
     var modal = { sys_stated: BillState.DICT };
     // this.$set(modal, 'sys_stated', BillState.DICT);
@@ -357,6 +360,9 @@ export default class CDataSet {
     if (cell) {
       let xinc = cell.autoInc;
       // console.log(xinc,'incCal');
+      if(this.ccells.pkindex && this.ccells.pkindex.length ==1){
+        xinc = this.ccells.pkindex[0]+1;
+      }
       if (xinc > 0) {
         var cel = cell.cels[xinc - 1];
         var s0 = cel.psAutoInc;

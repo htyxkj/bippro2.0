@@ -23,8 +23,8 @@
       <md-dialog-content class="no-padding">
         <md-layout md-flex-xsmall="0" :md-flex="true">
           <md-input-container class="md-flex md-header-search my-search">
-            <md-input class="md-header-search-input"  placeholder="search" @keyup.enter.native="doQuery(word)" v-model="word"></md-input>
-            <md-button class="md-icon-button md-inset" @click="doQuery(word)">
+            <md-input class="md-header-search-input"  placeholder="search" @keyup.enter.native="doSearch(word)" v-model="word"></md-input>
+            <md-button class="md-icon-button md-inset" @click="doSearch(word)">
               <md-icon>search</md-icon>
             </md-button>
           </md-input-container>  
@@ -183,6 +183,10 @@ export default {
         }
       }
       items=[];
+    },
+    doSearch(word){
+      this.pageInfo.page=1;
+      this.doQuery(word);
     },
     doQuery(word){ 
       word =word.replace(/(^\s*)|(\s*$)/g, "");

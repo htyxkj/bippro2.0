@@ -38,7 +38,7 @@ export default {
   },
   methods:{
     async initVV(){ 
-      // console.log('initVV')
+      console.log('initVV')
       var defv = this.modal[this.cell.id];
       if(defv){
         this.refValue = defv;
@@ -259,6 +259,14 @@ export default {
           refBackData.value = data.values;
         }else{
           refBackData.value = data.values[0];
+          let cc= refBackData.value[refBackData.cols[0]];
+          if(cc !== this.refValue){
+            let vl={}
+            for(var key in refBackData.value){
+              vl[key] = this.refValue
+        　　}
+            refBackData.value=vl;
+          }
         }
         this.refData = refBackData;
         let newValue ="";
@@ -273,7 +281,6 @@ export default {
         }else{
           newValue += this.refData.value[this.refData.cols[0]];
         }
-        this.refData.oldValue = this.oldValue;
         if(newValue !== this.oldValue){
             this.$emit('change',this.refData);
         }

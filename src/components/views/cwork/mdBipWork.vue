@@ -203,11 +203,12 @@ export default {
           }
         })
       }else{
-        this.cea.stateto = this.stateId;
+        this.cea.stateto = this.chkinfo.currState.stateId;
       }
       this.cea.bup = "2";
       this.cea.yjcontext = this.content; 
       this.cea.tousr = bup ? "#" : this.billuser;
+      this.cea.schk_mk = this.cea.stateto + "," + this.currUser;
       var res = await this.getCeaCheckInfo(this.cea, 34);
       if(res.data.id === 0){
         this.$emit("dataCheckUp",res.data.data.info);

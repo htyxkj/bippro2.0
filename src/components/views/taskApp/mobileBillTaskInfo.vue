@@ -1,13 +1,10 @@
 <template>
   <md-part>
     <md-part-toolbar>
-      <!-- <md-part-toolbar-group>
-        <md-button :disabled="canCreate" @click.native="create">新建</md-button>
-        <md-button class="md-accent" :disabled="canDelete" @click.native="delData">删除</md-button>
-        <md-button @click.native="save" :disabled="canSave">保存</md-button>
-      </md-part-toolbar-group>-->
       <md-part-toolbar-group>
         <md-button @click.native="gotask">{{$t('biptask.gotask')}}</md-button>
+        <md-button class="md-accent" :disabled="canDelete" @click.native="delData">删除</md-button>
+        <md-button @click.native="save" :disabled="canSave">保存</md-button>
         <md-button @click.native="submit" :disabled="canSubmit">{{getSH}}</md-button>      
         <md-button @click.native="TaskSubmitProcess" :disabled="canSubmit">{{$t('commBtn.B_SubmitProcess')}}</md-button>
       </md-part-toolbar-group>
@@ -84,7 +81,8 @@ export default {
   data() {
     return {
       curr_dsm: null,
-      chkinfo: null
+      chkinfo: null,
+      menuP:{},
     };
   },
   props: { dsm: Object, dsext: Array, opera: Object },
@@ -428,6 +426,7 @@ export default {
       }
     },
     canSave() {
+      console.log("canSave")
       if (this.dsm && this.dsm.currRecord != null) {
         if (
           (this.dsm.currRecord.sys_stated & billS.INSERT) > 0 ||
@@ -466,6 +465,7 @@ export default {
       }
     },
     canSubmit() {
+      console.log("canSubmit")
       if (this.dsm && this.dsm.currRecord != null) {
         if (
           (this.dsm.currRecord.sys_stated & billS.INSERT) > 0 ||
