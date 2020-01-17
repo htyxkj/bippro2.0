@@ -360,7 +360,7 @@ export default class CDataSet {
     if (cell) {
       let xinc = cell.autoInc;
       // console.log(xinc,'incCal');
-      if(this.ccells.pkindex && this.ccells.pkindex.length ==1){
+      if(xinc>0 && this.ccells.pkindex && this.ccells.pkindex.length ==1){
         xinc = this.ccells.pkindex[0]+1;
       }
       if (xinc > 0) {
