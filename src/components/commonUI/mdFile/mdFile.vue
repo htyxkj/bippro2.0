@@ -83,6 +83,36 @@
         }
       },
       onFileSelected($event) {  
+        // let newFiles = [];
+        // const files = $event.target.files || $event.dataTransfer.files;
+        // if (files) {
+        //   if (files.length > 1) {
+        //     this.filename = this.getMultipleName(files);
+        //   } else if (files.length === 1) {
+        //     let newD = new Date().getTime(); 
+        //       for(var i=0;i<files.length;i++){
+        //         alert(files[i].name);
+        //         let fileD = new Date(files[i].lastModifiedDate).getTime(); 
+        //         if(newD-fileD<=10000){ 
+        //           this.filename = newD+'_'+files[i].name ;
+        //           files[i].newName = this.filename;
+        //           var file = new File([files[i]], this.filename , {type: files[i].type});
+        //           newFiles.push(file);
+        //         }else{
+        //           newFiles.push(files[i]);
+        //         }
+        //       }
+        //   } else {
+        //     this.filename = null;
+        //   }
+        // } else {
+        //   this.filename = $event.target.value.split('\\').pop();
+        // }
+        // this.$emit('selected',newFiles);
+        // this.$emit('input', this.filename);
+        
+
+
         const files = $event.target.files || $event.dataTransfer.files;
         // console.log(files)
         if (files) {
@@ -99,6 +129,8 @@
         this.$emit('selected',$event);
         // this.$emit('selected', files || $event.target.value);
         this.$emit('input', this.filename);
+        var test = this.$refs.fileInput
+        test.value = ''; 	
       },
       brover() {
         var browser = {

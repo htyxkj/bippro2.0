@@ -249,16 +249,43 @@ export default {
       }
     },
     selectFile(e){ 
+      // for (var i = 0; i < files.length; i++) {
+      //   var file = files[i];  
+      //   var name = files[i].name;
+      //   var iid = _.findIndex(this.selFiles,(item)=>{
+      //     return item.name === name;
+      //   });
+      //   if(iid>=0){
+      //     this.$notify.warning({content:"文件重复！"});
+      //     return ;
+      //   }
+      //   var size = this.getSize(files[i].size)
+      //   this.selFiles.push(file);
+      //   if (!(/^image\/.*$/i.test(file.type))) {  
+      //       var _srcs = this.getFileIcon(name);
+      //       _srcs.size = size;
+      //       this.srcs.push(_srcs);
+      //       continue; //不是图片 就跳出这一次循环  
+      //   }  
+      //   //实例化FileReader API  
+      //   var freader = new FileReader();
+      //   freader.readAsDataURL(file);
+      //   var that = this;
+      //   freader.onload = function(e) {
+      //       var _srcs = {'src':e.target.result,'name':name,'size':size}
+      //       that.srcs.push(_srcs)
+      //   };
+      // }
       for (var i = 0; i < e.target.files.length; i++) {
-        var file = e.target.files.item(i);  
+        var file = e.target.files[i];
         var name = e.target.files[i].name;
         var iid = _.findIndex(this.selFiles,(item)=>{
           return item.name === name;
         });
-        if(iid>=0){
-          // console.log("iid"+iid)
-          return ;
-        }
+        // if(iid>=0){
+        //   // console.log("iid"+iid)
+        //   return ;
+        // }
         var size = this.getSize(e.target.files[i].size)
         // if(name.substring(0,name.lastIndexOf('.')).length>4){
         //     name = name.substring(0,3)+'...'+name.substring(name.lastIndexOf('.')+1)
@@ -280,6 +307,7 @@ export default {
             that.srcs.push(_srcs)
         };
       }
+      this.save();
     },
     save() { 
       if (this.selFiles.length < 1) {
