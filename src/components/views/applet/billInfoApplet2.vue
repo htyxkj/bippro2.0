@@ -268,7 +268,7 @@ export default {
           this.dsm.makeState(billS.DICT);
           this.$notify.success({ content: this.$t('commInfo.saveSucc'), placement: "mid-center" });
 
-          if(this.opera && this.dsm.currRecord.sys_stated !=4){
+          if(this.opera && this.dsm.currRecord.sys_stated !=4 && this.canSubmit){
             this.$dialog.confirm("是否提交此单据？", {
               okText: this.$t('commInfo.ok'),
               cancelText: this.$t('commInfo.cancel')
