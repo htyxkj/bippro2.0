@@ -793,7 +793,7 @@ export default {
         if (crd) {
           if ((crd.sys_stated & billS.INSERT) > 0) return true;
           const state = crd[this.opera.statefld];
-          if (state == "0" || state == "1") {
+          if (state == "0" || state == "1" || state == undefined) {
             return false;
           } else {
             return true;
@@ -873,7 +873,7 @@ export default {
   watch: {
     chkinfo() {
       if (this.chkinfo) {
-        if (this.chkinfo.currState.stateId !== "0" && this.chkinfo.currState.stateId !== "1") {
+        if (this.chkinfo.currState && this.chkinfo.currState.stateId !== "0" && this.chkinfo.currState.stateId !== "1") {
           this.dsm.canEdit = false;
         }
         if ((this.dsm.ccells.attr & billS.LSUPDATE) > 0 && this.chkinfo.currState.stateId !== "6") {//临时改  
