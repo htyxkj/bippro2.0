@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" href="./static/favicon.ico" type="image/x-icon" />
+    <meta http-equiv="cleartype" content="on">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width" name="viewport">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- 钉钉 -->
+    <script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.7.13/dingtalk.open.js"></script>
+    <title>钉钉条形码</title>
+</head>
+<script>
+    function barCode(params) {
+        dd.biz.util.scan({
+            type: "all" , // type 为 all、qrCode、barCode，默认是all。
+            onSuccess: function(data) {
+                //onSuccess将在扫码成功之后回调
+                /* data结构
+                    { 'text': String}
+                */
+                if(params==1){
+                    x=document.getElementById("one");
+                    x.value=data.text;
+                }
+                if(params==2){
+                    x=document.getElementById("two");
+                    x.value=data.text;
+                }
+                if(params==3){
+                    x=document.getElementById("three");
+                    x.value=data.text;
+                }
+            },
+            onFail : function(err) {
+
+            }
+        })
+    }
+</script>
+<body class="layout-fill">
+    <input type="text" id="one"></input>
+    <button type="button" onclick="barCode(1)">扫描</button>
+
+    
+    <input type="text" id="two"></input>
+    <button type="button" onclick="barCode(2)">扫描</button>
+
+
+    
+    <input type="text" id="three"></input>
+    <button type="button" onclick="barCode(3)">扫描</button>
+</body>
+
+</html>
