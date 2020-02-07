@@ -45,12 +45,6 @@
                 <md-layout md-flex="95">
                   <md-bip-input :isReport="true" :dsm="ds_cont" v-for="(cell, index) in ds_cont.ccells.cels" :key="cell.id" :cell="cell" :modal="ds_cont.currRecord" :is-search="true" v-if="cell.isShow&&index<4" :btj="true"  @change="dataChange"></md-bip-input>
                 </md-layout>
-                <!-- <md-layout md-flex="5" md-vertical-align="end"> 
-                  <md-button class="bip-more md-icon-button" @click.native="showMore()">
-                    <md-tooltip md-direction="left">{{tipLaber}}</md-tooltip>
-                    <md-icon>list</md-icon>   
-                  </md-button>
-                </md-layout> -->
               </md-layout>
             </template>
             <md-layout>
