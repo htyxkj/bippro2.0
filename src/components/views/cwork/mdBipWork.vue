@@ -446,7 +446,7 @@ export default {
     isSH() {  
       //0：新建状态，1:驳回状态；2:待审核；3:已审核;4:执行状态
       var id = 0;
-      if (this.chkinfo) {
+      if (this.chkinfo && this.chkinfo.currState) {
         if (this.chkinfo.currState.stateId == "0" || this.chkinfo.currState.stateId == "5") {
           id = 0;
         } else if (this.chkinfo.currState.stateId == "1") {

@@ -200,6 +200,7 @@ export default {
                 this.appEmitLogin(this.jumpRoute);
             } else {
                 this.$notify.danger({content: res.data.message})
+                this.$router.push('/') 
             }
         },
 

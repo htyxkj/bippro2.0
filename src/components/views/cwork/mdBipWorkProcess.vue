@@ -17,7 +17,7 @@
         <div>
           <div class="md-work-dialog">
             <md-avatar class="md-large md-fab md-fab-top-left" tabindex="-9999">
-              <template v-if="chkinfo && chkinfo.currState.stateId =='6'">
+              <template v-if="chkinfo && chkinfo.currState && chkinfo.currState.stateId =='6'">
                 <img src="../../../img/check/shtg.png">
               </template>
             </md-avatar>

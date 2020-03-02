@@ -13,7 +13,7 @@
 // global.BIPAPIURL = 'http://www.bip-soft.com:89/clubreserv/';//会所预定
 // global.BIPAPIURL = 'http://www.juminfuwu.cn:88/nc_jxgl/';//绩效管理
 // global.BIPAPIURL = 'http://120.79.16.71/bip-share/'; //财务共享
-global.BIPAPIURL = 'http://www.juminfuwu.cn:88/CRM/';//CRM
+global.BIPAPIURL = 'http://www.juminfuwu.cn:88/CRM/';//CRM?
 // global.BIPAPIURL = 'https://test.juminfuwu.cn/bip-share/'; //财务共享
 // global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/'; //安全隐患监控平台测试
 // global.BIPAPIURL = 'https://www.bip-soft.com/xsgk/';//安全隐患监控平台测试
@@ -25,6 +25,7 @@ global.BIPAPIURL = 'http://www.juminfuwu.cn:88/CRM/';//CRM
 // global.BIPAPIURL = 'http://192.168.1.18:9999/jd/';
 // global.BIPAPIURL = 'https://www.bip-soft.com/supervise/' //115食安
 // global.BIPAPIURL = 'https://www.bip-soft.com/guide/'//
+// global.BIPAPIURL = 'http://115.28.191.203:89/bip-collect/'//物质收集
 // global.DBID = 'ZT1';
 // global.DBID = 'J1';
 global.DBID = '01';
@@ -51,6 +52,8 @@ global.DBID = '01';
 // global.DBID = '137'//CRM
 // global.DBID = '140'//三农餐饮监管
 // global.DBID = '141'//财务共享
+// global.DBID = '144'//115SQLServer
+
 global.API_COM = 'api'; //web端入口
 global.API_UPD = 'upd'; //附件操作接口
 //队列消息配置
