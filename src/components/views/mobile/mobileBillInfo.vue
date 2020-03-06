@@ -73,7 +73,7 @@
                       <md-list>
                         <md-layout class="flex layout-column">
                             <md-layout>
-                              <md-bip-input :dsm="dsm" v-for="item in dsm.ds_sub[0].ccells.cels" :ref="item.id" :key="item.id" :cell="item" :modal="dj" :btj="false" class="bip-input" @change="childChange"></md-bip-input>
+                              <md-bip-input :dsm="dsm.ds_sub[0]" v-for="item in dsm.ds_sub[0].ccells.cels" :ref="item.id" :key="item.id" :cell="item" :modal="dj" :btj="false" class="bip-input" @change="childChange"></md-bip-input>
                             </md-layout>
                         </md-layout>
                       </md-list>
