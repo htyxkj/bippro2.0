@@ -656,9 +656,9 @@ export default {
                     arr[4] = "00"
                 if(!arr[5])
                     arr[5] = "00" 
-                this.minY = arr[0];
-                this.minM = arr[1];
-                this.minD = arr[2]; 
+                this.minY = parseInt(arr[0]);
+                this.minM = parseInt(arr[1]);
+                this.minD = parseInt(arr[2]); 
             }
         },
     }

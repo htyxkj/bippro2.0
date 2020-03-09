@@ -15,7 +15,7 @@
 // global.BIPAPIURL = 'http://120.79.16.71/bip-share/'; //财务共享
 // global.BIPAPIURL = 'http://www.juminfuwu.cn:88/CRM/';//CRM?
 // global.BIPAPIURL = 'https://test.juminfuwu.cn/bip-share/'; //财务共享
-// global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/'; //安全隐患监控平台测试
+global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/'; //安全隐患监控平台测试
 // global.BIPAPIURL = 'https://www.bip-soft.com/xsgk/';//安全隐患监控平台测试
 // global.BIPAPIURL = 'http://115.28.191.203:89/bip-library/';//图书管理
 // global.BIPAPIURL = 'http://192.168.0.200:8088/airfencea/';//本机测试环境
@@ -25,7 +25,7 @@
 // global.BIPAPIURL = 'http://192.168.1.18:9999/jd/';
 // global.BIPAPIURL = 'https://www.bip-soft.com/supervise/' //115食安
 // global.BIPAPIURL = 'https://www.bip-soft.com/guide/'//
-global.BIPAPIURL = 'http://115.28.191.203:89/bip-collect/'//物质收集
+// global.BIPAPIURL = 'http://115.28.191.203:89/bip-collect/'//物质收集
 // global.DBID = 'ZT1';
 // global.DBID = 'J1';
 global.DBID = '01';
