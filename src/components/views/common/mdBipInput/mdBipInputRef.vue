@@ -259,8 +259,9 @@ export default {
           refBackData.value = data.values;
         }else{
           refBackData.value = data.values[0];
-          let cc= refBackData.value[refBackData.cols[0]];
-          if(cc !== this.refValue){
+          let cc = refBackData.value[refBackData.cols[0]];
+          cc= cc+''
+          if(cc !== this.refValue+''){
             let vl={}
             for(var key in refBackData.value){
               vl[key] = this.refValue

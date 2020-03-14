@@ -60,6 +60,9 @@
                 <md-layout md-column md-gutter md-flex="10" md-flex-xsmall="15" md-flex-small="15"  md-align="center" v-if="file.img ==true">
                   <md-button class="md-primary md-raised mybtn" @click="openImg(file.srcopen,file.qname)" :disabled="!(progress[index]==100)">打开</md-button>
                 </md-layout>
+                <md-layout md-column md-gutter md-flex="10" md-flex-xsmall="15" md-flex-small="15"  md-align="center" v-else-if="file.pdf ==true">
+                  <md-button class="md-primary md-raised mybtn" @click="openPdf(file.srcopen,file.qname)" :disabled="!(progress[index]==100)">打开</md-button>
+                </md-layout>
             </md-layout>
           </md-layout>
       </md-dialog-content>
@@ -88,6 +91,10 @@
         </viewer> 
       </md-dialog-content>  
     </md-dialog>  
+
+ 
+    <md-bip-pdf ref="dlgPDF"></md-bip-pdf>
+
     <div class="md-input-ref layout layout-row">
       <label>{{cell.labelString}}</label>
       <md-input readonly v-model="modal[cell.id]" :required="cell.isReq"></md-input> 
@@ -195,6 +202,10 @@ export default {
       let img = {url:fileUrl,title:fileName}
       this.imgs.push(img);  
       this.$refs.dlgImg.open();
+    },
+    //PDF预览
+    openPdf(fileUrl,fileName){
+      this.$refs.dlgPDF.open(fileUrl,fileName)
     },
     closeImgDialog(){
       this.$refs.dlgImg.close();
@@ -428,12 +439,14 @@ export default {
         _srcs.size = this.getSize(this.selFiles[index].size);   
         _srcs.img = false;
         var kzm = name.substring(name.lastIndexOf('.')+1);
+        var snkey = JSON.parse(window.sessionStorage.getItem('snkey'));
+        var fjroot = this.bfjRoot?this.modal.fj_root:'';
+        var updid =  global.APIID_FILEDOWN;
+        _srcs.srcopen = global.BIPAPIURL+global.API_UPD+'?snkey='+snkey+'&fjroot='+fjroot+'&updid='+updid+'&fjname='+name;
         if(kzm == 'jpg' || kzm == 'png' || kzm == 'gif' || kzm == 'jpeg'  ){
-          var snkey = JSON.parse(window.sessionStorage.getItem('snkey'));
-          var fjroot = this.bfjRoot?this.modal.fj_root:'';
-          var updid =  global.APIID_FILEDOWN;
-          _srcs.srcopen = global.BIPAPIURL+global.API_UPD+'?snkey='+snkey+'&fjroot='+fjroot+'&updid='+updid+'&fjname='+name;
           _srcs.img = true;
+        }else if(kzm == 'pdf' || kzm == 'PDF'){
+          _srcs.pdf = true;
         }
         this.srcs.push(_srcs);
         this.upLoadFils.push(name);

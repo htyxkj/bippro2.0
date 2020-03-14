@@ -53,5 +53,5 @@ export default function install(Vue) {
   Vue.component('md-bip-input-autograph',() => import("./mdBipInputAutograph"));
   Vue.component('md-bip-input-ddGPS',()=> import("./mdBipInputDDGPS"));
   Vue.component('md-bip-input-switch',() => import("./mdBipInputSwitch"));
-  
+  Vue.component('md-bip-pdf',() => import("./mdBipPDF"));
 }

@@ -272,10 +272,13 @@ export default {
       let k_v = this.btnInfo.key.split(";");
       let dz1 = k_v[0].split(",");
       let vv1 = dz1[0].split("=")[1];
+      if(k_v[1]){
       let dz2 = k_v[1].split(",");
-      let vv2 = dz2[0].split("=")[1];
-      pcell = vv1+"("+vv2+")"
-        
+        let vv2 = dz2[0].split("=")[1];
+        pcell = vv1+"("+vv2+")"
+      }else{
+        pcell = vv1+"("+vv1+")"
+      }
       var data1 = {
         "dbid": `${global.DBID}`,
         "usercode": this.usrCode,

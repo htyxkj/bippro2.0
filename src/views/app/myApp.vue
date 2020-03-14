@@ -12,14 +12,14 @@
         ></app-toolbar>
       </div>
       <app-content class="layout-fill flex md-part layout-column"></app-content>
-      <!-- <template v-if="isLoginPage == 3 || isLoginPage == 2"> -->
-        <md-bottom-bar @change="bottomBar" style="z-index:50">
+      <!-- <template v-if="isLoginPage == 3 || isLoginPage == 2">   -->
+        <!-- <md-bottom-bar @change="bottomBar" style="z-index:50">
           <md-bottom-bar-item md-icon="home" :md-active="getBarActive('home')">首页</md-bottom-bar-item>
           <md-bottom-bar-item md-icon="menu" :md-active="getBarActive('menu')">菜单</md-bottom-bar-item>
           <md-bottom-bar-item md-icon="message" :md-active="getBarActive('message')">消息</md-bottom-bar-item>
           <md-bottom-bar-item md-icon="supervisor_account" :md-active="getBarActive('supervisor_account')">我的</md-bottom-bar-item>
-        </md-bottom-bar>
-      <!-- </template> -->
+        </md-bottom-bar> -->
+       <!-- </template> -->
     </div>
     <div v-else>
       <!-- 登录页 -->

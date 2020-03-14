@@ -129,9 +129,12 @@ export default class CDataSet {
   // 编辑检查
   checkEdit(res) {
     if(this.canEdit){
-      // console.log(res);
+      console.log(res);
       var cell = this.getCell(res.cellId);
-      // console.log(cell,'cell')
+      if(cell.type ==3){
+        res.value = new Number(res.value).toFixed(cell.ccPoint);
+        this.currRecord[res.cellId] = res.value ;
+      }
       cell.refValues = res;
       this.checkGS(cell);
       this.currRecord.sys_stated = this.currRecord.sys_stated | BillState.EDITED;
