@@ -198,22 +198,35 @@ export default {
     //删除数据
     delList(){
       console.log(this.selectData);
-      _.forEach(this.selectData,item=>{
-        if(this.opera){
-          var state = item[this.opera.statefld];
-          var sid  = item[this.opera.pkfld];
-          if(state !== '0' && state !=='1'){
-            this.$notify.warning({content: this.$t('commInfo.canNotDel')+sid+'!'});
-          }else{
-            item.sys_stated = 4;
-            var str = JSON.stringify(item);
-            var options = { pcell: this.dsm.pcell, jsonstr: str };
-            this.saveData(options,this.delSuccess);
-            // console.log(res);
-          }
-        }
-        console.log(item);
-      });
+      if(!this.selectData || (this.selectData && this.selectData.length ==0))
+        return;
+      this.$dialog
+        .confirm(this.$t('commInfo.confirmInf'), {
+          okText: this.$t('commInfo.ok'),
+          cancelText: this.$t('commInfo.cancel')
+        })
+        .then(() => {
+          _.forEach(this.selectData,item=>{
+            if(this.opera){
+              var state = item[this.opera.statefld];
+              var sid  = item[this.opera.pkfld];
+              if(state !== '0' && state !=='1'){
+                this.$notify.warning({content: this.$t('commInfo.canNotDel')+sid+'!'});
+              }else{
+                item.sys_stated = 4;
+                var str = JSON.stringify(item);
+                var options = { pcell: this.dsm.pcell, jsonstr: str };
+                this.saveData(options,this.delSuccess);
+              }
+            }else{
+              item.sys_stated = 4;
+              var str = JSON.stringify(item);
+              var options = { pcell: this.dsm.pcell, jsonstr: str };
+              this.saveData(options,this.delSuccess);
+            }
+            console.log(item);
+          });
+        });
       // var _self = this;
       // _.forEach(this.selectData,function(n,key){
       //   n.sys_stated = 4;

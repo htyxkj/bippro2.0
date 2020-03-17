@@ -13,12 +13,12 @@
       </div>
       <app-content class="layout-fill flex md-part layout-column"></app-content>
       <!-- <template v-if="isLoginPage == 3 || isLoginPage == 2">   -->
-        <!-- <md-bottom-bar @change="bottomBar" style="z-index:50">
+        <md-bottom-bar @change="bottomBar" style="z-index:50">
           <md-bottom-bar-item md-icon="home" :md-active="getBarActive('home')">首页</md-bottom-bar-item>
           <md-bottom-bar-item md-icon="menu" :md-active="getBarActive('menu')">菜单</md-bottom-bar-item>
           <md-bottom-bar-item md-icon="message" :md-active="getBarActive('message')">消息</md-bottom-bar-item>
           <md-bottom-bar-item md-icon="supervisor_account" :md-active="getBarActive('supervisor_account')">我的</md-bottom-bar-item>
-        </md-bottom-bar> -->
+        </md-bottom-bar>
        <!-- </template> -->
     </div>
     <div v-else>
@@ -59,7 +59,6 @@ export default {
       mdTitle: "",
       isLogin: false,
       isLoginPage: -1,
-      selBar:null,
     };
   },
   components: {
@@ -139,7 +138,6 @@ export default {
     emitLogin(checkRoute) {
       console.log("其他页面登录方法执行完成");
       if(checkRoute){
-        this.selBar = checkRoute;
         this.$router.push({ path: "/"+checkRoute });
       }
       this.isLogin = true;
@@ -171,22 +169,17 @@ export default {
     },
     //初始化登录后底部按钮栏选中的按钮  默认为home,
     getBarActive(barid){
-      if(!this.selBar){
-        if(barid == 'home')
-          return true;
+      if(this.$route.name == 'WxApplets' && barid == 'home'){
+        return true;
+      }else if(this.$route.name == 'WxAppletsMenu' && barid == 'menu'){
+        return true;
+      }else if(this.$route.name == 'WxAppletsMsg' && barid == 'message'){
+        return true;
+      }else if(this.$route.name == 'WxAppletsMe' && barid == 'supervisor_account'){
+        return true;
       }else{
-        if(this.selBar == 'wxApplets' && barid == 'home'){
-          return true;
-        }else if(this.selBar == 'wxAppletsMenu' && barid == 'menu'){
-          return true;
-        }else if(this.selBar == 'wxAppletsMsg' && barid == 'message'){
-          return true;
-        }else if(this.selBar == 'wxAppletsMe' && barid == 'supervisor_account'){
-          return true;
-        }else{
-          return false
-        }
-      }
+        return false
+      } 
     },
     blankLogin() {
       this.isLogin = true;

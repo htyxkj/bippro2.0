@@ -182,7 +182,7 @@ export default new Router({
         //微信小程序
         {
             path: '/wxApplets',
-            name: 'wxApplets',
+            name: 'WxApplets',
             component: WxApplets,
             beforeEnter: (to, from, next) => {
                 next();
@@ -206,7 +206,7 @@ export default new Router({
         },
         {
             path: '/wxAppletsMe',
-            name: 'wxAppletsMe',
+            name: 'WxAppletsMe',
             component: WxAppletsMe,
             beforeEnter: (to, from, next) => {
                 next();
