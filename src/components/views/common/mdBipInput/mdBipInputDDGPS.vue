@@ -33,6 +33,9 @@ export default {
       longitude:null,
       latitude:null,
       title:'',
+      corpId:"",
+      agentId:"",
+      ddCfg:null,
     };
   },
   mixins:[comm],
@@ -59,44 +62,45 @@ export default {
         }
       } 
       if(this.latitude !=null && this.longitude !=null){
-        dd.biz.map.locate({ 
-          latitude: _this.latitude, // 纬度，非必须
-          longitude: _this.longitude, // 经度，非必须
-          onSuccess: function (result) {   
-            let address = result.province+result.city+result.adName+result.snippet
-            let lgt = result.longitude+";"+result.latitude
-            _this.gpsOk(address,lgt);
-            /* result 结构 */
-            // {
-            //     province: 'xxx', // POI所在省会，可能为空
-            //     provinceCode: 'xxx', // POI所在省会编码，可能为空
-            //     city: 'xxx', // POI所在城市，可能为空
-            //     cityCode: 'xxx', // POI所在城市，可能为空
-            //     adName: 'xxx', // POI所在区名称，可能为空
-            //     adCode: 'xxx', // POI所在区编码，可能为空
-            //     distance: 'xxx', // POI与设备位置的距离
-            //     postCode: 'xxx', // POI的邮编，可能为空
-            //     snippet: 'xxx', // POI的街道地址，可能为空
-            //     title: 'xxx', // POI的名称
-            //     latitude: 39.903578, // POI的纬度
-            //     longitude: 116.473565, // POI的经度
-            // }
-          },
-          onFail: function (err) {
-            alert(JSON.stringify(err)); 
-          }
-        });
+          dd.biz.map.locate({ 
+            latitude: _this.latitude, // 纬度，非必须
+            longitude: _this.longitude, // 经度，非必须
+            onSuccess: function (result) {   
+              let address = result.province+result.city+result.adName+result.snippet
+              let lgt = result.longitude+";"+result.latitude
+              _this.gpsOk(address,lgt);
+              /* result 结构 */
+              // {
+              //     province: 'xxx', // POI所在省会，可能为空
+              //     provinceCode: 'xxx', // POI所在省会编码，可能为空
+              //     city: 'xxx', // POI所在城市，可能为空
+              //     cityCode: 'xxx', // POI所在城市，可能为空
+              //     adName: 'xxx', // POI所在区名称，可能为空
+              //     adCode: 'xxx', // POI所在区编码，可能为空
+              //     distance: 'xxx', // POI与设备位置的距离
+              //     postCode: 'xxx', // POI的邮编，可能为空
+              //     snippet: 'xxx', // POI的街道地址，可能为空
+              //     title: 'xxx', // POI的名称
+              //     latitude: 39.903578, // POI的纬度
+              //     longitude: 116.473565, // POI的经度
+              // }
+            },
+            onFail: function (err) {
+              alert(JSON.stringify(err)); 
+            }
+          });
       }else{
-        dd.biz.map.locate({  
-          onSuccess: function (result) {   
-            let address = result.province+result.city+result.adName+result.snippet
-            let lgt = result.longitude+";"+result.latitude
-            _this.gpsOk(address,lgt); 
-          },
-          onFail: function (err) {
-            alert(JSON.stringify(err)); 
-          }
-        });
+          dd.biz.map.locate({  
+            onSuccess: function (result) {   
+              let address = result.province+result.city+result.adName+result.snippet
+              let lgt = result.longitude+";"+result.latitude
+              _this.gpsOk(address,lgt); 
+            },
+            onFail: function (err) {
+              alert(JSON.stringify(err)); 
+            }
+          });
+
       }
     }, 
     //展示位置
@@ -152,9 +156,64 @@ export default {
         };
         this.$emit("change", refBackDatagps);
       } 
+    },
+    async getDDJSTicket(){ 
+      let ddConfig = JSON.parse(window.sessionStorage.getItem('ddConfig'));  
+      if(!ddConfig)
+          return;
+      let url =encodeURIComponent(window.location.href); 
+      
+      this.corpId = ddConfig["corpId"];
+      this.agentId = ddConfig["agentId"]; 
+      let bipAppid = ddConfig["bipAppid"]; 
+      var data = {
+          apiId: global.APIID_DDJSAPI_TICKET,
+          dbid: global.DBID, 
+          url:url, 
+          agentId:this.agentId, 
+          corpId:this.corpId,
+          bipAppid:bipAppid,
+      }  
+      var res = await this.getDataByAPINew(data); 
+      if(res.data.id != undefined){ 
+          if(res.data.id == 0){
+          this.ddCfg = JSON.parse(res.data.message); 
+          let _this= this;  
+          dd.ready(function() { 
+              dd.runtime.permission.requestAuthCode({
+                  corpId: _this.corpId,
+                  onSuccess: function(info) {
+                      dd.config({
+                          agentId: _this.agentId, // 必填，微应用ID
+                          corpId: _this.corpId,//必填，企业ID
+                          timeStamp:_this.ddCfg.timeStamp, // 必填，生成签名的时间戳
+                          nonceStr: _this.ddCfg.nonceStr, // 必填，生成签名的随机串
+                          signature: _this.ddCfg.DDJSTICKET, // 必填，签名
+                          type:0,   //选填。0表示微应用的jsapi,1表示服务窗的jsapi；不填默认为0。该参数从dingtalk.js的0.8.3版本开始支持
+                          jsApiList : [
+                              'biz.map.locate',
+                              'biz.map.view',
+                              'device.geolocation.get',
+                              'device.geolocation.start',
+                              'device.geolocation.stop',
+                              'biz.map.search',
+                          ] // 必填，需要使用的jsapi列表，注意：不要带dd。
+                      }); 
+                  },
+                  onFail : function(err) {
+                      alert('dd error: ' +JSON.stringify(error));
+                  }
+              });
+          }); 
+          dd.error(function(error){ 
+              alert('dd error: ' +JSON.stringify(error));
+          });
+          } 
+      } 
     }
   },
-  created(){  
+  async created(){  
+    await this.getDDJSTicket();
   },
   mounted(){ 
     if(this.cell){

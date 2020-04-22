@@ -9,6 +9,7 @@ export default {
             hcCon = await this.getConstant("SAVE."+obj_id);
             if(hcCon == null)
                 hcCon =[];
+            let retData=[];
             for(var i=0;i<hcCon.length;i++){
                 constant = hcCon[i];
                 if(constant != null){
@@ -31,8 +32,18 @@ export default {
                             let vl1 = dsm.currRecord[zd1];
                             let vl2 = dsm.currRecord[zd2];
                             let vl3 = dsm.currRecord[zd5]; 
+                            vl3 = parseFloat(vl3)
+                            while(zd7.indexOf("{") !=-1){
+                                let index0 = zd7.indexOf("{")
+                                let index1 = zd7.indexOf("}")
+                                let ct = zd7.substring(index0+1,index1)
+                                let reg = new RegExp("{"+ct+"}", "g")
+                                zd7 = zd7.replace(reg,dsm.currRecord[ct]);
+                            }
+
+
                             if(!vl1 || !vl2 || !vl2 ){
-                                return;
+                                continue;
                             }
                             
                             var arr = vl1.split(/[- : \/]/);
@@ -56,24 +67,32 @@ export default {
                             let d3 = this.OperationXX(d1,d2,zd3);
                             if(zd4 == 'ss'){
                                 vl3 = vl3*1000
+                                d3 = d3/1000
                             }else if(zd4 == 'mm'){
-                                vl3 = vl3*1000*60
+                                vl3 = vl3*1000*60                                
+                                d3 = d3/(1000*60)
                             }else if(zd4 == 'hh'){
                                 vl3 = vl3*1000*60*60
+                                d3 = d3/(1000*60*60)
                             }else if(zd4 == 'dd'){
                                 vl3 = vl3*1000*60*60*24
+                                d3 = d3/(1000*60*60*24)
                             }else if(zd4 == 'MM'){
                                 vl3 = vl3*1000*60*60*24*30
+                                d3 = d3/(1000*60*60*24*30)
                             }else if(zd4 == 'yy'){
                                 vl3 = vl3*1000*60*60*24*30*365
+                                d3 = d3/(1000*60*60*24*30*365)
                             }
+                            d3 = parseInt(d3)
                             let d4 = this.OperationXX(d3,vl3,zd6)
                             if(d4){
                                 let retv = [consoleType,zd7];
                                 if(consoleType =='Notification'){
                                     retv[2] = zd[7]
                                 }
-                                return retv;
+                                retData.push(retv);
+                                continue;
                             }
                         } 
                         if(dataType == 'number'){
@@ -97,7 +116,9 @@ export default {
                                 if(consoleType =='Notification'){
                                     retv[2] = zd[7]
                                 }
-                                return retv;
+                                
+                                retData.push(retv);
+                                continue;
                             }
                         }
                     }else if(consoleType == 'Only'){
@@ -125,7 +146,8 @@ export default {
                             let d4 = this.OperationXX(cc,zd2,zd3)
                             if(d4){
                                 let retv = ['Notification',zd4,zd5]; 
-                                return retv;
+                                retData.push(retv);
+                                continue;
                             }
                         }  
                     }else if(consoleType == 'ORNULL'){
@@ -145,7 +167,9 @@ export default {
                             }
                         }
                         if(this.OperationXX(count,parseInt(num),'<')){
-                            return ['Notification',msg,tf]; 
+                            retv = ['Notification',msg,tf]; 
+                            retData.push(retv);
+                            continue;
                         }
                     }
                 } 
@@ -153,7 +177,7 @@ export default {
 
                 } 
             }
-            return false;
+            return retData;
         } 
         Vue.prototype.OperationXX = function(v1,v2,fh){
             if(fh == '+'){
@@ -182,6 +206,9 @@ export default {
             }
             if(fh == '%'){
                 return v1 % v2;
+            }
+            if(fh == '='){
+                return v1 == v2;
             }
         }
     },

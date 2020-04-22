@@ -17,7 +17,8 @@ export default {
             route:null,
             appEmitLogin:null,
             appEmitNoLogin:null,
-            jumpRoute:null,
+            // jumpRoute:"WxApplets",
+            jumpRoute:"",
         }
     },
     methods:{
@@ -25,6 +26,7 @@ export default {
             this.route = route;
             this.appEmitNoLogin = mobileNoLogin;
             this.appEmitLogin = emitLogin;
+            if(this.route.query.jumpRoute)
             this.jumpRoute = this.route.query.jumpRoute;
             if (dd.env.platform !="notInDingTalk") {
                 window.sessionStorage.setItem('isLoginPage', 2); 
@@ -40,7 +42,11 @@ export default {
                 wx.miniProgram.getEnv(function(res) {
                     if (res.miniprogram) {
                         _this.secret = _this.route.query.secret;
-                        _this.loginWXRemote(_this.secret);
+                        if(_this.secret){
+                            _this.loginWXRemote(_this.secret);
+                        }else{
+                            _this.appEmitNoLogin();
+                        }
                     } else {
                         // 走不在小程序的逻辑
                         // alert("走不在小程序的逻辑2")
@@ -73,6 +79,7 @@ export default {
                         onFail : function(err) { 
                             alert(JSON.stringify(err))
                             alert("系统错误，请联系管理员！")
+                            this.$router.push('/') 
                         }
                     });
                 });
@@ -94,6 +101,7 @@ export default {
                 await this.loginSuccess(res);
             }catch(e){
                 this.$notify.danger({content: '系统连接错误！！！'});
+                this.$router.push('/') 
             }
         },
         async getDDJSTicket(){ 

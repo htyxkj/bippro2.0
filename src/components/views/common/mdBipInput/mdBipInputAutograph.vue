@@ -5,33 +5,27 @@
         <label>{{cell.labelString}}</label>
       </div> 
       <div class="canvas"> 
-        <img class="img" :src="imgVal" v-if="canvas_isimg" @click="showImg(cell.id+'img_dialog')"/>
+        <img class="img" :src="imgVal" v-if="canvas_isimg" @click="write(cell.id+'canvas_dialog')"/>
         <img class="img" v-else @click="write(cell.id+'canvas_dialog')"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASQAAABcCAYAAADH/8j0AAACuklEQVR4Xu3UQQ0AAAwCseHf9Gzco1NAysLOESBAICKwSA4xCBAgcAbJExAgkBEwSJkqBCFAwCD5AQIEMgIGKVOFIAQIGCQ/QIBARsAgZaoQhAABg+QHCBDICBikTBWCECBgkPwAAQIZAYOUqUIQAgQMkh8gQCAjYJAyVQhCgIBB8gMECGQEDFKmCkEIEDBIfoAAgYyAQcpUIQgBAgbJDxAgkBEwSJkqBCFAwCD5AQIEMgIGKVOFIAQIGCQ/QIBARsAgZaoQhAABg+QHCBDICBikTBWCECBgkPwAAQIZAYOUqUIQAgQMkh8gQCAjYJAyVQhCgIBB8gMECGQEDFKmCkEIEDBIfoAAgYyAQcpUIQgBAgbJDxAgkBEwSJkqBCFAwCD5AQIEMgIGKVOFIAQIGCQ/QIBARsAgZaoQhAABg+QHCBDICBikTBWCECBgkPwAAQIZAYOUqUIQAgQMkh8gQCAjYJAyVQhCgIBB8gMECGQEDFKmCkEIEDBIfoAAgYyAQcpUIQgBAgbJDxAgkBEwSJkqBCFAwCD5AQIEMgIGKVOFIAQIGCQ/QIBARsAgZaoQhAABg+QHCBDICBikTBWCECBgkPwAAQIZAYOUqUIQAgQMkh8gQCAjYJAyVQhCgIBB8gMECGQEDFKmCkEIEDBIfoAAgYyAQcpUIQgBAgbJDxAgkBEwSJkqBCFAwCD5AQIEMgIGKVOFIAQIGCQ/QIBARsAgZaoQhAABg+QHCBDICBikTBWCECBgkPwAAQIZAYOUqUIQAgQMkh8gQCAjYJAyVQhCgIBB8gMECGQEDFKmCkEIEDBIfoAAgYyAQcpUIQgBAgbJDxAgkBEwSJkqBCFAwCD5AQIEMgIGKVOFIAQIGCQ/QIBARsAgZaoQhAABg+QHCBDICBikTBWCECBgkPwAAQIZAYOUqUIQAgQe97UAXffUEn8AAAAASUVORK5CYII="/>
       </div>
       <slot></slot>   
     </div> 
-    <md-dialog :ref="cell.id+'canvas_dialog'" class="md-bip-dialog canvas-dialog">
+    <template v-if="showDialog">
+      <md-dialog :ref="cell.id+'canvas_dialog'" class="md-bip-dialog canvas-dialog">
         <md-dialog-title>{{cell.labelString}}</md-dialog-title>
-        <md-dialog-content > 
-          <div :ref="cell.id+'canvasHW'">
-            <canvas id="thecanvas" @touchstart='touchStart' @touchmove='touchMove' @touchend='touchEnd'  :ref="cell.id+'canvasF'"   @mousedown="mouseDown" @mousemove="mouseMove" @mouseup="mouseUp"></canvas>
-          </div>
-        </md-dialog-content>
-        <md-dialog-actions>
-          <md-button class="md-primary" @click="cancel(cell.id+'canvas_dialog')">取消</md-button>
-          <md-button class="md-primary" @click="overwrite">重写</md-button>
-          <md-button class="md-primary" @click="save(cell.id+'canvas_dialog')">提交</md-button>
-        </md-dialog-actions> 
-    </md-dialog>
-    <md-dialog :ref="cell.id+'img_dialog'" class="md-bip-dialog">
-        <md-dialog-title>{{cell.labelString}}</md-dialog-title>
-        <md-dialog-content > 
-          <img class="show_img" :src="imgVal"  />
-        </md-dialog-content>
-        <md-dialog-actions>
-          <md-button class="md-primary" @click="imgcancel(cell.id+'img_dialog')">取消</md-button>
-        </md-dialog-actions> 
-    </md-dialog>  
+          <md-dialog-content > 
+            <img v-show="canvas_isimg" class="show_img" :src="imgVal"  />
+            <div v-show="!canvas_isimg" :ref="cell.id+'canvasHW'">
+              <canvas id="thecanvas" @touchstart='touchStart' @touchmove='touchMove' @touchend='touchEnd'  :ref="cell.id+'canvasF'"   @mousedown="mouseDown" @mousemove="mouseMove" @mouseup="mouseUp"></canvas>
+            </div>
+          </md-dialog-content>
+          <md-dialog-actions>
+            <md-button class="md-primary" @click="cancel(cell.id+'canvas_dialog')">取消</md-button>
+            <md-button class="md-primary" v-if="this.dsm.canEdit" @click="overwrite">重写</md-button>
+            <md-button class="md-primary" v-if="this.dsm.canEdit" @click="save(cell.id+'canvas_dialog')">提交</md-button>
+          </md-dialog-actions> 
+      </md-dialog>
+    </template>
   </div>
 </template>
 
@@ -41,6 +35,11 @@
   export default {
       mixins:[comm],
       name: "signature",
+      props: {
+        dsm: { 
+          default:null,
+        }
+      },
       data(){
         return{
           points:[],
@@ -59,13 +58,14 @@
           canvas_isimg:false,
           imgVal:null,
           lt:null,
+          showDialog:false,
         }
       },
       created(){
 
       },
       mounted(){
-        
+        this.imgVal = null;
         if(this.modal&&this.modal[this.cell.id]!=undefined){
           this.oldValue = this.modal[this.cell.id];
           this.upData = this.modal[this.cell.id];
@@ -177,35 +177,48 @@
         },
         //重写
         overwrite(){
-          this.canvasTxt.clearRect(0, 0, this.$refs[this.cell.id+'canvasF'].width, this.$refs[this.cell.id+'canvasF'].height);
-          this.points=[];
+          if(this.canvas_isimg){
+            this.canvas_isimg = false;
+            setTimeout(() => {
+              this.canvas=this.$refs[this.cell.id+'canvasF'];
+              this.canvas.height = this.$refs[this.cell.id+'canvasHW'].offsetHeight;
+              this.canvas.width =this.$refs[this.cell.id+'canvasHW'].offsetWidth-10;
+              this.canvasTxt=this.canvas.getContext("2d");
+              this.canvasTxt.fillStyle = "#FFFFFF";
+              this.canvasTxt.fillRect(0,0,this.canvas.width,this.canvas.height); 
+              this.lt = this.getPosition(this.$refs[this.cell.id+'canvasHW'])
+              this.overwrite();
+             }, 300);
+          }else{
+              this.canvas_isimg = false;
+              this.canvasTxt.clearRect(0, 0, this.canWidth, this.canHeight);
+              this.points=[];
+          }
         },
         //取消
-        cancel(ref){
-          this.overwrite()
+        cancel(ref){ 
           this.$refs[ref].close(); 
-        },
-        close(ref){
-          this.cancel(ref);
         },
         //写
         write(ref){ 
-          this.$refs[ref].open();
-          this.canvas=this.$refs[this.cell.id+'canvasF'];
-          this.canvas.height = this.$refs[this.cell.id+'canvasHW'].offsetHeight;
-          this.canvas.width =this.$refs[this.cell.id+'canvasHW'].offsetWidth-10;
-          this.canvasTxt=this.canvas.getContext("2d");
-          this.canvasTxt.fillStyle = "#FFFFFF";
-          // ctx.fillStyle="#0000ff";
-          this.canvasTxt.fillRect(0,0,this.canvas.width,this.canvas.height); 
-          this.overwrite();
-          this.lt = this.getPosition(this.$refs[this.cell.id+'canvasHW'])
-        },
-        showImg(ref){
-          this.$refs[ref].open();
-        },
-        imgcancel(ref){
-          this.$refs[ref].close(); 
+          this.showDialog = true;
+          setTimeout(() => {
+            this.$refs[ref].open();
+            if(this.modal[this.cell.id] != null && this.modal[this.cell.id] !=''){
+                this.canvas_isimg = true;
+            }else{
+              this.canvas_isimg=false;
+              setTimeout(() => {
+                this.canvas=this.$refs[this.cell.id+'canvasF'];
+                this.canvas.height = this.$refs[this.cell.id+'canvasHW'].offsetHeight;
+                this.canvas.width =this.$refs[this.cell.id+'canvasHW'].offsetWidth-10;
+                this.canvasTxt=this.canvas.getContext("2d");
+                this.canvasTxt.fillStyle = "#FFFFFF";
+                this.canvasTxt.fillRect(0,0,this.canvas.width,this.canvas.height); 
+                this.lt = this.getPosition(this.$refs[this.cell.id+'canvasHW'])
+              }, 300);
+            }
+          }, 200);
         },
         getPosition(obj){
           var l=0;

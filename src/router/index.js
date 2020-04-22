@@ -1,15 +1,7 @@
 /* jshint esversion: 6 */
 import Vue from 'vue';
 import Router from 'vue-router';
-// import CommLayUI from '@/views/common/commonLayUI' 
-// import Task from '@/views/base/bipTask'
-// import Message from '@/views/base/bipMsg'
-// import BipKTZ from '@/components/views/ktzapp/BipKTZ'
-// import BipMap from '@/components/bipmap/BipMap'
-// import Adjust from '@/components/bipmap/AdjustMap'
-// import Fence from '@/components/bipmap/AlectricFence'
-// import Test1 from '@/components/Test1'
-// import Dashboard from '@/views/dashboard/Dashboard1'
+
 //单点登录
 import Test from '@/components/Test';
 //单点登录
@@ -65,24 +57,17 @@ const Fence = () =>
 //end
 
 //飞防管控
-const BipMap = () =>
-    import ('@/components/bipmap/airfence/BipMap');
-const BipMapHJ = () =>
-    import ('@/components/bipmap/airfence/BipMapHJ');
-const JCList = () =>
-    import ('@/components/bipmap/airfence/JCList');
-const jcSelList = () =>
-    import ('@/components/bipmap/airfence/jcSelList');
-const JCMap = () =>
-    import ('@/components/bipmap/airfence/JCMap');
-const BipMapCurrent = () =>
-    import ('@/components/bipmap/airfence/BipMapCurrent');
-const ExportData = () =>
-    import ('@/components/bipmap/airfence/Exportdata');
-const Synchronize = () =>
-    import ('@/components/bipmap/airfence/Synchronize');
-const BipMapWork = () =>
-    import ('@/components/bipmap/airfence/BipMapWork');
+const BipMap = () => import ('@/components/bipmap/airfence/BipMap');//轨迹回放
+const BipMapHJ = () => import ('@/components/bipmap/airfence/BipMapHJ');
+const JCList = () => import ('@/components/bipmap/airfence/JCList');
+const jcSelList = () => import ('@/components/bipmap/airfence/jcSelList');
+const JCMap = () => import ('@/components/bipmap/airfence/JCMap');
+const BipMapCurrent = () => import ('@/components/bipmap/airfence/BipMapCurrent');
+const ExportData = () => import ('@/components/bipmap/airfence/Exportdata');
+const Synchronize = () => import ('@/components/bipmap/airfence/Synchronize');
+const BipMapWork = () => import ('@/components/bipmap/airfence/BipMapWork');
+const PlayBack= () => import('@/components/bipmap/airfence/new/PlayBack')
+const RealTimeTrack= () => import('@/components/bipmap/airfence/new/RealTimeTrack')
 //end
 
 //水科学院
@@ -116,12 +101,14 @@ export default new Router({
         {
             path: '/',
             name: 'Index',
-            component: WxApplets
+            // component: WxApplets
+            component:RealTimeTrack//飞防
         },
         {
             path: '/index',
             name: 'Dashbord',
-            component: WxApplets,
+            // component: WxApplets,
+            component:RealTimeTrack//飞防
         },
         {
             path: '/task',
@@ -296,6 +283,16 @@ export default new Router({
             path: '/BipMapWork',
             name: '作业区查询(地图)',
             component: BipMapWork
+        },
+        {
+            path: '/PlayBack',
+            name: '轨迹回放(天地图)',
+            component: PlayBack
+        },
+        {
+            path: '/RealTimeTrack',
+            name: '实时轨迹(天地图)',
+            component: RealTimeTrack
         },
         //飞防 end
         //crm

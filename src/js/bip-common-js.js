@@ -8,11 +8,12 @@
 // global.BIPAPIURL = 'http://jtdrp.juminfuwu.cn/' //集团管理
 // global.BIPAPIURL = 'http://211.144.37.205/vehicle-sched/'; //一风车辆
 // global.BIPAPIURL = 'http://211.144.37.205/airfencea/'; //一风飞防
+global.BIPAPIURL = 'http://211.144.37.205/air-super/'; //一风新飞防
 // global.BIPAPIURL = 'http://115.28.191.203:89/skxjtfile/';//京通档案
 // global.BIPAPIURL = 'http://192.168.100.13:8080/skxjtfile/';//京通档案（水科学院）
 // global.BIPAPIURL = 'http://www.bip-soft.com:89/clubreserv/';//会所预定
 // global.BIPAPIURL = 'http://www.juminfuwu.cn:88/nc_jxgl/';//绩效管理
-// global.BIPAPIURL = 'http://120.79.16.71/bip-share/'; //财务共享
+// global.BIPAPIURL = 'http://120.79.16.71/bip-share/'; //集团财务共享
 // global.BIPAPIURL = 'http://www.juminfuwu.cn:88/CRM/';//CRM?
 // global.BIPAPIURL = 'https://test.juminfuwu.cn/bip-share/'; //财务共享
 // global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/'; //安全隐患监控平台测试
@@ -26,9 +27,10 @@
 // global.BIPAPIURL = 'http://192.168.1.18:9999/jd/';
 // global.BIPAPIURL = 'https://www.bip-soft.com/supervise/' //115食安
 // global.BIPAPIURL = 'https://www.bip-soft.com/guide/'//
-global.BIPAPIURL = 'http://115.28.191.203:89/bip-collect/'//物质收集
-// global.BIPAPIURL='http://39.99.133.27/bip-share/'//海富财务共享
+// global.BIPAPIURL = 'http://115.28.191.203:89/bip-collect/'//物质收集
+// global.BIPAPIURL='http://39.99.133.27/bip-share/'//海富财务共享   华智信
 // global.BIPAPIURL='http://122.4.216.194:8089/bip-erp/'//贝特ERP
+// global.BIPAPIURL='http://www.bip-soft.com:89/bip-flexible/'//灵活用工
 // global.DBID = 'ZT1';
 // global.DBID = 'J1';
 global.DBID = '01';
@@ -58,7 +60,8 @@ global.DBID = '01';
 // global.DBID = '144'//115SQLServer
 // global.DBID = '146'//海富财务共享
 // global.DBID = '147'//贝特ERP
-
+// global.DBID = '149'//物质收集
+// global.DBID = '150'//泰祥集团财务共享
 
 global.API_COM = 'api'; //web端入口
 global.API_UPD = 'upd'; //附件操作接口

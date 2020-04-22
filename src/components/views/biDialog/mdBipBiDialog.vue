@@ -277,7 +277,7 @@ export default {
         let vv2 = dz2[0].split("=")[1];
         pcell = vv1+"("+vv2+")"
       }else{
-        pcell = vv1+"("+vv1+")"
+        pcell = vv1
       }
       var data1 = {
         "dbid": `${global.DBID}`,
@@ -489,6 +489,7 @@ export default {
         }
       }else if(this.btnInfo.type == 'C'){//根据菜单号 
         // this.showMenu = true;
+        console.log("C")
         this.loading++;
         if(await this.getParams(this.btnInfo.cellID) == false){
           this.$notify.warning({ content: "没有菜单权限！" + this.btnInfo.cellID + "!" });

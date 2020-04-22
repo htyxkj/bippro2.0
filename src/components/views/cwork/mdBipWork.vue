@@ -24,30 +24,52 @@
           </md-button>
         </md-toolbar>
         <md-dialog-content>
+          <template v-if="!isReview">
+                <template v-if="this.cea && this.cea.statefr =='6'  && this.cea.stateto =='6' ">
+                    <md-layout class="bip-work-title"><h4>执行</h4></md-layout>
+                </template>
+                <template v-else>
+                    <md-layout class="bip-work-title"><h3>审批人员</h3></md-layout>
+                    <template v-if="chkinfo">
+                        <md-layout v-if="chkinfo.currState.hq">
+                            <md-layout>
+                                <template v-for="cnodes in chkinfo.currState.cnodes">
+                                    <md-layout v-for="user in cnodes.users" :key="user.userName">{{user.userName}}</md-layout>
+                                </template>
+                                <template v-for="cnodes in chkinfo.currState.cnodes">
+                                    <md-layout v-for="user in cnodes.userssh" :key="user.userName">{{user.userName}}  √</md-layout>
+                                </template>
+                            </md-layout>
+                        </md-layout>
+                        <md-layout v-if="!chkinfo.currState.hq">
+                            <template v-if="!chkinfo.currState.checked">
+                              <md-layout  v-for="user in chkinfo.currState.users" :key="user.userName">{{user.userName}}</md-layout>
+                            </template>
+                            <template v-else>
+                              <md-layout  v-for="user in chkinfo.currState.userssh" :key="user.userName">{{user.userName}}  √</md-layout>
+                            </template>
+                        </md-layout>
+                    </template>
+                </template>
+          </template>
+          <template v-else>
             <md-subheader>{{$t('cwork.nextNode')}}</md-subheader>
-
-
             <md-radio v-model="stateId" v-for="(item,index) in list" :key="index" :id="item.stateId" name="group1" :md-value="item.stateId">{{item.stateName}}</md-radio>
-
-
-
-
             <md-subheader>{{$t('cwork.approver')}}</md-subheader>
-            <!-- <md-radio v-model="userId" v-for="(item,index) in users" :key="item.userCode" :id="item.userCode" name="group1" :md-value="item.userCode">{{item.userName}}</md-radio> -->
-            <!-- <md-checkbox  v-for="item in users" :key="item.userCode" :id="item.userCode" :name="item.userCode" v-model="userIds" :md-value="item.userCode">{{item.userName}}</md-checkbox> -->
-
-
-
             <div v-for="(item0,index) in users" :key="'A'+index">
               {{item0.node}}
               <md-checkbox :disabled="item0.hq" v-for="item in item0.users" :key="item.userCode" :id="item.userCode" :name="item.userCode" v-model="userIds" :md-value="item.userCode">{{item.userName}}</md-checkbox>
             </div>
-
-
             <md-input-container md-theme="red">
               <label>{{$t('cwork.reasons')}}</label>
               <md-input v-model="content"></md-input>
             </md-input-container>
+            <template v-if="signature">
+              <md-layout  md-flex-xsmall="100">
+                <md-bip-input-autograph :dsm="dsm" :cell="cell" :modal="modal" :ref="cell.id"></md-bip-input-autograph>
+              </md-layout>
+            </template>
+          </template>
         </md-dialog-content>
         <md-dialog-actions>
             <md-button class="md-primary md-raised" @click.native="checkUp()" :disabled="canYes">{{getYes}}</md-button>
@@ -74,6 +96,19 @@ export default {
       currUser: JSON.parse(window.sessionStorage.getItem("user")).userCode,
       billuser: "",
       hqnodestate:"",//会签节点状态
+      isReview:null,//是否是当前节点的审批人
+      signature:false,//审批时是否需要签名
+
+      cell:{
+        id:"signature",
+        labelString:"签名",
+      },
+      modal:{
+        signature:null,
+      },
+      dsm:{
+        canEdit:true,
+      }
     };
   },
   props: { chkinfo: Object },
@@ -93,6 +128,12 @@ export default {
     },
     //同意并提交到下一个节点
     async checkUp() {
+      if(this.signature){
+        if(!this.modal.signature){
+          this.$notify.danger({ content: "请签名", placement: "mid-center" });
+          return;
+        }
+      }
       if(!this.content|| this.content.length<=0){
         this.content="同意";
       }
@@ -107,6 +148,7 @@ export default {
       this.cea.stateto = this.stateId;
       this.cea.yjcontext = this.content;
       this.cea.ckd = this.chkinfo.checked;
+      this.cea.signature = this.modal.signature;
       this.cea.tousr = this.makeUU();
       if(check.hq){ //会审
         let cnodes = check.cnodes;
@@ -147,6 +189,7 @@ export default {
       } else {
         if (this.cea.tousr == "") {
           this.$notify.danger({ content: "没有审批人", placement: "mid-center" });
+          return;
         } else {
           res = await this.getCeaCheckInfo(this.cea, 34);
         }
@@ -282,6 +325,7 @@ export default {
       this.close();
     },
     async open(ceaparam, billU) {
+      this.isReview = false;
       this.cea = ceaparam;
       // this.$notify.danger({ content: "没有审批人", placement: "mid-center" });
       this.billuser = billU;
@@ -294,6 +338,7 @@ export default {
           });
           return;
         }
+        this.isReview = true;
       } else {
         if(this.chkinfo.currState.hq){//会签
           if(this.chkinfo.currState.cnodes.length <= 0){//没有人
@@ -329,6 +374,32 @@ export default {
             });
           }
         }
+        if(this.cea.statefr == "0" || this.cea.statefr == "1" || this.cea.statefr == "5"){
+          this.isReview = true;
+        }
+        let noCheck = false;
+        if(!this.chkinfo.currState.checked)
+            noCheck = true;
+        let noUser = false;
+        if(this.chkinfo.currState.cnodes){
+          this.chkinfo.currState.cnodes.forEach((node) => {
+              if(node.users)
+              node.users.forEach((user) =>{
+                if(user.userCode == this.currUser){
+                    noUser = true;
+                }
+              })
+          });
+        }
+        if(this.chkinfo.currState.users){
+          this.chkinfo.currState.users.forEach((user) =>{
+            if(user.userCode == this.currUser){
+                noUser = true;
+            }
+          })
+        }
+        if(noUser && noCheck)
+          this.isReview = true;
         // if (this.chkinfo.currState.cnodes ) {
         //   var exitu = "";
         //   _.forEach(this.chkinfo.currState.cnodes, item => {
@@ -381,27 +452,30 @@ export default {
             }else{
               this.userIds = [];
               this.users = []; 
-               _.forEach(this.chkinfo.list, item => {
-                let u = {node:null,users:[],hq:false}
-                let usrCode =[];
-                let users =[];
-                _.forEach(item.users,u=>{
-                  if(usrCode.indexOf(u.userCode) == -1 ){
-                    usrCode.push(u.userCode);
-                    users.push(u);
+              let u = {node:null,users:[],hq:false}
+              let usrCode =[];
+              let users =[];
+              _.forEach(item.users,u=>{
+                if(usrCode.indexOf(u.userCode) == -1 ){
+                  usrCode.push(u.userCode);
+                  users.push(u);
+                }
+              })
+              u.node = item.stateName;
+              u.users = users;
+              this.users.push(u); 
+              if(this.users.length>0){
+                let user = this.users[0].users;
+                if(user && user.length>0){
+                  if(item.attr && (item.attr&16)>0){//签名
+                    this.signature = true;
                   }
-                })
-                u.node = item.stateName;
-                u.users = users;
-                this.users.push(u); 
-              });
-              if (this.users.length == 1) {
-                console.log(this.users)
-                for(var i=0;i<this.users.length;i++){
-                  if(this.users[i].users){
-                    if(this.userIds[i] = this.users[i].users[0]){
-                      this.userIds[i] = this.users[i].users[0].userCode;
+                  if(item.attr && (item.attr&8)>0){//审批人全选
+                    for(var j=0;j<user.length;j++){
+                      this.userIds.push(user[j].userCode)
                     }
+                  }else{
+                    this.userIds.push(user[0].userCode)
                   }
                 }
               }
@@ -478,12 +552,15 @@ export default {
     canYes() {
       if (this.chkinfo) {
         if (this.chkinfo.currState.stateId === "6") {
-          return true;Y
+          this.dsm.canEdit = false;
+          return true;
         }
         if(this.chkinfo.currState.stateId === "0" || this.chkinfo.currState.stateId === "1" || this.chkinfo.currState.stateId === "5"){
           if(this.billuser == this.currUser || this.billuser == undefined){
+            this.dsm.canEdit = true;
             return false;
           }
+          this.dsm.canEdit = false;
           return true;
         }
         var exitu = "";
@@ -509,11 +586,14 @@ export default {
           }
         }
         if (exitu) {
+          this.dsm.canEdit = true;
           return false;
         } else {
+          this.dsm.canEdit = false;
           return true;
         }
       }
+      this.dsm.canEdit = true;
       return false;
     },
     canTH() {
@@ -536,6 +616,16 @@ export default {
           if(this.chkinfo.chkInfos[0].userCode === this.currUser)
             return false;
           return true;
+        }
+        if(this.chkinfo.currState.checked){
+          let sshu = this.chkinfo.currState.userssh
+          if(sshu){
+              for(var z=0;z<sshu.length;z++){
+                if(sshu[z].userCode == this.currUser){
+                    return false;
+                }
+              }
+          }
         }
         if (this.chkinfo.upUser&&this.currUser === this.chkinfo.upUser.userCode) {
           return false;

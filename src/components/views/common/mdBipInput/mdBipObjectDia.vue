@@ -49,7 +49,7 @@
               <md-table-tool>
                 <md-layout class="flex"></md-layout>
                 <md-table-pagination :md-size="pageInfo.size" :md-total="pageInfo.total" :md-page="pageInfo.page" :md-label="$t('commInfo.Per')"
-                md-separator="/" :md-page-options="[5,10,15,20, 30, 50]" @pagination="onTablePagination">
+                md-separator="/" :md-page-options="[500,10,15,20, 30, 50]" @pagination="onTablePagination">
                 </md-table-pagination>
               </md-table-tool>
               <md-table-card v-show="false">
@@ -111,7 +111,7 @@ export default {
     },
     mdPageSize:{
       type:[Number,String],
-      default:'5'
+      default:500
     },
     mdRefId: String,
     options:{
@@ -157,6 +157,7 @@ export default {
   },
   methods:{ 
     selectOK() { 
+      console.log("selectOk")
       if (this.selectData) {
         if(this.mdSelection){
           this.cpinf[0].cdata = this.selectData;

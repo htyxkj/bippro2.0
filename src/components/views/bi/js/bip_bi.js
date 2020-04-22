@@ -214,6 +214,16 @@ export default {
       // }
 
       pdata = JSON.stringify(pdata);
+      let pbds = {};
+      if(this.mparams.pbds){
+        let p = this.mparams.pbds;
+        let parr = p.split("&");
+        for(var i=0;i<parr.length;i++){
+          let p1 = parr[i].split("=");
+          if(p1.length ==2)
+          pbds[p1[0]] = p1[1]
+        }
+      }
       var data1 = {
         dbid: global.DBID,
         usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
@@ -225,6 +235,7 @@ export default {
         pageSize: this.pageInfo.size,
         cellid: this.ds_m.ccells.obj_id,
         orderBy :orderBY, 
+        polnk:pbds.polnk
       };
       if((this.mparams.pattr & 0x10000) >0){ //外部SQL
         data1.type = "sql";

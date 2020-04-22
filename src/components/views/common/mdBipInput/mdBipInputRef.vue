@@ -200,10 +200,12 @@ export default {
               // let assid = this.cell.refValue.replace("{&","{")
               // this.getAssistDataByAPICout(assid,count,script,assType,this.getCallBack,this.getCallError);
               if(this.cell.assType && this.cell.assType =='C_QUERY'){
-                let script = "";
-                let assType = "";
-                let assid = this.cell.refValue.replace("{&","{")
-                this.getAssistDataByAPICout(assid,count,script,assType,this.getCallBack,this.getCallError);
+                if(this.cell.refValue){
+                  let script = "";
+                  let assType = "";
+                  let assid = this.cell.refValue.replace("{&","{")
+                  this.getAssistDataByAPICout(assid,count,script,assType,this.getCallBack,this.getCallError);
+                }
               }else{
                 let script =  this.analysisScript();
                 let assType = this.cell.assType;
@@ -228,11 +230,12 @@ export default {
               }
 
               if(this.cell.assType && this.cell.assType =='C_QUERY'){
-              
-                let script = "";
-                let assType = "";
-                let assid = this.cell.refValue.replace("{&","{")
-                this.getAssistDataByAPICout(assid,count,script,assType,this.getCallBack,this.getCallError);
+                if(this.cell.refValue){
+                  let script = "";
+                  let assType = "";
+                  let assid = this.cell.refValue.replace("{&","{")
+                  this.getAssistDataByAPICout(assid,count,script,assType,this.getCallBack,this.getCallError);
+                }
               }else{
                 let script =  this.analysisScript();
                 let assType = this.cell.assType;
@@ -371,7 +374,30 @@ export default {
       });
     },
     writeBack(res){ 
-      if(this.dsm.canEdit){
+      
+      if(this.dsm.canEdit && this.dsm.ds_sub.length == 0){
+        let rtnpar = res[0];
+        let crd = this.dsm.currRecord;
+        let _self = this; 
+        //单子表
+          let oneChild = res[0]; 
+          _.forEach(oneChild.cdata,function(key,v){  
+            _self.chileOnLineAdd(_self.dsm,v); 
+            let data ={};
+            _.forEach(key,function(value,index){
+              let i = _.findIndex(oneChild.kft,function(n){ 
+                return n.keyf ===index;
+              }); 
+              if(i>-1){
+                _self.$set(_self.dsm.cdata[v],oneChild.kft[i].keyt,value); 
+              }else{ 
+                _self.$set(_self.dsm.cdata[v],index,value);
+              }   
+            }); 
+          });
+      }
+
+      if(this.dsm.canEdit && this.dsm.ds_sub.length > 0){
         let rtnpar = res[0];
         let crd = this.dsm.currRecord;
         let _self = this;
@@ -389,7 +415,7 @@ export default {
         //单子表
         if(!this.istabs){
           let oneChild = res[1]; 
-          _self.dsm.ds_sub[0].cdata=[];
+          // _self.dsm.ds_sub[0].cdata=[];
           _.forEach(oneChild.cdata,function(key,v){  
             _self.onLineAdd(_self.dsm.ds_sub[0]); 
             let data ={};
@@ -438,7 +464,18 @@ export default {
         this.dsm.currRecord[subId] = [];
       }
       this.dsm.currRecord[subId] = subdsm.cdata;
-    },    
+    }, 
+    chileOnLineAdd(subdsm,index) {  
+      var subId = subdsm.ccells.obj_id;
+      if (!this.dsm.ds_par.canEdit) return;
+      if(index != 0)
+      var crd = subdsm.createRecord();
+      // console.log(subdsm,subId,crd);
+      if (!this.dsm.ds_par.currRecord[subId]) {
+        this.dsm.ds_par.currRecord[subId] = [];
+      }
+      this.dsm.ds_par.currRecord[subId] = subdsm.cdata;
+    },  
   }, 
   watch:{
     modal:{

@@ -30,7 +30,7 @@
                             <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" style="position: relative;">   
                                 <!-- <md-icon  v-colors="item.iconcc">{{item.menuIcon}}</md-icon>  -->
                                <img :src="dingMenuImg+'img/ding/'+item.menuId+'.png'" style="margin:auto;width: 30px;height: 30px;"/>
-                                <div class="textNum" v-show="item.bgnum >0">{{item.bgnum}}</div>
+                                <div class="textNum" v-show="bgnum[item.menuId] && bgnum[item.menuId] >0">{{bgnum[item.menuId]}}</div>
                             </md-layout>
                             <md-layout md-flex="100" md-flex-xsmall="100" md-flex-small="100" md-align="center"> 
                                 <span>{{item.menuName}}</span>
@@ -77,6 +77,7 @@ export default {
             agentId:'',
             ddCfg:{},  
             dingMenuImg :`${global.BIPAPIURL}`,
+            bgnum:{},
         }
     },
     async mounted(){ 
@@ -87,16 +88,7 @@ export default {
         var lid = window.sessionStorage.getItem('isLogin');
         if(lid){  
             if(this.menuList.length<=0){
-                this.menuList = JSON.parse(window.sessionStorage.getItem('menulist')); 
-                for(var i =0;i<this.menuList.length;i++){
-                    if(this.menuList[i].haveChild == true){
-                        for(var j =0;j<this.menuList[i].childMenu.length;j++){
-                            const cc = this.menuList[i].childMenu[j];
-                            this.$set(cc,'bgnum',0) 
-                            this.menuList[i].childMenu[j] = cc;
-                        }
-                    }
-                } 
+                this.menuList = JSON.parse(window.sessionStorage.getItem('menulist'));
             }  
             if(this.ddApp.length<=0){
                 let dapp = window.sessionStorage.getItem('ddApp');
@@ -142,39 +134,8 @@ export default {
                 var userI = res.data.data.user;
                 var mlist = res.data.data.menulist;
                 var snkey = res.data.data.snkey; 
-                let ml = JSON.parse(JSON.stringify(mlist)); 
-                if(ml)
-                    for(var i =0;i<ml.length;i++){
-                        if(ml[i].haveChild == true){
-                            for(var j =0;j<ml[i].childMenu.length;j++){
-                                let pbuid1 = ml[i].childMenu[j].pbuid;
-                                if(!pbuid1){
-                                    let command = ml[i].childMenu[j].command;
-                                    if(command){
-                                        let pbuid0 = command.split("&");//pbuid=100301&pmenuid=800303
-                                        pbuid1 = pbuid0[0].split("=")[1]; 
-                                        let menuid =  pbuid0[1].split("=")[1] 
-                                        ml[i].childMenu[j].pbuid = pbuid1;
-                                        ml[i].childMenu[j].menuid = menuid;
-                                    }
-                                } 
-                            }
-                        }
-                    }
+                let ml = JSON.parse(JSON.stringify(mlist));
                 this.menuList = ml;
-                // let aa=[];
-                // if(this.menuList)
-                // for(var i =0;i<this.menuList.length;i++){
-                //     if(this.menuList[i].haveChild == true){
-                //         for(var j =0;j<this.menuList[i].childMenu.length;j++){
-                //             var bb = Math.ceil(Math.random() * (ICONS.length-1));
-                //             this.menuList[i].childMenu[j].iconcc= ICONCOLOR[bb]
-                //             this.menuList[i].childMenu[j].menuIcon=ICONS[bb] 
-                //         }
-                //         aa.push(this.menuList[i]);
-                //     }
-                // }
-                // this.menuList = aa;
                 window.sessionStorage.setItem('user', JSON.stringify(userI));
                 window.sessionStorage.setItem('menulist', JSON.stringify(this.menuList));
                 window.sessionStorage.setItem('snkey', JSON.stringify(snkey));
@@ -251,10 +212,10 @@ export default {
                 corpId:this.corpId,
                 bipAppid:bipAppid,
             }  
-            var res = await this.getDataByAPINew(data);   
+            var res = await this.getDataByAPINew(data); 
             if(res.data.id != undefined){ 
                 if(res.data.id == 0){
-                this.ddCfg = JSON.parse(res.data.message);  
+                this.ddCfg = JSON.parse(res.data.message); 
                 let _this= this;  
                 dd.ready(function() { 
                     dd.runtime.permission.requestAuthCode({
@@ -270,6 +231,10 @@ export default {
                                 jsApiList : [
                                     'biz.map.locate',
                                     'biz.map.view',
+                                    'device.geolocation.get',
+                                    'device.geolocation.start',
+                                    'device.geolocation.stop',
+                                    'biz.map.search',
                                 ] // 必填，需要使用的jsapi列表，注意：不要带dd。
                             }); 
                         },
@@ -285,35 +250,38 @@ export default {
             } 
         }, 
         //菜单徽章  用来显示单据数量
-        async getNumberofBadges(menuid){   
-            if(this.menuList)
-            for(var i =0;i<this.menuList.length;i++){
-                if(this.menuList[i].haveChild == true){
-                    for(var j =0;j<this.menuList[i].childMenu.length;j++){
-                        let pbuid1 = this.menuList[i].childMenu[j].pbuid;
-                        if(!pbuid1){
-                            let command = this.menuList[i].childMenu[j].command;
-                            if(command){
-                                let pbuid0 = command.split("&");//pbuid=100301&pmenuid=800303
-                                pbuid1 = pbuid0[0].split("=")[1]; 
-                                let menuid =  pbuid0[1].split("=")[1] 
-                                this.menuList[i].childMenu[j].pbuid = pbuid1;
+        async getNumberofBadges(){ 
+            if(this.menuList){
+                for(var i =0;i<this.menuList.length;i++){
+                    if(this.menuList[i].haveChild == true){
+                        for(var j =0;j<this.menuList[i].childMenu.length;j++){
+                            let menu = this.menuList[i].childMenu[j];
+                            let pbuid1 = menu.pbuid;
+                            let menuId = menu.menuId
+                            if(!pbuid1 || !menuId){
+                                let command = this.menuList[i].childMenu[j].command;
+                                if(command){
+                                    let pbuid0 = command.split("&");//pbuid=100301&pmenuid=800303
+                                    pbuid1 = pbuid0[0].split("=")[1]; 
+                                    this.menuList[i].childMenu[j].pbuid = pbuid1; 
+                                    await this.getNum(pbuid1,menuId); 
+                                }
+                            }else if(pbuid1 && menuId){
+                                await this.getNum(pbuid1,menuId); 
                             }
-                        }
-                        if(pbuid1){
-                            await this.getNum(pbuid1,i,j); 
                         }
                     }
                 }
             }
+            this.$forceUpdate();
         },
-        async getNum(menuid,i,j){
+        async getNum(pbuid1,menuId){
             let _this = this;
             var data1 = {
             dbid: global.DBID,
             usercode: JSON.parse(window.sessionStorage.getItem("user")).userCode,
             apiId: global.APIID_DLG,
-            menuid: "BG."+menuid,
+            menuid: "BG."+pbuid1,
             };
             await this.getDataByAPINewSync(data1).then((res)=>{
                 if(res.data.id !=-1){
@@ -327,7 +295,8 @@ export default {
                     };
                     this.getDataByAPINewSync(data2).then((res)=>{ 
                         if(res.data) {
-                            _this.menuList[i].childMenu[j].bgnum = res.data.total; 
+                            console.log(res.data)
+                            _this.bgnum[menuId] =  res.data.total;
                         }
                     });
                 }

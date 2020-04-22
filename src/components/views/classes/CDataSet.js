@@ -128,6 +128,13 @@ export default class CDataSet {
 
   // 编辑检查
   checkEdit(res) {
+    if(this.ds_par){
+      if(this.ds_par.canEdit == false){
+        this.canEdit = false;
+        this.currRecord[res.cellId] = res.oldValue;
+        return;
+      }
+    }
     if(this.canEdit){
       console.log(res);
       var cell = this.getCell(res.cellId);
@@ -212,6 +219,8 @@ export default class CDataSet {
     var rowIndex =  _.findIndex(this.cdata, (chr) => {
       return chr == row;
     });
+    if(rowIndex ==-1)
+      rowIndex = row;
     // console.log(rowIndex,row,'fdsfdsf');
     this.deleteRow(rowIndex);
     // this.cdata = _.remove(this.cdata,(n) =>{
@@ -296,55 +305,78 @@ export default class CDataSet {
     var deptInfo = user.deptInfo;
     _.forEach(cell.cels, (item, index) => {
       let iniVl = item.initValue;
-      if (iniVl == '[!]') {
-        iniVl = deptInfo.deptCode;
-      }
-      if (iniVl == '[$]') {
-        iniVl = user.userCode;
-      }
-      if (iniVl == '[#]') {
-        iniVl = deptInfo.cmcCode;
-      }
-      if ((iniVl == '[Y-M-D]' || iniVl === '0') && item.type === 91) {
-        iniVl = common.now('YYYY-MM-DD');
-      }
-      if ((iniVl == '[Y-M-D]' || iniVl === '0') && item.type === 93) {
-        iniVl = common.now();
-      }
-      if (iniVl == '[Y-M-D]') {
-        iniVl = common.now('YYYY-MM-DD');
-      }
-      if (iniVl == '[YMD]') {
-        iniVl = common.now('YYYYMMDD');
-      }
-      if (iniVl == '[YM]') {
-        iniVl = common.now('YYYYMM');
-      }
-      if (iniVl == '[Y2M]') {
-        iniVl = common.now('YYMM');
-      }
-      if (iniVl == '[Y2MD]') {
-        iniVl = common.now('YYMMDD');
-      }
-      if (iniVl == '[Y-M]') {
-        iniVl = common.now('YYYY-MM');
-      }
-      if (iniVl == '[Y2-M]') {
-        iniVl = common.now('YY-MM');
-      }
-      if (iniVl && iniVl.indexOf("[Y]") !=-1) {
-        let Y = common.now('YYYY');
-        iniVl = iniVl.replace("[Y]",Y);
-      }
-      if (iniVl && iniVl.indexOf("[M]") !=-1) {
-        let Y = common.now('MM');
-        iniVl = iniVl.replace("[M]",Y);
-      }
-      if (item.type <= 5) {
-        if (iniVl == undefined)
-          iniVl = '';
-        else {
-          iniVl = parseInt(iniVl) + '';
+      if(iniVl){
+        if (iniVl == '[!]') {
+          iniVl = deptInfo.deptCode;
+        }
+        if (iniVl == '[$]') {
+          iniVl = user.userCode;
+        }
+        if (iniVl == '[#]') {
+          iniVl = deptInfo.cmcCode;
+        }
+        if ((iniVl == '[Y-M-D]' || iniVl === '0') && item.type === 91) {
+          iniVl = common.now('YYYY-MM-DD');
+        }
+        if ((iniVl == '[Y-M-D]' || iniVl === '0') && item.type === 93) {
+          iniVl = common.now();
+        }
+        if (iniVl == '[Y-M-D]') {
+          iniVl = common.now('YYYY-MM-DD');
+        }
+        if(iniVl.indexOf("[Y-M-D]")>-1){
+          iniVl = iniVl.replace("[Y-M-D]",common.now('YYYY-MM-DD'))
+        }
+        if (iniVl == '[YMD]') {
+          iniVl = common.now('YYYYMMDD');
+        }
+        if(iniVl.indexOf("[YMD]")>-1){
+          iniVl = iniVl.replace("[YMD]",common.now('YYYYMMDD'))
+        }
+        if (iniVl == '[YM]') {
+          iniVl = common.now('YYYYMM');
+        }
+        if(iniVl.indexOf("[YM]")>-1){
+          iniVl = iniVl.replace("[YM]",common.now('YYYYMM'))
+        }
+        if (iniVl == '[Y2M]') {
+          iniVl = common.now('YYMM');
+        }
+        if(iniVl.indexOf("[Y2M]")>-1){
+          iniVl = iniVl.replace("[Y2M]",common.now('YYMM'))
+        }
+        if (iniVl == '[Y2MD]') {
+          iniVl = common.now('YYMMDD');
+        }
+        if(iniVl.indexOf("[Y2MD]")>-1){
+          iniVl = iniVl.replace("[Y2MD]",common.now('YYMMDD'))
+        }
+        if (iniVl == '[Y-M]') {
+          iniVl = common.now('YYYY-MM');
+        }
+        if(iniVl.indexOf("[Y-M]")>-1){
+          iniVl = iniVl.replace("[Y-M]",common.now('YYYY-MM'))
+        }
+        if (iniVl == '[Y2-M]') {
+          iniVl = common.now('YY-MM');
+        }
+        if(iniVl.indexOf("[Y2-M]")>-1){
+          iniVl = iniVl.replace("[Y2-M]",common.now('YY-MM'))
+        }
+        if (iniVl && iniVl.indexOf("[Y]") !=-1) {
+          let Y = common.now('YYYY');
+          iniVl = iniVl.replace("[Y]",Y);
+        }
+        if (iniVl && iniVl.indexOf("[M]") !=-1) {
+          let Y = common.now('MM');
+          iniVl = iniVl.replace("[M]",Y);
+        }
+        if (item.type <= 5) {
+          if (iniVl == undefined)
+            iniVl = '';
+          else {
+            iniVl = parseInt(iniVl) + '';
+          }
         }
       }
       modal[item.id] = iniVl?iniVl:'';

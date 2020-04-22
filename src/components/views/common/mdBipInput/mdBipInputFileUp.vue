@@ -4,7 +4,7 @@
     <md-dialog md-open-from="#upfile" md-close-to="#upfile" ref="fDia"> 
       <md-dialog-title class="file_title"> 
           <md-input-container style="width:100%">
-            <md-file v-model="placeholder" :id="id" placeholder="选择文件" :accept="accept"  @selected="selectFile" ref="file" multiple :fj_type="fj_type"  :disabled="!dsm.canEdit"></md-file>
+            <md-file v-model="placeholder" :id="id" placeholder="选择文件" :accept="accept" @selected="selectFile" ref="file" multiple :fj_type="fj_type"  :disabled="!dsm.canEdit"></md-file>
           </md-input-container>
           <div v-if="selFile">已选择{{num}}个文件</div>
           <div v-else>可以上传图片或者文件</div>
@@ -54,7 +54,7 @@
                 </md-layout>
                 <!-- 4 -->
                 <md-layout md-column md-gutter md-flex="10"  md-flex-xsmall="15" md-flex-small="15" md-align="center">
-                  <md-button class="md-primary md-raised mybtn" @click="download(index)" :disabled="!(progress[index]==100) || !dsm.canEdit">下载</md-button>
+                  <md-button class="md-primary md-raised mybtn" @click="download(index)" :disabled="!(progress[index]==100)">下载</md-button>
                 </md-layout>
                 <!-- 5 --> 
                 <md-layout md-column md-gutter md-flex="10" md-flex-xsmall="15" md-flex-small="15"  md-align="center" v-if="file.img ==true">
@@ -290,9 +290,9 @@ export default {
       for (var i = 0; i < e.target.files.length; i++) {
         var file = e.target.files[i];
         var name = e.target.files[i].name;
-        var iid = _.findIndex(this.selFiles,(item)=>{
-          return item.name === name;
-        });
+        // var iid = _.findIndex(this.selFiles,(item)=>{
+        //   return item.name === name;
+        // });
         // if(iid>=0){
         //   // console.log("iid"+iid)
         //   return ;
@@ -303,7 +303,6 @@ export default {
         // }
         this.selFiles.push(file);
         if (!(/^image\/.*$/i.test(file.type))) {  
-            // var kzm = name.substring(name.lastIndexOf('.')+1);
             var _srcs = this.getFileIcon(name);
             _srcs.size = size;
             this.srcs.push(_srcs);
@@ -468,6 +467,9 @@ export default {
         }else{
           this.bfjRoot = false;
         }
+      }
+      if(this.cell.script){
+        this.accept = this.cell.script;
       }
     }
   },

@@ -114,13 +114,51 @@ export default {
       mainTabs:[],
       sth:{},
       isSelsth:false,
+      EXData:[],
     };
   },
   props: { dsm: Object, dsext: Array, opera: Object, mparams:Object,menuP:Object},
   methods: {
     dataChange(res) { 
       // console.log(res);
-      // console.log(res, "dataChange");
+      //EX 控制
+      if(this.EXData){
+        for(var i=0;i<this.EXData.length;i++){
+          let one = this.EXData[i];
+          if(one.indexOf("["+res.cellId+"]") !=-1){
+            let d0 = one.split(";");
+            let d1 = d0[0];
+            let d2 = d0[1];
+            if(d1.indexOf("==") !=-1){
+              let val0 = d1.split("==")[1]+"";
+              if(val0.indexOf("'") == 0){
+                val0 = val0.substring(val0.indexOf("'")+1,val0.lastIndexOf("'"))
+              }
+              let val1 = this.dsm.currRecord[res.cellId]+"";
+              if(val0 == val1){
+                let val2 = d2.split(",")
+                for(var j=0;j<val2.length;j++){
+                  if(val2[j].indexOf("!") !=-1){
+                    for(var dd = 0;dd<this.dsm.ccells.cels.length;dd++){
+                      if(dd.id == res.cellId){
+                        //非空
+                        this.dsm.ccells.cels[dd].unNull=true;
+                      }
+                    }
+                  }else{
+                    for(var dd = 0;dd<this.dsm.ccells.cels.length;dd++){
+                      if(dd.id == res.cellId){
+                        //非编辑
+                        this.dsm.ccells.cels[dd].attr = this.dsm.ccells.cels[dd].attr | (0x40)
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
       this.dsm.checkEdit(res);
     },
     create() {
@@ -304,21 +342,24 @@ export default {
         this.dsm.currRecord.oldpk = pk;
       } 
       if(this.dsm.currRecord.sys_stated !=4){
-        let check = await this.beforeSaveCheck(this.dsm);
+        let retData = await this.beforeSaveCheck(this.dsm);
 
         let issavet = 'false';
-        if(check){
-          if(check[0] == 'Dialog'){
-            issavet =  await this.$dialog.confirm(check[1], {
-              okText: this.$t('commInfo.ok'),
-              cancelText: this.$t('commInfo.cancel')
-            })
-            .then(() => {
-              return 'true';
-            });
-          }else if(check[0] == 'Notification'){
-            this.$notify.danger({content:check[1]})
-            issavet = check[2];
+        if(retData.length>0){
+          for(var i=0;i<retData.length;i++){
+            let check = retData[i]
+            if(check[0] == 'Dialog'){
+              issavet =  await this.$dialog.confirm(check[1], {
+                okText: this.$t('commInfo.ok'),
+                cancelText: this.$t('commInfo.cancel')
+              })
+              .then(() => {
+                return 'true';
+              });
+            }else if(check[0] == 'Notification'){
+              this.$notify.danger({content:check[1]})
+              issavet = check[2];
+            }
           }
         }else{
           issavet = 'true'
@@ -350,8 +391,8 @@ export default {
           // this.dsm.currRecord.sys_stated = billS.DICT;
           this.dsm.makeState(billS.DICT);
           this.$notify.success({ content: this.$t('commInfo.saveSucc'), placement: "mid-center" });
-
-          if(this.opera && this.dsm.currRecord.sys_stated !=4 && this.canSubmit){
+          
+          if(this.opera && this.dsm.currRecord.sys_stated !=4 && !this.canSubmit && (this.mparams.pattr & 0x100) >0){
             this.$dialog.confirm("是否提交此单据？", {
               okText: this.$t('commInfo.ok'),
               cancelText: this.$t('commInfo.cancel')
@@ -506,6 +547,7 @@ export default {
     },
         //删除某行单据
     deleteDj(subdsm,index){
+      console.log("删除某行单据")
       this.itemClick(subdsm,index);
       this.curr_dsm = subdsm;
       this.onRemove(index);
@@ -554,9 +596,9 @@ export default {
     childChange(res){
       this.curr_dsm.checkEdit(res);
       if(this.curr_dsm.canEdit){
-        this.smSub()
-      }
-      this.dsm.currRecord.sys_stated = this.dsm.currRecord.sys_stated | billS.EDITED;
+        this.smSub();
+        this.dsm.currRecord.sys_stated = this.dsm.currRecord.sys_stated | billS.EDITED;
+      }     
     },
     //listitem 点击step2 单据
     itemClick(subdsm,index){
@@ -740,6 +782,18 @@ export default {
         //   this.constituteChildrens(cc[1])
         // }
       }
+    },
+    //初始EX控制
+    async initEXControl(){
+      if(this.dsm.ccells.sui){
+        let sui = this.dsm.ccells.sui;
+        if(sui.indexOf("inetbas.cli.systool.CELZTUI*EX") !=-1){
+          let data =  await this.getLongText("190005");
+          if(data){
+            this.EXData = data;
+          }
+        }
+      }
     }
 
   },
@@ -856,6 +910,7 @@ export default {
     console.log("mounted")
     if (this.dsm) {
       this.getSwitch();
+      this.initEXControl();
       this.doMyLayout();
       this.dsm.runSui();
       const state = this.dsm.currRecord.sys_stated & billS.INSERT;
@@ -886,6 +941,7 @@ export default {
       if(this.dsm){
         this.dsm.createRecord(); 
         this.getSwitch();
+        this.initEXControl();
       }
       this.doMyLayout();
     }
