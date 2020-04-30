@@ -480,7 +480,7 @@ export default {
                 }, 1000);
                 return;
             }
-            if(this.taskPoint.length<=3){
+            if(this.taskPoint.length<=2){
                 this.getPointList(key,false,trtype);
             }
             let t1 = new Date().getTime();
@@ -554,13 +554,14 @@ export default {
                     let standard=[];
                     this.warnInterval++;
                     let flow0 = (this.warn.drugload/1000)/(((this.warn.area/this.warn.area)/(this.flightBeltWidth/1000))/data.speed);
-                    if(!isNaN(flow0)&& this.warnInterval >this.warn.interval){
+                    if(!isNaN(flow0)&& this.warnInterval >= this.warn.interval){
                         standard[0] = (flow0*(1-(this.warn.drugfloat/100))).toFixed(2);
                         standard[1] = (flow0*(1+(this.warn.drugfloat/100))).toFixed(2);
                         console.log(standard)
                         if(flow>standard[1] || flow<standard[0]){
                             msg = "当前速度："+data.speed+"km/h<br/>瞬时流量异常("+flow+"),超出当前速度标准范围("+standard[0]+"~"+standard[1]+")"
                         }
+                        this.warnInterval =0;
                     }
                     if(msg != ""){
                         //创建图片对象
@@ -588,7 +589,7 @@ export default {
                         this.tMap.addOverLay(newLine0);
                         this.sprayLine0.push(newLine0)
 
-                        let opts1 = {color:this.trackColor,weight:1,opacity:1};
+                        let opts1 = {color:this.trackColor,weight:4,opacity:1};
                         var newLine1 = new T.Polyline(points,opts1);
                         this.tMap.addOverLay(newLine1);     
                         this.sprayLine1.push(newLine1)
@@ -612,7 +613,7 @@ export default {
                         points2.push(lgt);
                         line2.setLngLats(points2)
                     }else{
-                        let opts2 = {color:this.noFlowColor,weight:1,opacity:1};
+                        let opts2 = {color:this.noFlowColor,weight:4,opacity:1};
                         let points = [];
                         points.push(lgt);
                         var newLine2 = new T.Polyline(points,opts2);
