@@ -168,8 +168,10 @@
 import CDataSet from '@/components/views/classes/CDataSet';
 import qs from 'qs'
 import axios from 'axios'  
+import NoSleep from "nosleep.js/dist/NoSleep.min.js";
 import GPSUtil from './js/GPSUtil.js' 
 import TMapUtils from './js/TMapUtils.js' 
+import moment from 'moment'
 export default {
     mixins:[TMapUtils,GPSUtil],
     created(){ 
@@ -178,6 +180,7 @@ export default {
         this.setHeight();
         this.createdMap();
         this.initWarn();
+        this.noSleep();
         window.onresize = () => { 
             this.setHeight();
         }
@@ -270,6 +273,14 @@ export default {
             setTimeout(() => {
                 this.tMap.checkResize();  
             }, 200);
+        },
+        //屏幕常亮
+        noSleep () {
+            let noSleep = new NoSleep();
+            document.addEventListener('click', function enableNoSleep() {
+                document.removeEventListener('click', enableNoSleep, false);
+                noSleep.enable();
+            }, false);
         },
         //初始化飞防任务
         async initTask(){
@@ -369,6 +380,8 @@ export default {
                     let cc = lnglat[1]+","+lnglat[0]
                     let poin = new T.LngLat(lnglat[1], lnglat[0]);
                     this.airPoint.push(poin);
+                     v.speedtime = new Date(v.speedtime)
+                    v.speedtime = moment(v.speedtime).format("YYYY-MM-DD HH:mm:ss")
                     let msg = "<div>任务编码："+task.sid+"<br/>任务名称："+task.taskname+"<br/>定位信息:"+lnglat[1]+","+ lnglat[0]+"<br/>时&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;间："+v.speedtime
                     if(offline){//离线
                         msg += "<br/>状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态：<span style='color:red;'>离线</span>"
@@ -448,9 +461,12 @@ export default {
                         let lnglat = [v.latitude,v.longitude];
                         if(trtype =='0'){
                             lnglat = this.bd09_To_gps84(v.latitude,v.longitude);
+                            v.speedtime = v.speedtime * 1000
                         }
                         v.latitude = lnglat[0];
                         v.longitude = lnglat[1]; 
+                        v.speedtime = new Date(v.speedtime)
+                        v.speedtime = moment(v.speedtime).format("YYYY-MM-DD HH:mm:ss")
                         if(this.taskPointJSON.indexOf(this.maxTime) ==-1){
                             this.taskPoint.push(v); 
                             this.taskPointJSON.push(this.maxTime);
@@ -520,15 +536,15 @@ export default {
             if(data){
                 let flow = data.flow;
                 
-                this.nowtime = this.dateFormat(data.speedtime*1000,"yyyy-MM-dd HH:mm:ss")
-                if(data.datetime){
-                    this.nowtime = data.datetime;
+                // this.nowtime = this.dateFormat(data.speedtime*1000,"yyyy-MM-dd HH:mm:ss")
+                if(data.speedtime){
+                    this.nowtime = data.speedtime;
                 }
                 this.nowspeed = (data.speed).toFixed(3);
                 this.nowpressure = data.pressure
                 this.nowtemperature = (data.temperature).toFixed(1);
 
-                this.nowflow = data.flow;
+                this.nowflow =(data.flow).toFixed(2);
                 // this.sumflow = (data.sumfolw).toFixed(3);
                 this.nowheight = data.height;
                 this.sumtime = this.sumtime+1;
@@ -638,7 +654,7 @@ export default {
                 this.plane.setLngLat(new T.LngLat(lnglat1.longitude, lnglat1.latitude))
             }  
             let jl = this.tMap.getDistance(new T.LngLat(lnglat1.longitude, lnglat1.latitude),new T.LngLat(lnglat2.longitude, lnglat2.latitude));
-            if(jl>1.2){
+            if(jl>1.5){
                 let curPos = new T.LngLat(lnglat1.longitude, lnglat1.latitude)
                 let targetPos = new T.LngLat(lnglat2.longitude, lnglat2.latitude)
                 this.rotate =  this.setRotation(curPos,targetPos,this.tMap);
@@ -646,7 +662,7 @@ export default {
                 // if(lnglat1.sbid)
                 //     this.rotate = lnglat1.direction || "0";  
             }
-            if(this.rotate && this.rotate!=0 && this.rotate!=360){
+            if(this.rotate){
                 let style = this.plane.Fr.style[this.CSS_TRANSFORM()];
                 this.plane.Fr.style[this.CSS_TRANSFORM()]= style+" rotate(" +this.rotate + "deg)";
                 this.plane.Fr.style["transform-origin"] = "50% 50%";
@@ -744,6 +760,7 @@ export default {
          */
         async refresh(){
             try{
+                // this.PreviousFlowPoint = null;
                 this.rightState = true;
                 this.clearCover();
                 this.loading = 1;

@@ -70,6 +70,18 @@
         <md-bip-work-process  ref="TASKSubmitProcess" :chkinfo="chkinfo" @dataCheckUp="dataCheckUp"></md-bip-work-process>
       </template>
     </md-part-body>
+    <template v-if="canUp ==true || canNext == true">
+      <div class="hover-left-css">
+        <md-button class="md-primary md-raised md-icon-button" :disabled="!canUp"  @click="gotPrevious">
+            <md-icon>arrow_back</md-icon>
+        </md-button>
+      </div>
+      <div class="hover-right-css">
+        <md-button class="md-primary md-raised md-icon-button" :disabled="!canNext" @click="goNext">
+            <md-icon>arrow_forward</md-icon>
+        </md-button>
+      </div>
+    </template>
   </md-part>
 </template>
 <script>
@@ -85,10 +97,18 @@ export default {
       menuP:{},
     };
   },
-  props: { dsm: Object, dsext: Array, opera: Object },
+  props: { dsm: Object, dsext: Array, opera: Object,canUp:Boolean,canNext:Boolean},
   methods: {
     gotask(){
       this.$emit('gotask');
+    },
+    //下一条
+    goNext(){
+      this.$emit('gorow','+');
+    },
+    //上一条
+    gotPrevious(){
+      this.$emit('gorow','-');
     },
     dataChange(res) {
       // console.log(res);
@@ -525,6 +545,9 @@ export default {
           this.dsm.canEdit = false;
         }
       }
+    },
+    dsm(){
+      console.log("dsmchange")
     }
   }
 };
@@ -532,6 +555,22 @@ export default {
 
 <style lang="scss" scoped>
 .md-layout{margin: 0;}
+.hover-right-css{
+  width:55px;
+  height:20px;
+  position:absolute;/*fixed总是以body为定位时的对象，总是根据浏览器的窗口来进行元素的定位，通过"left"、 "top"、 "right"、 "bottom" 属性进行定位。*/
+  right:0px;/*设置与右侧的距离*/
+  bottom:50%;/*设置与底部的距离*/
+  z-index:100;/*设置显示次序，数字越大显示越靠前*/
+}
+.hover-left-css{
+  width:20px;
+  height:20px;
+  position:fixed;/*fixed总是以body为定位时的对象，总是根据浏览器的窗口来进行元素的定位，通过"left"、 "top"、 "right"、 "bottom" 属性进行定位。*/
+  left:0px;/*设置与右侧的距离*/
+  bottom:50%;/*设置与底部的距离*/
+  z-index:100;/*设置显示次序，数字越大显示越靠前*/
+}
 </style>
 
 

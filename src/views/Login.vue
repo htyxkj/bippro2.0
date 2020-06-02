@@ -24,10 +24,10 @@
       </div>
       <div class="checkbox forPwd">
         <label>
-          <input type="checkbox">{{$t('login.rememberPwd')}}
+          <!-- <input type="checkbox">{{$t('login.rememberPwd')}} -->
         </label>
         <div class="forgetPwd">
-          <router-link to="/register"   >注册</router-link>
+          <!-- <router-link to="/register"   >注册</router-link> -->
         </div>
       </div>
       <button type="button" class="btn btn-success btn-block btn-my" @click="loginRemote">{{$t('login.loginBtn')}}</button>

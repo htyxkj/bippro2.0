@@ -52,7 +52,7 @@ export default {
       }
     },
     async makeRefValue(){
-      console.log("makeRefValue")
+      // console.log("makeRefValue")
       var s0 = this.bipRefId.refValue;
       if(s0 == '{&DATETIME}' || s0=='{&DATE}'){
         return ;
@@ -103,7 +103,7 @@ export default {
               }
             }
             var cc = await this.getCLByAPI({'assistid':this.bipRefId.refValue,'cont':codeArr[i],'assType':this.assType,'script':this.script});
-            console.log(cc);
+            // console.log(cc);
             if(cc.data.code==1){ 
               for(var j=0;j<cc.data.values.length;j++){
                 cldata = {'allCols':cc.data.allCols,'value':cc.data.values[j]}; 

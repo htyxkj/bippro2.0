@@ -19,7 +19,7 @@
                                             </md-layout>
                                             <md-layout md-flex ="100" :md-gutter="16"> 
                                                 <md-layout md-flex ="100" md-align="center">
-                                                    <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="rowClick(row,0)">{{$t('bipmsg.btnView')}}</button>
+                                                    <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="rowClick(row,0,index1)">{{$t('bipmsg.btnView')}}</button>
                                                 </md-layout>
                                             </md-layout>
                                         </md-card-header> 
@@ -41,7 +41,7 @@
                         </template>
                     </template>
                     <template v-if="bdj">
-                        <md-bip-task-applet v-if="ds_m" :dsm="ds_m" :dsext="ds_ext" :opera="opera" @gotask="gotask(0)"></md-bip-task-applet>
+                        <md-bip-task-applet v-if="ds_m" ref="myTaskApplet" :canUp="canUp" :canNext="canNext" :dsm="ds_m" :dsext="ds_ext" :opera="opera" @gotask="gotask(0)" @gorow="goRow"></md-bip-task-applet>
                     </template>
                 </md-tab> 
                 <md-tab md-label="已办" class="oneTab" :style="doBdj ==false?'height: 100%;padding-top: 0px;':'padding:0px;height: 100%'"> <!--  md-icon="work"  -->
@@ -79,7 +79,7 @@
                                             </md-layout>
                                             <md-layout md-flex ="100" :md-gutter="16"> 
                                                 <md-layout md-flex ="100" md-align="center">
-                                                    <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="rowClick(row,1)">{{$t('bipmsg.btnView')}}</button>
+                                                    <button type="button" class="small-btn" style="width:100%;background-color:#278FEF;color:white;" @click="rowClick(row,1,index1)">{{$t('bipmsg.btnView')}}</button>
                                                 </md-layout>
                                             </md-layout>
                                         </md-card-header> 
@@ -101,7 +101,7 @@
                         </template>
                     </template>
                     <template v-if="doBdj">
-                        <md-bip-task-applet v-if="ds_m" :dsm="ds_m" :dsext="ds_ext" :opera="opera" @gotask="gotask(1)"></md-bip-task-applet>
+                        <md-bip-task-applet v-if="ds_m" :pageInfo="taskDoPageInfo" :dsm="ds_m" :dsext="ds_ext" :opera="opera" @gotask="gotask(1) "  @gorow="goRow"></md-bip-task-applet>
                     </template>
                 </md-tab> 
                 <md-tab md-label="消息" class="oneTab"> <!--  md-icon="notifications_none" -->
@@ -220,7 +220,7 @@ export default {
             taskLayCel: {},//代办对象
             taskValues: [],//代办数据
             taskPageInfo: {
-                size: 20,
+                size: 10,
                 page: 1,
                 total: 0
             },
@@ -245,6 +245,9 @@ export default {
             isconnt: false,
             msgDetails:false,
             msgIndex:0,
+            rowId:0,
+            canUp:true,
+            canNext:true,
         }
     },
     async mounted(){
@@ -334,7 +337,26 @@ export default {
     /********************* 我的消息结束 ****************/
 
     /********************* 我的任务开始 ****************/
+        async goRow(state){
+            if(state == '+'){
+                this.rowId++;
+            }else{
+                this.rowId--;
+            }
+            if(this.rowId>= this.taskValues.length){
+                this.taskPageInfo.page++;
+                await this.fetchTaskData()
+                this.rowId =0
+            }
+            if(this.rowId<0){
+                this.taskPageInfo.page--;
+                await this.fetchTaskData()
+                this.rowId =this.taskValues.length-1;
+            }
+            this.rowClick(this.taskValues[this.rowId],0,this.rowId)
+        },
         gotask(type){
+            console.log("gotask")
             if(type == 0)
             this.bdj = false;
             if(type == 1)
@@ -387,7 +409,24 @@ export default {
                 this.taskPageInfo.size = res.data.data.pages.pageSize;
             }
         },
-        async rowClick(row,type) {
+        async rowClick(row,type,index) {
+            if(index == 0 && this.taskPageInfo.page ==1){
+                this.canUp = false;
+            }else{
+                this.canUp = true;
+            }
+            let totalPage = parseInt(this.taskPageInfo.total/this.taskPageInfo.size);
+            if(this.taskPageInfo.total%this.taskPageInfo.size >0 ){
+                totalPage++;
+            }
+
+            if(index == this.taskValues.length-1 && this.taskPageInfo.page == totalPage){
+                this.canNext = false;
+            }else{
+                this.canNext = true;
+            }
+            this.loading = 1;
+            this.rowId = index;
             row.brd = 1;
             var pflow = row.buid;
             var data1 = {
@@ -407,6 +446,10 @@ export default {
                     pdata[this.opera.pkfld] = row.buno;
                     await this.fetchUIData(pdata);
                     if(this.ds_m.cdata.length>0){
+                        let tapp = this.$refs['myTaskApplet']
+                        if(tapp){
+                            tapp.makeCheckParams();
+                        }
                         if(type == 0){
                             this.bdj = true;
                         }else if(type ==1){
@@ -415,11 +458,13 @@ export default {
                     }else{
                         this.$notify.warning({content: '未找到原单！'});
                     }
+                    this.loading = 0;
                 }
+            }else{
+                this.loading = 0;
             }
         },
         async fetchUIData (pdata) {
-            this.loading++;
             var data1 = {
                 'dbid': global.DBID,
                 'usercode': this.userCode,
@@ -441,7 +486,6 @@ export default {
                 this.ds_m.addRow(row);
                 });
             }
-            this.loading--;
         },
         setRowColor(_index) {
             _index = _index % 2;

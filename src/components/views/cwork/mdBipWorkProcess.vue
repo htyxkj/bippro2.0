@@ -89,6 +89,7 @@
                 <img class="image2" v-if="item.cid < 0 && item.cid != -20000" src="../../../img/check/process_bh.png">
                 <img class="image2" v-else-if="item.cid == -20000" src="../../../img/check/process_ds.png">
                 <img class="image2" v-else src="../../../img/check/process_ty.png">
+                <!-- <img v-if="item.signature" :src="item.signature" /> -->
                 <div class="div3">
                   <div style="float:left;">&nbsp;&nbsp;{{item.nameto}}<br/>&nbsp;&nbsp;
                     <span style="color:#8FB95C;font-size: 10px">
@@ -142,6 +143,7 @@ export default {
     async getSubmitProcess(ceaParams){
       this.info = [];
       var res = await this.getCeaCheckInfo(ceaParams, 35); 
+      console.log(res)
       if(res.data.id == 0){
         this.info = res.data.data.info;
       }

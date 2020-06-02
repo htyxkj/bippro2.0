@@ -59,7 +59,10 @@ export default {
   },
   watch: {
     value(){
-      if(this.value !== this.checkVal){
+      if(this.checkVal == '' ){
+        this.checkVal = this.formattedValue(this.modal[this.cell.id]);
+      }
+      if(this.value != this.checkVal){
         this.formtDate();
         let cc = (this.cell.attr & billS.SINGLEVAL);
         if (this.isReport && cc<=0) {
@@ -223,7 +226,7 @@ export default {
         this.updateValue("",false);
       }
     } else {
-      this.checkVal = this.formattedValue(this.value);
+      this.checkVal = this.formattedValue(this.modal[this.cell.id]);
     }
     // this.updateValue(this.checkVal,false)
     this.oldValue = this.checkVal;
