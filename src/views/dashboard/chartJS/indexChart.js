@@ -199,6 +199,8 @@ export default {
             var _value = value[z];
             var _v1 = v1[x1arr[1]];
             var _v2 = v2[x2arr[1]];
+            console.log(_value[_varr[1]] == _v1);
+            console.log(_value[_varr[2]] == _v2);
             if (_value[_varr[1]] == _v1 && _value[_varr[2]] == _v2) {
                 let v =  _value[Y];
                 if(!v)
