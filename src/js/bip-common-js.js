@@ -31,6 +31,7 @@
 // global.BIPAPIURL='http://39.99.133.27/bip-share/'//海富财务共享   华智信
 // global.BIPAPIURL='http://122.4.216.194:8089/bip-erp/'//贝特ERP
 // global.BIPAPIURL='http://www.bip-soft.com:89/bip-flexible/'//灵活用工
+// global.BIPAPIURL='http://kpi.shineon.cn:89/nc_jxgl/'//南昌绩效管理
 // global.DBID = 'ZT1';
 // global.DBID = 'J1';
 // global.DBID = '01';
