@@ -1,6 +1,6 @@
 module.exports = {
     // sysTitle:'林业有害生物飞机防治工程规范化作业信息管理平台',  
-    sysTitle:'飞机施药质量监测监管自动化计量综合服务平台',
+    // sysTitle:'飞机施药质量监测监管自动化计量综合服务平台',
     // sysTitle:'集团共享服务中心',
     // sysTitle:'财务共享平台',
     // sysTitle:'CRM',
@@ -8,7 +8,7 @@ module.exports = {
     // sysTitle:'缺陷隐患管控平台',
     // sysTitle:'灵活用工平台',
     // sysTitle:'项目管理',
-    // sysTitle:'绩效管理',
+    sysTitle:'南昌绩效管理',
     // sysTitle: '三农服务监管平台',
     // sysTitle:'物业管理',
     // sysTitle:'物资信息收集',

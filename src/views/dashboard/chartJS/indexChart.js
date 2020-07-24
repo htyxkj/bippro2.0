@@ -122,7 +122,7 @@ export default {
       //查询数据结果集
       var params = this.param;
       params.assistid = _varr[0];
-      params.pagesize = 100000;
+      params.pageSize = 100000;
       await axios.post(`${global.BIPAPIURL}` + `${global.API_COM }`, qs.stringify(params)).then(res => {
         if (res.data.message) {
 
@@ -147,7 +147,7 @@ export default {
       var x1arr = x1.split("|");
       var paramsX1 = this.param;
       paramsX1.assistid = x1arr[0];
-      paramsX1.pagesize = 100000;
+      paramsX1.pageSize = 100000;
       await axios.post(`${global.BIPAPIURL}` + `${global.API_COM }`, qs.stringify(paramsX1)).then(res => {
         if (res.data.message) {
 
@@ -173,7 +173,7 @@ export default {
       var x2arr = x2.split("|");
       var paramsX2 = this.param;
       paramsX2.assistid = x2arr[0];
-      paramsX2.pagesize = 100000;
+      paramsX2.pageSize = 100000;
       await axios.post(`${global.BIPAPIURL}` + `${global.API_COM }`, qs.stringify(paramsX2)).then(res => {
         X2Val = res.data;
       }).catch(err => {
@@ -199,8 +199,6 @@ export default {
             var _value = value[z];
             var _v1 = v1[x1arr[1]];
             var _v2 = v2[x2arr[1]];
-            console.log(_value[_varr[1]] == _v1);
-            console.log(_value[_varr[2]] == _v2);
             if (_value[_varr[1]] == _v1 && _value[_varr[2]] == _v2) {
                 let v =  _value[Y];
                 if(!v)
@@ -240,7 +238,7 @@ export default {
       //查询数据结果集
       let params = this.param;
       params.assistid = _varr[0];
-      params.pagesize = 100000;
+      params.pageSize = 100000;
       await axios.post(`${global.BIPAPIURL}` + `${global.API_COM }`, qs.stringify(params)).then(res => {
         value = res.data.values;
         fanhu = res.data;
@@ -259,7 +257,7 @@ export default {
       var x1arr = x1.split("|");
       let paramsX1 = this.param;
       paramsX1.assistid = x1arr[0];
-      paramsX1.pagesize = 100000;
+      paramsX1.pageSize = 100000;
       await axios.post(`${global.BIPAPIURL}` + `${global.API_COM }`, qs.stringify(paramsX1)).then(res => {
         X1Val = res.data;
       }).catch(err => {
@@ -319,7 +317,7 @@ export default {
       //查询数据结果集
       let params = this.param;
       params.assistid = _varr[0];
-      params.pagesize = 100000;
+      params.pageSize = 100000;
       await axios.post(`${global.BIPAPIURL}` + `${global.API_COM }`, qs.stringify(params)).then(res => {
         if (res.data.code && res.data.code == -1) {
           value = null;
@@ -342,7 +340,7 @@ export default {
       var x1arr = x1.split("|");
       let paramsX1 = this.param;
       params.assistid = x1arr[0];
-      params.pagesize = 100000;
+      params.pageSize = 100000;
       await axios.post(`${global.BIPAPIURL}` + `${global.API_COM }`, qs.stringify(paramsX1)).then(res => {
         X1Val = res.data;
       }).catch(err => {
@@ -388,7 +386,7 @@ export default {
       //查询数据结果集
       let params = this.param;
       params.assistid = _varr[0];
-      params.pagesize = 100000;
+      params.pageSize = 100000;
       await axios.post(`${global.BIPAPIURL}` + `${global.API_COM }`, qs.stringify(params)).then(res => {
         if (res.data.code && res.data.code == -1) {
           value = null;
@@ -411,7 +409,7 @@ export default {
       var x1arr = x1.split("|");
       let paramsX1 = this.param;
       params.assistid = x1arr[0];
-      params.pagesize = 100000;
+      params.pageSize = 100000;
       await axios.post(`${global.BIPAPIURL}` + `${global.API_COM }`, qs.stringify(paramsX1)).then(res => {
         X1Val = res.data;
       }).catch(err => {
