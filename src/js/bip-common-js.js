@@ -31,13 +31,14 @@
 // global.BIPAPIURL='http://39.99.133.27/bip-share/'//海富财务共享   华智信
 // global.BIPAPIURL='http://122.4.216.194:8089/bip-erp/'//贝特ERP
 // global.BIPAPIURL='http://www.bip-soft.com:89/bip-flexible/'//灵活用工
-global.BIPAPIURL='http://kpi.shineon.cn:89/nc_jxgl/'//南昌绩效管理
+// global.BIPAPIURL='http://kpi.shineon.cn:89/nc_jxgl/'//南昌绩效管理
+// global.BIPAPIURL='http://127.0.0.1:801/bip-share2/'//本机测试环境
 // global.DBID = 'ZT1';
 // global.DBID = 'J1';
-global.DBID = '01';
+// global.DBID = '01';
 
 
-// global.BIPAPIURL = 'http://127.0.0.1:9999/jd/';
+global.BIPAPIURL = 'http://127.0.0.1:9999/jd/';
 // global.DBID = '115';//本机达博
 // global.DBID = '112';//车辆管理
 // global.DBID = '121';//一风车辆管理
@@ -62,7 +63,7 @@ global.DBID = '01';
 // global.DBID = '146'//海富财务共享
 // global.DBID = '147'//贝特ERP
 // global.DBID = '149'//物质收集
-// global.DBID = '150'//泰祥集团财务共享
+global.DBID = '150'//泰祥集团财务共享
 // global.DBID = '139'//BIP-HR
 
 global.API_COM = 'api'; //web端入口
