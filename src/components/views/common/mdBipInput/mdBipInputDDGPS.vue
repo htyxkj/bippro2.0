@@ -91,6 +91,7 @@ export default {
           });
       }else{
           dd.biz.map.locate({  
+            scope: 5000,
             onSuccess: function (result) {   
               let address = result.province+result.city+result.adName+result.snippet
               let lgt = result.longitude+";"+result.latitude
