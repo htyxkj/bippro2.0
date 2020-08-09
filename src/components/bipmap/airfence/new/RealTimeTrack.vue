@@ -79,7 +79,7 @@
                                 </div>
                             </md-layout>
                         </div>
-                                                <div class="speed-flow">
+                        <div class="speed-flow">
                             <md-layout class="padding0">
                                 <div class="speed-content">
                                     <div class="sp-title ">
@@ -92,26 +92,17 @@
 
                                 <div class="speed-content">
                                     <div class="sp-title nowtime-header">
-                                        <span>当前温度</span>
+                                        <span>当前流量</span>
                                     </div>
                                     <div class="time">
-                                        {{nowtemperature}}℃
+                                       {{nowflow}}m³/h
                                     </div>
                                 </div>
                             </md-layout>
                         </div>
+
                         <div class="speed-flow">
                             <md-layout class="padding0">
-                                <div>
-                                    <div class="speed-content">
-                                        <div class="sp-title ">
-                                            <span>当前流量</span>
-                                        </div>
-                                        <div class="time">
-                                            {{nowflow}}m³/h
-                                        </div>
-                                    </div>
-                                </div>
                                 <div>
                                     <div class="speed-content">
                                         <div class="sp-title nowtime-header">
@@ -119,6 +110,41 @@
                                         </div>
                                         <div class="time">
                                             {{sumflow}}m³
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="speed-content">
+                                        <div class="sp-title ">
+                                            <span>当前风速</span>
+                                        </div>
+                                        <div class="time">
+                                            {{windSpeed}}m/s
+                                        </div>
+                                    </div>
+                                </div>
+                            </md-layout>
+                        </div>
+
+                        <div class="speed-flow">
+                            <md-layout class="padding0">
+                                <div>
+                                    <div class="speed-content">
+                                        <div class="sp-title nowtime-header">
+                                            <span>当前温度</span>
+                                        </div>
+                                        <div class="time">
+                                            {{nowtemperature}}℃
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>   
+                                    <div class="speed-content">
+                                        <div class="sp-title nowtime-header">
+                                            <span>当前湿度 </span>
+                                        </div>
+                                        <div class="time">
+                                            {{humidity}}%rh
                                         </div>
                                     </div>
                                 </div>
@@ -241,6 +267,11 @@ export default {
             sumtime: 0,
             taskname:"",
             sumarea: 0,
+
+            windSpeed: 0,//风速
+            humidity: 0,//湿度
+            nowpressure:0,//压力
+
             //当前任务起降点
             takeoff: null,//起降点
             takeoffRange: 50,//起降点范围
@@ -542,7 +573,15 @@ export default {
                 }
                 this.nowspeed = (data.speed).toFixed(3);
                 this.nowpressure = data.pressure
-                this.nowtemperature = (data.temperature).toFixed(1);
+                this.nowtemperature = (data.temperature).toFixed(1);//温度
+
+                if(data.windspeed)
+                    this.windSpeed = data.windspeed;//风速
+                if(data.humidity)
+                    this.humidity = data.humidity;//湿度
+                if(data.pressure)//压力
+                    this.nowpressure = (data.pressure).toFixed(1); 
+
 
                 this.nowflow =(data.flow).toFixed(2);
                 // this.sumflow = (data.sumfolw).toFixed(3);
