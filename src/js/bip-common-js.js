@@ -8,7 +8,7 @@
 // global.BIPAPIURL = 'http://jtdrp.juminfuwu.cn/' //集团管理
 // global.BIPAPIURL = 'http://211.144.37.205/vehicle-sched/'; //一风车辆
 // global.BIPAPIURL = 'http://211.144.37.205/airfencea/'; //一风飞防
-// global.BIPAPIURL = 'http://211.144.37.205/air-super/'; //一风新飞防
+global.BIPAPIURL = 'http://211.144.37.205/air-super/'; //一风新飞防
 // global.BIPAPIURL = 'http://115.28.191.203:89/skxjtfile/';//京通档案
 // global.BIPAPIURL = 'http://192.168.100.13:8080/skxjtfile/';//京通档案（水科学院）
 // global.BIPAPIURL = 'http://www.bip-soft.com:89/clubreserv/';//会所预定
@@ -32,6 +32,7 @@ global.BIPAPIURL = 'http://115.28.191.203:89/xsgk/'; //安全隐患监控平台�
 // global.BIPAPIURL='http://122.4.216.194:8089/bip-erp/'//贝特ERP
 // global.BIPAPIURL='http://www.bip-soft.com:89/bip-flexible/'//灵活用工
 // global.BIPAPIURL='http://kpi.shineon.cn:89/nc_jxgl/'//南昌绩效管理
+// global.BIPAPIURL='http://120.79.16.71:8081/bip-erp/'//搅拌站ERP
 // global.BIPAPIURL='http://127.0.0.1:801/bip-share2/'//本机测试环境
 // global.DBID = 'ZT1';
 // global.DBID = 'J1';

@@ -86,6 +86,16 @@
                             <div>
                                 <div class="speed-content">
                                     <div class="sp-title ">
+                                        <span>当前压力</span>
+                                    </div>
+                                    <div class="time">
+                                       {{nowpressure}}kpa 
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="speed-content">
+                                    <div class="sp-title nowtime-header">
                                         <span>当前流量</span>
                                     </div>
                                     <div class="time">
@@ -93,13 +103,52 @@
                                     </div>
                                 </div>
                             </div>
+                        </md-layout>
+                    </div>
+                    <div class="speed-flow">
+                        <md-layout class="padding0">
                             <div>
                                 <div class="speed-content">
-                                    <div class="sp-title nowtime-header">
+                                    <div class="sp-title ">
                                         <span>累计流量</span>
                                     </div>
                                     <div class="time">
-                                        {{sumflow}}m³
+                                       {{sumflow}}m³
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="speed-content">
+                                    <div class="sp-title nowtime-header">
+                                        <span>当前风速 </span>
+                                    </div>
+                                    <div class="time">
+                                         {{windSpeed}}m/s
+                                    </div>
+                                </div>
+                            </div>
+                        </md-layout>
+                    </div>
+
+                    <div class="speed-flow">
+                        <md-layout class="padding0">
+                            <div>
+                                <div class="speed-content">
+                                    <div class="sp-title ">
+                                        <span>当前温度</span>
+                                    </div>
+                                    <div class="time">
+                                       {{nowtemperature}}℃
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="speed-content">
+                                    <div class="sp-title nowtime-header">
+                                        <span>当前湿度 </span>
+                                    </div>
+                                    <div class="time">
+                                         {{humidity}}%rh
                                     </div>
                                 </div>
                             </div>
@@ -227,6 +276,10 @@ export default {
             sumarea: 0,//喷洒面积
             mileage: 0,//喷洒里程
 
+            windSpeed: 0,//风速
+            humidity: 0,//湿度
+            nowtemperature: 0,//温度
+            nowpressure:0,//压力
             warn:null,//预警信息
             
         }
@@ -386,6 +439,14 @@ export default {
             let data = this.taskData[this.dragPoints+index-1];
             this.percent = (index+this.dragPoints)/this.taskData.length *100;
             if(data){
+                if(data.windspeed)
+                    this.windSpeed = data.windspeed;//风速
+                if(data.humidity)
+                    this.humidity = data.humidity;//湿度
+                if(data.pressure)//压力
+                    this.nowpressure = (data.pressure).toFixed(1);
+                if(data.temperature)//温度
+                    this.nowtemperature = (data.temperature).toFixed(1);
                 this.nowtime = data.speedtime;
                 this.nowspeed = data.speed; 
                 this.nowflow = data.flow;
