@@ -189,6 +189,13 @@ export default {
       this.$emit("list");
     },
     async submit() { 
+      if(this.dsm.currRecord.sys_stated !=4){
+        if((this.dsm.currRecord&billS.DELETE)==0){
+          var isnull = this.checkNotNull(this.dsm);
+            if(!isnull)
+              return;
+        }
+      }
       var crd = this.dsm.currRecord;
       if (this.opera) {
         var state = crd[this.opera.statefld];
