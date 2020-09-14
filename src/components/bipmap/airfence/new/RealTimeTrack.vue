@@ -596,7 +596,7 @@ export default {
                     }
                 }
 
-                if(flow>0){//有流量去划线
+                if(flow>=0.9){//有流量去划线
                     this.sumflow = parseFloat(this.sumflow) + parseFloat(flow/60/60);
 
                     this.sumflow = parseFloat((this.sumflow).toFixed(3));
