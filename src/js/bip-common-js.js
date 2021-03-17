@@ -8,7 +8,7 @@
 // global.BIPAPIURL = 'http://jtdrp.juminfuwu.cn/' //集团管理
 // global.BIPAPIURL = 'http://211.144.37.205/vehicle-sched/'; //一风车辆
 // global.BIPAPIURL = 'http://211.144.37.205/airfencea/'; //一风飞防
-global.BIPAPIURL = 'http://211.144.37.205/air-super/'; //一风新飞防
+// global.BIPAPIURL = 'http://211.144.37.205/air-super/'; //一风新飞防
 // global.BIPAPIURL = 'http://115.28.191.203:89/skxjtfile/';//京通档案
 // global.BIPAPIURL = 'http://192.168.100.13:8080/skxjtfile/';//京通档案（水科学院）
 // global.BIPAPIURL = 'http://www.bip-soft.com:89/clubreserv/';//会所预定

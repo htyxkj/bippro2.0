@@ -101,8 +101,8 @@ export default new Router({
         {
             path: '/',
             name: 'Index',
-            // component: WxApplets
-            component:RealTimeTrack//飞防
+            component: WxApplets
+            // component:RealTimeTrack//飞防
         },
         {
             path: '/index',

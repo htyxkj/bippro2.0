@@ -137,6 +137,12 @@ export default {
       if(!this.content|| this.content.length<=0){
         this.content="同意";
       }
+      if(this.cea.sbuid == "100301" && this.stateId=="806"){
+        if(this.userIds.length <2){
+          this.$notify.danger({ content: "请勾选至少两位审批人！", placement: "mid-center" });
+          return;
+        }
+      }
       let check =null;//下一审批节点
       for(var i=0;i<this.chkinfo.list.length;i++){
         let item = this.chkinfo.list[i];
